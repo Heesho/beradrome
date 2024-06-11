@@ -7,7 +7,7 @@ require("solidity-coverage");
 /*===================================================================*/
 /*===========================  SETTINGS  ============================*/
 
-const CHAIN_ID = 2061; // Berachain chain id
+const CHAIN_ID = 80084; // Berachain Bartio chain id
 
 /*===========================  END SETTINGS  ========================*/
 /*===================================================================*/
@@ -51,12 +51,11 @@ module.exports = {
       accounts: [PRIVATE_KEY],
     },
     hardhat: {
-      // ******* bera plugin testing *******
-      // chainId: 2061,
-      // forking: {
-      //   url: "https://rpc.berachain-internal.com/",
-      // },
-      // ***********************************
+      chainId: CHAIN_ID,
+      forking: {
+        url: RPC_URL,
+      },
+      blockNumber: 146500,
     },
   },
   etherscan: {
@@ -64,7 +63,7 @@ module.exports = {
   },
   paths: {
     sources: "./contracts",
-    tests: "./tests/base",
+    tests: "./tests/bera",
     cache: "./cache",
     artifacts: "./artifacts",
   },
