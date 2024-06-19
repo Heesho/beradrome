@@ -55,7 +55,7 @@ module.exports = {
       forking: {
         url: RPC_URL,
       },
-      blockNumber: 146500,
+      blockNumber: 406900,
     },
   },
   etherscan: {
