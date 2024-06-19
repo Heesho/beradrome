@@ -6,13 +6,13 @@ const hre = require("hardhat");
 /*===========================  SETTINGS  ============================*/
 
 // PluginFactory settings
-const VOTER_ADDRESS = "0x0000000000000000000000000000000000000000";
+const VOTER_ADDRESS = "0x2363BB86cD2ABF89cc059A654f89f11bCceffcA9";
 
 // Plugin settings
-const LP_SYMBOL = "50WETH-50HONEY"; // Desired symbol for LP plugin
-const LP_ADDRESS = "0x0000000000000000000000000000000000000000"; // Address of LP token
-const TOKEN0 = "0x0000000000000000000000000000000000000000"; // WETH address
-const TOKEN1 = "0x0000000000000000000000000000000000000000"; // HONEY address
+const LP_SYMBOL = "HONEY-WBERA"; // Desired symbol for LP plugin
+const LP_ADDRESS = "0xd28d852cbcc68DCEC922f6d5C7a8185dBaa104B7"; // Address of LP token
+const TOKEN0 = "0x0E4aaF1351de4c0264C5c7056Ef3777b41BD8e03"; // HONEY address
+const TOKEN1 = "0x7507c1dc16935B82698e4C63f2746A2fCf994dF8"; // WBERA address
 
 /*===========================  END SETTINGS  ========================*/
 /*===================================================================*/
@@ -29,8 +29,11 @@ let plugin;
 /*===========================  CONTRACT DATA  =======================*/
 
 async function getContracts() {
-  // pluginFactory = await ethers.getContractAt("contracts/plugins/berachain/BexPairPluginFactory.sol:BexPairPluginFactory", "0x0000000000000000000000000000000000000000");
-  // plugin = await ethers.getContractAt("contracts/plugins/berachain/BexPairPluginFactory.sol:BexPairPlugin", "0x0000000000000000000000000000000000000000");
+  pluginFactory = await ethers.getContractAt(
+    "contracts/plugins/berachain/BexVaultPluginFactory.sol:BexVaultPluginFactory",
+    "0xb3B995567d6a4EF3D36b38252Cd70333d70bEe5e"
+  );
+  // plugin = await ethers.getContractAt("contracts/plugins/berachain/BexVaultPluginFactory.sol:BexVaultPlugin", "0x0000000000000000000000000000000000000000");
 
   console.log("Contracts Retrieved");
 }
@@ -41,7 +44,7 @@ async function getContracts() {
 async function deployPluginFactory() {
   console.log("Starting PluginFactory Deployment");
   const pluginFactoryArtifact = await ethers.getContractFactory(
-    "BexPairPluginFactory"
+    "BexVaultPluginFactory"
   );
   const pluginFactoryContract = await pluginFactoryArtifact.deploy(
     VOTER_ADDRESS,
@@ -63,7 +66,7 @@ async function verifyPluginFactory() {
   await hre.run("verify:verify", {
     address: pluginFactory.address,
     contract:
-      "contracts/plugins/berachain/BexPairPluginFactory.sol:BexPairPluginFactory",
+      "contracts/plugins/berachain/BexVaultPluginFactory.sol:BexVaultPluginFactory",
     constructorArguments: [VOTER_ADDRESS],
   });
   console.log("PluginFactory Verified");
@@ -87,12 +90,13 @@ async function verifyPlugin() {
   await hre.run("verify:verify", {
     address: plugin.address,
     contract:
-      "contracts/plugins/berachain/BexPairPluginFactory.sol:BexPairPlugin",
+      "contracts/plugins/berachain/BexVaultPluginFactory.sol:BexVaultPlugin",
     constructorArguments: [
       await plugin.getUnderlyingAddress(),
       VOTER_ADDRESS,
       await plugin.getTokensInUnderlying(),
       await plugin.getBribeTokens(),
+      await plugin.rewardsVault(),
       await plugin.getProtocol(),
       await plugin.getUnderlyingSymbol(),
     ],

@@ -6,9 +6,9 @@ const hre = require("hardhat");
 /*===========================  SETTINGS  ============================*/
 
 // PluginFactory settings
-const VOTER_ADDRESS = "0x0000000000000000000000000000000000000000";
-const BHONEY = "0xb89a17406508dc5edc3e777cbc23cd6b07fa6283";
-const WBERA = "0x5806E416dA447b267cEA759358cF22Cc41FAE80F";
+const VOTER_ADDRESS = "0x2363BB86cD2ABF89cc059A654f89f11bCceffcA9";
+const HONEY = "0x0E4aaF1351de4c0264C5c7056Ef3777b41BD8e03";
+const WBERA = "0x7507c1dc16935B82698e4C63f2746A2fCf994dF8";
 
 /*===========================  END SETTINGS  ========================*/
 /*===================================================================*/
@@ -24,7 +24,7 @@ let plugin;
 /*===========================  CONTRACT DATA  =======================*/
 
 async function getContracts() {
-  // plugin = await ethers.getContractAt("contracts/plugins/berachain/BerpPlugin.sol:BerpPlugin", "0x0000000000000000000000000000000000000000");
+  // plugin = await ethers.getContractAt("contracts/plugins/berachain/BerpsVaultPlugin.sol:BerpsVaultPlugin", "0x0000000000000000000000000000000000000000");
 
   console.log("Contracts Retrieved");
 }
@@ -34,12 +34,13 @@ async function getContracts() {
 
 async function deployPlugin() {
   console.log("Starting Plugin Deployment");
-  const pluginArtifact = await ethers.getContractFactory("BerpPlugin");
+  const pluginArtifact = await ethers.getContractFactory("BerpsVaultPlugin");
   const pluginContract = await pluginArtifact.deploy(
-    BHONEY,
     VOTER_ADDRESS,
-    [BHONEY],
-    [BGT],
+    [HONEY],
+    [WBERA],
+    "BERPS",
+    "bHONEY",
     {
       gasPrice: ethers.gasPrice,
     }
@@ -57,9 +58,8 @@ async function verifyPlugin() {
   await hre.run("verify:verify", {
     address: plugin.address,
     contract:
-      "contracts/plugins/berachain/BexPairPluginFactory.sol:BexPairPlugin",
+      "contracts/plugins/berachain/BerpsVaultPlugin.sol:BerpsVaultPlugin",
     constructorArguments: [
-      await plugin.getUnderlyingAddress(),
       VOTER_ADDRESS,
       await plugin.getTokensInUnderlying(),
       await plugin.getBribeTokens(),

@@ -51,11 +51,11 @@ module.exports = {
       accounts: [PRIVATE_KEY],
     },
     hardhat: {
-      chainId: CHAIN_ID,
-      forking: {
-        url: RPC_URL,
-      },
-      blockNumber: 406900,
+      // chainId: CHAIN_ID,
+      // forking: {
+      //   url: RPC_URL,
+      // },
+      // blockNumber: 406900,
     },
   },
   etherscan: {
@@ -63,7 +63,7 @@ module.exports = {
   },
   paths: {
     sources: "./contracts",
-    tests: "./tests/bera",
+    tests: "./tests/local",
     cache: "./cache",
     artifacts: "./artifacts",
   },

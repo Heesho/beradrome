@@ -21,7 +21,8 @@ interface ITOKEN {
     function getAccountCredit(address account) external view returns (uint256) ;
     function debts(address account) external view returns (uint256);
     function FEES() external view returns (address);
-    function PROTOCOL_FEE() external view returns (uint256);
+    function SWAP_FEE() external view returns (uint256);
+    function BORROW_FEE() external view returns (uint256);
     function DIVISOR() external view returns (uint256);
     function PRECISION() external view returns (uint256);
 }

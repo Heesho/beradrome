@@ -10,7 +10,8 @@
   "scripts": {
     "deploy": "hardhat run ./scripts/deploy.js  --network mainnet",
     "deployTestPlugins": "hardhat run ./scripts/local/deployPlugins.js  --network mainnet",
-    "deployPlugins": "hardhat run ./scripts/berachain/deployBexPairPlugin.js  --network mainnet",
+    "deployBexPlugins": "hardhat run ./scripts/berachain/deployBexPlugin.js  --network mainnet",
+    "deployBerpPlugins": "hardhat run ./scripts/berachain/deployBerpPlugin.js  --network mainnet",
     "testLocal": "hardhat test --grep local --network hardhat",
     "testZkevm": "hardhat test --grep zkevm --network hardhat",
     "testBase": "hardhat test --grep base --network hardhat"

@@ -161,7 +161,7 @@ contract Multicall {
         VTOKEN = _VTOKEN;
         rewarder = _rewarder;
 
-        FEE = ITOKEN(TOKEN).PROTOCOL_FEE();
+        FEE = ITOKEN(TOKEN).SWAP_FEE();
     }
 
     /*----------  VIEW FUNCTIONS  ---------------------------------------*/

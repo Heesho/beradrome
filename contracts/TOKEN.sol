@@ -59,10 +59,11 @@ contract TOKEN is ERC20, ReentrancyGuard {
     /*===================================================================*/
     /*===========================  SETTINGS  ============================*/
 
-    string internal constant NAME = 'LilTOKEN';     // Name of TOKEN
-    string internal constant SYMBOL = 'TOKEN';       // Symbol of TOKEN
+    string internal constant NAME = 'Beradrome';         // Name of TOKEN
+    string internal constant SYMBOL = 'BERO';       // Symbol of TOKEN
 
-    uint256 public constant PROTOCOL_FEE = 30;      // Swap and borrow fee: buy, sell, borrow
+    uint256 public constant SWAP_FEE = 30;      // Swap fee: buy, sell
+    uint256 public constant BORROW_FEE = 250;      // borrow fee
     uint256 public constant PROVIDER_FEE = 4000;    // Fee for the UI hosting provider
 
     /*===========================  END SETTINGS  ========================*/
@@ -181,7 +182,7 @@ contract TOKEN is ERC20, ReentrancyGuard {
         nonExpiredSwap(expireTimestamp)
         returns (bool)
     {
-        uint256 feeBASE = amountBase * PROTOCOL_FEE / DIVISOR;
+        uint256 feeBASE = amountBase * SWAP_FEE / DIVISOR;
         uint256 newMrBASE = (mrvBASE + mrrBASE) + amountBase - feeBASE;
         uint256 newMrTOKEN = (mrvBASE + mrrBASE) * mrrTOKEN / newMrBASE;
         uint256 outTOKEN = mrrTOKEN - newMrTOKEN;
@@ -222,7 +223,7 @@ contract TOKEN is ERC20, ReentrancyGuard {
         returns (bool)
     {
         if (amountToken > getMaxSell()) revert TOKEN__ExceedsSwapMarketReserves();
-        uint256 feeTOKEN = amountToken * PROTOCOL_FEE / DIVISOR;
+        uint256 feeTOKEN = amountToken * SWAP_FEE / DIVISOR;
         uint256 newMrTOKEN = mrrTOKEN + amountToken - feeTOKEN;
         uint256 newMrBASE = (mrvBASE + mrrBASE) * mrrTOKEN / newMrTOKEN;
         uint256 outBASE = (mrvBASE + mrrBASE) - newMrBASE;
@@ -308,7 +309,7 @@ contract TOKEN is ERC20, ReentrancyGuard {
         if (credit < amountBase) revert TOKEN__ExceedsBorrowCreditLimit();
         debts[account] += amountBase;
         debtTotal += amountBase;
-        uint256 feeBASE = amountBase * PROTOCOL_FEE / DIVISOR;
+        uint256 feeBASE = amountBase * BORROW_FEE / DIVISOR;
         emit TOKEN__Borrow(account, amountBase);
         BASE.safeTransfer(FEES, feeBASE);
         BASE.safeTransfer(account, amountBase - feeBASE);
