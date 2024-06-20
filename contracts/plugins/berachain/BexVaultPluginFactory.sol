@@ -126,8 +126,6 @@ contract BexVaultPluginFactory {
 
     address public last_plugin;
 
-    error PluginFactory__NotPair();
-
     event Plugin__PluginCreated(address plugin);
 
     constructor(address _VOTER) {
