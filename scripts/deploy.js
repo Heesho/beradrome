@@ -638,11 +638,21 @@ async function main() {
   // 10. Add plugins to voter
   //===================================================================
 
-  console.log("Adding Plugin0 to Voter");
-  await voter.addPlugin("0x7eCdc9d4328fd79bCeb08a7b1860822E8c2c85e9"); // BEX HONEY-WBERA
-  console.log("Adding Plugin1 to Voter");
-  await voter.addPlugin("0x0aA085b223482d3552474cd2cDEB0e2Ef1599337"); // BERPS bHONEY
-  console.log("Plugins added to Voter");
+  // console.log("Adding Plugin0 to Voter");
+  // await voter.addPlugin("0x7eCdc9d4328fd79bCeb08a7b1860822E8c2c85e9"); // BEX HONEY-WBERA
+  // console.log("Adding Plugin1 to Voter");
+  // await voter.addPlugin("0x0aA085b223482d3552474cd2cDEB0e2Ef1599337"); // BERPS bHONEY
+  // console.log("Plugins added to Voter");
+
+  //===================================================================
+  // 11. Distro Rewards
+  //===================================================================
+
+  // console.log("Distributing Rewards");
+  // await voter.distro();
+  // console.log("Voter Rewards Distributed");
+  // await fees.distribute();
+  // console.log("Fees Rewards Distributed");
 }
 
 main()

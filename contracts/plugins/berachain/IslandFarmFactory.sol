@@ -77,9 +77,7 @@ contract IslandFarmPlugin is Plugin {
     {
         super.depositFor(account, amount);
 
-        bytes32 id = keccak256(abi.encodePacked(address(this), block.timestamp, amount, lockedLiquidityOf(address(this))));
-
-
+        // bytes32 id = keccak256(abi.encodePacked(address(this), block.timestamp, amount, ICommunalFarm(farm).lockedLiquidityOf(address(this))));
         IERC20(getUnderlyingAddress()).safeApprove(farm, 0);
         IERC20(getUnderlyingAddress()).safeApprove(farm, amount);
         ICommunalFarm(farm).stakeLocked(amount, 0);
