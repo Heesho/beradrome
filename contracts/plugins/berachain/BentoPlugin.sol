@@ -22,6 +22,8 @@ contract BentoPlugin is ReentrancyGuard, Ownable {
     uint256 public constant AMOUNT = 1e16;
     uint256 public constant X_MAX = 256;
     uint256 public constant Y_MAX = 256;
+    string public constant SYMBOL = "BENTO";
+    string public constant PROTOCOL = "BentoBera";
 
     /*----------  STATE VARIABLES  --------------------------------------*/
 
@@ -36,7 +38,6 @@ contract BentoPlugin is ReentrancyGuard, Ownable {
 
     uint256 private _totalSupply;
     mapping(address => uint256) private _balances;
-    string public symbol;
     address public treasury;
 
     struct Tile {
@@ -55,12 +56,11 @@ contract BentoPlugin is ReentrancyGuard, Ownable {
     error Plugin__InvalidInput();
     error Plugin__InvalidZeroInput();
     error Plugin__NotAuthorizedVoter();
+    error Plugin__InsufficientFunds();
 
     /*----------  EVENTS ------------------------------------------------*/
 
     event Plugin__Placed(address indexed account, address indexed prevAccount, uint256 x, uint256 y, uint256 color);
-    event Plugin__Deposited(address indexed account, uint256 amount);
-    event Plugin__Withdrawn(address indexed account, uint256 amount);
     event Plugin__ClaimedAnDistributed();
 
     /*----------  MODIFIERS  --------------------------------------------*/
@@ -123,6 +123,7 @@ contract BentoPlugin is ReentrancyGuard, Ownable {
             emit Plugin__Placed(account, prevAccount, x[i], y[i], color);
         }
         uint256 amount = AMOUNT * x.length;
+        if (msg.value != amount) revert Plugin__InsufficientFunds();
         totalPlaced += amount;
         account_Placed[account] += amount;
         IGauge(gauge)._deposit(account, amount);
@@ -135,6 +136,10 @@ contract BentoPlugin is ReentrancyGuard, Ownable {
     fallback() external payable {}
 
     /*----------  RESTRICTED FUNCTIONS  ---------------------------------*/
+
+    function setColors(string[] memory _colors) external onlyOwner {
+        colors = _colors;
+    }
 
     function setGauge(address _gauge) external onlyVoter {
         gauge = _gauge;
@@ -155,11 +160,11 @@ contract BentoPlugin is ReentrancyGuard, Ownable {
     }
 
     function getUnderlyingName() public view virtual returns (string memory) {
-        return underlying.name();
+        return SYMBOL;
     }
 
     function getUnderlyingSymbol() public view virtual returns (string memory) {
-        return underlying.symbol();
+        return SYMBOL;
     }
 
     function getUnderlyingAddress() public view virtual returns (address) {
@@ -171,7 +176,7 @@ contract BentoPlugin is ReentrancyGuard, Ownable {
     }
 
     function getProtocol() public view virtual returns (string memory) {
-        return protocol;
+        return PROTOCOL;
     }
 
     function getVoter() public view returns (address) {
