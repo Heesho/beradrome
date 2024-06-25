@@ -16,7 +16,7 @@ interface ICommunalFarm {
     function withdrawLockedAll() external;
     function getReward() external;
     function lockedLiquidityOf(address account) external view returns (uint256);
-    function lockedStakedOf(address account) external view returns (LockedState[] memory);
+    function lockedStakesOf(address account) external view returns (LockedStake[] memory);
 }
 
 contract KodiakFarmPlugin is Plugin {
@@ -113,7 +113,7 @@ contract KodiakFarmPlugin is Plugin {
     }
 
     function getLockedStakes() public view returns (ICommunalFarm.LockedStake[] memory) {
-        return ICommunalFarm(farm).lockedStakedOf(address(this));
+        return ICommunalFarm(farm).lockedStakesOf(address(this));
     }
 
 }
