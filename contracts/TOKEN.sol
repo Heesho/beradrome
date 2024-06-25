@@ -64,7 +64,7 @@ contract TOKEN is ERC20, ReentrancyGuard {
 
     uint256 public constant SWAP_FEE = 30;      // Swap fee: buy, sell
     uint256 public constant BORROW_FEE = 250;      // borrow fee
-    uint256 public constant PROVIDER_FEE = 4000;    // Fee for the UI hosting provider
+    uint256 public constant PROVIDER_FEE = 2000;    // Fee for the UI hosting provider
 
     /*===========================  END SETTINGS  ========================*/
     /*===================================================================*/

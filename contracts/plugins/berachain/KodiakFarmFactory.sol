@@ -5,9 +5,18 @@ import 'contracts/Plugin.sol';
 import "@openzeppelin/contracts/access/Ownable.sol";
 
 interface ICommunalFarm {
+    struct LockedStake {
+        bytes32 kek_id;
+        uint256 start_timestamp;
+        uint256 liquidity;
+        uint256 ending_timestamp;
+        uint256 lock_multiplier; 
+    }
     function stakeLocked(uint256 amount, uint256 time) external;
     function withdrawLockedAll() external;
     function getReward() external;
+    function lockedLiquidityOf(address account) external view returns (uint256);
+    function lockedStakedOf(address account) external view returns (LockedState[] memory);
 }
 
 contract KodiakFarmPlugin is Plugin {
@@ -97,6 +106,14 @@ contract KodiakFarmPlugin is Plugin {
 
     function getUnderlyingSymbol() public view override returns (string memory) {
         return symbol;
+    }
+
+    function getLockedLiquidity() public view returns (uint256) {
+        return ICommunalFarm(farm).lockedLiquidityOf(address(this));
+    }
+
+    function getLockedStakes() public view returns (ICommunalFarm.LockedStake[] memory) {
+        return ICommunalFarm(farm).lockedStakedOf(address(this));
     }
 
 }
