@@ -65,7 +65,7 @@ let TOKEN, VTOKEN, OTOKEN, BASE;
 let WBERA, BHONEY;
 let plugin0, gauge0, bribe0;
 
-describe.only("berachain: berps vault testing", function () {
+describe("berachain: berps vault testing", function () {
   before("Initial set up", async function () {
     console.log("Begin Initialization");
 

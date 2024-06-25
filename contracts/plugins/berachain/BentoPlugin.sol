@@ -82,13 +82,13 @@ contract BentoPlugin is ReentrancyGuard, Ownable {
         address _voter, 
         address[] memory _tokensInUnderlying,   // [WBERA]
         address[] memory _bribeTokens,          // [WBERA]
-        string memory _protocol                 // "BentoBera"
+        address _treasury
     ) {
         underlying = IERC20Metadata(_underlying);
         voter = _voter;
         tokensInUnderlying = _tokensInUnderlying;
         bribeTokens = _bribeTokens;
-        protocol = _protocol;
+        treasury = _treasury;
         OTOKEN = IVoter(_voter).OTOKEN();
     }
 
