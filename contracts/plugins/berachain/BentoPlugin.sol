@@ -32,12 +32,9 @@ contract BentoPlugin is ReentrancyGuard, Ownable {
     address private immutable voter;
     address private gauge;
     address private bribe;
-    string private  protocol;
     address[] private tokensInUnderlying;
     address[] private bribeTokens;
 
-    uint256 private _totalSupply;
-    mapping(address => uint256) private _balances;
     address public treasury;
 
     struct Tile {
@@ -93,21 +90,25 @@ contract BentoPlugin is ReentrancyGuard, Ownable {
     }
 
     function claimAndDistribute() 
-        public 
+        external 
+        nonReentrant
     {
         uint256 duration = IBribe(bribe).DURATION();
         uint256 balance = address(this).balance;
         if (balance > duration) {
+            uint256 treasuryFee = balance / 10;
             IWBERA(WBERA).deposit{value: balance}();
+            IERC20(WBERA).safeTransfer(treasury, treasuryFee);
             IERC20(WBERA).safeApprove(bribe, 0);
-            IERC20(WBERA).safeApprove(bribe, balance);
-            IBribe(bribe).notifyRewardAmount(WBERA, balance);
+            IERC20(WBERA).safeApprove(bribe, balance - treasuryFee);
+            IBribe(bribe).notifyRewardAmount(WBERA, balance - treasuryFee);
         }
     }
 
     function placeFor(address account, uint256[] calldata x, uint256[] calldata y, uint256 color) 
-        public
+        external
         payable
+        nonReentrant
     {
         if (color >= colors.length) revert Plugin__InvalidColor();
         if (x.length == 0) revert Plugin__InvalidInput();
@@ -137,6 +138,10 @@ contract BentoPlugin is ReentrancyGuard, Ownable {
 
     /*----------  RESTRICTED FUNCTIONS  ---------------------------------*/
 
+    function setTreasury(address _treasury) external onlyOwner {
+        treasury = _treasury;
+    }
+
     function setColors(string[] memory _colors) external onlyOwner {
         colors = _colors;
     }
@@ -152,11 +157,11 @@ contract BentoPlugin is ReentrancyGuard, Ownable {
     /*----------  VIEW FUNCTIONS  ---------------------------------------*/
 
     function balanceOf(address account) public view returns (uint256) {
-        return _balances[account];
+        return IGauge(gauge).balanceOf(account);
     }
 
     function totalSupply() public view returns (uint256) {
-        return _totalSupply;
+        return IGauge(gauge).totalSupply();
     }
 
     function getUnderlyingName() public view virtual returns (string memory) {

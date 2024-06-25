@@ -5,13 +5,12 @@ import 'contracts/Plugin.sol';
 import "@openzeppelin/contracts/access/Ownable.sol";
 
 interface ICommunalFarm {
-    function lockedLiquidityOf(address account) external view returns (uint256);
     function stakeLocked(uint256 amount, uint256 time) external;
     function withdrawLockedAll() external;
     function getReward() external;
 }
 
-contract IslandFarmPlugin is Plugin {
+contract KodiakFarmPlugin is Plugin {
     using SafeERC20 for IERC20;
 
     /*----------  CONSTANTS  --------------------------------------------*/
@@ -20,13 +19,6 @@ contract IslandFarmPlugin is Plugin {
 
     address public farm;
     string public symbol;
-
-    mapping(address => LockedStake[]) public account_LockedStakes;
-
-    struct LockedStake {
-        bytes32 id;
-        uint256 amount;
-    }
 
     /*----------  ERRORS ------------------------------------------------*/
 
@@ -76,11 +68,11 @@ contract IslandFarmPlugin is Plugin {
         override 
     {
         super.depositFor(account, amount);
-
-        // bytes32 id = keccak256(abi.encodePacked(address(this), block.timestamp, amount, ICommunalFarm(farm).lockedLiquidityOf(address(this))));
+        ICommunalFarm(farm).withdrawLockedAll();
+        uint256 balance = IERC20(getUnderlyingAddress()).balanceOf(address(this));
         IERC20(getUnderlyingAddress()).safeApprove(farm, 0);
-        IERC20(getUnderlyingAddress()).safeApprove(farm, amount);
-        ICommunalFarm(farm).stakeLocked(amount, 0);
+        IERC20(getUnderlyingAddress()).safeApprove(farm, balance);
+        ICommunalFarm(farm).stakeLocked(balance, 0);
     }
 
     function withdrawTo(address account, uint256 amount) 
@@ -89,6 +81,10 @@ contract IslandFarmPlugin is Plugin {
     {
         ICommunalFarm(farm).withdrawLockedAll(); 
         super.withdrawTo(account, amount);
+        uint256 balance = IERC20(getUnderlyingAddress()).balanceOf(address(this));
+        IERC20(getUnderlyingAddress()).safeApprove(farm, 0);
+        IERC20(getUnderlyingAddress()).safeApprove(farm, balance);
+        ICommunalFarm(farm).stakeLocked(balance, 0);
     }
 
     /*----------  RESTRICTED FUNCTIONS  ---------------------------------*/
@@ -105,7 +101,7 @@ contract IslandFarmPlugin is Plugin {
 
 }
 
-contract IslandFarmPluginFactory is Ownable {
+contract KodiakFarmPluginFactory is Ownable {
 
     string public constant PROTOCOL = 'Kodiak';
     address public constant KDK = 0xfd27998fa0eaB1A6372Db14Afd4bF7c4a58C5364;
@@ -141,7 +137,7 @@ contract IslandFarmPluginFactory is Ownable {
             bribeTokens[2 + i] = _otherRewards[i];
         }
 
-        IslandFarmPlugin lastPlugin = new IslandFarmPlugin(
+        KodiakFarmPlugin lastPlugin = new KodiakFarmPlugin(
             _lpToken,
             VOTER,
             tokensInUnderlying,
