@@ -62,6 +62,11 @@ const KODIAK3_ADDR = "0xE5A2ab5D2fb268E5fF43A5564e44c3309609aFF9"; // Kodiak Vau
 const KODIAK3_FARM = "0xbdEE3F788a5efDdA1FcFe6bfe7DbbDa5690179e6";
 const KODIAK3_HOLDER = "0x2268606f89189Ae4F87DF5e4Dc4855737dbf7e94";
 
+const HONEY_ADDR = "0x0E4aaF1351de4c0264C5c7056Ef3777b41BD8e03";
+const KODIAK1_ADDR = "0x12C195768f65F282EA5F1B5C42755FBc910B0D8F"; // Kodiak Vault V1 HONEY/WBERA
+const KODIAK1_FARM = "0x1878eb1cA6Da5e2fC4B5213F7D170CA668A0E225";
+const KODIAK1_HOLDER = "0x531a0BaeC4B799eE894007f8E839A27E0746Dc19";
+
 let owner, multisig, treasury, user0, user1, user2;
 let VTOKENFactory,
   OTOKENFactory,
@@ -71,8 +76,9 @@ let VTOKENFactory,
   bribeFactory;
 let minter, voter, fees, rewarder, governance, multicall, pluginFactory;
 let TOKEN, VTOKEN, OTOKEN, BASE;
-let WBERA, YEET, XKDK;
+let WBERA, YEET, HONEY, XKDK;
 let KODIAK3, plugin0, gauge0, bribe0;
+let KODIAK1, plugin1, gauge1, bribe1;
 
 describe.only("berachain: kodiak farm testing", function () {
   before("Initial set up", async function () {
@@ -89,7 +95,9 @@ describe.only("berachain: kodiak farm testing", function () {
     // initialize ERC20s
     WBERA = new ethers.Contract(WBERA_ADDR, ERC20_ABI, provider);
     YEET = new ethers.Contract(YEET_ADDR, ERC20_ABI, provider);
+    HONEY = new ethers.Contract(HONEY_ADDR, ERC20_ABI, provider);
     KODIAK3 = new ethers.Contract(KODIAK3_ADDR, ERC20_ABI, provider);
+    KODIAK1 = new ethers.Contract(KODIAK1_ADDR, ERC20_ABI, provider);
     XKDK = new ethers.Contract(XKDK_ADDR, XKDK_ABI, provider);
     console.log("- ERC20s Initialized");
 
@@ -263,7 +271,7 @@ describe.only("berachain: kodiak farm testing", function () {
     );
     console.log("- Plugin Factory Initialized");
 
-    // initialize LP0
+    // initialize KODIAK3
     await pluginFactory.createPlugin(
       KODIAK3_ADDR,
       KODIAK3_FARM,
@@ -273,6 +281,20 @@ describe.only("berachain: kodiak farm testing", function () {
       "YEET-WBERA Island"
     );
     plugin0 = await ethers.getContractAt(
+      "contracts/plugins/berachain/KodiakFarmPluginFactory.sol:KodiakFarmPlugin",
+      await pluginFactory.last_plugin()
+    );
+
+    // initialize KODIAK1
+    await pluginFactory.createPlugin(
+      KODIAK1_ADDR,
+      KODIAK1_FARM,
+      HONEY_ADDR,
+      WBERA_ADDR,
+      [],
+      "HONEY-WBERA Island"
+    );
+    plugin1 = await ethers.getContractAt(
       "contracts/plugins/berachain/KodiakFarmPluginFactory.sol:KodiakFarmPlugin",
       await pluginFactory.last_plugin()
     );
@@ -290,6 +312,20 @@ describe.only("berachain: kodiak farm testing", function () {
       Bribe0Address
     );
     console.log("- KODIAK3 Added in Voter");
+
+    // add KODIAK1 Plugin to Voter
+    await voter.addPlugin(plugin1.address);
+    let Gauge1Address = await voter.gauges(plugin1.address);
+    let Bribe1Address = await voter.bribes(plugin1.address);
+    gauge1 = await ethers.getContractAt(
+      "contracts/GaugeFactory.sol:Gauge",
+      Gauge1Address
+    );
+    bribe1 = await ethers.getContractAt(
+      "contracts/BribeFactory.sol:Bribe",
+      Bribe1Address
+    );
+    console.log("- KODIAK1 Added in Voter");
 
     console.log("Initialization Complete");
     console.log();
