@@ -12,6 +12,7 @@
     "deployTestPlugins": "hardhat run ./scripts/local/deployPlugins.js  --network mainnet",
     "deployBexPlugins": "hardhat run ./scripts/berachain/deployBexPlugin.js  --network mainnet",
     "deployBerpPlugins": "hardhat run ./scripts/berachain/deployBerpPlugin.js  --network mainnet",
+    "deployKodiakPugins": "hardhat run ./scripts/kodiak/deployKodiakPlugin.js  --network mainnet",
     "testLocal": "hardhat test --grep local --network hardhat",
     "testZkevm": "hardhat test --grep zkevm --network hardhat",
     "testBase": "hardhat test --grep base --network hardhat"
