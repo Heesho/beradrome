@@ -30,11 +30,11 @@ const KODIAK3 = "0xE5A2ab5D2fb268E5fF43A5564e44c3309609aFF9";
 const KODIAK3_FARM = "0xbdEE3F788a5efDdA1FcFe6bfe7DbbDa5690179e6"; // rewards = KDK, xKDK, YEET
 
 // Plugin settings
-const LP_SYMBOL = ""; // Desired symbol for LP plugin
-const LP_ADDRESS = ""; // Address of LP token
-const TOKEN0 = ""; // HONEY address
-const TOKEN1 = ""; // WBERA address
-const FARM = ""; // Communal farm address
+const LP_SYMBOL = KODIAK3_SYMBOL; // Desired symbol for LP plugin
+const LP_ADDRESS = KODIAK3; // Address of LP token
+const TOKEN0 = YEET; // HONEY address
+const TOKEN1 = WBERA; // WBERA address
+const FARM = KODIAK3_FARM; // Communal farm address
 
 /*===========================  END SETTINGS  ========================*/
 /*===================================================================*/
@@ -51,10 +51,10 @@ let plugin;
 /*===========================  CONTRACT DATA  =======================*/
 
 async function getContracts() {
-  //   pluginFactory = await ethers.getContractAt(
-  //     "contracts/plugins/berachain/KodiakFarmPluginFactory.sol:KodiakFarmPluginFactory",
-  //     ""
-  //   );
+  pluginFactory = await ethers.getContractAt(
+    "contracts/plugins/berachain/KodiakFarmPluginFactory.sol:KodiakFarmPluginFactory",
+    "0xD8300AbAF2a86842A8623391b91a31cF9700aba8"
+  );
   // plugin = await ethers.getContractAt("contracts/plugins/berachain/KodiakFarmPluginFactory.sol:KodiakFarmPlugin", "");
 
   console.log("Contracts Retrieved");
@@ -101,7 +101,7 @@ async function deployPlugin() {
     FARM,
     TOKEN0,
     TOKEN1,
-    [],
+    [YEET],
     LP_SYMBOL,
     {
       gasPrice: ethers.gasPrice,

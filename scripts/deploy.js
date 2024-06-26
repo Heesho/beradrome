@@ -639,9 +639,11 @@ async function main() {
   //===================================================================
 
   // console.log("Adding Plugin0 to Voter");
-  // await voter.addPlugin("0x7eCdc9d4328fd79bCeb08a7b1860822E8c2c85e9"); // BEX HONEY-WBERA
+  // await voter.addPlugin("0x5e5589969FD5a19A70b571645FEBb72d253F1ABE"); // Kodiak HONEY-WBERA Island
   // console.log("Adding Plugin1 to Voter");
-  // await voter.addPlugin("0x0aA085b223482d3552474cd2cDEB0e2Ef1599337"); // BERPS bHONEY
+  // await voter.addPlugin("0xc376208d619c0bfb8a53d2A9Cc3e2A7F992b72c5"); // Kodiak HONEY-USDC Island
+  // console.log("Adding Plugin2 to Voter");
+  // await voter.addPlugin("0xD97006100cA1245642371F36f3F39EC3477f5E6e"); // Kodiak YEET-WBERA Island
   // console.log("Plugins added to Voter");
 
   //===================================================================
@@ -653,6 +655,19 @@ async function main() {
   // console.log("Voter Rewards Distributed");
   // await fees.distribute();
   // console.log("Fees Rewards Distributed");
+
+  //===================================================================
+  // 12. Plugin Data
+  //===================================================================
+
+  // console.log(
+  //   await multicall
+  //     .connect(wallet)
+  //     .bribeCardData(
+  //       "0xD97006100cA1245642371F36f3F39EC3477f5E6e",
+  //       "0x0000000000000000000000000000000000000000"
+  //     )
+  // );
 }
 
 main()
