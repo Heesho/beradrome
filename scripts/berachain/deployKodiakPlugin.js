@@ -126,7 +126,7 @@ async function verifyPlugin() {
       VOTER_ADDRESS,
       await plugin.getTokensInUnderlying(),
       await plugin.getBribeTokens(),
-      await plugin.rewardsVault(),
+      await plugin.farm(),
       await plugin.getProtocol(),
       await plugin.getUnderlyingSymbol(),
     ],
