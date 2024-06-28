@@ -36,8 +36,8 @@ contract RelayToken is ERC20, ERC20Permit, ERC20Votes, Ownable, ReentrancyGuard 
     address public voter;
     address public multicall;
 
-    address public voteDelegate;
-    address public rewardReceiver;
+    address public delegate;
+    address public treasury;
 
     address[] public plugins;
     address[] public weights;
@@ -72,8 +72,8 @@ contract RelayToken is ERC20, ERC20Permit, ERC20Votes, Ownable, ReentrancyGuard 
         vTokenRewarder = _vTokenRewarder;
         voter = _voter;
         multicall = _multicall;
-        voteDelegate = msg.sender;
-        rewardReceiver = msg.sender;
+        delegate = msg.sender;
+        treasury = msg.sender;
     }
 
     // mint
@@ -104,9 +104,9 @@ contract RelayToken is ERC20, ERC20Permit, ERC20Votes, Ownable, ReentrancyGuard 
 
     // set multicall
 
-    // set vote delegate
+    // set delegate
 
-    // set reward receiver
+    // set treasury
 
     // set slippage tolerance
 
