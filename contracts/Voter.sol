@@ -81,6 +81,7 @@ contract Voter is ReentrancyGuard, Ownable {
     event Voter__NotifyReward(address indexed sender, address indexed reward, uint amount);
     event Voter__DistributeReward(address indexed sender, address indexed gauge, uint amount);
     event Voter__BribeRewardAdded(address indexed bribe, address indexed reward);
+    event Voter__GaugeRewardAdded(address indexed gauge, address indexed reward);
 
     /*----------  MODIFIERS  --------------------------------------------*/
 
@@ -304,6 +305,15 @@ contract Voter is ReentrancyGuard, Ownable {
     {
         IBribe(_bribe).addReward(_rewardToken);
         emit Voter__BribeRewardAdded(_bribe, _rewardToken);
+    }
+
+    function addGaugeReward(address _gauge, address _rewardToken) 
+        external 
+        onlyGov 
+        nonZeroAddress(_rewardToken)
+    {
+        IGauge(_gauge).addReward(_rewardToken);
+        emit Voter__GaugeRewardAdded(_gauge, _rewardToken);
     }
 
     function emitDeposit(address account, uint amount) 

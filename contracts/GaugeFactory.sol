@@ -92,13 +92,6 @@ contract Gauge is ReentrancyGuard {
         _;
     }
 
-    modifier onlyVoter() {
-        if (msg.sender != voter) {
-            revert Gauge__NotAuthorizedVoter();
-        }
-        _;
-    }
-
     modifier nonZeroInput(uint256 _amount) {
         if (_amount == 0) revert Gauge__InvalidZeroInput();
         _;
@@ -149,9 +142,9 @@ contract Gauge is ReentrancyGuard {
     function notifyRewardAmount(address _rewardsToken, uint256 reward) 
         external
         nonReentrant
-        onlyVoter
         updateReward(address(0))
     {
+        if (_rewardsToken == IVoter(voter).OTOKEN() && msg.sender != voter) revert Gauge__NotAuthorizedVoter();
         if (!isRewardToken[_rewardsToken]) revert Gauge__NotRewardToken();
 
         IERC20(_rewardsToken).safeTransferFrom(msg.sender, address(this), reward);
@@ -211,8 +204,8 @@ contract Gauge is ReentrancyGuard {
      */
     function addReward(address _rewardsToken) 
         external 
-        onlyVoter
     {
+        if (msg.sender != voter) revert Gauge__NotAuthorizedVoter();
         if (isRewardToken[_rewardsToken]) revert Gauge__RewardTokenAlreadyAdded();
         rewardTokens.push(_rewardsToken);
         isRewardToken[_rewardsToken] = true;
