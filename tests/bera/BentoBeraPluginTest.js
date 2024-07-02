@@ -9,6 +9,7 @@ const helpers = require("@nomicfoundation/hardhat-network-helpers");
 require("dotenv").config();
 
 const AddressZero = "0x0000000000000000000000000000000000000000";
+const pointZeroOne = convert("0.01", 18);
 const one = convert("1", 18);
 const one6 = convert("1", 6);
 const two = convert("2", 18);
@@ -44,6 +45,10 @@ const ERC20_ABI = [
   "function name() view returns (string)",
 ];
 
+function getRndInteger(min, max) {
+  return Math.floor(Math.random() * (max - min)) + min;
+}
+
 function timer(t) {
   return new Promise((r) => setTimeout(r, t));
 }
@@ -60,9 +65,9 @@ let VTOKENFactory,
 let minter, voter, fees, rewarder, governance, multicall, pluginFactory;
 let TOKEN, VTOKEN, OTOKEN, BASE;
 let WBERA;
-let plugin0, gauge0, bribe0;
+let plugin, gauge0, bribe0;
 
-describe("berachain: bento bera testing", function () {
+describe.only("berachain: bento bera testing", function () {
   before("Initial set up", async function () {
     console.log("Begin Initialization");
 
@@ -244,13 +249,13 @@ describe("berachain: bento bera testing", function () {
       [WBERA_ADDR],
       treasury.address
     );
-    plugin0 = await ethers.getContractAt("BentoPlugin", pluginContract.address);
+    plugin = await ethers.getContractAt("BentoPlugin", pluginContract.address);
     console.log("- Bento Plugin Initialized");
 
     // add Plugin to Voter
-    await voter.addPlugin(plugin0.address);
-    let Gauge0Address = await voter.gauges(plugin0.address);
-    let Bribe0Address = await voter.bribes(plugin0.address);
+    await voter.addPlugin(plugin.address);
+    let Gauge0Address = await voter.gauges(plugin.address);
+    let Bribe0Address = await voter.bribes(plugin.address);
     gauge0 = await ethers.getContractAt(
       "contracts/GaugeFactory.sol:Gauge",
       Gauge0Address
@@ -267,5 +272,198 @@ describe("berachain: bento bera testing", function () {
 
   it("first test", async function () {
     console.log("******************************************************");
+  });
+
+  it("Set colors", async function () {
+    console.log("******************************************************");
+    await plugin.setColors([
+      "#000000",
+      "#18fc03",
+      "#fce303",
+      "#fc0317",
+      "#03a5fc",
+      "#db03fc",
+    ]);
+  });
+
+  it("Mint test tokens to each user", async function () {
+    console.log("******************************************************");
+    await BASE.mint(user0.address, 1000);
+    await BASE.mint(user1.address, 1000);
+    await BASE.mint(user2.address, 1000);
+  });
+
+  it("User0 Buys TOKEN with 10 BASE", async function () {
+    console.log("******************************************************");
+    await BASE.connect(user0).approve(TOKEN.address, ten);
+    await TOKEN.connect(user0).buy(
+      ten,
+      1,
+      1992282187,
+      user0.address,
+      AddressZero
+    );
+  });
+
+  it("User1 stakes TOKEN", async function () {
+    console.log("******************************************************");
+    await TOKEN.connect(user0).approve(VTOKEN.address, one);
+    await VTOKEN.connect(user0).deposit(one);
+  });
+
+  it("user0 votes on plugins a", async function () {
+    console.log("******************************************************");
+    await voter.connect(user0).vote([plugin.address], [ten]);
+  });
+
+  it("Owner calls distribute", async function () {
+    console.log("******************************************************");
+    await voter.connect(owner).distro();
+  });
+
+  it("GaugeCardData, plugin, user1", async function () {
+    console.log("******************************************************");
+    let res = await multicall.gaugeCardData(plugin.address, user1.address);
+    console.log("INFORMATION");
+    console.log("Gauge: ", res.gauge);
+    console.log("Plugin: ", res.plugin);
+    console.log("Underlying: ", res.underlying);
+    console.log("Tokens in Underlying: ");
+    for (let i = 0; i < res.tokensInUnderlying.length; i++) {
+      console.log(" - ", res.tokensInUnderlying[i]);
+    }
+    console.log("Underlying Decimals: ", res.underlyingDecimals);
+    console.log("Is Alive: ", res.isAlive);
+    console.log();
+    console.log("GLOBAL DATA");
+    console.log("Protocol: ", res.protocol);
+    console.log("Symbol: ", res.symbol);
+    console.log("Price OTOKEN: $", divDec(res.priceOTOKEN));
+    console.log("Reward Per token: ", divDec(res.rewardPerToken));
+    console.log("Reward Per token: $", divDec(res.rewardPerTokenUSD));
+    console.log("Total Supply: ", divDec(res.totalSupply));
+    console.log("Voting Weight: ", divDec(res.votingWeight), "%");
+    console.log();
+    console.log("ACCOUNT DATA");
+    console.log("Balance Underlying: ", divDec(res.accountUnderlyingBalance));
+    console.log("Balance Deposited: ", divDec(res.accountStakedBalance));
+    console.log("Earned OTOKEN: ", divDec(res.accountEarnedOTOKEN));
+  });
+
+  it("User0 places tiles randomly", async function () {
+    console.log("******************************************************");
+    console.log("ETH balance: ", divDec(await user0.getBalance()));
+    for (let i = 0; i < 1000; i++) {
+      await plugin
+        .connect(user0)
+        .placeFor(
+          user0.address,
+          [getRndInteger(0, 256)],
+          [getRndInteger(0, 256)],
+          getRndInteger(0, 6),
+          {
+            value: pointZeroOne,
+          }
+        );
+    }
+  });
+
+  it("User1 places tiles randomly", async function () {
+    console.log("******************************************************");
+    console.log("ETH balance: ", divDec(await user1.getBalance()));
+    for (let i = 0; i < 1000; i++) {
+      await plugin
+        .connect(user1)
+        .placeFor(
+          user1.address,
+          [getRndInteger(0, 256)],
+          [getRndInteger(0, 256)],
+          getRndInteger(0, 6),
+          {
+            value: pointZeroOne,
+          }
+        );
+    }
+  });
+
+  it("GaugeCardData, plugin, user0", async function () {
+    console.log("******************************************************");
+    let res = await multicall.gaugeCardData(plugin.address, user0.address);
+    console.log("INFORMATION");
+    console.log("Gauge: ", res.gauge);
+    console.log("Plugin: ", res.plugin);
+    console.log("Underlying: ", res.underlying);
+    console.log("Tokens in Underlying: ");
+    for (let i = 0; i < res.tokensInUnderlying.length; i++) {
+      console.log(" - ", res.tokensInUnderlying[i]);
+    }
+    console.log("Underlying Decimals: ", res.underlyingDecimals);
+    console.log("Is Alive: ", res.isAlive);
+    console.log();
+    console.log("GLOBAL DATA");
+    console.log("Protocol: ", res.protocol);
+    console.log("Symbol: ", res.symbol);
+    console.log("Price OTOKEN: $", divDec(res.priceOTOKEN));
+    console.log("Reward Per token: ", divDec(res.rewardPerToken));
+    console.log("Reward Per token: $", divDec(res.rewardPerTokenUSD));
+    console.log("Total Supply: ", divDec(res.totalSupply));
+    console.log("Voting Weight: ", divDec(res.votingWeight), "%");
+    console.log();
+    console.log("ACCOUNT DATA");
+    console.log("Balance Underlying: ", divDec(res.accountUnderlyingBalance));
+    console.log("Balance Deposited: ", divDec(res.accountStakedBalance));
+    console.log("Earned OTOKEN: ", divDec(res.accountEarnedOTOKEN));
+  });
+
+  it("Forward 7 days", async function () {
+    console.log("******************************************************");
+    await network.provider.send("evm_increaseTime", [7 * 24 * 3600]);
+    await network.provider.send("evm_mine");
+  });
+
+  it("Owner calls distribute", async function () {
+    console.log("******************************************************");
+    await voter.connect(owner).distro();
+  });
+
+  it("Forward 7 days", async function () {
+    console.log("******************************************************");
+    await network.provider.send("evm_increaseTime", [7 * 24 * 3600]);
+    await network.provider.send("evm_mine");
+  });
+
+  it("GaugeCardData, plugin, user0", async function () {
+    console.log("******************************************************");
+    let res = await multicall.gaugeCardData(plugin.address, user0.address);
+    console.log("INFORMATION");
+    console.log("Gauge: ", res.gauge);
+    console.log("Plugin: ", res.plugin);
+    console.log("Underlying: ", res.underlying);
+    console.log("Tokens in Underlying: ");
+    for (let i = 0; i < res.tokensInUnderlying.length; i++) {
+      console.log(" - ", res.tokensInUnderlying[i]);
+    }
+    console.log("Underlying Decimals: ", res.underlyingDecimals);
+    console.log("Is Alive: ", res.isAlive);
+    console.log();
+    console.log("GLOBAL DATA");
+    console.log("Protocol: ", res.protocol);
+    console.log("Symbol: ", res.symbol);
+    console.log("Price OTOKEN: $", divDec(res.priceOTOKEN));
+    console.log("Reward Per token: ", divDec(res.rewardPerToken));
+    console.log("Reward Per token: $", divDec(res.rewardPerTokenUSD));
+    console.log("Total Supply: ", divDec(res.totalSupply));
+    console.log("Voting Weight: ", divDec(res.votingWeight), "%");
+    console.log();
+    console.log("ACCOUNT DATA");
+    console.log("Balance Underlying: ", divDec(res.accountUnderlyingBalance));
+    console.log("Balance Deposited: ", divDec(res.accountStakedBalance));
+    console.log("Earned OTOKEN: ", divDec(res.accountEarnedOTOKEN));
+  });
+
+  it("Retrieve and display grid tiles", async function () {
+    console.log("******************************************************");
+    const gridChunk = await plugin.getGridChunk(0, 0, 15, 255);
+    console.log("Grid chunk: ", gridChunk);
   });
 });

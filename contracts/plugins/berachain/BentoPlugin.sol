@@ -204,4 +204,54 @@ contract BentoPlugin is ReentrancyGuard, Ownable {
         return bribeTokens;
     }
 
+    function getColors() public view returns (string[] memory) {
+        return colors;
+    }
+
+    function getTile(uint256 x, uint256 y) public view returns (uint256 color, address account) {
+        require(x < X_MAX && y < Y_MAX, "Invalid coordinates");
+        Tile memory tile = tiles[x][y];
+        return (tile.color, tile.account);
+    }
+
+    function getRow(uint256 y) public view returns (Tile[] memory) {
+        require(y < Y_MAX, "Invalid row index");
+        Tile[] memory rowTiles = new Tile[](X_MAX);
+
+        for (uint256 x = 0; x < X_MAX; x++) {
+            rowTiles[x] = tiles[x][y];
+        }
+        return rowTiles;
+    }
+
+    function getColumn(uint256 x) public view returns (Tile[] memory) {
+        require(x < X_MAX, "Invalid column index");
+        Tile[] memory columnTiles = new Tile[](Y_MAX);
+
+        for (uint256 y = 0; y < Y_MAX; y++) {
+            columnTiles[y] = tiles[x][y];
+        }
+        return columnTiles;
+    }
+
+    function getGridChunk(uint256 startX, uint256 startY, uint256 endX, uint256 endY) 
+        public view returns (Tile[][] memory) 
+    {
+        require(startX < X_MAX && endX < X_MAX && startY < Y_MAX && endY < Y_MAX, "Invalid coordinates");
+        require(startX <= endX && startY <= endY, "Invalid chunk coordinates");
+
+        uint256 width = endX - startX + 1;
+        uint256 height = endY - startY + 1;
+
+        Tile[][] memory chunkTiles = new Tile[][](width);
+
+        for (uint256 x = 0; x < width; x++) {
+            chunkTiles[x] = new Tile[](height);
+            for (uint256 y = 0; y < height; y++) {
+                chunkTiles[x][y] = tiles[startX + x][startY + y];
+            }
+        }
+        return chunkTiles;
+    }
+
 }

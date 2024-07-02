@@ -80,7 +80,7 @@ let WBERA, YEET, HONEY, XKDK;
 let KODIAK3, plugin0, gauge0, bribe0;
 let KODIAK1, plugin1, gauge1, bribe1;
 
-describe.only("berachain: kodiak farm testing", function () {
+describe("berachain: kodiak farm testing", function () {
   before("Initial set up", async function () {
     console.log("Begin Initialization");
 

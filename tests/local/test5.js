@@ -34,7 +34,7 @@ let TEST1, xTEST1, plugin1, gauge1, bribe1;
 let TEST2, LP0, plugin2, gauge2, bribe2;
 let TEST3, LP1, plugin3, gauge3, bribe3;
 
-describe.only("local: test5", function () {
+describe("local: test5", function () {
   before("Initial set up", async function () {
     console.log("Begin Initialization");
 
