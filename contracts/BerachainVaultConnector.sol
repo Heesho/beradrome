@@ -58,7 +58,7 @@ contract BerachainVaultConnector is Ownable {
     function distribute() external {
         uint256 amount = IERC20(BGT).balanceOf(address(this));
         if (amount > DURATION) {
-        IVTOKENRewarder(rewarder).notifyRewardAmount(BGT, amount);
+            IVTOKENRewarder(rewarder).notifyRewardAmount(BGT, amount);
         }
     }
 
