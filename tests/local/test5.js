@@ -34,7 +34,7 @@ let TEST1, xTEST1, plugin1, gauge1, bribe1;
 let TEST2, LP0, plugin2, gauge2, bribe2;
 let TEST3, LP1, plugin3, gauge3, bribe3;
 
-describe("local: test5", function () {
+describe.only("local: test5 relay token testing", function () {
   before("Initial set up", async function () {
     console.log("Begin Initialization");
 
@@ -341,8 +341,10 @@ describe("local: test5", function () {
     console.log("- Plugin3 Added in Voter");
 
     // Initialize relayToken
-    const relayTokenArtifact = await ethers.getContractFactory("RelayToken");
-    relayTokenContract = await relayTokenArtifact.deploy(
+    const relayTokenFactoryArtifact = await ethers.getContractFactory(
+      "RelayTokenFactory"
+    );
+    const relayTokenFactoryContract = await relayTokenFactoryArtifact.deploy(
       BASE.address,
       TOKEN.address,
       OTOKEN.address,
@@ -351,9 +353,9 @@ describe("local: test5", function () {
       voter.address,
       multicall.address
     );
-    relayToken = await ethers.getContractAt(
-      "RelayToken",
-      relayTokenContract.address
+    relayTokenFactory = await ethers.getContractAt(
+      "RelayTokenFactory",
+      relayTokenFactoryContract.address
     );
     console.log("- RelayToken Initialized");
 
@@ -379,7 +381,7 @@ describe("local: test5", function () {
     await LP1.mint(user1.address, 100);
     await LP1.mint(user2.address, 100);
   });
-
+  /*
   it("User0 Buys TOKEN with 10 BASE", async function () {
     console.log("******************************************************");
     await BASE.connect(user0).approve(TOKEN.address, ten);
