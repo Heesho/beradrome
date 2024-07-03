@@ -27,7 +27,8 @@ let VTOKENFactory,
   bribeFactory;
 let minter, voter, fees, rewarder, governance, multicall;
 let TOKEN, VTOKEN, OTOKEN, BASE;
-let relayTokenFactory, relayTokenRewarder, relayToken;
+let relayTokenFactory, relayRewarderFactory, relayFactory;
+let relayToken, relayRewarder;
 let pluginFactory;
 let TEST0, xTEST0, plugin0, gauge0, bribe0;
 let TEST1, xTEST1, plugin1, gauge1, bribe1;
@@ -340,11 +341,11 @@ describe.only("local: test5 relay token testing", function () {
     );
     console.log("- Plugin3 Added in Voter");
 
-    // Initialize relayToken
-    const relayTokenFactoryArtifact = await ethers.getContractFactory(
-      "RelayTokenFactory"
+    // Initialize relayFactory
+    const relayFactoryArtifact = await ethers.getContractFactory(
+      "RelayFactory"
     );
-    const relayTokenFactoryContract = await relayTokenFactoryArtifact.deploy(
+    const relayFactoryContract = await relayFactoryArtifact.deploy(
       BASE.address,
       TOKEN.address,
       OTOKEN.address,
@@ -353,11 +354,57 @@ describe.only("local: test5 relay token testing", function () {
       voter.address,
       multicall.address
     );
+    relayFactory = await ethers.getContractAt(
+      "RelayFactory",
+      relayFactoryContract.address
+    );
+    console.log("- RelayFactory Initialized");
+
+    //Iniitialize RelayTokenFactory
+    const relayTokenFactoryArtifact = await ethers.getContractFactory(
+      "RelayTokenFactory"
+    );
+    const relayTokenFactoryContract = await relayTokenFactoryArtifact.deploy(
+      relayFactory.address
+    );
     relayTokenFactory = await ethers.getContractAt(
       "RelayTokenFactory",
       relayTokenFactoryContract.address
     );
+    console.log("- RelayTokenFactory Initialized");
+
+    //Initialize RelayRewarderFactory
+    const relayRewarderFactoryArtifact = await ethers.getContractFactory(
+      "RelayRewarderFactory"
+    );
+    const relayRewarderFactoryContract =
+      await relayRewarderFactoryArtifact.deploy(relayFactory.address);
+    relayRewarderFactory = await ethers.getContractAt(
+      "RelayRewarderFactory",
+      relayRewarderFactoryContract.address
+    );
+    console.log("- RelayRewarderFactory Initialized");
+
+    // Set factories
+    await relayFactory.setRelayTokenFactory(relayTokenFactory.address);
+    await relayFactory.setRelayRewarderFactory(relayRewarderFactory.address);
+
+    // Create Relay
+    await relayFactory.createRelay("RELAY", "RELAY");
+
+    // Initialize RelayToken
+    relayToken = await ethers.getContractAt(
+      "contracts/RelayToken/RelayTokenFactory.sol:RelayToken",
+      await relayTokenFactory.lastRelayToken()
+    );
     console.log("- RelayToken Initialized");
+
+    // Initialize RelayRewarder
+    relayRewarder = await ethers.getContractAt(
+      "contracts/RelayToken/RelayRewarderFactory.sol:RelayRewarder",
+      await relayRewarderFactory.lastRelayRewarder()
+    );
+    console.log("- RelayRewarder Initialized");
 
     console.log("Initialization Complete");
     console.log();

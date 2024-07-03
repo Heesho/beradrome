@@ -50,11 +50,10 @@ contract RelayFactory is Ownable {
         multicall = _multicall;
     }
 
-    function createRelay(string calldata name, string calldata symbol) external returns (address) {
-        address relayToken = IRelayTokenFactory(relayTokenFactory).createRelayToken(msg.sender, name, symbol);
-        address relayTokenRewarder = IRelayRewarderFactory(relayRewarderFactory).createRelayRewarder(msg.sender, relayToken);
-        emit RelayFactory__RelayCreated(name, symbol, relayToken, relayTokenRewarder);
-        return address(relayToken);
+    function createRelay(string calldata name, string calldata symbol) external returns (address relayToken, address relayRewarder) {
+        relayToken = IRelayTokenFactory(relayTokenFactory).createRelayToken(msg.sender, name, symbol);
+        relayRewarder = IRelayRewarderFactory(relayRewarderFactory).createRelayRewarder(msg.sender, relayToken);
+        emit RelayFactory__RelayCreated(name, symbol, relayToken, relayRewarder);
     }
 
     function setRelayTokenFactory(address _relayTokenFactory) external onlyOwner() {

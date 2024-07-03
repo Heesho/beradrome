@@ -1,4 +1,3 @@
-
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.19;
 
@@ -91,7 +90,6 @@ contract RelayRewarder is ReentrancyGuard, Ownable {
             if (reward > 0) {
                 rewards[account][_rewardsToken] = 0;
                 emit RelayRewarder__RewardPaid(account, _rewardsToken, reward);
-                
                 IERC20(_rewardsToken).safeTransfer(account, reward);
             }
         }
