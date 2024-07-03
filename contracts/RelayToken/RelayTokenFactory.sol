@@ -83,6 +83,20 @@ contract RelayToken is ERC20, ERC20Permit, ERC20Votes, Ownable, ReentrancyGuard 
     /*----------  EVENTS ------------------------------------------------*/
 
     event RelayToken__Mint(address indexed minter, address indexed account, uint256 amount);
+    event RelayToken__Vote(address[] plugins, uint256[] weights);
+    event RelayToken__ClaimBribes(address[] bribes);
+    event RelayToken__SweepTokens(address token);
+    event RelayToken__ClaimVTokenRewards();
+    event RelayToken__BurnOTokenForVToken(uint256 amount);
+    event RelayToken__StakeTokenForVToken(uint256 amount);
+    event RelayToken__BorrowBase(uint256 amount);
+    event RelayToken__BuyTokenWithBase(uint256 amount);
+    event RelayToken__Loop();
+    event RelayToken__SetVotes(address[] plugins, uint256[] weights);
+    event RelayToken__SetDelegate(address delegate);
+    event RelayToken__SetTreasury(address treasury);
+    event RelayToken__SetSlippageTolerance(uint256 slippageTolerance);
+    event RelayToken__SetTreasuryFee(uint256 treasureyFee);
 
     /*----------  MODIFIERS  --------------------------------------------*/
 
@@ -138,6 +152,7 @@ contract RelayToken is ERC20, ERC20Permit, ERC20Votes, Ownable, ReentrancyGuard 
     {
         address voter = IRelayFactory(relayFactory).voter();
         IVoter(voter).vote(plugins, weights);
+        emit RelayToken__Vote(plugins, weights);
     }
 
     function claimBribes(address[] calldata bribes) 
@@ -145,6 +160,7 @@ contract RelayToken is ERC20, ERC20Permit, ERC20Votes, Ownable, ReentrancyGuard 
     {
         address voter = IRelayFactory(relayFactory).voter();
         IVoter(voter).claimBribes(bribes);
+        emit RelayToken__ClaimBribes(bribes);
     }
     
     function sweepTokens(address[] calldata tokens) 
@@ -153,6 +169,7 @@ contract RelayToken is ERC20, ERC20Permit, ERC20Votes, Ownable, ReentrancyGuard 
         for (uint256 i = 0; i < tokens.length; i++) {
             if (tokens[i] != base && tokens[i] != token && tokens[i] != oToken && tokens[i] != vToken) {
                 IERC20(tokens[i]).safeTransfer(treasury, IERC20(tokens[i]).balanceOf(address(this)));
+                emit RelayToken__SweepTokens(tokens[i]);
             }
         }
     }
@@ -161,6 +178,7 @@ contract RelayToken is ERC20, ERC20Permit, ERC20Votes, Ownable, ReentrancyGuard 
         public
     {
         IVTOKENRewarder(vTokenRewarder).getReward(address(this));
+        emit RelayToken__ClaimVTokenRewards();
     }
 
     function burnOTokenForVToken() 
@@ -171,6 +189,7 @@ contract RelayToken is ERC20, ERC20Permit, ERC20Votes, Ownable, ReentrancyGuard 
             IERC20(oToken).safeApprove(vToken, 0);
             IERC20(oToken).safeApprove(vToken, balance);
             IVTOKEN(vToken).burnFor(address(this), balance);
+            emit RelayToken__BurnOTokenForVToken(balance);
         }
     }
 
@@ -182,6 +201,7 @@ contract RelayToken is ERC20, ERC20Permit, ERC20Votes, Ownable, ReentrancyGuard 
             IERC20(token).safeApprove(vToken, 0);
             IERC20(token).safeApprove(vToken, balance);
             IVTOKEN(vToken).deposit(balance);
+            emit RelayToken__StakeTokenForVToken(balance);
         }
     }
 
@@ -191,6 +211,7 @@ contract RelayToken is ERC20, ERC20Permit, ERC20Votes, Ownable, ReentrancyGuard 
         uint256 credit = ITOKEN(token).getAccountCredit(address(this));
         if (credit > 0) {
             ITOKEN(token).borrow(credit);
+            emit RelayToken__BorrowBase(credit);
         }
     }
 
@@ -211,6 +232,7 @@ contract RelayToken is ERC20, ERC20Permit, ERC20Votes, Ownable, ReentrancyGuard 
         address multicall = IRelayFactory(relayFactory).multicall();
         (,,uint256 minOutput,) = IMulticall(multicall).quoteBuyIn(amountBase, slippageTolerance);
         ITOKEN(token).buy(amountBase, minOutput, block.timestamp + 1800, address(this), address(this));
+        emit RelayToken__BuyTokenWithBase(amountBase);
     }
 
     function buyTokenWithMaxBase() 
@@ -231,6 +253,7 @@ contract RelayToken is ERC20, ERC20Permit, ERC20Votes, Ownable, ReentrancyGuard 
             stakeTokenForVToken();
             borrowBase();
             buyTokenWithMaxBase();
+            emit RelayToken__Loop();
         }
     }
 
@@ -243,6 +266,7 @@ contract RelayToken is ERC20, ERC20Permit, ERC20Votes, Ownable, ReentrancyGuard 
         if (_plugins.length != _weights.length) revert RelayToken__InvalidVote();
         plugins = _plugins;
         weights = _weights;
+        emit RelayToken__SetVotes(_plugins, _weights);
     }
 
     function setDelegate(address _delegate) 
@@ -251,6 +275,7 @@ contract RelayToken is ERC20, ERC20Permit, ERC20Votes, Ownable, ReentrancyGuard 
         nonZeroAddress(_delegate) 
     {
         delegate = _delegate;
+        emit RelayToken__SetDelegate(_delegate);
     }
 
     function setTreasury(address _treasury) 
@@ -259,6 +284,7 @@ contract RelayToken is ERC20, ERC20Permit, ERC20Votes, Ownable, ReentrancyGuard 
         nonZeroAddress(_treasury) 
     {
         treasury = _treasury;
+        emit RelayToken__SetTreasury(_treasury);
     }
 
     function setSlippageTolerance(uint256 _slippageTolerance) 
@@ -267,6 +293,7 @@ contract RelayToken is ERC20, ERC20Permit, ERC20Votes, Ownable, ReentrancyGuard 
     {
         if (_slippageTolerance < MAX_SLIPPAGE) revert RelayToken__InvalidInput();
         slippageTolerance = _slippageTolerance;
+        emit RelayToken__SetSlippageTolerance(_slippageTolerance);
     }
 
     function setTreasuryFee(uint256 _treasureyFee) 
@@ -275,6 +302,7 @@ contract RelayToken is ERC20, ERC20Permit, ERC20Votes, Ownable, ReentrancyGuard 
     {
         if (_treasureyFee > MAX_FEE) revert RelayToken__InvalidInput();
         treasureyFee = _treasureyFee;
+        emit RelayToken__SetTreasuryFee(_treasureyFee);
     }
 
     /*----------  FUNCTION OVERRIDES  -----------------------------------*/
