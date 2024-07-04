@@ -48,6 +48,7 @@ contract RelayFactory is Ownable {
         vTokenRewarder = _vTokenRewarder;
         voter = _voter;
         multicall = _multicall;
+        protocol = msg.sender;
     }
 
     function createRelay(string calldata name, string calldata symbol) external returns (address relayToken, address relayRewarder) {

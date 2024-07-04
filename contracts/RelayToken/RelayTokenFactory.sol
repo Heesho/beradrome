@@ -18,6 +18,7 @@ interface IVTOKENRewarder {
 }
 
 interface IVTOKEN {
+    function balanceOf(address account) external view returns (uint256);
     function deposit(uint256 amount) external;
     function burnFor(address account, uint256 amount) external;
 }
@@ -337,12 +338,21 @@ contract RelayToken is ERC20, ERC20Permit, ERC20Votes, Ownable, ReentrancyGuard 
 
     /*----------  VIEW FUNCTIONS  ---------------------------------------*/
 
-    function getVotes() 
+    function getVote() 
         external 
         view 
         returns (address[] memory, uint256[] memory) 
     {
         return (plugins, weights);
+    }
+
+    function getLeverage() 
+        external 
+        view 
+        returns (uint256) 
+    {
+        uint256 votingPower = IVTOKEN(vToken).balanceOf(address(this));
+        return votingPower * PRECISION / totalSupply();
     }
 
 }

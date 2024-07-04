@@ -26,7 +26,7 @@ contract BerachainVaultConnector is Ownable {
     using SafeERC20 for IERC20;
 
     uint256 public constant DURATION = 7 days;
-    address public constant BGT = 0x0000000000000000000000000000000000000000;
+    address public constant BGT = 0xbDa130737BDd9618301681329bF2e46A016ff9Ad;
 
     address public immutable vaultToken;
     address public immutable rewarder;
@@ -58,6 +58,8 @@ contract BerachainVaultConnector is Ownable {
     function distribute() external {
         uint256 amount = IERC20(BGT).balanceOf(address(this));
         if (amount > DURATION) {
+            IERC20(BGT).safeApprove(rewarder, 0);
+            IERC20(BGT).safeApprove(rewarder, amount);
             IVTOKENRewarder(rewarder).notifyRewardAmount(BGT, amount);
         }
     }

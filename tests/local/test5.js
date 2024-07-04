@@ -18,7 +18,15 @@ const fiveHundred = convert("500", 18);
 const eightHundred = convert("800", 18);
 const oneThousand = convert("1000", 18);
 
-let owner, multisig, treasury, user0, user1, user2;
+let owner,
+  multisig,
+  treasury,
+  user0,
+  user1,
+  user2,
+  relayOwner,
+  relayTreasury,
+  relayDelegate;
 let VTOKENFactory,
   OTOKENFactory,
   feesFactory,
@@ -40,8 +48,17 @@ describe.only("local: test5 relay token testing", function () {
     console.log("Begin Initialization");
 
     // initialize users
-    [owner, multisig, treasury, user0, user1, user2] =
-      await ethers.getSigners();
+    [
+      owner,
+      multisig,
+      treasury,
+      user0,
+      user1,
+      user2,
+      relayOwner,
+      relayTreasury,
+      relayDelegate,
+    ] = await ethers.getSigners();
 
     // initialize BASE
     const ERC20MockArtifact = await ethers.getContractFactory(
@@ -428,7 +445,7 @@ describe.only("local: test5 relay token testing", function () {
     await LP1.mint(user1.address, 100);
     await LP1.mint(user2.address, 100);
   });
-  /*
+
   it("User0 Buys TOKEN with 10 BASE", async function () {
     console.log("******************************************************");
     await BASE.connect(user0).approve(TOKEN.address, ten);
@@ -1684,7 +1701,7 @@ describe.only("local: test5 relay token testing", function () {
     console.log("Max Withdraw: ", divDec(res.accountMaxWithdraw), "VTOKEN");
   });
 
-  it("User0 mints lsTOKEN with all TOKEN", async function () {
+  it("User0 mints relayToken with all TOKEN", async function () {
     console.log("******************************************************");
     await TOKEN.connect(user0).approve(relayToken.address, ten);
     await relayToken.connect(user0).mint(user0.address, ten);
@@ -1792,157 +1809,115 @@ describe.only("local: test5 relay token testing", function () {
     );
   });
 
-  /*
   it("User0 calls stakeTokenForVTOKEN", async function () {
     console.log("******************************************************");
-    await LSTOKEN.connect(user0).stakeTokenForVToken();
+    await relayToken.connect(user0).stakeTokenForVToken();
   });
 
   it("User0 calls borrowMaxBase", async function () {
     console.log("******************************************************");
-    await LSTOKEN.connect(user0).borrowMaxBase();
+    await relayToken.connect(user0).borrowBase();
   });
 
   it("User0 calls burnOTokenForVToken", async function () {
     console.log("******************************************************");
-    await LSTOKEN.connect(user0).burnOTokenForVToken();
+    await relayToken.connect(user0).burnOTokenForVToken();
   });
 
   it("User0 calls buyTokenWithBase", async function () {
     console.log("******************************************************");
-    await LSTOKEN.connect(user0).buyTokenWithBase(
-      await BASE.connect(owner).balanceOf(LSTOKEN.address)
-    );
-  });
-
-  it("User0 claims rewards", async function () {
-    console.log("******************************************************");
-    console.log(
-      "Before User0 Base Balance",
-      divDec(await BASE.connect(owner).balanceOf(user0.address))
-    );
-    await LSTOKEN.connect(user0).claimFees();
-    console.log(
-      "After User0 Base Balance",
-      divDec(await BASE.connect(owner).balanceOf(user0.address))
-    );
-  });
-
-  it("User1 claims rewards", async function () {
-    console.log("******************************************************");
-    console.log(
-      "Before User1 Base Balance",
-      divDec(await BASE.connect(owner).balanceOf(user1.address))
-    );
-    await LSTOKEN.connect(user1).claimFees();
-    console.log(
-      "After User1 Base Balance",
-      divDec(await BASE.connect(owner).balanceOf(user1.address))
-    );
+    await relayToken
+      .connect(user0)
+      .buyTokenWithBase(
+        await BASE.connect(owner).balanceOf(relayToken.address)
+      );
   });
 
   it("User0 calls stakeTokenForVTOKEN", async function () {
     console.log("******************************************************");
-    await LSTOKEN.connect(user0).stakeTokenForVToken();
+    await relayToken.connect(user0).stakeTokenForVToken();
   });
 
   it("User0 calls borrowMaxBase", async function () {
     console.log("******************************************************");
-    await LSTOKEN.connect(user0).borrowMaxBase();
+    await relayToken.connect(user0).borrowBase();
   });
 
   it("User0 calls burnOTokenForVToken", async function () {
     console.log("******************************************************");
-    await LSTOKEN.connect(user0).burnOTokenForVToken();
+    await relayToken.connect(user0).burnOTokenForVToken();
   });
 
-  it("User0 calls buyTokenWithBase", async function () {
+  it("User0 calls buyTokenWithMaxBase", async function () {
     console.log("******************************************************");
-    await LSTOKEN.connect(user0).buyTokenWithBase(
-      await BASE.connect(owner).balanceOf(LSTOKEN.address)
-    );
+    await relayToken.connect(user0).buyTokenWithMaxBase();
   });
 
-  it("User0 claims rewards", async function () {
+  it("BondingCurveData, relayToken", async function () {
     console.log("******************************************************");
-    console.log(
-      "Before User0 Base Balance",
-      divDec(await BASE.connect(owner).balanceOf(user0.address))
-    );
-    await LSTOKEN.connect(user0).claimFees();
-    console.log(
-      "After User0 Base Balance",
-      divDec(await BASE.connect(owner).balanceOf(user0.address))
-    );
+    let res = await multicall.bondingCurveData(relayToken.address);
+    console.log("GLOBAL DATA");
+    console.log("Price BASE: $", divDec(res.priceBASE));
+    console.log("Price TOKEN: $", divDec(res.priceTOKEN));
+    console.log("Price OTOKEN: $", divDec(res.priceOTOKEN));
+    console.log("Max Market Sell: ", divDec(res.maxMarketSell));
+    console.log();
+    console.log("Total Value Locked: $", divDec(res.tvl));
+    console.log("Market Cap: $", divDec(res.marketCap));
+    console.log("TOKEN Supply: ", divDec(res.supplyTOKEN));
+    console.log("VTOKEN Supply: ", divDec(res.supplyVTOKEN));
+    console.log("APR: ", divDec(res.apr), "%");
+    console.log("Loan-to-Value: ", divDec(res.ltv), "%");
+    console.log("WeeklyOTOKEN: ", divDec(res.weekly));
+    console.log();
+    console.log("ACCOUNT DATA");
+    console.log("Balance BASE: ", divDec(res.accountBASE));
+    console.log("Earned BASE: ", divDec(res.accountEarnedBASE));
+    console.log("Balance TOKEN: ", divDec(res.accountTOKEN));
+    console.log("Earned TOKEN: ", divDec(res.accountEarnedTOKEN));
+    console.log("Balance OTOKEN: ", divDec(res.accountOTOKEN));
+    console.log("Earned BASE: ", divDec(res.accountEarnedBASE));
+    console.log("Balance VTOKEN: ", divDec(res.accountVTOKEN));
+    console.log("Voting Power: ", divDec(res.accountVotingPower));
+    console.log("Used Voting Power: ", divDec(res.accountUsedWeights));
+    console.log("Borrow Credit: ", divDec(res.accountBorrowCredit), "BASE");
+    console.log("Borrow Debt: ", divDec(res.accountBorrowDebt), "BASE");
+    console.log("Max Withdraw: ", divDec(res.accountMaxWithdraw), "VTOKEN");
   });
 
-  it("User1 claims rewards", async function () {
+  it("User0 transfers relayToken to user1", async function () {
     console.log("******************************************************");
+    await relayToken
+      .connect(user0)
+      .transfer(user1.address, await relayToken.balanceOf(user0.address));
     console.log(
-      "Before User1 Base Balance",
-      divDec(await BASE.connect(owner).balanceOf(user1.address))
+      "User0 relayToken Balance: ",
+      divDec(await relayToken.balanceOf(user0.address))
     );
-    await LSTOKEN.connect(user1).claimFees();
     console.log(
-      "After User1 Base Balance",
-      divDec(await BASE.connect(owner).balanceOf(user1.address))
-    );
-  });
-
-  it("User0 transfers LSTOKEN to user1", async function () {
-    console.log("******************************************************");
-    await LSTOKEN.connect(user0).transfer(
-      user1.address,
-      await LSTOKEN.balanceOf(user0.address)
+      "User1 relayToken Balance: ",
+      divDec(await relayToken.balanceOf(user1.address))
     );
   });
 
   it("User0 calls stakeTokenForVTOKEN", async function () {
     console.log("******************************************************");
-    await LSTOKEN.connect(user0).stakeTokenForVToken();
+    await relayToken.connect(user0).stakeTokenForVToken();
   });
 
-  it("User0 calls borrowMaxBase", async function () {
+  it("User0 calls borrowBase", async function () {
     console.log("******************************************************");
-    await LSTOKEN.connect(user0).borrowMaxBase();
+    await relayToken.connect(user0).borrowBase();
   });
 
   it("User0 calls burnOTokenForVToken", async function () {
     console.log("******************************************************");
-    await LSTOKEN.connect(user0).burnOTokenForVToken();
+    await relayToken.connect(user0).burnOTokenForVToken();
   });
 
-  it("User0 calls buyTokenWithBase", async function () {
+  it("User0 calls buyTokenWithMaxBase", async function () {
     console.log("******************************************************");
-    await LSTOKEN.connect(user0).buyTokenWithBase(
-      await BASE.connect(owner).balanceOf(LSTOKEN.address)
-    );
-  });
-
-  it("User0 claims rewards", async function () {
-    console.log("******************************************************");
-    console.log(
-      "Before User0 Base Balance",
-      divDec(await BASE.connect(owner).balanceOf(user0.address))
-    );
-    await LSTOKEN.connect(user0).claimFees();
-    console.log(
-      "After User0 Base Balance",
-      divDec(await BASE.connect(owner).balanceOf(user0.address))
-    );
-  });
-
-  it("User1 claims rewards", async function () {
-    console.log("******************************************************");
-    console.log(
-      "Before User1 Base Balance",
-      divDec(await BASE.connect(owner).balanceOf(user1.address))
-    );
-    await LSTOKEN.connect(user1).claimFees();
-    console.log(
-      "After User1 Base Balance",
-      divDec(await BASE.connect(owner).balanceOf(user1.address))
-    );
+    await relayToken.connect(user0).buyTokenWithMaxBase();
   });
 
   it("Owner calls distribute", async function () {
@@ -1961,112 +1936,131 @@ describe.only("local: test5 relay token testing", function () {
     await network.provider.send("evm_mine");
   });
 
+  it("BondingCurveData, relayToken", async function () {
+    console.log("******************************************************");
+    let res = await multicall.bondingCurveData(relayToken.address);
+    console.log("GLOBAL DATA");
+    console.log("Price BASE: $", divDec(res.priceBASE));
+    console.log("Price TOKEN: $", divDec(res.priceTOKEN));
+    console.log("Price OTOKEN: $", divDec(res.priceOTOKEN));
+    console.log("Max Market Sell: ", divDec(res.maxMarketSell));
+    console.log();
+    console.log("Total Value Locked: $", divDec(res.tvl));
+    console.log("Market Cap: $", divDec(res.marketCap));
+    console.log("TOKEN Supply: ", divDec(res.supplyTOKEN));
+    console.log("VTOKEN Supply: ", divDec(res.supplyVTOKEN));
+    console.log("APR: ", divDec(res.apr), "%");
+    console.log("Loan-to-Value: ", divDec(res.ltv), "%");
+    console.log("WeeklyOTOKEN: ", divDec(res.weekly));
+    console.log();
+    console.log("ACCOUNT DATA");
+    console.log("Balance BASE: ", divDec(res.accountBASE));
+    console.log("Earned BASE: ", divDec(res.accountEarnedBASE));
+    console.log("Balance TOKEN: ", divDec(res.accountTOKEN));
+    console.log("Earned TOKEN: ", divDec(res.accountEarnedTOKEN));
+    console.log("Balance OTOKEN: ", divDec(res.accountOTOKEN));
+    console.log("Earned BASE: ", divDec(res.accountEarnedBASE));
+    console.log("Balance VTOKEN: ", divDec(res.accountVTOKEN));
+    console.log("Voting Power: ", divDec(res.accountVotingPower));
+    console.log("Used Voting Power: ", divDec(res.accountUsedWeights));
+    console.log("Borrow Credit: ", divDec(res.accountBorrowCredit), "BASE");
+    console.log("Borrow Debt: ", divDec(res.accountBorrowDebt), "BASE");
+    console.log("Max Withdraw: ", divDec(res.accountMaxWithdraw), "VTOKEN");
+  });
+
   it("User0 calls claimVTokenRewards", async function () {
     console.log("******************************************************");
-    await LSTOKEN.connect(user0).claimVTokenRewards();
+    await relayToken.connect(user0).claimVTokenRewards();
+  });
+
+  it("BondingCurveData, relayToken", async function () {
+    console.log("******************************************************");
+    let res = await multicall.bondingCurveData(relayToken.address);
+    console.log("GLOBAL DATA");
+    console.log("Price BASE: $", divDec(res.priceBASE));
+    console.log("Price TOKEN: $", divDec(res.priceTOKEN));
+    console.log("Price OTOKEN: $", divDec(res.priceOTOKEN));
+    console.log("Max Market Sell: ", divDec(res.maxMarketSell));
+    console.log();
+    console.log("Total Value Locked: $", divDec(res.tvl));
+    console.log("Market Cap: $", divDec(res.marketCap));
+    console.log("TOKEN Supply: ", divDec(res.supplyTOKEN));
+    console.log("VTOKEN Supply: ", divDec(res.supplyVTOKEN));
+    console.log("APR: ", divDec(res.apr), "%");
+    console.log("Loan-to-Value: ", divDec(res.ltv), "%");
+    console.log("WeeklyOTOKEN: ", divDec(res.weekly));
+    console.log();
+    console.log("ACCOUNT DATA");
+    console.log("Balance BASE: ", divDec(res.accountBASE));
+    console.log("Earned BASE: ", divDec(res.accountEarnedBASE));
+    console.log("Balance TOKEN: ", divDec(res.accountTOKEN));
+    console.log("Earned TOKEN: ", divDec(res.accountEarnedTOKEN));
+    console.log("Balance OTOKEN: ", divDec(res.accountOTOKEN));
+    console.log("Earned BASE: ", divDec(res.accountEarnedBASE));
+    console.log("Balance VTOKEN: ", divDec(res.accountVTOKEN));
+    console.log("Voting Power: ", divDec(res.accountVotingPower));
+    console.log("Used Voting Power: ", divDec(res.accountUsedWeights));
+    console.log("Borrow Credit: ", divDec(res.accountBorrowCredit), "BASE");
+    console.log("Borrow Debt: ", divDec(res.accountBorrowDebt), "BASE");
+    console.log("Max Withdraw: ", divDec(res.accountMaxWithdraw), "VTOKEN");
   });
 
   it("User0 calls stakeTokenForVTOKEN", async function () {
     console.log("******************************************************");
-    await LSTOKEN.connect(user0).stakeTokenForVToken();
+    await relayToken.connect(user0).stakeTokenForVToken();
   });
 
   it("User0 calls stakeTokenForVTOKEN", async function () {
     console.log("******************************************************");
-    await LSTOKEN.connect(user0).stakeTokenForVToken();
+    await relayToken.connect(user0).stakeTokenForVToken();
   });
 
-  it("User0 calls borrowMaxBase", async function () {
+  it("User0 calls borrowBase", async function () {
     console.log("******************************************************");
-    await LSTOKEN.connect(user0).borrowMaxBase();
+    await relayToken.connect(user0).borrowBase();
   });
 
-  it("User0 calls borrowMaxBase", async function () {
+  it("User0 calls borrowBase", async function () {
     console.log("******************************************************");
-    await LSTOKEN.connect(user0).borrowMaxBase();
+    await relayToken.connect(user0).borrowBase();
   });
 
   it("User0 calls burnOTokenForVToken", async function () {
     console.log("******************************************************");
-    await LSTOKEN.connect(user0).burnOTokenForVToken();
+    await relayToken.connect(user0).burnOTokenForVToken();
   });
 
   it("User0 calls buyTokenWithBase", async function () {
     console.log("******************************************************");
-    await LSTOKEN.connect(user0).buyTokenWithBase(one);
+    await relayToken.connect(user0).buyTokenWithBase(one);
   });
 
   it("User0 calls buyTokenWithBase", async function () {
     console.log("******************************************************");
-    await LSTOKEN.connect(user0).buyTokenWithBase(
-      await BASE.connect(owner).balanceOf(LSTOKEN.address)
-    );
+    await relayToken
+      .connect(user0)
+      .buyTokenWithBase(
+        await BASE.connect(owner).balanceOf(relayToken.address)
+      );
   });
 
-  it("User0 calls buyTokenWithBase", async function () {
+  it("User0 calls buyTokenWithMaxBase", async function () {
     console.log("******************************************************");
-    await LSTOKEN.connect(user0).buyTokenWithBase(
-      await BASE.connect(owner).balanceOf(LSTOKEN.address)
-    );
+    await relayToken.connect(user0).buyTokenWithMaxBase();
   });
 
-  it("User1 transfers LSTOKEN to user0", async function () {
+  it("User1 transfers relayToken to user0", async function () {
     console.log("******************************************************");
-    await LSTOKEN.connect(user1).transfer(
-      user0.address,
-      await LSTOKEN.balanceOf(user1.address)
-    );
-  });
-
-  it("User0 claims rewards", async function () {
-    console.log("******************************************************");
+    await relayToken
+      .connect(user1)
+      .transfer(user0.address, await relayToken.balanceOf(user1.address));
     console.log(
-      "Before User0 Base Balance",
-      divDec(await BASE.connect(owner).balanceOf(user0.address))
+      "User0 relayToken Balance: ",
+      divDec(await relayToken.balanceOf(user0.address))
     );
-    await LSTOKEN.connect(user0).claimFees();
     console.log(
-      "After User0 Base Balance",
-      divDec(await BASE.connect(owner).balanceOf(user0.address))
-    );
-  });
-
-  it("User1 claims rewards", async function () {
-    console.log("******************************************************");
-    console.log(
-      "Before User1 Base Balance",
-      divDec(await BASE.connect(owner).balanceOf(user1.address))
-    );
-    await LSTOKEN.connect(user1).claimFees();
-    console.log(
-      "After User1 Base Balance",
-      divDec(await BASE.connect(owner).balanceOf(user1.address))
-    );
-  });
-
-  it("User0 claims rewards", async function () {
-    console.log("******************************************************");
-    console.log(
-      "Before User0 Base Balance",
-      divDec(await BASE.connect(owner).balanceOf(user0.address))
-    );
-    await LSTOKEN.connect(user0).claimFees();
-    console.log(
-      "After User0 Base Balance",
-      divDec(await BASE.connect(owner).balanceOf(user0.address))
-    );
-  });
-
-  it("User1 claims rewards", async function () {
-    console.log("******************************************************");
-    console.log(
-      "Before User1 Base Balance",
-      divDec(await BASE.connect(owner).balanceOf(user1.address))
-    );
-    await LSTOKEN.connect(user1).claimFees();
-    console.log(
-      "After User1 Base Balance",
-      divDec(await BASE.connect(owner).balanceOf(user1.address))
+      "User1 relayToken Balance: ",
+      divDec(await relayToken.balanceOf(user1.address))
     );
   });
 
@@ -2074,18 +2068,20 @@ describe.only("local: test5 relay token testing", function () {
     console.log("******************************************************");
     console.log(
       "Leverage Check",
-      divDec(await LSTOKEN.connect(user0).leverage())
+      divDec(await relayToken.connect(user0).getLeverage())
     );
   });
 
   it("Vote Master sets votes", async function () {
     console.log("******************************************************");
-    await LSTOKEN.connect(owner).setVotes(
-      [plugin0.address, plugin1.address, plugin2.address, plugin3.address],
-      [ten, ten, ten, ten]
-    );
-    console.log(await LSTOKEN.connect(owner).getVote());
-    await LSTOKEN.connect(user1).vote();
+    await relayToken
+      .connect(owner)
+      .setVotes(
+        [plugin0.address, plugin1.address, plugin2.address, plugin3.address],
+        [ten, ten, ten, ten]
+      );
+    console.log("Votes: ", await relayToken.connect(user0).getVote());
+    await relayToken.connect(user1).vote();
   });
 
   it("owner distributes voting rewards", async function () {
@@ -2104,9 +2100,12 @@ describe.only("local: test5 relay token testing", function () {
     await network.provider.send("evm_mine");
   });
 
-  it("BribeCardData, plugin0, lsTOKEN ", async function () {
+  it("BribeCardData, plugin0, relayToken ", async function () {
     console.log("******************************************************");
-    let res = await multicall.bribeCardData(plugin0.address, LSTOKEN.address);
+    let res = await multicall.bribeCardData(
+      plugin0.address,
+      relayToken.address
+    );
     console.log("INFORMATION");
     console.log("Bribe: ", res.bribe);
     console.log("Plugin: ", res.plugin);
@@ -2134,9 +2133,12 @@ describe.only("local: test5 relay token testing", function () {
     }
   });
 
-  it("BribeCardData, plugin2, lsTOKEN ", async function () {
+  it("BribeCardData, plugin2, relayToken ", async function () {
     console.log("******************************************************");
-    let res = await multicall.bribeCardData(plugin2.address, LSTOKEN.address);
+    let res = await multicall.bribeCardData(
+      plugin2.address,
+      relayToken.address
+    );
     console.log("INFORMATION");
     console.log("Bribe: ", res.bribe);
     console.log("Plugin: ", res.plugin);
@@ -2164,103 +2166,141 @@ describe.only("local: test5 relay token testing", function () {
     }
   });
 
-  it("User0 calls stakeTokenForVTOKEN", async function () {
+  it("User0 claims bribes", async function () {
     console.log("******************************************************");
-    await LSTOKEN.connect(user0).claimBribes([
-      bribe0.address,
-      bribe1.address,
-      bribe2.address,
-      bribe3.address,
-    ]);
+    await relayToken
+      .connect(user0)
+      .claimBribes([
+        bribe0.address,
+        bribe1.address,
+        bribe2.address,
+        bribe3.address,
+      ]);
   });
 
-  it("User0 calls stakeTokenForVTOKEN", async function () {
+  it("User0 claims bribes", async function () {
     console.log("******************************************************");
-    await LSTOKEN.connect(user0).claimBribes([
-      bribe0.address,
-      bribe1.address,
-      bribe2.address,
-      bribe3.address,
-    ]);
+    await relayToken
+      .connect(user0)
+      .claimBribes([
+        bribe0.address,
+        bribe1.address,
+        bribe2.address,
+        bribe3.address,
+      ]);
   });
 
   it("User0 calls claimVTokenRewards", async function () {
     console.log("******************************************************");
-    await LSTOKEN.connect(user0).claimVTokenRewards();
+    await relayToken.connect(user0).claimVTokenRewards();
   });
 
   it("User0 calls claimVTokenRewards", async function () {
     console.log("******************************************************");
-    await LSTOKEN.connect(user0).claimVTokenRewards();
+    await relayToken.connect(user0).claimVTokenRewards();
   });
 
-  it("LSTOKENBalances", async function () {
+  it("RelayToken alances", async function () {
     console.log("******************************************************");
-    console.log("BASE", divDec(await BASE.balanceOf(LSTOKEN.address)));
-    console.log("TOKEN", divDec(await TOKEN.balanceOf(LSTOKEN.address)));
-    console.log("oTOKEN", divDec(await OTOKEN.balanceOf(LSTOKEN.address)));
-    console.log("vTOKEN", divDec(await VTOKEN.balanceOf(LSTOKEN.address)));
+    console.log("BASE", divDec(await BASE.balanceOf(relayToken.address)));
+    console.log("TOKEN", divDec(await TOKEN.balanceOf(relayToken.address)));
+    console.log("oTOKEN", divDec(await OTOKEN.balanceOf(relayToken.address)));
+    console.log("vTOKEN", divDec(await VTOKEN.balanceOf(relayToken.address)));
     console.log();
-    console.log("TEST0", divDec(await TEST0.balanceOf(LSTOKEN.address)));
-    console.log("TEST1", divDec(await TEST1.balanceOf(LSTOKEN.address)));
-    console.log("TEST2", divDec(await TEST2.balanceOf(LSTOKEN.address)));
-    console.log("TEST3", divDec(await TEST3.balanceOf(LSTOKEN.address)));
+    console.log("TEST0", divDec(await TEST0.balanceOf(relayToken.address)));
+    console.log("TEST1", divDec(await TEST1.balanceOf(relayToken.address)));
+    console.log("TEST2", divDec(await TEST2.balanceOf(relayToken.address)));
+    console.log("TEST3", divDec(await TEST3.balanceOf(relayToken.address)));
+  });
+
+  it("Owner sets relay token owner to relayOwner", async function () {
+    console.log("******************************************************");
+    await expect(
+      relayToken.connect(relayOwner).transferOwnership(relayOwner.address)
+    ).to.be.reverted;
+    await relayToken.connect(owner).transferOwnership(relayOwner.address);
+  });
+
+  it("RelayOwner sets relay token delegate to relayDelegate", async function () {
+    console.log("******************************************************");
+    await expect(relayToken.connect(owner).setDelegate(relayDelegate.address))
+      .to.be.reverted;
+    await relayToken.connect(relayOwner).setDelegate(relayDelegate.address);
+  });
+
+  it("RelayOwner sets treasury to relayTreasury", async function () {
+    console.log("******************************************************");
+    await expect(relayToken.connect(owner).setTreasury(relayTreasury.address))
+      .to.be.reverted;
+    await relayToken.connect(relayOwner).setTreasury(relayTreasury.address);
   });
 
   it("User0 calls sweep rewards", async function () {
     console.log("******************************************************");
-    await LSTOKEN.connect(user0).sweepRewards([
-      BASE.address,
-      TOKEN.address,
-      OTOKEN.address,
-      VTOKEN.address,
-    ]);
+    await relayToken
+      .connect(user0)
+      .sweepTokens([
+        BASE.address,
+        TOKEN.address,
+        OTOKEN.address,
+        VTOKEN.address,
+      ]);
   });
 
-  it("LSTOKENBalances", async function () {
+  it("RelayToken alances", async function () {
     console.log("******************************************************");
-    console.log("BASE", divDec(await BASE.balanceOf(LSTOKEN.address)));
-    console.log("TOKEN", divDec(await TOKEN.balanceOf(LSTOKEN.address)));
-    console.log("oTOKEN", divDec(await OTOKEN.balanceOf(LSTOKEN.address)));
-    console.log("vTOKEN", divDec(await VTOKEN.balanceOf(LSTOKEN.address)));
+    console.log("BASE", divDec(await BASE.balanceOf(relayToken.address)));
+    console.log("TOKEN", divDec(await TOKEN.balanceOf(relayToken.address)));
+    console.log("oTOKEN", divDec(await OTOKEN.balanceOf(relayToken.address)));
+    console.log("vTOKEN", divDec(await VTOKEN.balanceOf(relayToken.address)));
     console.log();
-    console.log("TEST0", divDec(await TEST0.balanceOf(LSTOKEN.address)));
-    console.log("TEST1", divDec(await TEST1.balanceOf(LSTOKEN.address)));
-    console.log("TEST2", divDec(await TEST2.balanceOf(LSTOKEN.address)));
-    console.log("TEST3", divDec(await TEST3.balanceOf(LSTOKEN.address)));
+    console.log("TEST0", divDec(await TEST0.balanceOf(relayToken.address)));
+    console.log("TEST1", divDec(await TEST1.balanceOf(relayToken.address)));
+    console.log("TEST2", divDec(await TEST2.balanceOf(relayToken.address)));
+    console.log("TEST3", divDec(await TEST3.balanceOf(relayToken.address)));
+  });
+
+  it("RelayTreasury balances", async function () {
+    console.log("******************************************************");
+    console.log("TEST0", divDec(await TEST0.balanceOf(relayTreasury.address)));
+    console.log("TEST1", divDec(await TEST1.balanceOf(relayTreasury.address)));
+    console.log("TEST2", divDec(await TEST2.balanceOf(relayTreasury.address)));
+    console.log("TEST3", divDec(await TEST3.balanceOf(relayTreasury.address)));
   });
 
   it("User0 calls sweep rewards", async function () {
     console.log("******************************************************");
-    await LSTOKEN.connect(user0).sweepRewards([
-      TEST0.address,
-      TEST1.address,
-      TEST2.address,
-      TEST3.address,
-    ]);
+    await relayToken
+      .connect(user0)
+      .sweepTokens([
+        TEST0.address,
+        TEST1.address,
+        TEST2.address,
+        TEST3.address,
+      ]);
   });
 
-  it("LSTOKENBalances", async function () {
+  it("RelayToken alances", async function () {
     console.log("******************************************************");
-    console.log("BASE", divDec(await BASE.balanceOf(LSTOKEN.address)));
-    console.log("TOKEN", divDec(await TOKEN.balanceOf(LSTOKEN.address)));
-    console.log("oTOKEN", divDec(await OTOKEN.balanceOf(LSTOKEN.address)));
-    console.log("vTOKEN", divDec(await VTOKEN.balanceOf(LSTOKEN.address)));
+    console.log("BASE", divDec(await BASE.balanceOf(relayToken.address)));
+    console.log("TOKEN", divDec(await TOKEN.balanceOf(relayToken.address)));
+    console.log("oTOKEN", divDec(await OTOKEN.balanceOf(relayToken.address)));
+    console.log("vTOKEN", divDec(await VTOKEN.balanceOf(relayToken.address)));
     console.log();
-    console.log("TEST0", divDec(await TEST0.balanceOf(LSTOKEN.address)));
-    console.log("TEST1", divDec(await TEST1.balanceOf(LSTOKEN.address)));
-    console.log("TEST2", divDec(await TEST2.balanceOf(LSTOKEN.address)));
-    console.log("TEST3", divDec(await TEST3.balanceOf(LSTOKEN.address)));
+    console.log("TEST0", divDec(await TEST0.balanceOf(relayToken.address)));
+    console.log("TEST1", divDec(await TEST1.balanceOf(relayToken.address)));
+    console.log("TEST2", divDec(await TEST2.balanceOf(relayToken.address)));
+    console.log("TEST3", divDec(await TEST3.balanceOf(relayToken.address)));
   });
 
-  it("Owner balances", async function () {
+  it("RelayTreasury balances", async function () {
     console.log("******************************************************");
-    console.log("TEST0", divDec(await TEST0.balanceOf(owner.address)));
-    console.log("TEST1", divDec(await TEST1.balanceOf(owner.address)));
-    console.log("TEST2", divDec(await TEST2.balanceOf(owner.address)));
-    console.log("TEST3", divDec(await TEST3.balanceOf(owner.address)));
+    console.log("TEST0", divDec(await TEST0.balanceOf(relayTreasury.address)));
+    console.log("TEST1", divDec(await TEST1.balanceOf(relayTreasury.address)));
+    console.log("TEST2", divDec(await TEST2.balanceOf(relayTreasury.address)));
+    console.log("TEST3", divDec(await TEST3.balanceOf(relayTreasury.address)));
   });
-
+  /*
   it("Coverage Testing", async function () {
     console.log("******************************************************");
     await expect(LSTOKEN.connect(user0).mint(0)).to.be.revertedWith(
