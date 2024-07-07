@@ -2300,76 +2300,69 @@ describe.only("local: test5 relay token testing", function () {
     console.log("TEST2", divDec(await TEST2.balanceOf(relayTreasury.address)));
     console.log("TEST3", divDec(await TEST3.balanceOf(relayTreasury.address)));
   });
-  /*
+
   it("Coverage Testing", async function () {
     console.log("******************************************************");
-    await expect(LSTOKEN.connect(user0).mint(0)).to.be.revertedWith(
-      "LSTOKEN__InvalidZeroInput"
-    );
     await expect(
-      LSTOKEN.connect(user0).setVotes([plugin1.address], [100])
-    ).to.be.revertedWith("LSTOKEN__NotVoteDelegate");
+      relayToken.connect(user0).mint(user0.address, 0)
+    ).to.be.revertedWith("RelayToken__InvalidZeroInput");
     await expect(
-      LSTOKEN.connect(owner).setVotes([plugin1.address], [100, 100])
-    ).to.be.revertedWith("LSTOKEN__InvalidLength");
+      relayToken.connect(user0).setVotes([plugin1.address], [100])
+    ).to.be.revertedWith("RelayToken__NotDelegate");
     await expect(
-      LSTOKEN.connect(owner).setVoter(AddressZero)
-    ).to.be.revertedWith("LSTOKEN__InvalidZeroAddress");
-    await expect(LSTOKEN.connect(user0).setVoter(user0.address)).to.be.reverted;
-    await LSTOKEN.connect(owner).setVoter(user0.address);
+      relayToken.connect(relayDelegate).setVotes([plugin1.address], [100, 100])
+    ).to.be.revertedWith("RelayToken__InvalidVote");
 
     await expect(
-      LSTOKEN.connect(owner).setVoteDelegate(AddressZero)
-    ).to.be.revertedWith("LSTOKEN__InvalidZeroAddress");
-    await expect(LSTOKEN.connect(user0).setVoteDelegate(user0.address)).to.be
+      relayToken.connect(relayOwner).setDelegate(AddressZero)
+    ).to.be.revertedWith("RelayToken__InvalidZeroAddress");
+    await expect(relayToken.connect(user0).setDelegate(user0.address)).to.be
       .reverted;
-    await LSTOKEN.connect(owner).setVoteDelegate(user0.address);
 
     await expect(
-      LSTOKEN.connect(owner).setRewardReceiver(AddressZero)
-    ).to.be.revertedWith("LSTOKEN__InvalidZeroAddress");
-    await expect(LSTOKEN.connect(user0).setRewardReceiver(user0.address)).to.be
+      relayToken.connect(relayOwner).setTreasury(AddressZero)
+    ).to.be.revertedWith("RelayToken__InvalidZeroAddress");
+    await expect(relayToken.connect(user0).setTreasury(user0.address)).to.be
       .reverted;
-    await LSTOKEN.connect(owner).setRewardReceiver(user0.address);
   });
 
   it("User0 calls loop 10 times", async function () {
     console.log("******************************************************");
-    await LSTOKEN.connect(user0).loop(10);
+    await relayToken.connect(user0).loop(10);
   });
 
   it("Leverage Check", async function () {
     console.log("******************************************************");
     console.log(
       "Leverage Check",
-      divDec(await LSTOKEN.connect(user0).leverage())
+      divDec(await relayToken.connect(user0).getLeverage())
     );
   });
 
   it("User0 calls loop 10 times", async function () {
     console.log("******************************************************");
-    await LSTOKEN.connect(user0).loop(10);
+    await relayToken.connect(user0).loop(10);
   });
 
   it("Leverage Check", async function () {
     console.log("******************************************************");
     console.log(
       "Leverage Check",
-      divDec(await LSTOKEN.connect(user0).leverage())
+      divDec(await relayToken.connect(user0).getLeverage())
     );
     console.log(
-      "LSTOKEN Supply",
-      divDec(await LSTOKEN.connect(user0).totalSupply())
+      "relayToken Supply",
+      divDec(await relayToken.connect(user0).totalSupply())
     );
     console.log(
-      "LSTOKEN VTOKEN Balance",
-      divDec(await VTOKEN.connect(owner).balanceOf(LSTOKEN.address))
+      "relayToken VTOKEN Balance",
+      divDec(await VTOKEN.connect(owner).balanceOf(relayToken.address))
     );
   });
 
-  it("BondingCurveData, lsToken", async function () {
+  it("BondingCurveData, relayToken", async function () {
     console.log("******************************************************");
-    let res = await multicall.bondingCurveData(LSTOKEN.address);
+    let res = await multicall.bondingCurveData(relayToken.address);
     console.log("GLOBAL DATA");
     console.log("Price BASE: $", divDec(res.priceBASE));
     console.log("Price TOKEN: $", divDec(res.priceTOKEN));
@@ -2398,7 +2391,7 @@ describe.only("local: test5 relay token testing", function () {
     console.log("Borrow Debt: ", divDec(res.accountBorrowDebt), "BASE");
     console.log("Max Withdraw: ", divDec(res.accountMaxWithdraw), "VTOKEN");
   });
-
+  /*
   it("User0 mints lsTOKEN with all TOKEN", async function () {
     console.log("******************************************************");
     await TOKEN.connect(user0).approve(LSTOKEN.address, five);
