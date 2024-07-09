@@ -52,6 +52,11 @@ const XKDK_ABI = [
 const XKDK_ADDR = "0x414B50157a5697F14e91417C5275A7496DcF429D";
 const XKDK_OWNER = "0x064097EbcbFca546E5Fc6a19559EA1b90262E9D1";
 
+// XKDK ABI
+const FARM_ABI = [
+  "function earned(address account) view returns (uint256[] memory)",
+];
+
 function timer(t) {
   return new Promise((r) => setTimeout(r, t));
 }
@@ -79,7 +84,7 @@ let minter,
   trifectaMulticall,
   pluginFactory;
 let TOKEN, VTOKEN, OTOKEN, BASE;
-let WBERA, YEET, XKDK;
+let WBERA, YEET, XKDK, farm;
 let KODIAK3, plugin0, gauge0, bribe0;
 
 describe.only("berachain: trifecta testing", function () {
@@ -99,6 +104,7 @@ describe.only("berachain: trifecta testing", function () {
     YEET = new ethers.Contract(YEET_ADDR, ERC20_ABI, provider);
     KODIAK3 = new ethers.Contract(KODIAK3_ADDR, ERC20_ABI, provider);
     XKDK = new ethers.Contract(XKDK_ADDR, XKDK_ABI, provider);
+    farm = new ethers.Contract(KODIAK3_FARM, FARM_ABI, provider);
     console.log("- ERC20s Initialized");
 
     // initialize ERC20Mocks
@@ -637,6 +643,11 @@ describe.only("berachain: trifecta testing", function () {
     const signer = ethers.provider.getSigner(XKDK_OWNER);
     await XKDK.connect(signer).updateTransferWhitelist(plugin0.address, true);
     await XKDK.connect(signer).updateTransferWhitelist(gauge0.address, true);
+  });
+
+  it("Owner kodiak rewards contract", async function () {
+    console.log("******************************************************");
+    console.log(await farm.connect(owner).earned(plugin0.address));
   });
 
   it("Owner calls distribute", async function () {
