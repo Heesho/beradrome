@@ -249,6 +249,10 @@ contract Gauge is ReentrancyGuard {
         return rewardData[_rewardsToken].rewardRate * DURATION;
     }
 
+    function getRewardTokens() external view returns (address[] memory) {
+        return rewardTokens;
+    }
+
 }
 
 

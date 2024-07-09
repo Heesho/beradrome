@@ -16,4 +16,5 @@ interface IGauge {
     function getRewardForDuration(address reward) external view returns (uint);
     function earned(address account, address reward) external view returns (uint);
     function left(address token) external view returns (uint);
+    function getRewardTokens() external view returns (address[] memory);
 }
