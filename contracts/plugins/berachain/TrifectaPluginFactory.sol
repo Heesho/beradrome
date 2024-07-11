@@ -140,7 +140,7 @@ contract TrifectaPlugin is Plugin {
 
 contract TrifectaPluginFactory is Ownable {
 
-    string public constant PROTOCOL = 'Kodiak';
+    string public constant PROTOCOL = 'Kodiak Trifecta';
     address public constant KDK = 0xfd27998fa0eaB1A6372Db14Afd4bF7c4a58C5364;
     address public constant XKDK = 0x414B50157a5697F14e91417C5275A7496DcF429D;
 

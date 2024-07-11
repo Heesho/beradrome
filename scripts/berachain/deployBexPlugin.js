@@ -6,7 +6,7 @@ const hre = require("hardhat");
 /*===========================  SETTINGS  ============================*/
 
 // PluginFactory settings
-const VOTER_ADDRESS = "0x2363BB86cD2ABF89cc059A654f89f11bCceffcA9";
+const VOTER_ADDRESS = "0x580ABF764405aA82dC96788b356435474c5956A7";
 
 // Plugin settings
 const LP_SYMBOL = "HONEY-WBERA"; // Desired symbol for LP plugin
@@ -31,7 +31,7 @@ let plugin;
 async function getContracts() {
   pluginFactory = await ethers.getContractAt(
     "contracts/plugins/berachain/BexVaultPluginFactory.sol:BexVaultPluginFactory",
-    "0xb3B995567d6a4EF3D36b38252Cd70333d70bEe5e"
+    "0x353b6735e288Aca27C45336bA178cBb50D958a92"
   );
   // plugin = await ethers.getContractAt("contracts/plugins/berachain/BexVaultPluginFactory.sol:BexVaultPlugin", "0x0000000000000000000000000000000000000000");
 

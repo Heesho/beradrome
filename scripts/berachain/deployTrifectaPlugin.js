@@ -10,19 +10,7 @@ const VOTER_ADDRESS = "0x580ABF764405aA82dC96788b356435474c5956A7";
 
 // Tokens
 const WBERA = "0x7507c1dc16935B82698e4C63f2746A2fCf994dF8";
-const HONEY = "0x0E4aaF1351de4c0264C5c7056Ef3777b41BD8e03";
-const USDC = "0xd6D83aF58a19Cd14eF3CF6fe848C9A4d21e5727c";
 const YEET = "0x1740F679325ef3686B2f574e392007A92e4BeD41";
-
-// Kodiak Vault V1 HONEY/WBERA
-const KODIAK1_SYMBOL = "HONEY-WBERA Island";
-const KODIAK1 = "0x12C195768f65F282EA5F1B5C42755FBc910B0D8F";
-const KODIAK1_FARM = "0x1878eb1cA6Da5e2fC4B5213F7D170CA668A0E225"; // rewards = KDK, xKDK
-
-// Kodiak Vault V1 HONEY/USDC
-const KODIAK2_SYMBOL = "HONEY-USDC Island";
-const KODIAK2 = "0xb73deE52F38539bA854979eab6342A60dD4C8c03";
-const KODIAK2_FARM = "0x43340e50807c1244c04e74C6539fe8632597Ca39"; // rewards = KDK, xKDK
 
 // Kodiak Vault V1 YEET/WBERA
 const KODIAK3_SYMBOL = "YEET-WBERA Island";
@@ -30,11 +18,11 @@ const KODIAK3 = "0xE5A2ab5D2fb268E5fF43A5564e44c3309609aFF9";
 const KODIAK3_FARM = "0xbdEE3F788a5efDdA1FcFe6bfe7DbbDa5690179e6"; // rewards = KDK, xKDK, YEET
 
 // Plugin settings
-const LP_SYMBOL = KODIAK2_SYMBOL; // Desired symbol for LP plugin
-const LP_ADDRESS = KODIAK2; // Address of LP token
-const TOKEN0 = HONEY; // HONEY address
-const TOKEN1 = USDC; // WBERA address
-const FARM = KODIAK2_FARM; // Communal farm address
+const LP_SYMBOL = KODIAK3_SYMBOL; // Desired symbol for LP plugin
+const LP_ADDRESS = KODIAK3; // Address of LP token
+const TOKEN0 = YEET; // HONEY address
+const TOKEN1 = WBERA; // WBERA address
+const FARM = KODIAK3_FARM; // Communal farm address
 
 /*===========================  END SETTINGS  ========================*/
 /*===================================================================*/
@@ -52,10 +40,10 @@ let plugin;
 
 async function getContracts() {
   pluginFactory = await ethers.getContractAt(
-    "contracts/plugins/berachain/KodiakFarmPluginFactory.sol:KodiakFarmPluginFactory",
-    "0x0EA76c1cdfd123fE30dd1C9952616477Cd15c85F"
+    "contracts/plugins/berachain/TrifectaPluginFactory.sol:TrifectaPluginFactory",
+    "0x7F1266993dE9eAfF3F8dECC3B1D2d5Bc836A996C"
   );
-  // plugin = await ethers.getContractAt("contracts/plugins/berachain/KodiakFarmPluginFactory.sol:KodiakFarmPlugin", "");
+  // plugin = await ethers.getContractAt("contracts/plugins/berachain/TrifectaPluginFactory.sol:TrifectaPlugin", "");
 
   console.log("Contracts Retrieved");
 }
@@ -66,7 +54,7 @@ async function getContracts() {
 async function deployPluginFactory() {
   console.log("Starting PluginFactory Deployment");
   const pluginFactoryArtifact = await ethers.getContractFactory(
-    "KodiakFarmPluginFactory"
+    "TrifectaPluginFactory"
   );
   const pluginFactoryContract = await pluginFactoryArtifact.deploy(
     VOTER_ADDRESS,
@@ -88,7 +76,7 @@ async function verifyPluginFactory() {
   await hre.run("verify:verify", {
     address: pluginFactory.address,
     contract:
-      "contracts/plugins/berachain/KodiakFarmPluginFactory.sol:KodiakFarmPluginFactory",
+      "contracts/plugins/berachain/TrifectaPluginFactory.sol:TrifectaPluginFactory",
     constructorArguments: [VOTER_ADDRESS],
   });
   console.log("PluginFactory Verified");
@@ -101,7 +89,7 @@ async function deployPlugin() {
     FARM,
     TOKEN0,
     TOKEN1,
-    [],
+    [YEET],
     LP_SYMBOL,
     {
       gasPrice: ethers.gasPrice,
@@ -120,7 +108,7 @@ async function verifyPlugin() {
   await hre.run("verify:verify", {
     address: plugin.address,
     contract:
-      "contracts/plugins/berachain/KodiakFarmPluginFactory.sol:KodiakFarmPlugin",
+      "contracts/plugins/berachain/TrifectaPluginFactory.sol:TrifectaPlugin",
     constructorArguments: [
       await plugin.getUnderlyingAddress(),
       VOTER_ADDRESS,
@@ -160,7 +148,7 @@ async function main() {
   //===================================================================
   // Only deploy one plugin at a time
 
-  await deployPlugin();
+  // await deployPlugin();
 
   /*********** UPDATE getContracts() with new addresses *************/
 

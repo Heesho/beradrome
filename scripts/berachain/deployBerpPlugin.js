@@ -6,7 +6,7 @@ const hre = require("hardhat");
 /*===========================  SETTINGS  ============================*/
 
 // PluginFactory settings
-const VOTER_ADDRESS = "0x2363BB86cD2ABF89cc059A654f89f11bCceffcA9";
+const VOTER_ADDRESS = "0x580ABF764405aA82dC96788b356435474c5956A7";
 const HONEY = "0x0E4aaF1351de4c0264C5c7056Ef3777b41BD8e03";
 const WBERA = "0x7507c1dc16935B82698e4C63f2746A2fCf994dF8";
 

@@ -25,6 +25,7 @@ let TOKEN, OTOKEN, VTOKEN, fees, rewarder, governor;
 let OTOKENFactory, VTOKENFactory, rewarderFactory;
 let voter, minter, gaugeFactory, bribeFactory;
 let multicall, controller;
+let trifectaMulticall;
 
 /*===================================================================*/
 /*===========================  CONTRACT DATA  =======================*/
@@ -74,15 +75,15 @@ async function getContracts() {
 
   gaugeFactory = await ethers.getContractAt(
     "contracts/GaugeFactory.sol:GaugeFactory",
-    "0x3A0e70d7cc68Ea495821355f4289a09F32596532"
+    "0x473a6539F7E6995B1BeD3121116001DaCBCDBfdA"
   );
   bribeFactory = await ethers.getContractAt(
     "contracts/BribeFactory.sol:BribeFactory",
-    "0xdDfD12Ed8bbD301B9B7B0baD6ef546A3CE3909Ad"
+    "0xC0Af0298984d7444e7E82377d5C02f77Ad09ff4A"
   );
   voter = await ethers.getContractAt(
     "contracts/Voter.sol:Voter",
-    "0x2363BB86cD2ABF89cc059A654f89f11bCceffcA9"
+    "0x580ABF764405aA82dC96788b356435474c5956A7"
   );
   minter = await ethers.getContractAt(
     "contracts/Minter.sol:Minter",
@@ -91,11 +92,16 @@ async function getContracts() {
 
   multicall = await ethers.getContractAt(
     "contracts/Multicall.sol:Multicall",
-    "0xb04c91E738e149BAe5dbDDB78243d6eCA314075a"
+    "0x8452DA49f0ae4dA4392b5714C2F0096997c93fE7"
   );
   controller = await ethers.getContractAt(
     "contracts/Controller.sol:Controller",
-    "0x2AE7dFfbFFf8d3444AE359c49fA0DDb7b2308eFc"
+    "0x8058EC2572d8Bf6f85303714B06096CDf707d0CF "
+  );
+
+  trifectaMulticall = await ethers.getContractAt(
+    "contracts/TrifectaMulticall.sol:TrifectaMulticall",
+    "0x6d6C42723Dea7C2077AFF8a8fdB6417c6e20D041"
   );
 
   console.log("Contracts Retrieved");
@@ -424,6 +430,20 @@ async function deployMulticall() {
   console.log("Multicall Deployed at:", multicall.address);
 }
 
+async function deployTrifectaMulticall() {
+  console.log("Starting TrifectaMulticall Deployment");
+  const trifectaMulticallArtifact = await ethers.getContractFactory(
+    "TrifectaMulticall"
+  );
+  const trifectaMulticallContract = await trifectaMulticallArtifact.deploy(
+    voter.address,
+    { gasPrice: ethers.gasPrice }
+  );
+  trifectaMulticall = await trifectaMulticallContract.deployed();
+  await sleep(5000);
+  console.log("TrifectaMulticall Deployed at:", trifectaMulticall.address);
+}
+
 async function deployController() {
   console.log("Starting Controller Deployment");
   const controllerArtifact = await ethers.getContractFactory("Controller");
@@ -511,24 +531,24 @@ async function setUpSystem(wallet) {
 }
 
 async function transferOwnership() {
-  await minter.setTeam(MULTISIG);
-  await sleep(5000);
-  console.log("Minter team set to MULTISIG");
+  // await minter.setTeam(MULTISIG);
+  // await sleep(5000);
+  // console.log("Minter team set to MULTISIG");
 
-  await minter.transferOwnership(MULTISIG);
+  // await minter.transferOwnership(MULTISIG);
   //   await minter.transferOwnership(governor.address);
-  await sleep(5000);
-  console.log("Minter ownership transferred to governor");
+  // await sleep(5000);
+  // console.log("Minter ownership transferred to governor");
 
   await voter.transferOwnership(MULTISIG);
   //   await voter.transferOwnership(governor.address);
-  await sleep(5000);
-  console.log("Voter ownership transferred to governor");
+  // await sleep(5000);
+  // console.log("Voter ownership transferred to governor");
 
-  await VTOKEN.transferOwnership(MULTISIG);
+  // await VTOKEN.transferOwnership(MULTISIG);
   //   await VTOKEN.transferOwnership(governor.address);
-  await sleep(5000);
-  console.log("VTOKEN ownership transferred to governor");
+  // await sleep(5000);
+  // console.log("VTOKEN ownership transferred to governor");
 }
 
 async function main() {
@@ -565,12 +585,12 @@ async function main() {
   // 3. Deploy Voting System
   //===================================================================
 
-  //   console.log("Starting Voting Deployment");
-  //   await deployGaugeFactory(wallet.address);
-  //   await deployBribeFactory(wallet.address);
-  //   await deployVoter();
-  //   await deployMinter();
-  //   await printVotingAddresses();
+  // console.log("Starting Voting Deployment");
+  // await deployGaugeFactory(wallet.address);
+  // await deployBribeFactory(wallet.address);
+  // await deployVoter();
+  // await deployMinter();
+  // await printVotingAddresses();
 
   /*********** UPDATE getContracts() with new addresses *************/
 
@@ -578,10 +598,10 @@ async function main() {
   // 4. Deploy Ancillary Contracts
   //===================================================================
 
-  //   console.log("Starting Ancillary Deployment");
-  //   await deployMulticall();
-  //   await deployController();
-  //   await printAncillaryAddresses();
+  // console.log("Starting Ancillary Deployment");
+  // await deployMulticall();
+  // await deployController();
+  // await printAncillaryAddresses();
 
   /*********** UPDATE getContracts() with new addresses *************/
 
@@ -630,39 +650,43 @@ async function main() {
   // 9. Transfer Ownership
   //===================================================================
 
-  //   console.log("Starting Ownership Transfer");
-  //   await transferOwnership();
-  //   console.log("Ownership Transferred");
+  // console.log("Starting Ownership Transfer");
+  // await transferOwnership();
+  // console.log("Ownership Transferred");
 
   //===================================================================
   // 10. Add plugins to voter
   //===================================================================
 
   // console.log("Adding Plugin0 to Voter");
-  // await voter.addPlugin("0x5e5589969FD5a19A70b571645FEBb72d253F1ABE"); // Kodiak HONEY-WBERA Island
+  // await voter.addPlugin("0x37e888f8a28BF1DA9761bbDd914fA4280dA434a8"); // BEX HONEY-WBERA
   // console.log("Adding Plugin1 to Voter");
-  // await voter.addPlugin("0xc376208d619c0bfb8a53d2A9Cc3e2A7F992b72c5"); // Kodiak HONEY-USDC Island
+  // await voter.addPlugin("0x9D7A7198eCfe07414C5e9B3e233878Fcc30B9048"); // BERPS bHONEY
   // console.log("Adding Plugin2 to Voter");
-  // await voter.addPlugin("0xD97006100cA1245642371F36f3F39EC3477f5E6e"); // Kodiak YEET-WBERA Island
+  // await voter.addPlugin("0xfE12B5f5adb8E20F7C43A6014844479e7dC8Dc49"); // Kodiak HONEY-WBERA Island
+  // console.log("Adding Plugin3 to Voter");
+  // await voter.addPlugin("0xb3D10C15360e444aBB2673D772D6f2EE32AAaB34"); // Kodiak HONEY-USDC Island
+  // console.log("Adding Plugin4 to Voter");
+  // await voter.addPlugin("0x80D7759Fa55f6a1F661D5FCBB3bC5164Dc63eb4D"); // Kodiak Trifecta YEET-WBERA Island
   // console.log("Plugins added to Voter");
 
   //===================================================================
   // 11. Distro Rewards
   //===================================================================
 
-  console.log("Distributing Rewards");
-  await voter.distro();
-  console.log("Voter Rewards Distributed");
-  await fees.distribute();
-  console.log("Fees Rewards Distributed");
-  await voter.distributeToBribes([
-    "0x7eCdc9d4328fd79bCeb08a7b1860822E8c2c85e9",
-    "0x0aA085b223482d3552474cd2cDEB0e2Ef1599337",
-    "0x5e5589969FD5a19A70b571645FEBb72d253F1ABE",
-    "0xc376208d619c0bfb8a53d2A9Cc3e2A7F992b72c5",
-    "0xD97006100cA1245642371F36f3F39EC3477f5E6e",
-  ]);
-  console.log("Bribe Rewards Distributed");
+  // console.log("Distributing Rewards");
+  // await voter.distro();
+  // console.log("Voter Rewards Distributed");
+  // await fees.distribute();
+  // console.log("Fees Rewards Distributed");
+  // await voter.distributeToBribes([
+  //   "0x7eCdc9d4328fd79bCeb08a7b1860822E8c2c85e9",
+  //   "0x0aA085b223482d3552474cd2cDEB0e2Ef1599337",
+  //   "0x5e5589969FD5a19A70b571645FEBb72d253F1ABE",
+  //   "0xc376208d619c0bfb8a53d2A9Cc3e2A7F992b72c5",
+  //   "0xD97006100cA1245642371F36f3F39EC3477f5E6e",
+  // ]);
+  // console.log("Bribe Rewards Distributed");
 
   //===================================================================
   // 12. Plugin Data
@@ -672,10 +696,57 @@ async function main() {
   //   await multicall
   //     .connect(wallet)
   //     .bribeCardData(
-  //       "0xD97006100cA1245642371F36f3F39EC3477f5E6e",
+  //       "0xb3D10C15360e444aBB2673D772D6f2EE32AAaB34",
   //       "0x0000000000000000000000000000000000000000"
   //     )
   // );
+
+  // console.log(
+  //   await multicall
+  //     .connect(wallet)
+  //     .gaugeCardData(
+  //       "0x80D7759Fa55f6a1F661D5FCBB3bC5164Dc63eb4D",
+  //       "0x0000000000000000000000000000000000000000"
+  //     )
+  // );
+
+  // console.log(
+  //   await trifectaMulticall
+  //     .connect(wallet)
+  //     .gaugeRewardData(
+  //       "0x80D7759Fa55f6a1F661D5FCBB3bC5164Dc63eb4D",
+  //       "0x0000000000000000000000000000000000000000"
+  //     )
+  // );
+
+  // console.log(await voter.connect(wallet).getPlugins());
+
+  //===================================================================
+  // 13. Add Gauge Rewards
+  //===================================================================
+
+  // await voter
+  //   .connect(wallet)
+  //   .addGaugeReward(
+  //     "0x981E491Dd159F17009CF7cd27a98eAB995c2fa6C",
+  //     "0xfd27998fa0eaB1A6372Db14Afd4bF7c4a58C5364"
+  //   ); // KDK added to YEET-WBERA Island Gauge
+  // console.log("- KDK added as gauge reward");
+  // await voter
+  //   .connect(wallet)
+  //   .addGaugeReward(
+  //     "0x981E491Dd159F17009CF7cd27a98eAB995c2fa6C",
+  //     "0x414B50157a5697F14e91417C5275A7496DcF429D"
+  //   ); // xKDK added to YEET-WBERA Island Gauge
+  // console.log("- xKDK added as gauge rewards");
+
+  //===================================================================
+  // 13. Deploy Trifecta Multicall
+  //===================================================================
+
+  // console.log("Starting TrifectaMulticall Deployment");
+  // await deployTrifectaMulticall();
+  // console.log("TrifectaMulticall Deployed at:", trifectaMulticall.address);
 }
 
 main()
