@@ -723,6 +723,15 @@ describe.only("berachain: trifecta testing", function () {
     }
   });
 
+  it("TrifectaPluginGauge, plugin0, user1 ", async function () {
+    console.log("******************************************************");
+    let res = await trifectaMulticall.gaugeRewardData(
+      plugin0.address,
+      user1.address
+    );
+    console.log(res);
+  });
+
   /*
 
   it("User0 withdraws from all gauges", async function () {

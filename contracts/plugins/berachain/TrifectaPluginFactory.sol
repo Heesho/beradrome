@@ -66,19 +66,28 @@ contract TrifectaPlugin is Plugin {
         address bribe = getBribe();
         address gauge = getGauge();
         uint256 duration = IBribe(bribe).DURATION();
+
+        uint256 kdkBalance = IERC20(KDK).balanceOf(address(this));
+        if (kdkBalance > duration) {
+            IERC20(KDK).safeApprove(gauge, 0);
+            IERC20(KDK).safeApprove(gauge, IERC20(KDK).balanceOf(address(this)));
+            IGauge(gauge).notifyRewardAmount(KDK, IERC20(KDK).balanceOf(address(this)));
+        }
+        
+        uint256 xkdkBalance = IERC20(XKDK).balanceOf(address(this));
+        if (xkdkBalance > duration) {
+            IERC20(XKDK).safeApprove(gauge, 0);
+            IERC20(XKDK).safeApprove(gauge, xkdkBalance);
+            IGauge(gauge).notifyRewardAmount(XKDK, xkdkBalance);
+        }
+
         for (uint256 i = 0; i < getBribeTokens().length; i++) {
             address token = getBribeTokens()[i];
             uint256 balance = IERC20(token).balanceOf(address(this));
             if (balance > duration) {
-                if (token == KDK || token == XKDK) {
-                    IERC20(token).safeApprove(gauge, 0);
-                    IERC20(token).safeApprove(gauge, balance);
-                    IGauge(gauge).notifyRewardAmount(token, balance);
-                } else {
-                    IERC20(token).safeApprove(bribe, 0);
-                    IERC20(token).safeApprove(bribe, balance);
-                    IBribe(bribe).notifyRewardAmount(token, balance);
-                }
+                IERC20(token).safeApprove(bribe, 0);
+                IERC20(token).safeApprove(bribe, balance);
+                IBribe(bribe).notifyRewardAmount(token, balance);
             }
         }
     }
