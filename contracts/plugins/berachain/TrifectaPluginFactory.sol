@@ -158,11 +158,9 @@ contract TrifectaPluginFactory is Ownable {
         tokensInUnderlying[0] = _token0;
         tokensInUnderlying[1] = _token1;
 
-        address[] memory bribeTokens = new address[](2 + _otherRewards.length);
-        bribeTokens[0] = KDK;
-        bribeTokens[1] = XKDK;
+        address[] memory bribeTokens = new address[](_otherRewards.length);
         for (uint256 i = 0; i < _otherRewards.length; i++) {
-            bribeTokens[2 + i] = _otherRewards[i];
+            bribeTokens[i] = _otherRewards[i];
         }
 
         TrifectaPlugin lastPlugin = new TrifectaPlugin(
