@@ -680,11 +680,11 @@ async function main() {
   // await fees.distribute();
   // console.log("Fees Rewards Distributed");
   // await voter.distributeToBribes([
-  //   "0x7eCdc9d4328fd79bCeb08a7b1860822E8c2c85e9",
-  //   "0x0aA085b223482d3552474cd2cDEB0e2Ef1599337",
-  //   "0x5e5589969FD5a19A70b571645FEBb72d253F1ABE",
-  //   "0xc376208d619c0bfb8a53d2A9Cc3e2A7F992b72c5",
-  //   "0xD97006100cA1245642371F36f3F39EC3477f5E6e",
+  //   "0x37e888f8a28BF1DA9761bbDd914fA4280dA434a8",
+  //   "0x9D7A7198eCfe07414C5e9B3e233878Fcc30B9048",
+  //   "0xfE12B5f5adb8E20F7C43A6014844479e7dC8Dc49",
+  //   "0xb3D10C15360e444aBB2673D772D6f2EE32AAaB34",
+  //   "0x80D7759Fa55f6a1F661D5FCBB3bC5164Dc63eb4D",
   // ]);
   // console.log("Bribe Rewards Distributed");
 
@@ -705,7 +705,7 @@ async function main() {
   //   await multicall
   //     .connect(wallet)
   //     .gaugeCardData(
-  //       "0x80D7759Fa55f6a1F661D5FCBB3bC5164Dc63eb4D",
+  //       "0x37e888f8a28BF1DA9761bbDd914fA4280dA434a8",
   //       "0x0000000000000000000000000000000000000000"
   //     )
   // );
@@ -747,6 +747,8 @@ async function main() {
   // console.log("Starting TrifectaMulticall Deployment");
   // await deployTrifectaMulticall();
   // console.log("TrifectaMulticall Deployed at:", trifectaMulticall.address);
+
+  console.log(await minter.connect(wallet).active_period());
 }
 
 main()
