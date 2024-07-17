@@ -668,6 +668,8 @@ async function main() {
   // await voter.addPlugin("0xb3D10C15360e444aBB2673D772D6f2EE32AAaB34"); // Kodiak HONEY-USDC Island
   // console.log("Adding Plugin4 to Voter");
   // await voter.addPlugin("0x80D7759Fa55f6a1F661D5FCBB3bC5164Dc63eb4D"); // Kodiak Trifecta YEET-WBERA Island
+  // console.log("Adding Plugin5 to Voter");
+  // await voter.addPlugin("0x61d0b4fbB9d507F64112e859523524AA2c548A6C"); // Bullas BULL ISH Game Plugin
   // console.log("Plugins added to Voter");
 
   //===================================================================
@@ -748,7 +750,7 @@ async function main() {
   // await deployTrifectaMulticall();
   // console.log("TrifectaMulticall Deployed at:", trifectaMulticall.address);
 
-  console.log(await minter.connect(wallet).active_period());
+  // console.log(await minter.connect(wallet).active_period());
 }
 
 main()
