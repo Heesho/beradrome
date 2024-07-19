@@ -23,10 +23,12 @@ contract RelayRewarder is ReentrancyGuard, Ownable {
         uint256 rewardPerTokenStored;   // reward per virtual token stored
     }
 
+    address public immutable relayFactory;          // address of relay factory contract
+    address public immutable relayToken;            // address of relay token contract
+
     mapping(address => Reward) public rewardData;   // reward token -> reward data
     mapping(address => bool) public isRewardToken;  // reward token -> true if reward token
     address[] public rewardTokens;                  // array of reward tokens
-    address public immutable relayToken;            // address of relay token contract
 
     mapping(address => mapping(address => uint256)) public userRewardPerTokenPaid;  // user -> reward token -> reward per virtual token paid
     mapping(address => mapping(address => uint256)) public rewards;                 // user -> reward token -> reward amount
@@ -40,6 +42,7 @@ contract RelayRewarder is ReentrancyGuard, Ownable {
     error RelayRewarder__NotRewardToken();
     error RelayRewarder__RewardTokenAlreadyAdded();
     error RelayRewarder__InvalidZeroInput();
+    error RelayRewarder__NotAdmin();
 
     /*----------  EVENTS ------------------------------------------------*/
 
@@ -68,10 +71,16 @@ contract RelayRewarder is ReentrancyGuard, Ownable {
         if (_amount == 0) revert RelayRewarder__InvalidZeroInput();
         _;
     }
+
+    modifier onlyAdmin() {
+        if (msg.sender != relayFactory && msg.sender != owner()) revert RelayRewarder__NotAdmin();
+        _;
+    }
     
     /*----------  FUNCTIONS  --------------------------------------------*/
 
-    constructor(address _relayToken) {
+    constructor(address _relayFactory, address _relayToken) {
+        relayFactory = _relayFactory;
         relayToken = _relayToken;
     }
 
@@ -152,7 +161,7 @@ contract RelayRewarder is ReentrancyGuard, Ownable {
      */
     function addReward(address _rewardsToken) 
         external 
-        onlyOwner()
+        onlyAdmin()
     {
         if (isRewardToken[_rewardsToken]) revert RelayRewarder__RewardTokenAlreadyAdded();
         rewardTokens.push(_rewardsToken);
@@ -226,7 +235,7 @@ contract RelayRewarderFactory {
     }
 
     function createRelayRewarder(address owner, address relayToken) external onlyRelayFactory returns (address) {
-        RelayRewarder relayRewarder = new RelayRewarder(relayToken);
+        RelayRewarder relayRewarder = new RelayRewarder(relayFactory, relayToken);
         relayRewarder.transferOwnership(owner);
         lastRelayRewarder = address(relayRewarder);
         emit RelayRewarderFactory__RelayRewarderCreated(lastRelayRewarder);

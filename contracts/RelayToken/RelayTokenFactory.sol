@@ -29,6 +29,10 @@ interface ITOKEN {
     function borrow(uint256 amountBase) external;
 }
 
+interface IRelayRewarder {
+    function notifyRewardAmount(address rewardToken, uint256 amount) external;
+}
+
 interface IMulticall {
     function quoteBuyIn(uint256 input, uint256 slippageTolerance) external view returns (uint256 output, uint256 slippage, uint256 minOutput, uint256 autoMinOutput);
 }
@@ -66,6 +70,7 @@ contract RelayToken is ERC20, ERC20Permit, ERC20Votes, Ownable, ReentrancyGuard 
 
     address public delegate;
     address public treasury;
+    address public rewarder;
 
     address[] public plugins;
     uint256[] public weights;
@@ -80,6 +85,7 @@ contract RelayToken is ERC20, ERC20Permit, ERC20Votes, Ownable, ReentrancyGuard 
     error RelayToken__NotDelegate();
     error RelayToken__InvalidVote();
     error RelayToken__InvalidInput();
+    error RelayToken__NotAdmin();
 
     /*----------  EVENTS ------------------------------------------------*/
 
@@ -116,6 +122,11 @@ contract RelayToken is ERC20, ERC20Permit, ERC20Votes, Ownable, ReentrancyGuard 
         _;
     }
 
+    modifier onlyAdmin() {
+        if (msg.sender != owner() && msg.sender != owner()) revert RelayToken__NotAdmin();
+        _;
+    }
+
     /*----------  FUNCTIONS  --------------------------------------------*/
 
     constructor(
@@ -124,7 +135,7 @@ contract RelayToken is ERC20, ERC20Permit, ERC20Votes, Ownable, ReentrancyGuard 
         string memory _name,
         string memory _symbol
     )
-        ERC20(_name, _symbol) 
+        ERC20(_name, _symbol)
         ERC20Permit(_name)
     {
         relayFactory = _relayFactory;
@@ -272,7 +283,7 @@ contract RelayToken is ERC20, ERC20Permit, ERC20Votes, Ownable, ReentrancyGuard 
 
     function setDelegate(address _delegate) 
         external 
-        onlyOwner() 
+        onlyAdmin() 
         nonZeroAddress(_delegate) 
     {
         delegate = _delegate;
@@ -288,9 +299,17 @@ contract RelayToken is ERC20, ERC20Permit, ERC20Votes, Ownable, ReentrancyGuard 
         emit RelayToken__SetTreasury(_treasury);
     }
 
+    function setRewarder(address _rewarder) 
+        external 
+        onlyAdmin() 
+        nonZeroAddress(_rewarder) 
+    {
+        rewarder = _rewarder;
+    }
+
     function setSlippageTolerance(uint256 _slippageTolerance) 
         external 
-        onlyOwner() 
+        onlyAdmin() 
     {
         if (_slippageTolerance < MAX_SLIPPAGE) revert RelayToken__InvalidInput();
         slippageTolerance = _slippageTolerance;

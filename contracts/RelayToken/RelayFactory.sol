@@ -11,6 +11,14 @@ interface IRelayRewarderFactory {
     function createRelayRewarder(address owner, address relayToken) external returns (address);
 }
 
+interface IRelayToken {
+    function setRewarder(address rewarder) external;
+}
+
+interface IRelayRewarder {
+    function addReward(address rewardToken) external;
+}
+
 contract RelayFactory is Ownable {
 
     address public immutable base;
@@ -54,6 +62,8 @@ contract RelayFactory is Ownable {
     function createRelay(string calldata name, string calldata symbol) external returns (address relayToken, address relayRewarder) {
         relayToken = IRelayTokenFactory(relayTokenFactory).createRelayToken(msg.sender, name, symbol);
         relayRewarder = IRelayRewarderFactory(relayRewarderFactory).createRelayRewarder(msg.sender, relayToken);
+        IRelayToken(relayToken).setRewarder(relayRewarder);
+        IRelayRewarder(relayRewarder).addReward(base);
         emit RelayFactory__RelayCreated(name, symbol, relayToken, relayRewarder);
     }
 
@@ -82,6 +92,10 @@ contract RelayFactory is Ownable {
     function setProtocol(address _protocol) external onlyOwner() {
         if (_protocol == address(0)) revert RelayFactory__InvalidZeroAddress();
         protocol = _protocol;
+    }
+
+    function addReward(address relayRewarder, address rewardToken) external onlyOwner() {
+        IRelayRewarder(relayRewarder).addReward(rewardToken);
     }
 
 }
