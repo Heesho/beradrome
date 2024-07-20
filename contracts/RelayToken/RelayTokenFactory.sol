@@ -29,16 +29,13 @@ interface ITOKEN {
     function borrow(uint256 amountBase) external;
 }
 
-interface IRelayRewarder {
-    function notifyRewardAmount(address rewardToken, uint256 amount) external;
-}
-
 interface IMulticall {
     function quoteBuyIn(uint256 input, uint256 slippageTolerance) external view returns (uint256 output, uint256 slippage, uint256 minOutput, uint256 autoMinOutput);
 }
 
 interface IRelayFactory {
     function protocol() external view returns (address);
+    function developer() external view returns (address);
     function base() external view returns (address);
     function token() external view returns (address);
     function oToken() external view returns (address);
@@ -48,15 +45,17 @@ interface IRelayFactory {
     function multicall() external view returns (address);
 }
 
+// NOTE: must build in a way to handle BGT rewards (convert to BERA, then transfer to treasury)
+
 contract RelayToken is ERC20, ERC20Permit, ERC20Votes, Ownable, ReentrancyGuard {
     using SafeERC20 for IERC20;
 
     /*----------  CONSTANTS  --------------------------------------------*/
 
-    uint256 public constant DIVISOR = 10000;
     uint256 public constant PRECISION = 1e18;
-    uint256 public constant PROTOCOL_FEE = 1000;    // 10%
-    uint256 public constant MAX_FEE = 4000;         // 40%
+    uint256 public constant DIVISOR = 10000;
+    uint256 public constant ADMIN_FEE = 300;        // 3%
+    uint256 public constant REWARDER_FEE = 1100;    // 11%
     uint256 public constant MAX_SLIPPAGE = 8000;    // 20% slippage
 
     /*----------  STATE VARIABLES  --------------------------------------*/
@@ -70,13 +69,11 @@ contract RelayToken is ERC20, ERC20Permit, ERC20Votes, Ownable, ReentrancyGuard 
 
     address public delegate;
     address public treasury;
-    address public rewarder;
 
     address[] public plugins;
     uint256[] public weights;
 
     uint256 public slippageTolerance = 9500; // 5% slippage
-    uint256 public treasureyFee = 1000; // 10%
 
     /*----------  ERRORS ------------------------------------------------*/
 
@@ -92,7 +89,7 @@ contract RelayToken is ERC20, ERC20Permit, ERC20Votes, Ownable, ReentrancyGuard 
     event RelayToken__Mint(address indexed minter, address indexed account, uint256 amount);
     event RelayToken__Vote(address[] plugins, uint256[] weights);
     event RelayToken__ClaimBribes(address[] bribes);
-    event RelayToken__SweepTokens(address token);
+    event RelayToken__SweepRewardTokens(address token);
     event RelayToken__ClaimVTokenRewards();
     event RelayToken__BurnOTokenForVToken(uint256 amount);
     event RelayToken__StakeTokenForVToken(uint256 amount);
@@ -103,7 +100,6 @@ contract RelayToken is ERC20, ERC20Permit, ERC20Votes, Ownable, ReentrancyGuard 
     event RelayToken__SetDelegate(address delegate);
     event RelayToken__SetTreasury(address treasury);
     event RelayToken__SetSlippageTolerance(uint256 slippageTolerance);
-    event RelayToken__SetTreasuryFee(uint256 treasureyFee);
 
     /*----------  MODIFIERS  --------------------------------------------*/
 
@@ -175,13 +171,13 @@ contract RelayToken is ERC20, ERC20Permit, ERC20Votes, Ownable, ReentrancyGuard 
         emit RelayToken__ClaimBribes(bribes);
     }
     
-    function sweepTokens(address[] calldata tokens) 
+    function sweepRewardTokens(address[] calldata tokens) 
         external
     {
         for (uint256 i = 0; i < tokens.length; i++) {
             if (tokens[i] != base && tokens[i] != token && tokens[i] != oToken && tokens[i] != vToken) {
                 IERC20(tokens[i]).safeTransfer(treasury, IERC20(tokens[i]).balanceOf(address(this)));
-                emit RelayToken__SweepTokens(tokens[i]);
+                emit RelayToken__SweepRewardTokens(tokens[i]);
             }
         }
     }
@@ -231,13 +227,16 @@ contract RelayToken is ERC20, ERC20Permit, ERC20Votes, Ownable, ReentrancyGuard 
         public
         nonZeroInput(amountBase)
     {
-        uint256 treasuryFeeAmount = amountBase * treasureyFee / DIVISOR;
-        IERC20(base).safeTransfer(treasury, treasuryFeeAmount);
-        amountBase -= treasuryFeeAmount;
 
-        uint256 protocolFeeAmount = amountBase * PROTOCOL_FEE / DIVISOR;
-        IERC20(base).safeTransfer(IRelayFactory(relayFactory).protocol(), protocolFeeAmount);
-        amountBase -= protocolFeeAmount;
+        uint256 adminFee = amountBase * ADMIN_FEE / DIVISOR;
+        IERC20(base).safeTransfer(owner(), adminFee); // manager fee
+        IERC20(base).safeTransfer(IRelayFactory(relayFactory).protocol(), adminFee); // protocol fee
+        IERC20(base).safeTransfer(IRelayFactory(relayFactory).developer(), adminFee); // developer fee
+
+        uint256 rewarderFee = amountBase * REWARDER_FEE / DIVISOR;
+        IERC20(base).safeTransfer(treasury, rewarderFee); // rewarder fee
+
+        amountBase -= ((3 * adminFee) + rewarderFee);
 
         IERC20(base).safeApprove(token, 0);
         IERC20(base).safeApprove(token, amountBase);
@@ -292,19 +291,11 @@ contract RelayToken is ERC20, ERC20Permit, ERC20Votes, Ownable, ReentrancyGuard 
 
     function setTreasury(address _treasury) 
         external 
-        onlyOwner() 
+        onlyAdmin() 
         nonZeroAddress(_treasury) 
     {
         treasury = _treasury;
         emit RelayToken__SetTreasury(_treasury);
-    }
-
-    function setRewarder(address _rewarder) 
-        external 
-        onlyAdmin() 
-        nonZeroAddress(_rewarder) 
-    {
-        rewarder = _rewarder;
     }
 
     function setSlippageTolerance(uint256 _slippageTolerance) 
@@ -314,15 +305,6 @@ contract RelayToken is ERC20, ERC20Permit, ERC20Votes, Ownable, ReentrancyGuard 
         if (_slippageTolerance < MAX_SLIPPAGE) revert RelayToken__InvalidInput();
         slippageTolerance = _slippageTolerance;
         emit RelayToken__SetSlippageTolerance(_slippageTolerance);
-    }
-
-    function setTreasuryFee(uint256 _treasureyFee) 
-        external 
-        onlyOwner() 
-    {
-        if (_treasureyFee > MAX_FEE) revert RelayToken__InvalidInput();
-        treasureyFee = _treasureyFee;
-        emit RelayToken__SetTreasuryFee(_treasureyFee);
     }
 
     /*----------  FUNCTION OVERRIDES  -----------------------------------*/

@@ -11,8 +11,8 @@ interface IRelayRewarderFactory {
     function createRelayRewarder(address owner, address relayToken) external returns (address);
 }
 
-interface IRelayToken {
-    function setRewarder(address rewarder) external;
+interface IRelayTreasuryFactory {
+    function createRelayTreasury(address owner, address relayRewarder) external returns (address);
 }
 
 interface IRelayRewarder {
@@ -29,16 +29,20 @@ contract RelayFactory is Ownable {
 
     address public relayTokenFactory;
     address public relayRewarderFactory;
+    address public relayTreasuryFactory;
 
     address public voter;
     address public multicall;
     address public protocol;
+    address public developer;
 
     error RelayFactory__InvalidZeroAddress();
+    error RelayFactory__Unauthorized();
 
     event RelayFactory__RelayCreated(string name, string symbol, address indexed relayToken, address indexed relayTokenRewarder);
     event RelayFactory__RelayTokenFactorySet(address indexed relayTokenFactory);
     event RelayFactory__RelayRewarderFactorySet(address indexed relayRewarderFactory);
+    event RelayFactory__RelayTreasuryFactorySet(address indexed relayTreasuryFactory);
 
     constructor(
         address _base, 
@@ -57,12 +61,13 @@ contract RelayFactory is Ownable {
         voter = _voter;
         multicall = _multicall;
         protocol = msg.sender;
+        developer = msg.sender;
     }
 
-    function createRelay(string calldata name, string calldata symbol) external returns (address relayToken, address relayRewarder) {
+    function createRelay(string calldata name, string calldata symbol) external returns (address relayToken, address relayRewarder, address relayTreasury) {
         relayToken = IRelayTokenFactory(relayTokenFactory).createRelayToken(msg.sender, name, symbol);
         relayRewarder = IRelayRewarderFactory(relayRewarderFactory).createRelayRewarder(msg.sender, relayToken);
-        IRelayToken(relayToken).setRewarder(relayRewarder);
+        relayTreasury = IRelayTreasuryFactory(relayTreasuryFactory).createRelayTreasury(msg.sender, relayRewarder);
         IRelayRewarder(relayRewarder).addReward(base);
         emit RelayFactory__RelayCreated(name, symbol, relayToken, relayRewarder);
     }
@@ -79,6 +84,12 @@ contract RelayFactory is Ownable {
         emit RelayFactory__RelayRewarderFactorySet(_relayRewarderFactory);
     }
 
+    function setRelayTreasuryFactory(address _relayTreasuryFactory) external onlyOwner() {
+        if (_relayTreasuryFactory == address(0)) revert RelayFactory__InvalidZeroAddress();
+        relayTreasuryFactory = _relayTreasuryFactory;
+        emit RelayFactory__RelayTreasuryFactorySet(_relayTreasuryFactory);
+    }
+
     function setVoter(address _voter) external onlyOwner() {
         if (_voter == address(0)) revert RelayFactory__InvalidZeroAddress();
         voter = _voter;
@@ -92,6 +103,12 @@ contract RelayFactory is Ownable {
     function setProtocol(address _protocol) external onlyOwner() {
         if (_protocol == address(0)) revert RelayFactory__InvalidZeroAddress();
         protocol = _protocol;
+    }
+
+    function setDeveloper(address _developer) external {
+        if (msg.sender != developer) revert RelayFactory__Unauthorized();
+        if (_developer == address(0)) revert RelayFactory__InvalidZeroAddress();
+        developer = _developer;
     }
 
     function addReward(address relayRewarder, address rewardToken) external onlyOwner() {
