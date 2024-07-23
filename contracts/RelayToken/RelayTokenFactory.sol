@@ -33,6 +33,15 @@ interface IMulticall {
     function quoteBuyIn(uint256 input, uint256 slippageTolerance) external view returns (uint256 output, uint256 slippage, uint256 minOutput, uint256 autoMinOutput);
 }
 
+interface IBGT {
+    function unboostedBalanceOf(address account) external view returns (uint256);
+    function redeem(address receiver, uint256 amount) external;
+}
+
+interface IWBERA {
+    function deposit() external payable;
+}
+
 interface IRelayFactory {
     function protocol() external view returns (address);
     function developer() external view returns (address);
@@ -45,8 +54,6 @@ interface IRelayFactory {
     function multicall() external view returns (address);
 }
 
-// NOTE: must build in a way to handle BGT rewards (convert to BERA, then transfer to treasury)
-
 contract RelayToken is ERC20, ERC20Permit, ERC20Votes, Ownable, ReentrancyGuard {
     using SafeERC20 for IERC20;
 
@@ -58,6 +65,9 @@ contract RelayToken is ERC20, ERC20Permit, ERC20Votes, Ownable, ReentrancyGuard 
     uint256 public constant REWARDER_FEE = 1100;    // 11%
     uint256 public constant MAX_SLIPPAGE = 8000;    // 20% slippage
 
+    address public constant BGT = 0xbDa130737BDd9618301681329bF2e46A016ff9Ad;
+    address public constant WBERA = 0x7507c1dc16935B82698e4C63f2746A2fCf994dF8;
+
     /*----------  STATE VARIABLES  --------------------------------------*/
 
     address public immutable relayFactory;
@@ -68,12 +78,15 @@ contract RelayToken is ERC20, ERC20Permit, ERC20Votes, Ownable, ReentrancyGuard 
     address public immutable vTokenRewarder;
 
     address public delegate;
-    address public treasury;
+    address public feeFlow;
+    address public distro;
 
     address[] public plugins;
     uint256[] public weights;
 
     uint256 public slippageTolerance = 9500; // 5% slippage
+
+    bool public mintable = true;
 
     /*----------  ERRORS ------------------------------------------------*/
 
@@ -83,6 +96,7 @@ contract RelayToken is ERC20, ERC20Permit, ERC20Votes, Ownable, ReentrancyGuard 
     error RelayToken__InvalidVote();
     error RelayToken__InvalidInput();
     error RelayToken__NotAdmin();
+    error RelayToken__NotMintable();
 
     /*----------  EVENTS ------------------------------------------------*/
 
@@ -98,7 +112,8 @@ contract RelayToken is ERC20, ERC20Permit, ERC20Votes, Ownable, ReentrancyGuard 
     event RelayToken__Loop();
     event RelayToken__SetVotes(address[] plugins, uint256[] weights);
     event RelayToken__SetDelegate(address delegate);
-    event RelayToken__SetTreasury(address treasury);
+    event RelayToken__SetFeeFlow(address feeFlow);
+    event RelayToken__SetDistro(address distro);
     event RelayToken__SetSlippageTolerance(uint256 slippageTolerance);
 
     /*----------  MODIFIERS  --------------------------------------------*/
@@ -114,12 +129,12 @@ contract RelayToken is ERC20, ERC20Permit, ERC20Votes, Ownable, ReentrancyGuard 
     }
 
     modifier onlyDelegate() {
-        if (msg.sender != delegate) revert RelayToken__NotDelegate();
+        if (msg.sender != owner() && msg.sender != delegate) revert RelayToken__NotDelegate();
         _;
     }
 
     modifier onlyAdmin() {
-        if (msg.sender != owner() && msg.sender != owner()) revert RelayToken__NotAdmin();
+        if (msg.sender != owner() && msg.sender != relayFactory) revert RelayToken__NotAdmin();
         _;
     }
 
@@ -142,7 +157,8 @@ contract RelayToken is ERC20, ERC20Permit, ERC20Votes, Ownable, ReentrancyGuard 
         vTokenRewarder = IRelayFactory(relayFactory).vTokenRewarder();
 
         delegate = _owner;
-        treasury = _owner;
+        feeFlow = _owner;
+        distro = _owner;
     }
 
     function mint(address account, uint256 amount) 
@@ -150,6 +166,7 @@ contract RelayToken is ERC20, ERC20Permit, ERC20Votes, Ownable, ReentrancyGuard 
         nonReentrant
         nonZeroInput(amount)
     {
+        if (!mintable) revert RelayToken__NotMintable();
         _mint(account, amount);
         IERC20(token).safeTransferFrom(msg.sender, address(this), amount);
         emit RelayToken__Mint(msg.sender, account, amount);
@@ -171,15 +188,22 @@ contract RelayToken is ERC20, ERC20Permit, ERC20Votes, Ownable, ReentrancyGuard 
         emit RelayToken__ClaimBribes(bribes);
     }
     
-    function sweepRewardTokens(address[] calldata tokens) 
+    function sweepVotingRewards(address[] calldata tokens) 
         external
     {
         for (uint256 i = 0; i < tokens.length; i++) {
             if (tokens[i] != base && tokens[i] != token && tokens[i] != oToken && tokens[i] != vToken) {
-                IERC20(tokens[i]).safeTransfer(treasury, IERC20(tokens[i]).balanceOf(address(this)));
+                IERC20(tokens[i]).safeTransfer(feeFlow, IERC20(tokens[i]).balanceOf(address(this)));
                 emit RelayToken__SweepRewardTokens(tokens[i]);
             }
         }
+    }
+
+    function sweepBgt() external {
+        uint256 balance = IBGT(BGT).unboostedBalanceOf(address(this));
+        IBGT(BGT).redeem(address(this), balance);
+        IWBERA(WBERA).deposit{value: balance}();
+        IERC20(WBERA).safeTransfer(feeFlow, IERC20(WBERA).balanceOf(address(this)));
     }
 
     function claimVTokenRewards() 
@@ -234,7 +258,7 @@ contract RelayToken is ERC20, ERC20Permit, ERC20Votes, Ownable, ReentrancyGuard 
         IERC20(base).safeTransfer(IRelayFactory(relayFactory).developer(), adminFee); // developer fee
 
         uint256 rewarderFee = amountBase * REWARDER_FEE / DIVISOR;
-        IERC20(base).safeTransfer(treasury, rewarderFee); // rewarder fee
+        IERC20(base).safeTransfer(distro, rewarderFee); // rewarder fee
 
         amountBase -= ((3 * adminFee) + rewarderFee);
 
@@ -289,13 +313,22 @@ contract RelayToken is ERC20, ERC20Permit, ERC20Votes, Ownable, ReentrancyGuard 
         emit RelayToken__SetDelegate(_delegate);
     }
 
-    function setTreasury(address _treasury) 
+    function setFeeFlow(address _feeFlow) 
         external 
         onlyAdmin() 
-        nonZeroAddress(_treasury) 
+        nonZeroAddress(_feeFlow) 
     {
-        treasury = _treasury;
-        emit RelayToken__SetTreasury(_treasury);
+        feeFlow = _feeFlow;
+        emit RelayToken__SetFeeFlow(_feeFlow);
+    }
+
+    function setDistro(address _distro) 
+        external 
+        onlyAdmin() 
+        nonZeroAddress(_distro) 
+    {
+        distro = _distro;
+        emit RelayToken__SetDistro(_distro);
     }
 
     function setSlippageTolerance(uint256 _slippageTolerance) 
@@ -305,6 +338,13 @@ contract RelayToken is ERC20, ERC20Permit, ERC20Votes, Ownable, ReentrancyGuard 
         if (_slippageTolerance < MAX_SLIPPAGE) revert RelayToken__InvalidInput();
         slippageTolerance = _slippageTolerance;
         emit RelayToken__SetSlippageTolerance(_slippageTolerance);
+    }
+
+    function setMintable(bool _mintable) 
+        external 
+        onlyAdmin() 
+    {
+        mintable = _mintable;
     }
 
     /*----------  FUNCTION OVERRIDES  -----------------------------------*/

@@ -676,20 +676,20 @@ async function main() {
   // 11. Distro Rewards
   //===================================================================
 
-  // console.log("Distributing Rewards");
+  console.log("Distributing Rewards");
   // await voter.distro();
   // console.log("Voter Rewards Distributed");
   // await fees.distribute();
   // console.log("Fees Rewards Distributed");
-  // await voter.distributeToBribes([
-  // "0x37e888f8a28BF1DA9761bbDd914fA4280dA434a8",
-  // "0x9D7A7198eCfe07414C5e9B3e233878Fcc30B9048",
-  // "0xfE12B5f5adb8E20F7C43A6014844479e7dC8Dc49",
-  // "0xb3D10C15360e444aBB2673D772D6f2EE32AAaB34",
-  // "0x80D7759Fa55f6a1F661D5FCBB3bC5164Dc63eb4D",
-  //   "0x61d0b4fbB9d507F64112e859523524AA2c548A6C",
-  // ]);
-  // console.log("Bribe Rewards Distributed");
+  await voter.distributeToBribes([
+    "0x37e888f8a28BF1DA9761bbDd914fA4280dA434a8",
+    "0x9D7A7198eCfe07414C5e9B3e233878Fcc30B9048",
+    "0xfE12B5f5adb8E20F7C43A6014844479e7dC8Dc49",
+    "0xb3D10C15360e444aBB2673D772D6f2EE32AAaB34",
+    "0x80D7759Fa55f6a1F661D5FCBB3bC5164Dc63eb4D",
+    "0x61d0b4fbB9d507F64112e859523524AA2c548A6C",
+  ]);
+  console.log("Bribe Rewards Distributed");
 
   //===================================================================
   // 12. Plugin Data
