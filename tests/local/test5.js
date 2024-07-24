@@ -2572,6 +2572,11 @@ describe.only("local: test5 relay token testing", function () {
       divDec(await relayRewarder.balanceOf(user0.address))
     );
   });
+
+  it("distro rewards to rewarder", async function () {
+    console.log("******************************************************");
+    await relayDistro.distributeRewards([BASE.address]);
+  });
   /*
   it("User1 claims rewards", async function () {
     console.log("******************************************************");

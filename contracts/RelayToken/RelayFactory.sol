@@ -20,7 +20,6 @@ interface IRelayFeeFlowFactory {
 }
 
 interface IRelayToken {
-    function setDistro(address relayDistro) external;
     function setFeeFlow(address relayFeeFlow) external;
 }
 
@@ -30,19 +29,16 @@ interface IRelayRewarder {
 
 contract RelayFactory is Ownable {
 
-    address public immutable base;
-    address public immutable token;
     address public immutable oToken;
     address public immutable vToken;
     address public immutable vTokenRewarder;
+    address public voter;
 
     address public relayTokenFactory;
     address public relayRewarderFactory;
     address public relayDistroFactory;
     address public relayFeeFlowFactory;
 
-    address public voter;
-    address public multicall;
     address public protocol;
     address public developer;
 
@@ -54,23 +50,21 @@ contract RelayFactory is Ownable {
     event RelayFactory__RelayRewarderFactorySet(address relayRewarderFactory);
     event RelayFactory__RelayDistroFactorySet(address relayDistroFactory);
     event RelayFactory__RelayFeeFlowFactorySet(address relayFeeFlowFactory);
+    event RelayFactory__RewardAdded(address relayRewarder, address rewardToken);
+    event RelayFactory__VoterSet(address voter);
+    event RelayFactory__ProtocolSet(address protocol);
+    event RelayFactory__DeveloperSet(address developer);
 
     constructor(
-        address _base, 
-        address _token, 
         address _oToken, 
         address _vToken, 
         address _vTokenRewarder,
-        address _voter,
-        address _multicall
+        address _voter
     ) {
-        base = _base;
-        token = _token;
         oToken = _oToken;
         vToken = _vToken;
         vTokenRewarder = _vTokenRewarder;
         voter = _voter;
-        multicall = _multicall;
         protocol = msg.sender;
         developer = msg.sender;
     }
@@ -80,10 +74,8 @@ contract RelayFactory is Ownable {
         relayRewarder = IRelayRewarderFactory(relayRewarderFactory).createRelayRewarder(msg.sender, relayToken);
         relayDistro = IRelayDistroFactory(relayDistroFactory).createRelayDistro(msg.sender, relayRewarder);
         relayFeeFlow = IRelayFeeFlowFactory(relayFeeFlowFactory).createRelayFeeFlow(relayDistro, rewardToken, initPrice, minInitPrice);
-        IRelayToken(relayToken).setDistro(relayDistro);
         IRelayToken(relayToken).setFeeFlow(relayFeeFlow);
-        IRelayRewarder(relayRewarder).addReward(base);
-        if (rewardToken != base) IRelayRewarder(relayRewarder).addReward(rewardToken);
+        IRelayRewarder(relayRewarder).addReward(rewardToken);
         emit RelayFactory__RelayCreated(name, symbol, relayToken, relayRewarder, relayDistro, relayFeeFlow);
     }
 
@@ -114,26 +106,25 @@ contract RelayFactory is Ownable {
     function setVoter(address _voter) external onlyOwner() {
         if (_voter == address(0)) revert RelayFactory__InvalidZeroAddress();
         voter = _voter;
+        emit RelayFactory__VoterSet(_voter);
     }
 
-    function setMulticall(address _multicall) external onlyOwner() {
-        if (_multicall == address(0)) revert RelayFactory__InvalidZeroAddress();
-        multicall = _multicall;
+    function addReward(address relayRewarder, address rewardToken) external onlyOwner() {
+        IRelayRewarder(relayRewarder).addReward(rewardToken);
+        emit RelayFactory__RewardAdded(relayRewarder, rewardToken);
     }
 
     function setProtocol(address _protocol) external onlyOwner() {
         if (_protocol == address(0)) revert RelayFactory__InvalidZeroAddress();
         protocol = _protocol;
+        emit RelayFactory__ProtocolSet(_protocol);
     }
 
     function setDeveloper(address _developer) external {
         if (msg.sender != developer) revert RelayFactory__Unauthorized();
         if (_developer == address(0)) revert RelayFactory__InvalidZeroAddress();
         developer = _developer;
-    }
-
-    function addReward(address relayRewarder, address rewardToken) external onlyOwner() {
-        IRelayRewarder(relayRewarder).addReward(rewardToken);
+        emit RelayFactory__DeveloperSet(_developer);
     }
 
 }
