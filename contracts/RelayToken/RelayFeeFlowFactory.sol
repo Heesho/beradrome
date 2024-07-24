@@ -912,7 +912,7 @@ contract RelayFeeFlow is MinimalEVCClient {
 
 contract RelayFeeFlowFactory {
 
-    uint256 constant public EPOCH_PERIOD = 7 days;
+    uint256 constant public EPOCH_PERIOD = 100 days;
     uint256 constant public PRICE_MULTIPLIER = 2 * 1e18;
 
     address public relayFactory;

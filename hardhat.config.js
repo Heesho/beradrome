@@ -33,16 +33,26 @@ task("accounts", "Prints the list of accounts", async (taskArgs, hre) => {
 
 module.exports = {
   solidity: {
-    version: "0.8.19",
-    settings: {
-      optimizer: {
-        enabled: true,
-        runs: 200,
-        // details: {
-        //   yul: true
-        // }
+    compilers: [
+      {
+        version: "0.8.19",
+        settings: {
+          optimizer: {
+            enabled: true,
+            runs: 200,
+          },
+        },
       },
-    },
+      {
+        version: "0.8.24",
+        settings: {
+          optimizer: {
+            enabled: true,
+            runs: 200,
+          },
+        },
+      },
+    ],
   },
   networks: {
     mainnet: {
@@ -51,11 +61,11 @@ module.exports = {
       accounts: [PRIVATE_KEY],
     },
     hardhat: {
-      chainId: CHAIN_ID,
-      forking: {
-        url: RPC_URL,
-      },
-      blockNumber: 1267000,
+      // chainId: CHAIN_ID,
+      // forking: {
+      //   url: RPC_URL,
+      // },
+      // blockNumber: 1267000,
     },
   },
   etherscan: {

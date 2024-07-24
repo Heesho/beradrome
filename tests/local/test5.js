@@ -35,15 +35,19 @@ let VTOKENFactory,
   bribeFactory;
 let minter, voter, fees, rewarder, governance, multicall;
 let TOKEN, VTOKEN, OTOKEN, BASE;
-let relayTokenFactory, relayRewarderFactory, relayFactory;
-let relayToken, relayRewarder;
+let relayFactory,
+  relayTokenFactory,
+  relayRewarderFactory,
+  relayDistroFactory,
+  relayFeeFlowFactory;
+let relayToken, relayRewarder, relayDistro, relayFeeFlow;
 let pluginFactory;
 let TEST0, xTEST0, plugin0, gauge0, bribe0;
 let TEST1, xTEST1, plugin1, gauge1, bribe1;
 let TEST2, LP0, plugin2, gauge2, bribe2;
 let TEST3, LP1, plugin3, gauge3, bribe3;
 
-describe("local: test5 relay token testing", function () {
+describe.only("local: test5 relay token testing", function () {
   before("Initial set up", async function () {
     console.log("Begin Initialization");
 
@@ -402,26 +406,63 @@ describe("local: test5 relay token testing", function () {
     );
     console.log("- RelayRewarderFactory Initialized");
 
+    const distroFactoryArtifact = await ethers.getContractFactory(
+      "RelayDistroFactory"
+    );
+    relayDistroFactory = await distroFactoryArtifact.deploy(
+      relayFactory.address
+    );
+    console.log("- DistroFactory Initialized");
+
+    const feeFlowFactoryArtifact = await ethers.getContractFactory(
+      "RelayFeeFlowFactory"
+    );
+    relayFeeFlowFactory = await feeFlowFactoryArtifact.deploy(
+      relayFactory.address
+    );
+    console.log("- FeeFlowFactory Initialized");
+
     // Set factories
     await relayFactory.setRelayTokenFactory(relayTokenFactory.address);
     await relayFactory.setRelayRewarderFactory(relayRewarderFactory.address);
+    await relayFactory.setRelayDistroFactory(relayDistroFactory.address);
+    await relayFactory.setRelayFeeFlowFactory(relayFeeFlowFactory.address);
+    console.log("- Factories Set");
 
     // Create Relay
-    await relayFactory.createRelay("RELAY", "RELAY");
+    await relayFactory.createRelay(
+      "RELAY",
+      "RELAY",
+      BASE.address,
+      oneHundred,
+      ten
+    );
+    console.log("- RELAY Token deployed");
 
     // Initialize RelayToken
     relayToken = await ethers.getContractAt(
-      "contracts/RelayToken/RelayTokenFactory.sol:RelayToken",
-      await relayTokenFactory.lastRelayToken()
+      "RelayToken",
+      await relayTokenFactory.connect(owner).lastRelayToken()
     );
-    console.log("- RelayToken Initialized");
+    console.log("- relayToken Initialized at:", relayToken.address);
 
-    // Initialize RelayRewarder
     relayRewarder = await ethers.getContractAt(
-      "contracts/RelayToken/RelayRewarderFactory.sol:RelayRewarder",
-      await relayRewarderFactory.lastRelayRewarder()
+      "RelayRewarder",
+      await relayRewarderFactory.connect(owner).lastRelayRewarder()
     );
-    console.log("- RelayRewarder Initialized");
+    console.log("- relayRewarder Initialized");
+
+    relayDistro = await ethers.getContractAt(
+      "RelayDistro",
+      await relayDistroFactory.connect(owner).lastRelayDistro()
+    );
+    console.log("- relayDistro Initialized");
+
+    relayFeeFlow = await ethers.getContractAt(
+      "RelayFeeFlow",
+      await relayFeeFlowFactory.connect(owner).lastRelayFeeFlow()
+    );
+    console.log("- relayFeeFlow Initialized");
 
     console.log("Initialization Complete");
     console.log();
@@ -2228,18 +2269,11 @@ describe("local: test5 relay token testing", function () {
     await relayToken.connect(relayOwner).setDelegate(relayDelegate.address);
   });
 
-  it("RelayOwner sets treasury to relayTreasury", async function () {
-    console.log("******************************************************");
-    await expect(relayToken.connect(owner).setTreasury(relayTreasury.address))
-      .to.be.reverted;
-    await relayToken.connect(relayOwner).setTreasury(relayTreasury.address);
-  });
-
   it("User0 calls sweep rewards", async function () {
     console.log("******************************************************");
     await relayToken
       .connect(user0)
-      .sweepTokens([
+      .sweepVotingRewards([
         BASE.address,
         TOKEN.address,
         OTOKEN.address,
@@ -2260,19 +2294,19 @@ describe("local: test5 relay token testing", function () {
     console.log("TEST3", divDec(await TEST3.balanceOf(relayToken.address)));
   });
 
-  it("RelayTreasury balances", async function () {
+  it("RelayFeeFlow balances", async function () {
     console.log("******************************************************");
-    console.log("TEST0", divDec(await TEST0.balanceOf(relayTreasury.address)));
-    console.log("TEST1", divDec(await TEST1.balanceOf(relayTreasury.address)));
-    console.log("TEST2", divDec(await TEST2.balanceOf(relayTreasury.address)));
-    console.log("TEST3", divDec(await TEST3.balanceOf(relayTreasury.address)));
+    console.log("TEST0", divDec(await TEST0.balanceOf(relayFeeFlow.address)));
+    console.log("TEST1", divDec(await TEST1.balanceOf(relayFeeFlow.address)));
+    console.log("TEST2", divDec(await TEST2.balanceOf(relayFeeFlow.address)));
+    console.log("TEST3", divDec(await TEST3.balanceOf(relayFeeFlow.address)));
   });
 
   it("User0 calls sweep rewards", async function () {
     console.log("******************************************************");
     await relayToken
       .connect(user0)
-      .sweepTokens([
+      .sweepVotingRewards([
         TEST0.address,
         TEST1.address,
         TEST2.address,
@@ -2293,12 +2327,58 @@ describe("local: test5 relay token testing", function () {
     console.log("TEST3", divDec(await TEST3.balanceOf(relayToken.address)));
   });
 
-  it("RelayTreasury balances", async function () {
+  it("RelayFeeFlow balances", async function () {
     console.log("******************************************************");
-    console.log("TEST0", divDec(await TEST0.balanceOf(relayTreasury.address)));
-    console.log("TEST1", divDec(await TEST1.balanceOf(relayTreasury.address)));
-    console.log("TEST2", divDec(await TEST2.balanceOf(relayTreasury.address)));
-    console.log("TEST3", divDec(await TEST3.balanceOf(relayTreasury.address)));
+    console.log("TEST0", divDec(await TEST0.balanceOf(relayFeeFlow.address)));
+    console.log("TEST1", divDec(await TEST1.balanceOf(relayFeeFlow.address)));
+    console.log("TEST2", divDec(await TEST2.balanceOf(relayFeeFlow.address)));
+    console.log("TEST3", divDec(await TEST3.balanceOf(relayFeeFlow.address)));
+  });
+
+  it("RelayDistro balances", async function () {
+    console.log("******************************************************");
+    console.log("BASE", divDec(await BASE.balanceOf(relayToken.address)));
+    console.log("TOKEN", divDec(await TOKEN.balanceOf(relayToken.address)));
+    console.log("oTOKEN", divDec(await OTOKEN.balanceOf(relayToken.address)));
+    console.log("vTOKEN", divDec(await VTOKEN.balanceOf(relayToken.address)));
+  });
+
+  it("RelayFeeFlow stats", async function () {
+    console.log("******************************************************");
+    console.log("Auction Price: ", divDec(await relayFeeFlow.getPrice()));
+  });
+
+  it("RelayFeeFlow buy", async function () {
+    console.log("******************************************************");
+    const price = await relayFeeFlow.getPrice();
+    await BASE.connect(user1).approve(relayFeeFlow.address, price);
+    await relayFeeFlow
+      .connect(user1)
+      .buy(
+        [TEST0.address, TEST1.address, TEST2.address, TEST3.address],
+        user1.address,
+        0,
+        1792282187,
+        price
+      );
+  });
+
+  it("RelayFeeFlow balances", async function () {
+    console.log("******************************************************");
+    console.log("BASE", divDec(await BASE.balanceOf(relayFeeFlow.address)));
+    console.log("TOKEN", divDec(await TOKEN.balanceOf(relayFeeFlow.address)));
+    console.log("oTOKEN", divDec(await OTOKEN.balanceOf(relayFeeFlow.address)));
+    console.log("vTOKEN", divDec(await VTOKEN.balanceOf(relayFeeFlow.address)));
+    console.log();
+    console.log("TEST0", divDec(await TEST0.balanceOf(relayFeeFlow.address)));
+    console.log("TEST1", divDec(await TEST1.balanceOf(relayFeeFlow.address)));
+    console.log("TEST2", divDec(await TEST2.balanceOf(relayFeeFlow.address)));
+    console.log("TEST3", divDec(await TEST3.balanceOf(relayFeeFlow.address)));
+  });
+
+  it("RelayFeeFlow stats", async function () {
+    console.log("******************************************************");
+    console.log("Auction Price: ", divDec(await relayFeeFlow.getPrice()));
   });
 
   it("Coverage Testing", async function () {
@@ -2320,9 +2400,14 @@ describe("local: test5 relay token testing", function () {
       .reverted;
 
     await expect(
-      relayToken.connect(relayOwner).setTreasury(AddressZero)
+      relayToken.connect(relayOwner).setFeeFlow(AddressZero)
     ).to.be.revertedWith("RelayToken__InvalidZeroAddress");
-    await expect(relayToken.connect(user0).setTreasury(user0.address)).to.be
+    await expect(relayToken.connect(user0).setFeeFlow(user0.address)).to.be
+      .reverted;
+    await expect(
+      relayToken.connect(relayOwner).setDistro(AddressZero)
+    ).to.be.revertedWith("RelayToken__InvalidZeroAddress");
+    await expect(relayToken.connect(user0).setDistro(user0.address)).to.be
       .reverted;
   });
 
@@ -2391,20 +2476,20 @@ describe("local: test5 relay token testing", function () {
     console.log("Borrow Debt: ", divDec(res.accountBorrowDebt), "BASE");
     console.log("Max Withdraw: ", divDec(res.accountMaxWithdraw), "VTOKEN");
   });
-  /*
-  it("User0 mints lsTOKEN with all TOKEN", async function () {
+
+  it("User0 mints relayTOKEN with all TOKEN", async function () {
     console.log("******************************************************");
-    await TOKEN.connect(user0).approve(LSTOKEN.address, five);
-    await LSTOKEN.connect(user0).mint(five);
+    await TOKEN.connect(user0).approve(relayToken.address, five);
+    await relayToken.connect(user0).mint(user0.address, five);
     console.log(
-      "User0 lsToken Balance: ",
-      divDec(await LSTOKEN.balanceOf(user0.address))
+      "User0 relayToken Balance: ",
+      divDec(await relayToken.balanceOf(user0.address))
     );
   });
 
-  it("BondingCurveData, lsToken", async function () {
+  it("BondingCurveData, relayToken", async function () {
     console.log("******************************************************");
-    let res = await multicall.bondingCurveData(LSTOKEN.address);
+    let res = await multicall.bondingCurveData(relayToken.address);
     console.log("GLOBAL DATA");
     console.log("Price BASE: $", divDec(res.priceBASE));
     console.log("Price TOKEN: $", divDec(res.priceTOKEN));
@@ -2438,52 +2523,56 @@ describe("local: test5 relay token testing", function () {
     console.log("******************************************************");
     console.log(
       "Leverage Check",
-      divDec(await LSTOKEN.connect(user0).leverage())
+      divDec(await relayToken.connect(user0).getLeverage())
     );
     console.log(
-      "LSTOKEN Supply",
-      divDec(await LSTOKEN.connect(user0).totalSupply())
+      "relayToken Supply",
+      divDec(await relayToken.connect(user0).totalSupply())
     );
     console.log(
-      "LSTOKEN VTOKEN Balance",
-      divDec(await VTOKEN.connect(owner).balanceOf(LSTOKEN.address))
+      "relayToken VTOKEN Balance",
+      divDec(await VTOKEN.connect(owner).balanceOf(relayToken.address))
     );
   });
 
   it("User0 calls loop 10 times", async function () {
     console.log("******************************************************");
-    await LSTOKEN.connect(user0).loop(10);
+    await relayToken.connect(user0).loop(10);
   });
 
   it("Leverage Check", async function () {
     console.log("******************************************************");
     console.log(
       "Leverage Check",
-      divDec(await LSTOKEN.connect(user0).leverage())
+      divDec(await relayToken.connect(user0).getLeverage())
     );
     console.log(
-      "LSTOKEN Supply",
-      divDec(await LSTOKEN.connect(user0).totalSupply())
+      "relayToken Supply",
+      divDec(await relayToken.connect(user0).totalSupply())
     );
     console.log(
-      "LSTOKEN VTOKEN Balance",
-      divDec(await VTOKEN.connect(owner).balanceOf(LSTOKEN.address))
+      "relayToken VTOKEN Balance",
+      divDec(await VTOKEN.connect(owner).balanceOf(relayToken.address))
     );
   });
 
-  it("User0 claims rewards", async function () {
+  it("User0 stakes relayToken", async function () {
     console.log("******************************************************");
+    await relayToken
+      .connect(user0)
+      .approve(
+        relayRewarder.address,
+        await relayToken.balanceOf(user0.address)
+      );
+    await relayRewarder
+      .connect(user0)
+      .deposit(await relayToken.balanceOf(user0.address));
     console.log(
-      "Before User0 Base Balance",
-      divDec(await BASE.connect(owner).balanceOf(user0.address))
-    );
-    await LSTOKEN.connect(user0).claimFees();
-    console.log(
-      "After User0 Base Balance",
-      divDec(await BASE.connect(owner).balanceOf(user0.address))
+      "User0 staked relayToken: ",
+      divDec(await relayRewarder.balanceOf(user0.address))
     );
   });
-
+  /*
   it("User1 claims rewards", async function () {
     console.log("******************************************************");
     console.log(
