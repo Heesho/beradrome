@@ -293,6 +293,14 @@ contract RelayToken is ERC20, ERC20Permit, ERC20Votes, Ownable, ReentrancyGuard 
         return plugins;
     }
 
+    function getWeights() 
+        external 
+        view 
+        returns (uint256[] memory) 
+    {
+        return weights;
+    }
+
 }
 
 contract RelayTokenFactory {

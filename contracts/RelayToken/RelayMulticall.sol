@@ -2,6 +2,7 @@
 pragma solidity 0.8.19;
 
 import "@openzeppelin/contracts/token/ERC20/extensions/IERC20Metadata.sol";
+import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 
 interface IRelayFactory {
     function getRelayByIndex(uint256 index) external view returns (address relayToken, address relayRewarder, address relayDistro, address relayFeeFlow);
@@ -13,8 +14,9 @@ interface IRelayToken {
     function description() external view returns (string memory);
     function owner() external view returns (address);
     function delegate() external view returns (address);
-    function getVote() external view returns (uint256[] memory plugins, uint256[] memory weights);
+    function getVote() external view returns (address[] memory plugins, uint256[] memory weights);
     function getPlugins() external view returns (address[] memory plugins);
+    function mint(address account, uint256 amount) external;
 }
 
 interface IRelayFeeFlow {
@@ -36,6 +38,8 @@ interface IVTOKENRewarder {
 
 interface IVoter {
     function bribes(address plugin) external view returns (address bribe);
+    function lastVoted(address account) external view returns (uint256);
+    function vote(address[] calldata _plugins, uint256[] calldata _weights) external;
 }
 
 interface IBribe {
@@ -44,8 +48,11 @@ interface IBribe {
 }
 
 contract RelayMulticall {
+    using SafeERC20 for IERC20;
 
     /*----------  CONSTANTS  --------------------------------------------*/
+
+    uint256 public constant DURATION = 7 days;
 
     /*----------  STATE VARIABLES  --------------------------------------*/
 
@@ -73,7 +80,7 @@ contract RelayMulticall {
         uint256 votingPower;
         uint256 votingPercent;
 
-        uint256[] plugins;
+        address[] plugins;
         uint256[] weights;
 
         uint8 rewardTokenDecimals;
@@ -113,6 +120,32 @@ contract RelayMulticall {
         vTokenRewarder = _vTokenRewarder;
         voter = _voter;
     }
+
+    function mint(address relayToken, uint256 amount) public {
+        IERC20(oToken).safeTransferFrom(msg.sender, address(this), amount);
+        IERC20(oToken).safeApprove(relayToken, 0);
+        IERC20(oToken).safeApprove(relayToken, amount);
+        IRelayToken(relayToken).mint(msg.sender, amount);
+        bool canVote = (block.timestamp / DURATION) * DURATION > IVoter(voter).lastVoted(msg.sender);
+        bool hasVote = IRelayToken(relayToken).getPlugins().length > 0;
+        if (canVote && hasVote) {
+            (address[] memory plugins, uint256[] memory weights) = IRelayToken(relayToken).getVote();
+            IVoter(voter).vote(plugins, weights);
+        }
+    }
+
+    // deposit
+
+    // withdraw
+
+    // mint and deposit
+
+    // buy auction
+    // claim rewards from staking IVTOKENRewarder.getReward()
+    // loop through bribes and claim rewards IBribe.getReward()
+    // transfer rewards to fee flow
+    // call buy
+    // call notify reward amount
 
     /*----------  VIEW FUNCTIONS  ---------------------------------------*/
 
@@ -179,15 +212,5 @@ contract RelayMulticall {
             auction.rewards[i + 1] = bribeRewards;
         }
     }
-
-    // deposit oBERO for relayBERO
-    // vote if can vote and there is a vote
-
-    // buy auction
-    // claim rewards from staking IVTOKENRewarder.getReward()
-    // loop through bribes and claim rewards IBribe.getReward()
-    // transfer rewards to fee flow
-    // call buy
-    // call notify reward amount
 
 }
