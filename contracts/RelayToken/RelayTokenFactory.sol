@@ -65,8 +65,12 @@ contract RelayToken is ERC20, ERC20Permit, ERC20Votes, Ownable, ReentrancyGuard 
     address[] public plugins;
     uint256[] public weights;
 
+    string public uri;
+    string public description;
+
     /*----------  ERRORS ------------------------------------------------*/
 
+    error RelayToken__InvalidInput();
     error RelayToken__InvalidZeroInput();
     error RelayToken__InvalidZeroAddress();
     error RelayToken__NotDelegate();
@@ -83,6 +87,8 @@ contract RelayToken is ERC20, ERC20Permit, ERC20Votes, Ownable, ReentrancyGuard 
     event RelayToken__SetVotes(address[] plugins, uint256[] weights);
     event RelayToken__SetDelegate(address delegate);
     event RelayToken__SetFeeFlow(address feeFlow);
+    event RelayToken__SetUri(string uri);
+    event RelayToken__SetDescription(string description);
 
     /*----------  MODIFIERS  --------------------------------------------*/
 
@@ -112,11 +118,16 @@ contract RelayToken is ERC20, ERC20Permit, ERC20Votes, Ownable, ReentrancyGuard 
         address _relayFactory,
         address _owner,
         string memory _name,
-        string memory _symbol
+        string memory _symbol,
+        string memory _uri,
+        string memory _description
     )
         ERC20(_name, _symbol)
         ERC20Permit(_name)
     {
+        uri = _uri;
+        description = _description;
+
         relayFactory = _relayFactory;
         oToken = IRelayFactory(relayFactory).oToken();
         vToken = IRelayFactory(relayFactory).vToken();
@@ -209,6 +220,25 @@ contract RelayToken is ERC20, ERC20Permit, ERC20Votes, Ownable, ReentrancyGuard 
         emit RelayToken__SetFeeFlow(_feeFlow);
     }
 
+    function setUri(string calldata _uri) 
+        external 
+        onlyAdmin() 
+    {
+        if (bytes(_uri).length == 0) revert RelayToken__InvalidInput();
+        uri = _uri;
+        emit RelayToken__SetUri(_uri);
+    }
+
+    function setDescription(string calldata _description) 
+        external 
+        onlyAdmin() 
+    {
+        if (bytes(_description).length == 0) revert RelayToken__InvalidInput();
+        if (bytes(_description).length > 256) revert RelayToken__InvalidInput();
+        description = _description;
+        emit RelayToken__SetDescription(_description);
+    }
+
     /*----------  FUNCTION OVERRIDES  -----------------------------------*/
 
     function _afterTokenTransfer(address from, address to, uint256 amount)
@@ -255,6 +285,14 @@ contract RelayToken is ERC20, ERC20Permit, ERC20Votes, Ownable, ReentrancyGuard 
         return (plugins, weights);
     }
 
+    function getPlugins() 
+        external 
+        view 
+        returns (address[] memory) 
+    {
+        return plugins;
+    }
+
 }
 
 contract RelayTokenFactory {
@@ -283,8 +321,8 @@ contract RelayTokenFactory {
         emit RelayTokenFactory__RelayFactorySet(_relayFactory);
     }
 
-    function createRelayToken(address owner, string calldata name, string calldata symbol) external onlyRelayFactory returns (address) {
-        RelayToken relayToken = new RelayToken(relayFactory, owner, name, symbol);
+    function createRelayToken(address owner, string calldata name, string calldata symbol, string calldata uri, string calldata description) external onlyRelayFactory returns (address) {
+        RelayToken relayToken = new RelayToken(relayFactory, owner, name, symbol, uri, description);
         relayToken.transferOwnership(owner);
         lastRelayToken = address(relayToken);
         emit RelayTokenFactory__RelayTokenCreated(lastRelayToken);

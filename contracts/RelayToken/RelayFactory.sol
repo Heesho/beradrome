@@ -4,7 +4,7 @@ pragma solidity 0.8.19;
 import "@openzeppelin/contracts/access/Ownable.sol";
 
 interface IRelayTokenFactory {
-    function createRelayToken(address owner, string calldata name, string calldata symbol) external returns (address);
+    function createRelayToken(address owner, string calldata name, string calldata symbol, string calldata uri, string calldata description) external returns (address);
 }
 
 interface IRelayRewarderFactory {
@@ -42,6 +42,17 @@ contract RelayFactory is Ownable {
     address public protocol;
     address public developer;
 
+    struct Relay {
+        address relayToken;
+        address relayRewarder;
+        address relayDistro;
+        address relayFeeFlow;
+    } 
+
+    uint256 public relayIndex = 0;
+    mapping(uint256 => Relay) public index_Relay;
+    mapping(address => uint256) public relayToken_Index;
+
     error RelayFactory__InvalidZeroAddress();
     error RelayFactory__Unauthorized();
 
@@ -69,13 +80,27 @@ contract RelayFactory is Ownable {
         developer = msg.sender;
     }
 
-    function createRelay(string calldata name, string calldata symbol, address rewardToken, uint256 initPrice, uint256 minInitPrice) external returns (address relayToken, address relayRewarder, address relayDistro, address relayFeeFlow) {
-        relayToken = IRelayTokenFactory(relayTokenFactory).createRelayToken(msg.sender, name, symbol);
-        relayRewarder = IRelayRewarderFactory(relayRewarderFactory).createRelayRewarder(msg.sender, relayToken);
-        relayDistro = IRelayDistroFactory(relayDistroFactory).createRelayDistro(msg.sender, relayRewarder);
-        relayFeeFlow = IRelayFeeFlowFactory(relayFeeFlowFactory).createRelayFeeFlow(relayDistro, rewardToken, initPrice, minInitPrice);
+    function createRelay(
+        string calldata name, 
+        string calldata symbol, 
+        string calldata uri,
+        string calldata description,
+        address rewardToken, 
+        uint256 initPrice, 
+        uint256 minInitPrice
+    ) external {
+        address relayToken = IRelayTokenFactory(relayTokenFactory).createRelayToken(msg.sender, name, symbol, uri, description);
+        address relayRewarder = IRelayRewarderFactory(relayRewarderFactory).createRelayRewarder(msg.sender, relayToken);
+        address relayDistro = IRelayDistroFactory(relayDistroFactory).createRelayDistro(msg.sender, relayRewarder);
+        address relayFeeFlow = IRelayFeeFlowFactory(relayFeeFlowFactory).createRelayFeeFlow(relayDistro, rewardToken, initPrice, minInitPrice);
+
+        index_Relay[relayIndex] = Relay(relayToken, relayRewarder, relayDistro, relayFeeFlow);
+        relayToken_Index[relayToken] = relayIndex;
+        relayIndex++;
+
         IRelayToken(relayToken).setFeeFlow(relayFeeFlow);
         IRelayRewarder(relayRewarder).addReward(rewardToken);
+
         emit RelayFactory__RelayCreated(name, symbol, relayToken, relayRewarder, relayDistro, relayFeeFlow);
     }
 
@@ -125,6 +150,15 @@ contract RelayFactory is Ownable {
         if (_developer == address(0)) revert RelayFactory__InvalidZeroAddress();
         developer = _developer;
         emit RelayFactory__DeveloperSet(_developer);
+    }
+
+    function getRelayByIndex(uint256 index) external view returns (address relayToken, address relayRewarder, address relayDistro, address relayFeeFlow) {
+        return (index_Relay[index].relayToken, index_Relay[index].relayRewarder, index_Relay[index].relayDistro, index_Relay[index].relayFeeFlow);
+    }
+
+    function getRelayByToken(address relayToken) external view returns (address relayRewarder, address relayDistro, address relayFeeFlow) {
+        uint256 index = relayToken_Index[relayToken];
+        return (index_Relay[index].relayRewarder, index_Relay[index].relayDistro, index_Relay[index].relayFeeFlow);
     }
 
 }

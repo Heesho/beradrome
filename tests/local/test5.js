@@ -39,7 +39,8 @@ let relayFactory,
   relayTokenFactory,
   relayRewarderFactory,
   relayDistroFactory,
-  relayFeeFlowFactory;
+  relayFeeFlowFactory,
+  relayMulticall;
 let relayToken, relayRewarder, relayDistro, relayFeeFlow;
 let pluginFactory;
 let TEST0, xTEST0, plugin0, gauge0, bribe0;
@@ -426,10 +427,29 @@ describe.only("local: test5 relay token testing", function () {
     await relayFactory.setRelayFeeFlowFactory(relayFeeFlowFactory.address);
     console.log("- Factories Set");
 
+    // Initialize RelayMulticall
+    const relayMulticallArtifact = await ethers.getContractFactory(
+      "RelayMulticall"
+    );
+    const relayMulticallContract = await relayMulticallArtifact.deploy(
+      relayFactory.address,
+      OTOKEN.address,
+      VTOKEN.address,
+      rewarder.address,
+      voter.address
+    );
+    relayMulticall = await ethers.getContractAt(
+      "RelayMulticall",
+      relayMulticallContract.address
+    );
+    console.log("- RelayMulticall Initialized");
+
     // Create Relay
     await relayFactory.createRelay(
-      "RELAY",
-      "RELAY",
+      "Profit Bero Relay",
+      "profitBERO",
+      "uri",
+      "The profitBERO relay maxes out voting rewards.",
       BASE.address,
       oneHundred,
       ten
@@ -437,10 +457,8 @@ describe.only("local: test5 relay token testing", function () {
     console.log("- RELAY Token deployed");
 
     // Initialize RelayToken
-    relayToken = await ethers.getContractAt(
-      "RelayToken",
-      await relayTokenFactory.connect(owner).lastRelayToken()
-    );
+    let res = await relayFactory.connect(owner).index_Relay(0);
+    relayToken = await ethers.getContractAt("RelayToken", res.relayToken);
     console.log("- relayToken Initialized at:", relayToken.address);
 
     relayRewarder = await ethers.getContractAt(
@@ -2426,5 +2444,27 @@ describe.only("local: test5 relay token testing", function () {
     console.log("Borrow Credit: ", divDec(res.accountBorrowCredit), "BASE");
     console.log("Borrow Debt: ", divDec(res.accountBorrowDebt), "BASE");
     console.log("Max Withdraw: ", divDec(res.accountMaxWithdraw), "VTOKEN");
+  });
+
+  it("RelayData", async function () {
+    console.log("******************************************************");
+    let res = await relayMulticall.getRelay(relayToken.address, user0.address);
+    console.log(res);
+  });
+
+  it("Forward time by 1 days", async function () {
+    console.log("******************************************************");
+    await network.provider.send("evm_increaseTime", [1 * 24 * 3600]);
+    await network.provider.send("evm_mine");
+  });
+
+  const util = require("util");
+
+  it("AuctionData", async function () {
+    console.log("******************************************************");
+    let res = await relayMulticall.getAuction(relayToken.address);
+    console.log(
+      util.inspect(res, { showHidden: false, depth: null, colors: true })
+    );
   });
 });
