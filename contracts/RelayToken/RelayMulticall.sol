@@ -17,11 +17,25 @@ interface IRelayToken {
     function getVote() external view returns (address[] memory plugins, uint256[] memory weights);
     function getPlugins() external view returns (address[] memory plugins);
     function mint(address account, uint256 amount) external;
+    function transferToFeeFlow(address[] calldata tokens) external;
+    function vote() external;
+}
+
+interface IRelayDistro {
+    function distributeRewards(address[] calldata assets) external;
 }
 
 interface IRelayFeeFlow {
+    struct Slot0 {
+        uint8 locked;
+        uint16 epochId;
+        uint192 initPrice;
+        uint40 startTime;
+    }
     function paymentToken() external view returns (address);
     function getPrice() external view returns (uint256);
+    function getSlot0() external view returns (Slot0 memory);
+    function buy(address[] calldata assets, address assetsReceiver, uint256 epochId, uint256 deadline, uint256 maxPaymentTokenAmount) external returns(uint256 paymentAmount);
 }
 
 interface IRelayRewarder {
@@ -29,22 +43,25 @@ interface IRelayRewarder {
     function totalSupply() external view returns (uint256);
     function getRewardForDuration(address rewardToken) external view returns (uint256);
     function earned(address account, address rewardToken) external view returns (uint256);
+    function deposit(address account, uint256 amount) external;
+    function withdraw(address account, uint256 amount) external;
 }
 
 interface IVTOKENRewarder {
-    function earned(address relayToken, address rewardToken) external view returns (uint256);
+    function earned(address account, address rewardToken) external view returns (uint256);
     function getRewardTokens() external view returns (address[] memory);
+    function getReward(address account) external;
 }
 
 interface IVoter {
     function bribes(address plugin) external view returns (address bribe);
     function lastVoted(address account) external view returns (uint256);
-    function vote(address[] calldata _plugins, uint256[] calldata _weights) external;
 }
 
 interface IBribe {
-    function earned(address relayToken, address rewardToken) external view returns (uint256);
+    function earned(address account, address rewardToken) external view returns (uint256);
     function getRewardTokens() external view returns (address[] memory);
+    function getReward(address account) external;
 }
 
 contract RelayMulticall {
@@ -121,31 +138,63 @@ contract RelayMulticall {
         voter = _voter;
     }
 
-    function mint(address relayToken, uint256 amount) public {
+    function mint(address relayToken, uint256 amount) external {
         IERC20(oToken).safeTransferFrom(msg.sender, address(this), amount);
         IERC20(oToken).safeApprove(relayToken, 0);
         IERC20(oToken).safeApprove(relayToken, amount);
         IRelayToken(relayToken).mint(msg.sender, amount);
-        bool canVote = (block.timestamp / DURATION) * DURATION > IVoter(voter).lastVoted(msg.sender);
-        bool hasVote = IRelayToken(relayToken).getPlugins().length > 0;
-        if (canVote && hasVote) {
-            (address[] memory plugins, uint256[] memory weights) = IRelayToken(relayToken).getVote();
-            IVoter(voter).vote(plugins, weights);
-        }
+        vote(relayToken);
     }
 
-    // deposit
+    function deposit(address relayToken, uint256 amount) external {
+        (address relayRewarder, , ) = IRelayFactory(relayFactory).getRelayByToken(relayToken);
+        IERC20(relayToken).safeTransferFrom(msg.sender, address(this), amount);
+        IERC20(relayToken).safeApprove(relayRewarder, 0);
+        IERC20(relayToken).safeApprove(relayRewarder, amount);
+        IRelayRewarder(relayRewarder).deposit(msg.sender, amount);
+        vote(relayToken); 
+    }
 
-    // withdraw
+    function vote(address relayToken) public {
+        bool canVote = (block.timestamp / DURATION) * DURATION > IVoter(voter).lastVoted(relayToken);
+        bool hasVote = IRelayToken(relayToken).getPlugins().length > 0;
+        if (canVote && hasVote) {
+            IRelayToken(relayToken).vote();
+        }    
+    }
 
-    // mint and deposit
+    function mintAndDeposit(address relayToken, uint256 amount) external {
+        (address relayRewarder, , ) = IRelayFactory(relayFactory).getRelayByToken(relayToken);
+        IERC20(oToken).safeTransferFrom(msg.sender, address(this), amount);
+        IERC20(oToken).safeApprove(relayToken, 0);
+        IERC20(oToken).safeApprove(relayToken, amount);
+        IRelayToken(relayToken).mint(address(this), amount);
+        IERC20(relayToken).safeApprove(relayRewarder, 0);
+        IERC20(relayToken).safeApprove(relayRewarder, amount);
+        IRelayRewarder(relayRewarder).deposit(msg.sender, amount);
+        vote(relayToken); 
+    }
 
-    // buy auction
-    // claim rewards from staking IVTOKENRewarder.getReward()
-    // loop through bribes and claim rewards IBribe.getReward()
-    // transfer rewards to fee flow
-    // call buy
-    // call notify reward amount
+    function buyAuction(address relayToken, uint256 deadline) external {
+        (, address relayDistro, address relayFeeFlow) = IRelayFactory(relayFactory).getRelayByToken(relayToken);
+        address paymentToken = IRelayFeeFlow(relayFeeFlow).paymentToken();
+        uint256 price = IRelayFeeFlow(relayFeeFlow).getPrice();
+        uint16 epochId = IRelayFeeFlow(relayFeeFlow).getSlot0().epochId;
+        address[] memory assets = getAuctionAssets(relayToken);
+        
+        IVTOKENRewarder(vTokenRewarder).getReward(relayToken);
+        address[] memory plugins = IRelayToken(relayToken).getPlugins();
+        for (uint256 i = 0; i < plugins.length; i++) {
+            IBribe(IVoter(voter).bribes(plugins[i])).getReward(relayToken);
+        }
+
+        IRelayToken(relayToken).transferToFeeFlow(assets);
+        IERC20(paymentToken).safeTransferFrom(msg.sender, address(this), price);
+        IERC20(paymentToken).safeApprove(relayFeeFlow, 0);
+        IERC20(paymentToken).safeApprove(relayFeeFlow, price);
+        IRelayFeeFlow(relayFeeFlow).buy(assets, msg.sender, epochId, deadline, price);
+        IRelayDistro(relayDistro).distributeRewards(assets);
+    }
 
     /*----------  VIEW FUNCTIONS  ---------------------------------------*/
 
@@ -162,7 +211,7 @@ contract RelayMulticall {
         relay.delegate = IRelayToken(relayToken).delegate();
         relay.rewardToken = IRelayFeeFlow(relay.relayFeeFlow).paymentToken();
 
-        relay.votingPower = IERC20(vToken).balanceOf(account);
+        relay.votingPower = IERC20(vToken).balanceOf(relayToken);
         uint256 votingSupply = IERC20(vToken).totalSupply();
         relay.votingPercent = votingSupply == 0 ? 0 : relay.votingPower * 1e18 * 100 / votingSupply;
 
@@ -211,6 +260,40 @@ contract RelayMulticall {
             }
             auction.rewards[i + 1] = bribeRewards;
         }
+    }
+
+    function getAuctionAssets(address relayToken) public view returns (address[] memory assets) {
+        address[] memory stakingRewardTokens = IVTOKENRewarder(vTokenRewarder).getRewardTokens();
+        address[] memory plugins = IRelayToken(relayToken).getPlugins();
+
+        uint256 assetCount = 0;
+
+        assetCount += stakingRewardTokens.length;
+
+        for (uint256 i = 0; i < plugins.length; i++) {
+            address bribe = IVoter(voter).bribes(plugins[i]);
+            address[] memory bribeRewardTokens = IBribe(bribe).getRewardTokens();
+            assetCount += bribeRewardTokens.length;
+        }
+
+        assets = new address[](assetCount);
+
+        uint256 index = 0;
+
+        for (uint256 i = 0; i < stakingRewardTokens.length; i++) {
+            assets[index] = stakingRewardTokens[i];
+            index++;
+        }
+
+        for (uint256 i = 0; i < plugins.length; i++) {
+            address bribe = IVoter(voter).bribes(plugins[i]);
+            address[] memory bribeRewardTokens = IBribe(bribe).getRewardTokens();
+            for (uint256 j = 0; j < bribeRewardTokens.length; j++) {
+                assets[index] = bribeRewardTokens[j];
+                index++;
+            }
+        }
+
     }
 
 }

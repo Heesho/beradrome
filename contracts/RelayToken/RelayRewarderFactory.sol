@@ -131,18 +131,18 @@ contract RelayRewarder is ReentrancyGuard, Ownable {
         emit RelayRewarder__RewardNotified(_rewardsToken, reward);
     }
 
-    function deposit(uint256 amount) 
+    function deposit(address account, uint256 amount) 
         external 
         nonZeroInput(amount)
-        updateReward(msg.sender)
+        updateReward(account)
     {
         _totalSupply = _totalSupply + amount;
-        _balances[msg.sender] = _balances[msg.sender] + amount;
-        emit RelayRewarder__Deposited(msg.sender, amount);
+        _balances[account] = _balances[account] + amount;
+        emit RelayRewarder__Deposited(account, amount);
         IERC20(relayToken).safeTransferFrom(msg.sender, address(this), amount);
     }
 
-    function withdraw(uint256 amount) 
+    function withdraw(address account, uint256 amount) 
         external 
         nonZeroInput(amount)
         updateReward(msg.sender) 
@@ -150,7 +150,7 @@ contract RelayRewarder is ReentrancyGuard, Ownable {
         _totalSupply = _totalSupply - amount;
         _balances[msg.sender] = _balances[msg.sender] - amount;
         emit RelayRewarder__Withdrawn(msg.sender, amount);
-        IERC20(relayToken).safeTransfer(msg.sender, amount);
+        IERC20(relayToken).safeTransfer(account, amount);
     }
 
     /*----------  RESTRICTED FUNCTIONS  ---------------------------------*/
