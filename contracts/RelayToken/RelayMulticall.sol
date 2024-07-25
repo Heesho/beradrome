@@ -178,7 +178,16 @@ contract RelayMulticall {
             }
             auction.rewards[i + 1] = bribeRewards;
         }
-
     }
+
+    // deposit oBERO for relayBERO
+    // vote if can vote and there is a vote
+
+    // buy auction
+    // claim rewards from staking IVTOKENRewarder.getReward()
+    // loop through bribes and claim rewards IBribe.getReward()
+    // transfer rewards to fee flow
+    // call buy
+    // call notify reward amount
 
 }
