@@ -169,9 +169,10 @@ contract RelayMulticall {
         IERC20(oToken).safeApprove(relayToken, 0);
         IERC20(oToken).safeApprove(relayToken, amount);
         IRelayToken(relayToken).mint(address(this), amount);
+        uint256 balance = IERC20(relayToken).balanceOf(address(this));
         IERC20(relayToken).safeApprove(relayRewarder, 0);
-        IERC20(relayToken).safeApprove(relayRewarder, amount);
-        IRelayRewarder(relayRewarder).deposit(msg.sender, amount);
+        IERC20(relayToken).safeApprove(relayRewarder, balance);
+        IRelayRewarder(relayRewarder).deposit(msg.sender, balance);
         vote(relayToken); 
     }
 

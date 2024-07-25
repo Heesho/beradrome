@@ -37,6 +37,7 @@ interface IRelayFactory {
     function vToken() external view returns (address);
     function vTokenRewarder() external view returns (address);
     function voter() external view returns (address);
+    function mintFee() external view returns (uint256);
 }
 
 contract RelayToken is ERC20, ERC20Permit, ERC20Votes, Ownable, ReentrancyGuard {
@@ -44,10 +45,7 @@ contract RelayToken is ERC20, ERC20Permit, ERC20Votes, Ownable, ReentrancyGuard 
 
     /*----------  CONSTANTS  --------------------------------------------*/
 
-    uint256 public constant PRECISION = 1e18;
     uint256 public constant DIVISOR = 10000;
-    uint256 public constant ADMIN_FEE = 300;
-    uint256 public constant REWARDER_FEE = 1100;
 
     address public constant BGT = 0xbDa130737BDd9618301681329bF2e46A016ff9Ad;
     address public constant WBERA = 0x7507c1dc16935B82698e4C63f2746A2fCf994dF8;
@@ -61,6 +59,7 @@ contract RelayToken is ERC20, ERC20Permit, ERC20Votes, Ownable, ReentrancyGuard 
 
     address public delegate;
     address public feeFlow;
+    address public treasury;
 
     address[] public plugins;
     uint256[] public weights;
@@ -79,7 +78,7 @@ contract RelayToken is ERC20, ERC20Permit, ERC20Votes, Ownable, ReentrancyGuard 
 
     /*----------  EVENTS ------------------------------------------------*/
 
-    event RelayToken__Mint(address indexed minter, address indexed account, uint256 amount);
+    event RelayToken__Mint(address indexed minter, address indexed account, uint256 amount, uint256 fee);
     event RelayToken__Vote(address[] plugins, uint256[] weights);
     event RelayToken__ClaimBribes(address[] bribes);
     event RelayToken__TransferToFeeFlow(address token);
@@ -89,6 +88,7 @@ contract RelayToken is ERC20, ERC20Permit, ERC20Votes, Ownable, ReentrancyGuard 
     event RelayToken__SetFeeFlow(address feeFlow);
     event RelayToken__SetUri(string uri);
     event RelayToken__SetDescription(string description);
+    event RelayToken__SetTreasury(address treasury);
 
     /*----------  MODIFIERS  --------------------------------------------*/
 
@@ -135,6 +135,7 @@ contract RelayToken is ERC20, ERC20Permit, ERC20Votes, Ownable, ReentrancyGuard 
 
         delegate = _owner;
         feeFlow = _owner;
+        treasury = _owner;
     }
 
     function mint(address account, uint256 amount) 
@@ -142,12 +143,19 @@ contract RelayToken is ERC20, ERC20Permit, ERC20Votes, Ownable, ReentrancyGuard 
         nonReentrant
         nonZeroInput(amount)
     {
+        uint256 fee = amount * IRelayFactory(relayFactory).mintFee() / DIVISOR;
+        amount -= fee;
         _mint(account, amount);
         IERC20(oToken).safeTransferFrom(msg.sender, address(this), amount);
+
+        IERC20(oToken).safeTransferFrom(msg.sender, treasury, fee / 3);
+        IERC20(oToken).safeTransferFrom(msg.sender, IRelayFactory(relayFactory).protocol(), fee / 3);
+        IERC20(oToken).safeTransferFrom(msg.sender, IRelayFactory(relayFactory).developer(), fee / 3);
+        
         IERC20(oToken).safeApprove(vToken, 0);
         IERC20(oToken).safeApprove(vToken, amount);
         IVTOKEN(vToken).burnFor(address(this), amount);
-        emit RelayToken__Mint(msg.sender, account, amount);
+        emit RelayToken__Mint(msg.sender, account, amount, fee);
     }
 
     function vote()
@@ -237,6 +245,15 @@ contract RelayToken is ERC20, ERC20Permit, ERC20Votes, Ownable, ReentrancyGuard 
         if (bytes(_description).length > 256) revert RelayToken__InvalidInput();
         description = _description;
         emit RelayToken__SetDescription(_description);
+    }
+
+    function setTreasury(address _treasury) 
+        external 
+        onlyOwner() 
+        nonZeroAddress(_treasury) 
+    {
+        treasury = _treasury;
+        emit RelayToken__SetTreasury(_treasury);
     }
 
     /*----------  FUNCTION OVERRIDES  -----------------------------------*/

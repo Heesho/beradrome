@@ -12,7 +12,7 @@ interface IRelayRewarderFactory {
 }
 
 interface IRelayDistroFactory {
-    function createRelayDistro(address owner, address relayRewarder) external returns (address);
+    function createRelayDistro(address owner, address relayToken, address relayRewarder) external returns (address);
 }
 
 interface IRelayFeeFlowFactory {
@@ -29,6 +29,11 @@ interface IRelayRewarder {
 
 contract RelayFactory is Ownable {
 
+    uint256 public constant MINT_FEE_MIN = 0;
+    uint256 public constant MINT_FEE_MAX = 200;
+    uint256 public constant REWARD_FEE_MIN = 200;
+    uint256 public constant REWARD_FEE_MAX = 2000;
+
     address public immutable oToken;
     address public immutable vToken;
     address public immutable vTokenRewarder;
@@ -41,6 +46,9 @@ contract RelayFactory is Ownable {
 
     address public protocol;
     address public developer;
+
+    uint256 public mintFee = 100;
+    uint256 public rewardFee = 1000;
 
     struct Relay {
         address relayToken;
@@ -55,6 +63,7 @@ contract RelayFactory is Ownable {
 
     error RelayFactory__InvalidZeroAddress();
     error RelayFactory__Unauthorized();
+    error RelayFactory__InvalidInput();
 
     event RelayFactory__RelayCreated(string name, string symbol, address relayToken, address relayRewarder, address relayDistro, address relayFeeFlow);
     event RelayFactory__RelayTokenFactorySet(address relayTokenFactory);
@@ -65,6 +74,8 @@ contract RelayFactory is Ownable {
     event RelayFactory__VoterSet(address voter);
     event RelayFactory__ProtocolSet(address protocol);
     event RelayFactory__DeveloperSet(address developer);
+    event RelayFactory__MintFeeSet(uint256 mintFee);
+    event RelayFactory__RewardFeeSet(uint256 rewardFee);
 
     constructor(
         address _oToken, 
@@ -91,7 +102,7 @@ contract RelayFactory is Ownable {
     ) external {
         address relayToken = IRelayTokenFactory(relayTokenFactory).createRelayToken(msg.sender, name, symbol, uri, description);
         address relayRewarder = IRelayRewarderFactory(relayRewarderFactory).createRelayRewarder(msg.sender, relayToken);
-        address relayDistro = IRelayDistroFactory(relayDistroFactory).createRelayDistro(msg.sender, relayRewarder);
+        address relayDistro = IRelayDistroFactory(relayDistroFactory).createRelayDistro(msg.sender, relayToken, relayRewarder);
         address relayFeeFlow = IRelayFeeFlowFactory(relayFeeFlowFactory).createRelayFeeFlow(relayDistro, rewardToken, initPrice, minInitPrice);
 
         index_Relay[relayIndex] = Relay(relayToken, relayRewarder, relayDistro, relayFeeFlow);
@@ -150,6 +161,18 @@ contract RelayFactory is Ownable {
         if (_developer == address(0)) revert RelayFactory__InvalidZeroAddress();
         developer = _developer;
         emit RelayFactory__DeveloperSet(_developer);
+    }
+
+    function setMintFee(uint256 fee) external onlyOwner() {
+        if (fee < MINT_FEE_MIN || fee > MINT_FEE_MAX) revert RelayFactory__InvalidInput();
+        mintFee = fee;
+        emit RelayFactory__MintFeeSet(fee);
+    }
+
+    function setRewardFee(uint256 fee) external onlyOwner() {
+        if (fee < REWARD_FEE_MIN || fee > REWARD_FEE_MAX) revert RelayFactory__InvalidInput();
+        rewardFee = fee;
+        emit RelayFactory__RewardFeeSet(fee);
     }
 
     function getRelayByIndex(uint256 index) external view returns (address relayToken, address relayRewarder, address relayDistro, address relayFeeFlow) {

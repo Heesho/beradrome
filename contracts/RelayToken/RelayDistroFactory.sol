@@ -5,6 +5,16 @@ import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 
+interface IRelayFactory {
+    function protocol() external view returns (address);
+    function developer() external view returns (address);
+    function rewardFee() external view returns (uint256);
+}
+
+interface IRelayToken {
+    function treasury() external view returns (address);
+}
+
 interface IRelayRewarder {
     function notifyRewardAmount(address rewardToken, uint256 amount) external;
 }
@@ -15,19 +25,27 @@ contract RelayDistro is Ownable, ReentrancyGuard {
     /*----------  CONSTANTS  --------------------------------------------*/
 
     uint256 public constant DURATION = 7 days;
+    uint256 public constant DIVISOR = 10000;
 
     /*----------  STATE VARIABLES  --------------------------------------*/
 
-    address public relayFactory;
-    address public relayRewarder;
+    address public immutable relayFactory;
+    address public immutable relayToken;
+    address public immutable relayRewarder;
+
+    /*----------  EVENTS  ----------------------------------------------*/
+
+    event RelayDistro__RewardDistributed(address indexed rewardToken, uint256 amount);
 
     /*----------  FUNCTIONS  --------------------------------------------*/
 
     constructor(
         address _relayFactory,
+        address _relayToken,
         address _relayRewarder
     ) {
         relayFactory = _relayFactory;
+        relayToken = _relayToken;
         relayRewarder = _relayRewarder;
     } 
 
@@ -35,9 +53,17 @@ contract RelayDistro is Ownable, ReentrancyGuard {
         for (uint256 i = 0; i < rewardTokens.length; i++) {
             uint256 balance = IERC20(rewardTokens[i]).balanceOf(address(this));
             if (balance > DURATION) {
+                uint256 fee = balance * IRelayFactory(relayFactory).rewardFee() / DIVISOR;
+                balance -= fee;
+                
+                IERC20(rewardTokens[i]).safeTransfer(IRelayToken(relayToken).treasury(), fee / 3);
+                IERC20(rewardTokens[i]).safeTransfer(IRelayFactory(relayFactory).protocol(), fee  /3);
+                IERC20(rewardTokens[i]).safeTransfer(IRelayFactory(relayFactory).developer(), fee / 3);
+
                 IERC20(rewardTokens[i]).safeApprove(relayRewarder, 0);
                 IERC20(rewardTokens[i]).safeApprove(relayRewarder, balance);
                 IRelayRewarder(relayRewarder).notifyRewardAmount(rewardTokens[i], balance);
+                emit RelayDistro__RewardDistributed(rewardTokens[i], balance);
             }
         }
     }
@@ -70,8 +96,8 @@ contract RelayDistroFactory {
         emit RelayDistroFactory__RelayFactorySet(_relayFactory);
     }
 
-    function createRelayDistro(address owner, address relayRewarder) external onlyRelayFactory returns (address) {
-        RelayDistro relayDistro = new RelayDistro(relayFactory, relayRewarder);
+    function createRelayDistro(address owner, address relayToken, address relayRewarder) external onlyRelayFactory returns (address) {
+        RelayDistro relayDistro = new RelayDistro(relayFactory, relayToken, relayRewarder);
         relayDistro.transferOwnership(owner);
         lastRelayDistro = address(relayDistro);
         emit RelayDistroFactory__RelayDistroCreated(lastRelayDistro);

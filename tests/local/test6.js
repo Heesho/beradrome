@@ -728,7 +728,9 @@ describe.only("local: test6 relay token testing multicall", function () {
 
   it("User1 withdraws 5 relayToken", async function () {
     console.log("******************************************************");
-    await relayRewarder.connect(user1).withdraw(user1.address, five);
+    await relayRewarder
+      .connect(user1)
+      .withdraw(user1.address, await relayRewarder.balanceOf(user1.address));
     console.log(
       "User1 relayToken Balance: ",
       divDec(await relayToken.balanceOf(user1.address))
