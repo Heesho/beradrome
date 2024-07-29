@@ -1040,4 +1040,105 @@ describe.only("local: test6 relay token testing multicall", function () {
     await relayRewarder.connect(user0).getReward(user0.address);
     console.log("BASE", divDec(await BASE.balanceOf(user0.address)));
   });
+
+  it("Forward 7 days", async function () {
+    console.log("******************************************************");
+    await network.provider.send("evm_increaseTime", [7 * 24 * 3600]);
+    await network.provider.send("evm_mine");
+  });
+
+  it("RelayFeeFlow buy", async function () {
+    console.log("******************************************************");
+    const price = await relayFeeFlow.getPrice();
+    await BASE.connect(owner).approve(relayMulticall.address, price);
+    await relayMulticall
+      .connect(owner)
+      .buyAuction(relayToken.address, 1792282187);
+  });
+
+  it("Owner sets Fee Flow", async function () {
+    console.log("******************************************************");
+    await relayFactory
+      .connect(owner)
+      .setRelayFeeFlow(relayToken.address, fiveHundred, ten);
+  });
+
+  it("AuctionData", async function () {
+    console.log("******************************************************");
+    let res = await relayMulticall.getAuction(relayToken.address);
+    console.log(
+      util.inspect(res, { showHidden: false, depth: null, colors: true })
+    );
+  });
+
+  it("Owner creates bribe on plugin0", async function () {
+    console.log("******************************************************");
+    await BASE.connect(owner).mint(owner.address, 1000);
+    await BASE.connect(owner).approve(bribe0.address, ten);
+    await bribe0.connect(owner).notifyRewardAmount(BASE.address, ten);
+  });
+
+  it("Forward 1 days", async function () {
+    console.log("******************************************************");
+    await network.provider.send("evm_increaseTime", [24 * 3600]);
+    await network.provider.send("evm_mine");
+  });
+
+  it("AuctionData", async function () {
+    console.log("******************************************************");
+    let res = await relayMulticall.getAuction(relayToken.address);
+    console.log(
+      util.inspect(res, { showHidden: false, depth: null, colors: true })
+    );
+  });
+
+  it("Forward 1 days", async function () {
+    console.log("******************************************************");
+    await network.provider.send("evm_increaseTime", [24 * 3600]);
+    await network.provider.send("evm_mine");
+  });
+
+  it("RelayRewarder balances", async function () {
+    console.log("******************************************************");
+    console.log("BASE", divDec(await BASE.balanceOf(relayRewarder.address)));
+    console.log("TOKEN", divDec(await TOKEN.balanceOf(relayRewarder.address)));
+    console.log(
+      "oTOKEN",
+      divDec(await OTOKEN.balanceOf(relayRewarder.address))
+    );
+    console.log();
+    console.log("TEST0", divDec(await TEST0.balanceOf(relayRewarder.address)));
+    console.log("TEST1", divDec(await TEST1.balanceOf(relayRewarder.address)));
+    console.log("TEST2", divDec(await TEST2.balanceOf(relayRewarder.address)));
+    console.log("TEST3", divDec(await TEST3.balanceOf(relayRewarder.address)));
+  });
+
+  it("RelayFeeFlow buy", async function () {
+    console.log("******************************************************");
+    const price = await relayMulticall.getFeeFlowPrice(relayToken.address);
+    console.log(
+      "User1 BASE Balance: ",
+      divDec(await BASE.balanceOf(user1.address))
+    );
+    console.log("Cost: ", divDec(price));
+    await BASE.connect(user1).approve(relayMulticall.address, price);
+    await relayMulticall
+      .connect(user1)
+      .buyAuction(relayToken.address, 1792282187);
+  });
+
+  it("RelayRewarder balances", async function () {
+    console.log("******************************************************");
+    console.log("BASE", divDec(await BASE.balanceOf(relayRewarder.address)));
+    console.log("TOKEN", divDec(await TOKEN.balanceOf(relayRewarder.address)));
+    console.log(
+      "oTOKEN",
+      divDec(await OTOKEN.balanceOf(relayRewarder.address))
+    );
+    console.log();
+    console.log("TEST0", divDec(await TEST0.balanceOf(relayRewarder.address)));
+    console.log("TEST1", divDec(await TEST1.balanceOf(relayRewarder.address)));
+    console.log("TEST2", divDec(await TEST2.balanceOf(relayRewarder.address)));
+    console.log("TEST3", divDec(await TEST3.balanceOf(relayRewarder.address)));
+  });
 });

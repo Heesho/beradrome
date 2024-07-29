@@ -297,4 +297,9 @@ contract RelayMulticall {
 
     }
 
+    function getFeeFlowPrice(address relayToken) public view returns (uint256 price) {
+        (, , address relayFeeFlow) = IRelayFactory(relayFactory).getRelayByToken(relayToken);
+        price = IRelayFeeFlow(relayFeeFlow).getPrice();
+    }
+
 }

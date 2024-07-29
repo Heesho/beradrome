@@ -55,6 +55,7 @@ contract RelayFactory is Ownable {
         address relayRewarder;
         address relayDistro;
         address relayFeeFlow;
+        address rewardToken;
     } 
 
     uint256 public relayIndex = 0;
@@ -71,6 +72,7 @@ contract RelayFactory is Ownable {
     event RelayFactory__RelayDistroFactorySet(address relayDistroFactory);
     event RelayFactory__RelayFeeFlowFactorySet(address relayFeeFlowFactory);
     event RelayFactory__RewardAdded(address relayRewarder, address rewardToken);
+    event RelayFactory__FeeFlowSet(uint256 index, address relayToken, address relayFeeFlow);
     event RelayFactory__VoterSet(address voter);
     event RelayFactory__ProtocolSet(address protocol);
     event RelayFactory__DeveloperSet(address developer);
@@ -105,7 +107,7 @@ contract RelayFactory is Ownable {
         address relayDistro = IRelayDistroFactory(relayDistroFactory).createRelayDistro(msg.sender, relayToken, relayRewarder);
         address relayFeeFlow = IRelayFeeFlowFactory(relayFeeFlowFactory).createRelayFeeFlow(relayDistro, rewardToken, initPrice, minInitPrice);
 
-        index_Relay[relayIndex] = Relay(relayToken, relayRewarder, relayDistro, relayFeeFlow);
+        index_Relay[relayIndex] = Relay(relayToken, relayRewarder, relayDistro, relayFeeFlow, rewardToken);
         relayToken_Index[relayToken] = relayIndex;
         relayIndex++;
 
@@ -148,6 +150,16 @@ contract RelayFactory is Ownable {
     function addReward(address relayRewarder, address rewardToken) external onlyOwner() {
         IRelayRewarder(relayRewarder).addReward(rewardToken);
         emit RelayFactory__RewardAdded(relayRewarder, rewardToken);
+    }
+
+    function setRelayFeeFlow(address relayToken, uint256 initPrice, uint256 minInitPrice) external onlyOwner() {
+        uint256 index = relayToken_Index[relayToken];
+        address relayDistro = index_Relay[index].relayDistro;
+        address rewardToken = index_Relay[index].rewardToken;
+        address relayFeeFlow = IRelayFeeFlowFactory(relayFeeFlowFactory).createRelayFeeFlow(relayDistro, rewardToken, initPrice, minInitPrice);
+        IRelayToken(relayToken).setFeeFlow(relayFeeFlow);
+        index_Relay[index].relayFeeFlow = relayFeeFlow;
+        emit RelayFactory__FeeFlowSet(index, relayToken, relayFeeFlow);
     }
 
     function setProtocol(address _protocol) external onlyOwner() {

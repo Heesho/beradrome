@@ -677,10 +677,10 @@ async function main() {
   //===================================================================
 
   console.log("Distributing Rewards");
-  // await voter.distro();
-  // console.log("Voter Rewards Distributed");
-  // await fees.distribute();
-  // console.log("Fees Rewards Distributed");
+  await voter.distro();
+  console.log("Voter Rewards Distributed");
+  await fees.distribute();
+  console.log("Fees Rewards Distributed");
   await voter.distributeToBribes([
     "0x37e888f8a28BF1DA9761bbDd914fA4280dA434a8",
     "0x9D7A7198eCfe07414C5e9B3e233878Fcc30B9048",

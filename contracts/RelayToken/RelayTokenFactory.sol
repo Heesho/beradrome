@@ -74,7 +74,7 @@ contract RelayToken is ERC20, ERC20Permit, ERC20Votes, Ownable, ReentrancyGuard 
     error RelayToken__InvalidZeroAddress();
     error RelayToken__NotDelegate();
     error RelayToken__InvalidVote();
-    error RelayToken__NotAdmin();
+    error RelayToken__NotAuthorized();
 
     /*----------  EVENTS ------------------------------------------------*/
 
@@ -104,11 +104,6 @@ contract RelayToken is ERC20, ERC20Permit, ERC20Votes, Ownable, ReentrancyGuard 
 
     modifier onlyDelegate() {
         if (msg.sender != owner() && msg.sender != delegate) revert RelayToken__NotDelegate();
-        _;
-    }
-
-    modifier onlyAdmin() {
-        if (msg.sender != owner() && msg.sender != relayFactory) revert RelayToken__NotAdmin();
         _;
     }
 
@@ -212,7 +207,7 @@ contract RelayToken is ERC20, ERC20Permit, ERC20Votes, Ownable, ReentrancyGuard 
 
     function setDelegate(address _delegate) 
         external 
-        onlyAdmin() 
+        onlyDelegate() 
         nonZeroAddress(_delegate) 
     {
         delegate = _delegate;
@@ -221,16 +216,16 @@ contract RelayToken is ERC20, ERC20Permit, ERC20Votes, Ownable, ReentrancyGuard 
 
     function setFeeFlow(address _feeFlow) 
         external 
-        onlyAdmin() 
         nonZeroAddress(_feeFlow) 
     {
+        if (msg.sender != relayFactory) revert RelayToken__NotAuthorized();
         feeFlow = _feeFlow;
         emit RelayToken__SetFeeFlow(_feeFlow);
     }
 
     function setUri(string calldata _uri) 
         external 
-        onlyAdmin() 
+        onlyOwner() 
     {
         if (bytes(_uri).length == 0) revert RelayToken__InvalidInput();
         uri = _uri;
@@ -239,7 +234,7 @@ contract RelayToken is ERC20, ERC20Permit, ERC20Votes, Ownable, ReentrancyGuard 
 
     function setDescription(string calldata _description) 
         external 
-        onlyAdmin() 
+        onlyOwner() 
     {
         if (bytes(_description).length == 0) revert RelayToken__InvalidInput();
         if (bytes(_description).length > 256) revert RelayToken__InvalidInput();

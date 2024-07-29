@@ -2156,9 +2156,9 @@ describe.only("local: test5 relay token testing", function () {
 
   it("RelayOwner sets relay token delegate to relayDelegate", async function () {
     console.log("******************************************************");
+    await relayToken.connect(relayOwner).setDelegate(relayDelegate.address);
     await expect(relayToken.connect(owner).setDelegate(relayDelegate.address))
       .to.be.reverted;
-    await relayToken.connect(relayOwner).setDelegate(relayDelegate.address);
   });
 
   it("User0 calls transferToFeeFlow", async function () {
