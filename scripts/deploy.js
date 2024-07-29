@@ -496,8 +496,7 @@ async function setUpSystem(wallet) {
 
   let amount = await OTOKEN.totalSupply();
   amount = amount.div(10);
-  await OTOKEN.approve(VTOKEN.address, amount);
-  await VTOKEN.burnFor(BUILDER_ADDRESS, amount);
+  await OTOKEN.transfer(BUILDER_ADDRESS, amount);
   amount = await OTOKEN.balanceOf(wallet);
   await OTOKEN.transfer(MULTISIG, amount);
   console.log("OTOKEN Allocated");
@@ -531,24 +530,24 @@ async function setUpSystem(wallet) {
 }
 
 async function transferOwnership() {
-  // await minter.setTeam(MULTISIG);
-  // await sleep(5000);
-  // console.log("Minter team set to MULTISIG");
+  await minter.setTeam(MULTISIG);
+  await sleep(5000);
+  console.log("Minter team set to MULTISIG");
 
-  // await minter.transferOwnership(MULTISIG);
-  //   await minter.transferOwnership(governor.address);
-  // await sleep(5000);
-  // console.log("Minter ownership transferred to governor");
+  await minter.transferOwnership(MULTISIG);
+  await minter.transferOwnership(governor.address);
+  await sleep(5000);
+  console.log("Minter ownership transferred to governor");
 
   await voter.transferOwnership(MULTISIG);
-  //   await voter.transferOwnership(governor.address);
-  // await sleep(5000);
-  // console.log("Voter ownership transferred to governor");
+  await voter.transferOwnership(governor.address);
+  await sleep(5000);
+  console.log("Voter ownership transferred to governor");
 
-  // await VTOKEN.transferOwnership(MULTISIG);
-  //   await VTOKEN.transferOwnership(governor.address);
-  // await sleep(5000);
-  // console.log("VTOKEN ownership transferred to governor");
+  await VTOKEN.transferOwnership(MULTISIG);
+  await VTOKEN.transferOwnership(governor.address);
+  await sleep(5000);
+  console.log("VTOKEN ownership transferred to governor");
 }
 
 async function main() {
