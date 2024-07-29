@@ -26,7 +26,7 @@ const TOKEN1 = "0xd6D83aF58a19Cd14eF3CF6fe848C9A4d21e5727c"; // USDC address
 // const TOKEN1 = "0x6E1E9896e93F7A71ECB33d4386b49DeeD67a231A"; // WETH address
 
 // const LP_SYMBOL = "HONEY-WBTC"; // Desired symbol for LP plugin
-// const LP_ADDRESS = ""; // Address of LP token
+// const LP_ADDRESS = "0x14Ee0A8dCD1714781AA0d026f46FC7f77b73C01d"; // Address of LP token
 // const TOKEN0 = "0x0E4aaF1351de4c0264C5c7056Ef3777b41BD8e03"; // HONEY address
 // const TOKEN1 = "0x286F1C3f0323dB9c91D1E8f45c8DF2d065AB5fae"; // WBTC address
 
