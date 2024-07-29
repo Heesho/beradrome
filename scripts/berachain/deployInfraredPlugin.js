@@ -19,30 +19,42 @@ const SYMBOL0 = "iBGT";
 // bHONEY
 const VAULT1 = "0x7d91bf5851b3a8bcf8c39a69af2f0f98a4e2202a";
 const TOKENS1 = ["0x1306D3c36eC7E38dd2c128fBe3097C2C2449af64"]; // bHONEY
-const REWARDS1 = ["0x46efc86f0d7455f135cc9df501673739d513e982"]; // IGBT
+const REWARDS1 = ["0x46efc86f0d7455f135cc9df501673739d513e982"]; // IBGT
 const SYMBOL1 = "bHONEY";
 
 // HONEY-USDC
 const VAULT2 = "0x675547750f4acdf64ed72e9426293f38d8138ca8";
-const TOKENS2 = ["0x0E4aaF1351de4c0264C5c7056Ef3777b41BD8e03", "0xd6D83aF58a19Cd14eF3CF6fe848C9A4d21e5727c"]; // HONEY, USDC
+const TOKENS2 = [
+  "0x0E4aaF1351de4c0264C5c7056Ef3777b41BD8e03",
+  "0xd6D83aF58a19Cd14eF3CF6fe848C9A4d21e5727c",
+]; // HONEY, USDC
 const REWARDS2 = ["0x46efc86f0d7455f135cc9df501673739d513e982"]; // IBGT
 const SYMBOL2 = "HONEY-USDC";
 
 // HONEY-WBTC
 const VAULT3 = "0x42faa63ab12825ec2efb6ff01d7c1cf1327c3bab";
-const TOKENS3 = ["0x0E4aaF1351de4c0264C5c7056Ef3777b41BD8e03", "0x286F1C3f0323dB9c91D1E8f45c8DF2d065AB5fae"]; // HONEY, WBTC
+const TOKENS3 = [
+  "0x0E4aaF1351de4c0264C5c7056Ef3777b41BD8e03",
+  "0x286F1C3f0323dB9c91D1E8f45c8DF2d065AB5fae",
+]; // HONEY, WBTC
 const REWARDS3 = ["0x46efc86f0d7455f135cc9df501673739d513e982"]; // IBGT
 const SYMBOL3 = "HONEY-WBTC";
 
-// HONEY-ETH
+// HONEY-WETH
 const VAULT4 = "0xa9480499b1faeaf225ceb88ade69de10b7f86c1e";
-const TOKENS4 = ["0x0E4aaF1351de4c0264C5c7056Ef3777b41BD8e03", "0x6E1E9896e93F7A71ECB33d4386b49DeeD67a231A"]; // HONEY, ETH
+const TOKENS4 = [
+  "0x0E4aaF1351de4c0264C5c7056Ef3777b41BD8e03",
+  "0x6E1E9896e93F7A71ECB33d4386b49DeeD67a231A",
+]; // HONEY, ETH
 const REWARDS4 = ["0x46efc86f0d7455f135cc9df501673739d513e982"]; // IBGT
-const SYMBOL4 = "HONEY-ETH";
+const SYMBOL4 = "HONEY-WETH";
 
 // HONEY-WBERA
 const VAULT5 = "0x5c5f9a838747fb83678ece15d85005fd4f558237";
-const TOKENS5 = ["0x0E4aaF1351de4c0264C5c7056Ef3777b41BD8e03", "0x7507c1dc16935B82698e4C63f2746A2fCf994dF8"]; // HONEY, WBERA
+const TOKENS5 = [
+  "0x0E4aaF1351de4c0264C5c7056Ef3777b41BD8e03",
+  "0x7507c1dc16935B82698e4C63f2746A2fCf994dF8",
+]; // HONEY, WBERA
 const REWARDS5 = ["0x46efc86f0d7455f135cc9df501673739d513e982"]; // IBGT
 const SYMBOL5 = "HONEY-WBERA";
 
@@ -62,9 +74,9 @@ let plugin;
 
 async function getContracts() {
   pluginFactory = await ethers.getContractAt(
-  //   "contracts/plugins/berachain/InfraredVaultPluginFactory.sol:InfraredVaultPluginFactory",
-  //   "0x0000000000000000000000000000000000000000"
-  // );
+    "contracts/plugins/berachain/InfraredVaultPluginFactory.sol:InfraredVaultPluginFactory",
+    "0x9C356543AB03f9c069B97c69717bdDF82302Ad7b"
+  );
   // plugin = await ethers.getContractAt("contracts/plugins/berachain/InfraredVaultPluginFactory.sol:InfraredVaultPlugin", "0x0000000000000000000000000000000000000000");
 
   console.log("Contracts Retrieved");
@@ -106,7 +118,7 @@ async function verifyPluginFactory() {
 
 async function deployPlugin() {
   console.log("Starting Plugin Deployment");
-  await pluginFactory.createPlugin(VAULT0, TOKENS0, REWARDS0, SYMBOL0, {
+  await pluginFactory.createPlugin(VAULT5, TOKENS5, REWARDS5, SYMBOL5, {
     gasPrice: ethers.gasPrice,
   });
   await sleep(5000);
@@ -162,7 +174,7 @@ async function main() {
   //===================================================================
   // Only deploy one plugin at a time
 
-  // await deployPlugin();
+  await deployPlugin();
 
   /*********** UPDATE getContracts() with new addresses *************/
 

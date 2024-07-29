@@ -9,10 +9,26 @@ const hre = require("hardhat");
 const VOTER_ADDRESS = "0x580ABF764405aA82dC96788b356435474c5956A7";
 
 // Plugin settings
-const LP_SYMBOL = "HONEY-WBERA"; // Desired symbol for LP plugin
-const LP_ADDRESS = "0xd28d852cbcc68DCEC922f6d5C7a8185dBaa104B7"; // Address of LP token
+
+// const LP_SYMBOL = "HONEY-WBERA"; // Desired symbol for LP plugin
+// const LP_ADDRESS = "0xd28d852cbcc68DCEC922f6d5C7a8185dBaa104B7"; // Address of LP token
+// const TOKEN0 = "0x0E4aaF1351de4c0264C5c7056Ef3777b41BD8e03"; // HONEY address
+// const TOKEN1 = "0x7507c1dc16935B82698e4C63f2746A2fCf994dF8"; // WBERA address
+
+const LP_SYMBOL = "HONEY-USDC"; // Desired symbol for LP plugin
+const LP_ADDRESS = "0xD69ADb6FB5fD6D06E6ceEc5405D95A37F96E3b96"; // Address of LP token
 const TOKEN0 = "0x0E4aaF1351de4c0264C5c7056Ef3777b41BD8e03"; // HONEY address
-const TOKEN1 = "0x7507c1dc16935B82698e4C63f2746A2fCf994dF8"; // WBERA address
+const TOKEN1 = "0xd6D83aF58a19Cd14eF3CF6fe848C9A4d21e5727c"; // USDC address
+
+// const LP_SYMBOL = "HONEY-WETH"; // Desired symbol for LP plugin
+// const LP_ADDRESS = "0xfbE71d98f9D2c658d52a2d72994c717637C3ddA1"; // Address of LP token
+// const TOKEN0 = "0x0E4aaF1351de4c0264C5c7056Ef3777b41BD8e03"; // HONEY address
+// const TOKEN1 = "0x6E1E9896e93F7A71ECB33d4386b49DeeD67a231A"; // WETH address
+
+// const LP_SYMBOL = "HONEY-WBTC"; // Desired symbol for LP plugin
+// const LP_ADDRESS = ""; // Address of LP token
+// const TOKEN0 = "0x0E4aaF1351de4c0264C5c7056Ef3777b41BD8e03"; // HONEY address
+// const TOKEN1 = "0x286F1C3f0323dB9c91D1E8f45c8DF2d065AB5fae"; // WBTC address
 
 /*===========================  END SETTINGS  ========================*/
 /*===================================================================*/
