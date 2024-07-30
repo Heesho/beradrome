@@ -7,6 +7,7 @@ import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 interface IRelayFactory {
     function getRelayByIndex(uint256 index) external view returns (address relayToken, address relayRewarder, address relayDistro, address relayFeeFlow);
     function getRelayByToken(address relayToken) external view returns (address relayRewarder, address relayDistro, address relayFeeFlow);
+    function relayIndex() external view returns (uint256);
 }
 
 interface IRelayToken {
@@ -230,6 +231,15 @@ contract RelayMulticall {
         }
     }
 
+    function getRelays(uint256 start, uint256 end) public view returns (Relay[] memory relays) {
+        uint256 length = end - start;
+        relays = new Relay[](length);
+        for (uint256 i = 0; i < length; i++) {
+            (address relayToken, , , ) = IRelayFactory(relayFactory).getRelayByIndex(start + i);
+            relays[i] = getRelay(relayToken, address(0));
+        }
+    }
+
     function getAuction(address relayToken) public view returns (Auction memory auction) {
         auction.relayToken = relayToken;
         (auction.relayRewarder, auction.relayDistro, auction.relayFeeFlow) = IRelayFactory(relayFactory).getRelayByToken(relayToken);
@@ -260,6 +270,15 @@ contract RelayMulticall {
                 bribeRewards[j].amount = IBribe(bribe).earned(relayToken, bribeRewardTokens[j]);
             }
             auction.rewards[i + 1] = bribeRewards;
+        }
+    }
+
+    function getAuctions(uint256 start, uint256 end) public view returns (Auction[] memory auctions) {
+        uint256 length = end - start;
+        auctions = new Auction[](length);
+        for (uint256 i = 0; i < length; i++) {
+            (address relayToken, , , ) = IRelayFactory(relayFactory).getRelayByIndex(start + i);
+            auctions[i] = getAuction(relayToken);
         }
     }
 
@@ -300,6 +319,10 @@ contract RelayMulticall {
     function getFeeFlowPrice(address relayToken) public view returns (uint256 price) {
         (, , address relayFeeFlow) = IRelayFactory(relayFactory).getRelayByToken(relayToken);
         price = IRelayFeeFlow(relayFeeFlow).getPrice();
+    }
+
+    function getRelayLength() public view returns (uint256) {
+        return IRelayFactory(relayFactory).relayIndex();
     }
 
 }
