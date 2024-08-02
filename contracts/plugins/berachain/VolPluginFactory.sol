@@ -8,22 +8,7 @@ import "contracts/interfaces/IGauge.sol";
 import "contracts/interfaces/IBribe.sol";
 import "contracts/interfaces/IVoter.sol";
 
-/**
- * @title Plugin
- * @author heesho
- * 
- * Plugins are contracts that can be used to integrate a yield-bearing asset with the Voting system.
- * The idea is that when a yield-bearing asset is added to this system, users can deposit it in a Plugin
- * to earn OTOKEN rewards. The Plugin will strip the yield from the yield-bearing asset and distribute it
- * as a voting reward to VTOKEN holders that voted for the Plugin. The Plugin contract is in charge of 
- * accepting deposits/withdrawals from accounts and updating their balances in the corresponding Gauge contract
- * so that they can receive OTOKEN rewards. The Plugin is also in charge of harvesting yield from the yield-bearing
- * asset (underlying) and distributing that yield to its corresponding Bribe contract.
- * 
- * Plugin balanceOf must be equal to Gauge balanceOf for all users at all times.
- * Plugin totalSupply must be equal to Gauge totalSupply at all times.
- */
-contract PolPlugin is ReentrancyGuard {
+contract VolPlugin is ReentrancyGuard {
     using SafeERC20 for IERC20Metadata;
 
     /*----------  CONSTANTS  --------------------------------------------*/
@@ -60,12 +45,15 @@ contract PolPlugin is ReentrancyGuard {
 
     error Plugin__InvalidZeroInput();
     error Plugin__NotAuthorizedVoter();
+    error Plugin__DeadlinePassed();
+    error Plugin__EpochIdMismatch();
+    error Plugin__MaxPaymentAmountExceeded();
 
     /*----------  EVENTS ------------------------------------------------*/
 
-    event Plugin__Deposited(address indexed account, uint256 amount);
-    event Plugin__Withdrawn(address indexed account, uint256 amount);
+    event Plugin__Initialized();
     event Plugin__ClaimedAnDistributed();
+    event Plugin__Buy(address indexed buyer, address indexed assetReceiver, uint256 paymentAmount);
 
     /*----------  MODIFIERS  --------------------------------------------*/
 
@@ -108,19 +96,20 @@ contract PolPlugin is ReentrancyGuard {
     }
 
     function claimAndDistribute() public virtual nonReentrant {
+        // should send all underlying to bribe contract
         emit Plugin__ClaimedAnDistributed();
     }
 
     function buy(address assetReceiver, uint256 epochId, uint256 deadline, uint256 maxPaymentTokenAmount) external nonReentrant returns (uint256 paymentAmount) {
-        // if (block.timestamp > deadline) revert Plugin__DeadlinePassed();
+        if (block.timestamp > deadline) revert Plugin__DeadlinePassed();
 
         Auction memory auctionCache = auction;
 
-        // if (epochId != auctionCache.epochId) revert Plugin__EpochIdMismatch();
+        if (epochId != auctionCache.epochId) revert Plugin__EpochIdMismatch();
 
         paymentAmount = getPriceFromCache(auctionCache);
 
-        // if (paymentAmount > maxPaymentTokenAmount) revert Plugin__MaxPaymentAmountExceeded();
+        if (paymentAmount > maxPaymentTokenAmount) revert Plugin__MaxPaymentAmountExceeded();
 
         if (paymentAmount > 0) {
             underlying.safeTransferFrom(msg.sender, address(this), paymentAmount);
@@ -144,7 +133,7 @@ contract PolPlugin is ReentrancyGuard {
 
         auction = auctionCache;
 
-        // emit Plugin__Buy(msg.sender, assetReceiver, paymenAmount);
+        emit Plugin__Buy(msg.sender, assetReceiver, paymentAmount);
 
         return paymentAmount;
     }
@@ -163,7 +152,7 @@ contract PolPlugin is ReentrancyGuard {
     function initialize()
         internal
     {
-        emit Plugin__Deposited(address(this), AMOUNT);
+        emit Plugin__Initialized();
         IGauge(gauge)._deposit(address(this), AMOUNT);
     }
 
@@ -240,9 +229,9 @@ contract PolPlugin is ReentrancyGuard {
     }
 }
 
-contract PolPluginFactory {
+contract VolPluginFactory {
 
-    string public constant PROTOCOL = 'Protocol Owned Liquidity';
+    string public constant PROTOCOL = 'Voter Owned Liquidity';
 
     address public immutable VOTER;
 
@@ -264,7 +253,7 @@ contract PolPluginFactory {
         uint256 _priceMultiplier
     ) external returns (address) {
 
-        PolPlugin lastPlugin = new PolPlugin(
+        VolPlugin lastPlugin = new VolPlugin(
             _paymentToken,
             VOTER,
             _tokensInUnderlying,
