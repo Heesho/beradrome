@@ -96,7 +96,12 @@ contract VolPlugin is ReentrancyGuard {
     }
 
     function claimAndDistribute() public virtual nonReentrant {
-        // should send all underlying to bribe contract
+        uint256 balance = underlying.balanceOf(address(this));
+        if (balance > DURATION) {
+            underlying.safeApprove(bribe, 0);
+            underlying.safeApprove(bribe, balance);
+            IBribe(bribe).notifyRewardAmount(address(underlying), balance);
+        }
         emit Plugin__ClaimedAnDistributed();
     }
 
