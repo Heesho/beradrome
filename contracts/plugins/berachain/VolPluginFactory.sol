@@ -13,10 +13,11 @@ contract VolPlugin is ReentrancyGuard {
 
     /*----------  CONSTANTS  --------------------------------------------*/
 
-    uint256 constant AMOUNT = 1e18;
-    uint256 constant PRECISION = 1e18;
-    uint256 constant DURATION = 7 days;
+    uint256 constant public AMOUNT = 1e18;
+    uint256 constant public PRECISION = 1e18;
+    uint256 constant public DURATION = 7 days;
     uint256 constant public ABS_MAX_INIT_PRICE = type(uint192).max;
+    uint256 constant public PRICE_MULITPLIER = 2e18;
 
     /*----------  STATE VARIABLES  --------------------------------------*/
 
@@ -30,7 +31,6 @@ contract VolPlugin is ReentrancyGuard {
     address[] private tokensInUnderlying;
     address[] private bribeTokens;
 
-    uint256 public immutable priceMultiplier;
     uint256 public immutable minInitPrice;
 
     struct Auction {
@@ -77,8 +77,7 @@ contract VolPlugin is ReentrancyGuard {
         string memory _protocol,
         string memory _symbol,
         uint256 _initPrice,
-        uint256 _minInitPrice,
-        uint256 _priceMultiplier
+        uint256 _minInitPrice
     ) {
         underlying = IERC20Metadata(_underlying);
         voter = _voter;
@@ -92,7 +91,6 @@ contract VolPlugin is ReentrancyGuard {
         auction.startTime = block.timestamp;
 
         minInitPrice = _minInitPrice;
-        priceMultiplier = _priceMultiplier;
     }
 
     function claimAndDistribute() public virtual nonReentrant {
@@ -124,7 +122,7 @@ contract VolPlugin is ReentrancyGuard {
         uint256 balance = IERC20Metadata(OTOKEN).balanceOf(address(this));
         IERC20Metadata(OTOKEN).safeTransfer(assetReceiver, balance);
 
-        uint256 newInitPrice = paymentAmount * priceMultiplier / PRECISION;
+        uint256 newInitPrice = paymentAmount * PRICE_MULITPLIER / PRECISION;
 
         if (newInitPrice > ABS_MAX_INIT_PRICE) {
             newInitPrice = ABS_MAX_INIT_PRICE;
@@ -251,23 +249,23 @@ contract VolPluginFactory {
     function createPlugin(
         address _paymentToken,
         address[] memory _tokensInUnderlying,
-        address[] memory _bribeTokens,
         string memory _symbol,
         uint256 _initPrice,
-        uint256 _minInitPrice,
-        uint256 _priceMultiplier
+        uint256 _minInitPrice
     ) external returns (address) {
+
+        address[] memory bribeTokens = new address[](1);
+        bribeTokens[0] = _paymentToken;
 
         VolPlugin lastPlugin = new VolPlugin(
             _paymentToken,
             VOTER,
             _tokensInUnderlying,
-            _bribeTokens,
+            bribeTokens,
             PROTOCOL,
             _symbol,
             _initPrice,
-            _minInitPrice,
-            _priceMultiplier
+            _minInitPrice
         );
         last_plugin = address(lastPlugin);
         emit Plugin__PluginCreated(last_plugin);
