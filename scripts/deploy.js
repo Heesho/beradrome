@@ -687,28 +687,28 @@ async function main() {
   // 11. Distro Rewards
   //===================================================================
 
-  // console.log("Distributing Rewards");
-  // await voter.distro();
-  // console.log("Voter Rewards Distributed");
-  // await fees.distribute();
-  // console.log("Fees Rewards Distributed");
-  // await voter.distributeToBribes([
-  //   "0x37e888f8a28BF1DA9761bbDd914fA4280dA434a8",
-  //   "0x9D7A7198eCfe07414C5e9B3e233878Fcc30B9048",
-  //   "0xfE12B5f5adb8E20F7C43A6014844479e7dC8Dc49",
-  //   "0xb3D10C15360e444aBB2673D772D6f2EE32AAaB34",
-  //   "0x80D7759Fa55f6a1F661D5FCBB3bC5164Dc63eb4D",
-  //   "0x61d0b4fbB9d507F64112e859523524AA2c548A6C",
-  // ]);
-  // await voter.distributeToBribes([
-  //   "0xE9EE66a91F540A6E5297b1B1780061278AB1ac78",
-  //   "0x7Ab142C0FD1aF1EE0C52e80b251b3CF153Ad4033",
-  //   "0x017A47E19e02d4aAf88738B8C78DE2a48904b2e1",
-  //   "0xb5469370776D165E82D726F36e3e0933c307d4c4",
-  //   "0x170d64FB2FCD6bB6639eD0D37b981F6Af0E26C3a",
-  //   "0x120E4B564D608ab8ea110df0a1429998cCA580D0",
-  // ]);
-  // console.log("Bribe Rewards Distributed");
+  console.log("Distributing Rewards");
+  await voter.distro();
+  console.log("Voter Rewards Distributed");
+  await fees.distribute();
+  console.log("Fees Rewards Distributed");
+  await voter.distributeToBribes([
+    "0x37e888f8a28BF1DA9761bbDd914fA4280dA434a8",
+    "0x9D7A7198eCfe07414C5e9B3e233878Fcc30B9048",
+    "0xfE12B5f5adb8E20F7C43A6014844479e7dC8Dc49",
+    "0xb3D10C15360e444aBB2673D772D6f2EE32AAaB34",
+    "0x80D7759Fa55f6a1F661D5FCBB3bC5164Dc63eb4D",
+    "0x61d0b4fbB9d507F64112e859523524AA2c548A6C",
+  ]);
+  await voter.distributeToBribes([
+    "0xE9EE66a91F540A6E5297b1B1780061278AB1ac78",
+    "0x7Ab142C0FD1aF1EE0C52e80b251b3CF153Ad4033",
+    "0x017A47E19e02d4aAf88738B8C78DE2a48904b2e1",
+    "0xb5469370776D165E82D726F36e3e0933c307d4c4",
+    "0x170d64FB2FCD6bB6639eD0D37b981F6Af0E26C3a",
+    "0x120E4B564D608ab8ea110df0a1429998cCA580D0",
+  ]);
+  console.log("Bribe Rewards Distributed");
 
   //===================================================================
   // 12. Plugin Data
