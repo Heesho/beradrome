@@ -261,6 +261,7 @@ describe.only("Vol Plugin testing", function () {
       "contracts/BribeFactory.sol:Bribe",
       Bribe0Address
     );
+    await plugin0.initialize();
     console.log("- Plugin0 Added in Voter");
 
     // add Plugin1 to Voter
@@ -275,6 +276,7 @@ describe.only("Vol Plugin testing", function () {
       "contracts/BribeFactory.sol:Bribe",
       Bribe1Address
     );
+    await plugin1.initialize();
     console.log("- Plugin1 Added in Voter");
 
     console.log("Initialization Complete");

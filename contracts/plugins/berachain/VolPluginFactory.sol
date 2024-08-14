@@ -32,6 +32,7 @@ contract VolPlugin is ReentrancyGuard {
     address[] private bribeTokens;
 
     uint256 public immutable minInitPrice;
+    bool public initialized = false;
 
     struct Auction {
         uint256 epochId;
@@ -48,10 +49,10 @@ contract VolPlugin is ReentrancyGuard {
     error Plugin__DeadlinePassed();
     error Plugin__EpochIdMismatch();
     error Plugin__MaxPaymentAmountExceeded();
+    error Plugin__Initialized();
 
     /*----------  EVENTS ------------------------------------------------*/
 
-    event Plugin__Initialized();
     event Plugin__ClaimedAnDistributed();
     event Plugin__Buy(address indexed buyer, address indexed assetReceiver, uint256 paymentAmount);
 
@@ -141,22 +142,20 @@ contract VolPlugin is ReentrancyGuard {
         return paymentAmount;
     }
 
+    function initialize() external {
+        if (initialized) revert Plugin__Initialized();
+        initialized = true;
+        IGauge(gauge)._deposit(address(this), AMOUNT);
+    }
+
     /*----------  RESTRICTED FUNCTIONS  ---------------------------------*/
 
     function setGauge(address _gauge) external onlyVoter {
         gauge = _gauge;
-        initialize();
     }
 
     function setBribe(address _bribe) external onlyVoter {
         bribe = _bribe;
-    }
-
-    function initialize()
-        internal
-    {
-        emit Plugin__Initialized();
-        IGauge(gauge)._deposit(address(this), AMOUNT);
     }
 
     function getPriceFromCache(Auction memory auctionCache) internal view returns (uint256) {
