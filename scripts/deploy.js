@@ -681,6 +681,8 @@ async function main() {
   // await voter.addPlugin("0x170d64FB2FCD6bB6639eD0D37b981F6Af0E26C3a"); // Infrared HONEY-WETH Plugin
   // console.log("Adding Plugin11 to Voter");
   // await voter.addPlugin("0x120E4B564D608ab8ea110df0a1429998cCA580D0"); // Infrared HONEY-WBERA Plugin
+  // console.log("Adding Plugin12 to Voter");
+  // await voter.addPlugin("0x0375E50e3a58381b65Ce9D565313FD8f993101c5"); // Bullas BULL ISH Game Plugin
   // console.log("Plugins added to Voter");
 
   //===================================================================
@@ -782,12 +784,12 @@ async function main() {
   // 14. Remove Plugin
   //===================================================================
 
-  console.log("Removing Plugin from Voter");
+  // console.log("Removing Plugin from Voter");
   // Remove BULL ISH plugin
-  await voter
-    .connect(wallet)
-    .killGauge("0xCd936Ff849da906cD015e0333e277F22e33D5118");
-  console.log("Plugin removed from Voter");
+  // await voter
+  //   .connect(wallet)
+  //   .killGauge("0xCd936Ff849da906cD015e0333e277F22e33D5118");
+  // console.log("Plugin removed from Voter");
 }
 
 main()
