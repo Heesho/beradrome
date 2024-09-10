@@ -11,18 +11,24 @@ const VOTER_ADDRESS = "0x580ABF764405aA82dC96788b356435474c5956A7";
 // Tokens
 const WBERA = "0x7507c1dc16935B82698e4C63f2746A2fCf994dF8";
 const YEET = "0x1740F679325ef3686B2f574e392007A92e4BeD41";
+const oBERO = "0x7629668774f918c00Eb4b03AdF5C4e2E53d45f0b";
 
 // Kodiak Vault V1 YEET/WBERA
 const KODIAK3_SYMBOL = "YEET-WBERA Island";
 const KODIAK3 = "0xE5A2ab5D2fb268E5fF43A5564e44c3309609aFF9";
 const KODIAK3_FARM = "0xbdEE3F788a5efDdA1FcFe6bfe7DbbDa5690179e6"; // rewards = KDK, xKDK, YEET
 
+// Kodiak Vault V1 oBERO/WBERA
+const KODIAK8_SYMBOL = "oBERO-WBERA Island";
+const KODIAK8 = "0xbfbEfcfAE7a58C14292B53C2CcD95bF2c5742EB0";
+const KODIAK8_FARM = "0x1812FC946EF5809f8efCEF28Afa6ec9030907748"; // rewards = KDK, xKDK, oBERO
+
 // Plugin settings
-const LP_SYMBOL = KODIAK3_SYMBOL; // Desired symbol for LP plugin
-const LP_ADDRESS = KODIAK3; // Address of LP token
-const TOKEN0 = YEET; // HONEY address
+const LP_SYMBOL = KODIAK8_SYMBOL; // Desired symbol for LP plugin
+const LP_ADDRESS = KODIAK8; // Address of LP token
+const TOKEN0 = oBERO; // HONEY address
 const TOKEN1 = WBERA; // WBERA address
-const FARM = KODIAK3_FARM; // Communal farm address
+const FARM = KODIAK8_FARM; // Communal farm address
 
 /*===========================  END SETTINGS  ========================*/
 /*===================================================================*/
@@ -43,7 +49,10 @@ async function getContracts() {
     "contracts/plugins/berachain/TrifectaPluginFactory.sol:TrifectaPluginFactory",
     "0x7F1266993dE9eAfF3F8dECC3B1D2d5Bc836A996C"
   );
-  // plugin = await ethers.getContractAt("contracts/plugins/berachain/TrifectaPluginFactory.sol:TrifectaPlugin", "");
+  plugin = await ethers.getContractAt(
+    "contracts/plugins/berachain/TrifectaPluginFactory.sol:TrifectaPlugin",
+    "0x62c310059A7d84805c675d2458234d3D137D9a1c"
+  );
 
   console.log("Contracts Retrieved");
 }
@@ -89,7 +98,7 @@ async function deployPlugin() {
     FARM,
     TOKEN0,
     TOKEN1,
-    [YEET],
+    [oBERO],
     LP_SYMBOL,
     {
       gasPrice: ethers.gasPrice,

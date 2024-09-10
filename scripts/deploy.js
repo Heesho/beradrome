@@ -683,6 +683,8 @@ async function main() {
   // await voter.addPlugin("0x120E4B564D608ab8ea110df0a1429998cCA580D0"); // Infrared HONEY-WBERA Plugin
   // console.log("Adding Plugin12 to Voter");
   // await voter.addPlugin("0x0375E50e3a58381b65Ce9D565313FD8f993101c5"); // Bullas BULL ISH Game Plugin
+  // console.log("Adding Plugin13 to Voter");
+  // await voter.addPlugin("0x62c310059A7d84805c675d2458234d3D137D9a1c"); // Kodiak Trifecta oBERO-WBERA Island
   // console.log("Plugins added to Voter");
 
   //===================================================================
@@ -700,6 +702,7 @@ async function main() {
   //   "0xfE12B5f5adb8E20F7C43A6014844479e7dC8Dc49", // Kodiak HONEY-WBERA Island
   //   "0xb3D10C15360e444aBB2673D772D6f2EE32AAaB34", // Kodiak HONEY-USDC Island
   //   "0x80D7759Fa55f6a1F661D5FCBB3bC5164Dc63eb4D", // Kodiak Trifecta YEET-WBERA Island
+  //   "0x62c310059A7d84805c675d2458234d3D137D9a1c", // Kodiak Trifecta oBERO-WBERA Island
   // ]);
   // await voter.distributeToBribes([
   //   "0xE9EE66a91F540A6E5297b1B1780061278AB1ac78", // Infrared iBGT Plugin
@@ -731,7 +734,7 @@ async function main() {
   //   await multicall
   //     .connect(wallet)
   //     .gaugeCardData(
-  //       "0x61d0b4fbB9d507F64112e859523524AA2c548A6C",
+  //       "0x62c310059A7d84805c675d2458234d3D137D9a1c",
   //       "0x0000000000000000000000000000000000000000"
   //     )
   // );
@@ -772,6 +775,20 @@ async function main() {
   //     "0x0E4aaF1351de4c0264C5c7056Ef3777b41BD8e03"
   //   ); // xKDK added to YEET-WBERA Island Gauge
   // console.log("- HONEY added as bribe rewards");
+  // await voter
+  //   .connect(wallet)
+  //   .addGaugeReward(
+  //     "0x5A0C0864FE63fb1a9364A4eFdd570497774288C7",
+  //     "0xfd27998fa0eaB1A6372Db14Afd4bF7c4a58C5364"
+  //   ); // KDK added to oBERO-WBERA Island Gauge
+  // console.log("- KDK added as gauge reward");
+  // await voter
+  //   .connect(wallet)
+  //   .addGaugeReward(
+  //     "0x5A0C0864FE63fb1a9364A4eFdd570497774288C7",
+  //     "0x414B50157a5697F14e91417C5275A7496DcF429D"
+  //   ); // xKDK added to oBERO-WBERA Island Gauge
+  // console.log("- xKDK added as gauge rewards");
 
   //===================================================================
   // 13. Deploy Trifecta Multicall
