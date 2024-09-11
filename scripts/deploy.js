@@ -732,14 +732,14 @@ async function main() {
   //     )
   // );
 
-  console.log(
-    await multicall
-      .connect(wallet)
-      .gaugeCardData(
-        "0xC81c2E2415702179F78B51CbC5f9A16B957F5333",
-        "0x0000000000000000000000000000000000000000"
-      )
-  );
+  // console.log(
+  //   await multicall
+  //     .connect(wallet)
+  //     .gaugeCardData(
+  //       "0xC81c2E2415702179F78B51CbC5f9A16B957F5333",
+  //       "0x0000000000000000000000000000000000000000"
+  //     )
+  // );
 
   // console.log(
   //   await trifectaMulticall
