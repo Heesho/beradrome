@@ -685,8 +685,11 @@ async function main() {
   // await voter.addPlugin("0x0375E50e3a58381b65Ce9D565313FD8f993101c5"); // Bullas BULL ISH Game Plugin 1
   // console.log("Adding Plugin13 to Voter");
   // await voter.addPlugin("0x62c310059A7d84805c675d2458234d3D137D9a1c"); // Kodiak Trifecta oBERO-WBERA Island
-  // console.log("Adding Plugin13 to Voter");
+  // console.log("Adding Plugin14 to Voter");
   // await voter.addPlugin("0xC81c2E2415702179F78B51CbC5f9A16B957F5333"); // BUllas BULL ISH Game Plugin 2
+  // console.log("Plugins added to Voter");
+  // console.log("Adding Plugin15 to Voter");
+  // await voter.addPlugin("0x9C8366e5fb3B818e7C8c04F080f36f56BFf335Ee"); // BUllas BULL ISH Game Plugin 3
   // console.log("Plugins added to Voter");
 
   //===================================================================
@@ -715,7 +718,7 @@ async function main() {
   //   "0x120E4B564D608ab8ea110df0a1429998cCA580D0", // Infrared HONEY-WBERA Plugin
   // ]);
   // await voter.distributeToBribes([
-  //   "0xC81c2E2415702179F78B51CbC5f9A16B957F5333", // BULL ISH
+  //   "0x9C8366e5fb3B818e7C8c04F080f36f56BFf335Ee", // BULL ISH
   // ]);
   // console.log("Bribe Rewards Distributed");
 
@@ -736,7 +739,7 @@ async function main() {
   //   await multicall
   //     .connect(wallet)
   //     .gaugeCardData(
-  //       "0xC81c2E2415702179F78B51CbC5f9A16B957F5333",
+  //       "0x9C8366e5fb3B818e7C8c04F080f36f56BFf335Ee",
   //       "0x0000000000000000000000000000000000000000"
   //     )
   // );
@@ -809,7 +812,7 @@ async function main() {
   // console.log("Removing Plugin from Voter"); // Remove BULL ISH plugin
   // await voter
   //   .connect(wallet)
-  //   .killGauge("0x489E3242d501c84d33A5858cfd2a35F64e157001");
+  //   .killGauge("0x50b0e61620769c19695EB9Ebf24ffcB500346Ee3");
   // console.log("Plugin removed from Voter");
 }
 
