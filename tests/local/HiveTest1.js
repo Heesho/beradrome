@@ -25,9 +25,9 @@ let owner,
   user0,
   user1,
   user2,
-  relayOwner,
-  relayTreasury,
-  relayDelegate;
+  hiveOwner,
+  hiveTreasury,
+  hiveDelegate;
 let VTOKENFactory,
   OTOKENFactory,
   feesFactory,
@@ -36,20 +36,20 @@ let VTOKENFactory,
   bribeFactory;
 let minter, voter, fees, rewarder, governance, multicall;
 let TOKEN, VTOKEN, OTOKEN, BASE;
-let relayFactory,
-  relayTokenFactory,
-  relayRewarderFactory,
-  relayDistroFactory,
-  relayFeeFlowFactory,
-  relayMulticall;
-let relayToken, relayRewarder, relayDistro, relayFeeFlow;
+let hiveFactory,
+  hiveTokenFactory,
+  hiveRewarderFactory,
+  hiveDistroFactory,
+  hiveFeeFlowFactory,
+  hiveMulticall;
+let hiveToken, hiveRewarder, hiveDistro, hiveFeeFlow;
 let pluginFactory;
 let TEST0, xTEST0, plugin0, gauge0, bribe0;
 let TEST1, xTEST1, plugin1, gauge1, bribe1;
 let TEST2, LP0, plugin2, gauge2, bribe2;
 let TEST3, LP1, plugin3, gauge3, bribe3;
 
-describe("Relay token testing multicall", function () {
+describe("Hive token testing multicall", function () {
   before("Initial set up", async function () {
     console.log("Begin Initialization");
 
@@ -61,9 +61,9 @@ describe("Relay token testing multicall", function () {
       user0,
       user1,
       user2,
-      relayOwner,
-      relayTreasury,
-      relayDelegate,
+      hiveOwner,
+      hiveTreasury,
+      hiveDelegate,
     ] = await ethers.getSigners();
 
     // initialize BASE
@@ -364,121 +364,117 @@ describe("Relay token testing multicall", function () {
     );
     console.log("- Plugin3 Added in Voter");
 
-    // Initialize relayFactory
-    const relayFactoryArtifact = await ethers.getContractFactory(
-      "RelayFactory"
-    );
-    const relayFactoryContract = await relayFactoryArtifact.deploy(
+    // Initialize hiveFactory
+    const hiveFactoryArtifact = await ethers.getContractFactory("HiveFactory");
+    const hiveFactoryContract = await hiveFactoryArtifact.deploy(
       OTOKEN.address,
       VTOKEN.address,
       rewarder.address,
       voter.address
     );
-    relayFactory = await ethers.getContractAt(
-      "RelayFactory",
-      relayFactoryContract.address
+    hiveFactory = await ethers.getContractAt(
+      "HiveFactory",
+      hiveFactoryContract.address
     );
-    console.log("- RelayFactory Initialized");
+    console.log("- HiveFactory Initialized");
 
-    //Iniitialize RelayTokenFactory
-    const relayTokenFactoryArtifact = await ethers.getContractFactory(
-      "RelayTokenFactory"
+    //Iniitialize HiveTokenFactory
+    const hiveTokenFactoryArtifact = await ethers.getContractFactory(
+      "HiveTokenFactory"
     );
-    const relayTokenFactoryContract = await relayTokenFactoryArtifact.deploy(
-      relayFactory.address
+    const hiveTokenFactoryContract = await hiveTokenFactoryArtifact.deploy(
+      hiveFactory.address
     );
-    relayTokenFactory = await ethers.getContractAt(
-      "RelayTokenFactory",
-      relayTokenFactoryContract.address
+    hiveTokenFactory = await ethers.getContractAt(
+      "HiveTokenFactory",
+      hiveTokenFactoryContract.address
     );
-    console.log("- RelayTokenFactory Initialized");
+    console.log("- HiveTokenFactory Initialized");
 
-    //Initialize RelayRewarderFactory
-    const relayRewarderFactoryArtifact = await ethers.getContractFactory(
-      "RelayRewarderFactory"
+    //Initialize HiveRewarderFactory
+    const hiveRewarderFactoryArtifact = await ethers.getContractFactory(
+      "HiveRewarderFactory"
     );
-    const relayRewarderFactoryContract =
-      await relayRewarderFactoryArtifact.deploy(relayFactory.address);
-    relayRewarderFactory = await ethers.getContractAt(
-      "RelayRewarderFactory",
-      relayRewarderFactoryContract.address
+    const hiveRewarderFactoryContract =
+      await hiveRewarderFactoryArtifact.deploy(hiveFactory.address);
+    hiveRewarderFactory = await ethers.getContractAt(
+      "HiveRewarderFactory",
+      hiveRewarderFactoryContract.address
     );
-    console.log("- RelayRewarderFactory Initialized");
+    console.log("- HiveRewarderFactory Initialized");
 
     const distroFactoryArtifact = await ethers.getContractFactory(
-      "RelayDistroFactory"
+      "HiveDistroFactory"
     );
-    relayDistroFactory = await distroFactoryArtifact.deploy(
-      relayFactory.address
-    );
+    hiveDistroFactory = await distroFactoryArtifact.deploy(hiveFactory.address);
     console.log("- DistroFactory Initialized");
 
     const feeFlowFactoryArtifact = await ethers.getContractFactory(
-      "RelayFeeFlowFactory"
+      "HiveFeeFlowFactory"
     );
-    relayFeeFlowFactory = await feeFlowFactoryArtifact.deploy(
-      relayFactory.address
+    hiveFeeFlowFactory = await feeFlowFactoryArtifact.deploy(
+      hiveFactory.address
     );
     console.log("- FeeFlowFactory Initialized");
 
     // Set factories
-    await relayFactory.setRelayTokenFactory(relayTokenFactory.address);
-    await relayFactory.setRelayRewarderFactory(relayRewarderFactory.address);
-    await relayFactory.setRelayDistroFactory(relayDistroFactory.address);
-    await relayFactory.setRelayFeeFlowFactory(relayFeeFlowFactory.address);
+    await hiveFactory.setHiveTokenFactory(hiveTokenFactory.address);
+    await hiveFactory.setHiveRewarderFactory(hiveRewarderFactory.address);
+    await hiveFactory.setHiveDistroFactory(hiveDistroFactory.address);
+    await hiveFactory.setHiveFeeFlowFactory(hiveFeeFlowFactory.address);
     console.log("- Factories Set");
 
-    // Initialize RelayMulticall
-    const relayMulticallArtifact = await ethers.getContractFactory(
-      "RelayMulticall"
+    // Initialize HiveMulticall
+    const hiveMulticallArtifact = await ethers.getContractFactory(
+      "HiveMulticall"
     );
-    const relayMulticallContract = await relayMulticallArtifact.deploy(
-      relayFactory.address,
+    const hiveMulticallContract = await hiveMulticallArtifact.deploy(
+      hiveFactory.address,
       OTOKEN.address,
       VTOKEN.address,
       rewarder.address,
       voter.address
     );
-    relayMulticall = await ethers.getContractAt(
-      "RelayMulticall",
-      relayMulticallContract.address
+    hiveMulticall = await ethers.getContractAt(
+      "HiveMulticall",
+      hiveMulticallContract.address
     );
-    console.log("- RelayMulticall Initialized");
+    console.log("- HiveMulticall Initialized");
 
-    // Create Relay
-    await relayFactory.createRelay(
-      "Profit Bero Relay",
+    // Create Hive
+    await hiveFactory.createHive(
+      "Profit Bero Hive",
       "profitBERO",
       "uri",
-      "The profitBERO relay maxes out voting rewards.",
+      "The profitBERO hive maxes out voting rewards.",
       BASE.address,
       oneHundred,
       ten
     );
-    console.log("- RELAY Token deployed");
+    console.log("- HIVE Token deployed");
 
-    // Initialize RelayToken
-    let res = await relayFactory.connect(owner).index_Relay(0);
-    relayToken = await ethers.getContractAt("RelayToken", res.relayToken);
-    console.log("- relayToken Initialized at:", relayToken.address);
+    // Initialize HiveToken
+    let res = await hiveFactory.connect(owner).index_Hive(0);
+    hiveToken = await ethers.getContractAt("HiveToken", res.hiveToken);
+    console.log("- hiveToken Initialized at:", hiveToken.address);
 
-    relayRewarder = await ethers.getContractAt(
-      "RelayRewarder",
-      await relayRewarderFactory.connect(owner).lastRelayRewarder()
+    hiveRewarder = await ethers.getContractAt(
+      "HiveRewarder",
+      await hiveRewarderFactory.connect(owner).lastHiveRewarder()
     );
-    console.log("- relayRewarder Initialized");
+    console.log("- hiveRewarder Initialized");
 
-    relayDistro = await ethers.getContractAt(
-      "RelayDistro",
-      await relayDistroFactory.connect(owner).lastRelayDistro()
+    hiveDistro = await ethers.getContractAt(
+      "HiveDistro",
+      await hiveDistroFactory.connect(owner).lastHiveDistro()
     );
-    console.log("- relayDistro Initialized");
+    console.log("- hiveDistro Initialized");
 
-    relayFeeFlow = await ethers.getContractAt(
-      "RelayFeeFlow",
-      await relayFeeFlowFactory.connect(owner).lastRelayFeeFlow()
+    hiveFeeFlow = await ethers.getContractAt(
+      "HiveFeeFlow",
+      await hiveFeeFlowFactory.connect(owner).lastHiveFeeFlow()
     );
-    console.log("- relayFeeFlow Initialized");
+    console.log("- hiveFeeFlow Initialized");
 
     console.log("Initialization Complete");
     console.log();
@@ -645,117 +641,115 @@ describe("Relay token testing multicall", function () {
     );
   });
 
-  it("RelayData", async function () {
+  it("HiveData", async function () {
     console.log("******************************************************");
-    let res = await relayMulticall.getRelay(relayToken.address, user0.address);
+    let res = await hiveMulticall.getHive(hiveToken.address, user0.address);
     console.log(res);
   });
 
-  it("User0 mints relayToken with 10 oTOKEN", async function () {
+  it("User0 mints hiveToken with 10 oTOKEN", async function () {
     console.log("******************************************************");
-    await OTOKEN.connect(user0).approve(relayMulticall.address, ten);
-    await relayMulticall.connect(user0).mint(relayToken.address, ten);
+    await OTOKEN.connect(user0).approve(hiveMulticall.address, ten);
+    await hiveMulticall.connect(user0).mint(hiveToken.address, ten);
     console.log(
-      "User0 relayToken Balance: ",
-      divDec(await relayToken.balanceOf(user0.address))
+      "User0 hiveToken Balance: ",
+      divDec(await hiveToken.balanceOf(user0.address))
     );
   });
 
-  it("RelayData", async function () {
+  it("HiveData", async function () {
     console.log("******************************************************");
-    let res = await relayMulticall.getRelay(relayToken.address, user0.address);
+    let res = await hiveMulticall.getHive(hiveToken.address, user0.address);
     console.log(res);
   });
 
-  it("User0 mints and deposits relayToken with 10 oTOKEN", async function () {
+  it("User0 mints and deposits hiveToken with 10 oTOKEN", async function () {
     console.log("******************************************************");
-    await OTOKEN.connect(user0).approve(relayMulticall.address, ten);
-    await relayMulticall.connect(user0).mintAndDeposit(relayToken.address, ten);
+    await OTOKEN.connect(user0).approve(hiveMulticall.address, ten);
+    await hiveMulticall.connect(user0).mintAndDeposit(hiveToken.address, ten);
     console.log(
-      "User0 relayToken Balance: ",
-      divDec(await relayToken.balanceOf(user0.address))
+      "User0 hiveToken Balance: ",
+      divDec(await hiveToken.balanceOf(user0.address))
     );
     console.log(
-      "User relayToken Staked: ",
-      divDec(await relayRewarder.balanceOf(user0.address))
+      "User hiveToken Staked: ",
+      divDec(await hiveRewarder.balanceOf(user0.address))
     );
   });
 
-  it("RelayData", async function () {
+  it("HiveData", async function () {
     console.log("******************************************************");
-    let res = await relayMulticall.getRelay(relayToken.address, user0.address);
+    let res = await hiveMulticall.getHive(hiveToken.address, user0.address);
     console.log(res);
   });
 
-  it("User1 mints relayToken with five oTOKEN", async function () {
+  it("User1 mints hiveToken with five oTOKEN", async function () {
     console.log("******************************************************");
-    await OTOKEN.connect(user1).approve(relayMulticall.address, five);
-    await relayMulticall.connect(user1).mint(relayToken.address, five);
+    await OTOKEN.connect(user1).approve(hiveMulticall.address, five);
+    await hiveMulticall.connect(user1).mint(hiveToken.address, five);
     console.log(
-      "User1 relayToken Balance: ",
-      divDec(await relayToken.balanceOf(user1.address))
+      "User1 hiveToken Balance: ",
+      divDec(await hiveToken.balanceOf(user1.address))
     );
   });
 
   it("Delegate sets votes", async function () {
     console.log("******************************************************");
-    await relayToken
+    await hiveToken
       .connect(owner)
       .setVotes(
         [plugin0.address, plugin1.address, plugin2.address, plugin3.address],
         [ten, ten, ten, ten]
       );
-    console.log("Votes: ", await relayToken.connect(user0).getVote());
+    console.log("Votes: ", await hiveToken.connect(user0).getVote());
   });
 
-  it("RelayData", async function () {
+  it("HiveData", async function () {
     console.log("******************************************************");
-    let res = await relayMulticall.getRelay(relayToken.address, user0.address);
+    let res = await hiveMulticall.getHive(hiveToken.address, user0.address);
     console.log(res);
   });
 
-  it("User1 mints and deposits relayToken with five oTOKEN", async function () {
+  it("User1 mints and deposits hiveToken with five oTOKEN", async function () {
     console.log("******************************************************");
-    await OTOKEN.connect(user1).approve(relayMulticall.address, five);
-    await relayMulticall
-      .connect(user1)
-      .mintAndDeposit(relayToken.address, five);
+    await OTOKEN.connect(user1).approve(hiveMulticall.address, five);
+    await hiveMulticall.connect(user1).mintAndDeposit(hiveToken.address, five);
     console.log(
-      "User1 relayToken Balance: ",
-      divDec(await relayToken.balanceOf(user1.address))
+      "User1 hiveToken Balance: ",
+      divDec(await hiveToken.balanceOf(user1.address))
     );
   });
 
-  it("User1 withdraws 5 relayToken", async function () {
+  it("User1 withdraws 5 hiveToken", async function () {
     console.log("******************************************************");
-    await relayRewarder
+    await hiveRewarder
       .connect(user1)
-      .withdraw(user1.address, await relayRewarder.balanceOf(user1.address));
+      .withdraw(user1.address, await hiveRewarder.balanceOf(user1.address));
     console.log(
-      "User1 relayToken Balance: ",
-      divDec(await relayToken.balanceOf(user1.address))
+      "User1 hiveToken Balance: ",
+      divDec(await hiveToken.balanceOf(user1.address))
     );
   });
 
-  it("RelayData", async function () {
+  it("HiveData", async function () {
     console.log("******************************************************");
-    let res = await relayMulticall.getRelay(relayToken.address, user1.address);
+    let res = await hiveMulticall.getHive(hiveToken.address, user1.address);
     console.log(res);
   });
 
-  it("User1 deposits 5 relayToken", async function () {
+  it("User1 deposits 5 hiveToken", async function () {
     console.log("******************************************************");
-    await relayToken.connect(user1).approve(relayMulticall.address, five);
-    await relayMulticall.connect(user1).deposit(relayToken.address, five);
+    await hiveToken.connect(user1).approve(hiveMulticall.address, five);
+    await hiveMulticall.connect(user1).deposit(hiveToken.address, five);
     console.log(
-      "User1 relayToken Balance: ",
-      divDec(await relayToken.balanceOf(user1.address))
+      "User1 hiveToken Balance: ",
+      divDec(await hiveToken.balanceOf(user1.address))
     );
   });
 
-  it("RelayData", async function () {
+  it("HiveData", async function () {
     console.log("******************************************************");
-    let res = await relayMulticall.getRelay(relayToken.address, user1.address);
+    let res = await hiveMulticall.getHive(hiveToken.address, user1.address);
     console.log(res);
   });
 
@@ -769,113 +763,110 @@ describe("Relay token testing multicall", function () {
     ]);
   });
 
-  it("RelayToken balances", async function () {
+  it("HiveToken balances", async function () {
     console.log("******************************************************");
-    console.log("BASE", divDec(await BASE.balanceOf(relayToken.address)));
-    console.log("TOKEN", divDec(await TOKEN.balanceOf(relayToken.address)));
-    console.log("oTOKEN", divDec(await OTOKEN.balanceOf(relayToken.address)));
+    console.log("BASE", divDec(await BASE.balanceOf(hiveToken.address)));
+    console.log("TOKEN", divDec(await TOKEN.balanceOf(hiveToken.address)));
+    console.log("oTOKEN", divDec(await OTOKEN.balanceOf(hiveToken.address)));
     console.log();
-    console.log("TEST0", divDec(await TEST0.balanceOf(relayToken.address)));
-    console.log("TEST1", divDec(await TEST1.balanceOf(relayToken.address)));
-    console.log("TEST2", divDec(await TEST2.balanceOf(relayToken.address)));
-    console.log("TEST3", divDec(await TEST3.balanceOf(relayToken.address)));
+    console.log("TEST0", divDec(await TEST0.balanceOf(hiveToken.address)));
+    console.log("TEST1", divDec(await TEST1.balanceOf(hiveToken.address)));
+    console.log("TEST2", divDec(await TEST2.balanceOf(hiveToken.address)));
+    console.log("TEST3", divDec(await TEST3.balanceOf(hiveToken.address)));
   });
 
-  it("RelayFeeFlow balances", async function () {
+  it("HiveFeeFlow balances", async function () {
     console.log("******************************************************");
-    console.log("BASE", divDec(await BASE.balanceOf(relayFeeFlow.address)));
-    console.log("TOKEN", divDec(await TOKEN.balanceOf(relayFeeFlow.address)));
-    console.log("oTOKEN", divDec(await OTOKEN.balanceOf(relayFeeFlow.address)));
+    console.log("BASE", divDec(await BASE.balanceOf(hiveFeeFlow.address)));
+    console.log("TOKEN", divDec(await TOKEN.balanceOf(hiveFeeFlow.address)));
+    console.log("oTOKEN", divDec(await OTOKEN.balanceOf(hiveFeeFlow.address)));
     console.log();
-    console.log("TEST0", divDec(await TEST0.balanceOf(relayFeeFlow.address)));
-    console.log("TEST1", divDec(await TEST1.balanceOf(relayFeeFlow.address)));
-    console.log("TEST2", divDec(await TEST2.balanceOf(relayFeeFlow.address)));
-    console.log("TEST3", divDec(await TEST3.balanceOf(relayFeeFlow.address)));
+    console.log("TEST0", divDec(await TEST0.balanceOf(hiveFeeFlow.address)));
+    console.log("TEST1", divDec(await TEST1.balanceOf(hiveFeeFlow.address)));
+    console.log("TEST2", divDec(await TEST2.balanceOf(hiveFeeFlow.address)));
+    console.log("TEST3", divDec(await TEST3.balanceOf(hiveFeeFlow.address)));
   });
 
-  it("RelayDistro balances", async function () {
+  it("HiveDistro balances", async function () {
     console.log("******************************************************");
-    console.log("BASE", divDec(await BASE.balanceOf(relayDistro.address)));
-    console.log("TOKEN", divDec(await TOKEN.balanceOf(relayDistro.address)));
-    console.log("oTOKEN", divDec(await OTOKEN.balanceOf(relayDistro.address)));
+    console.log("BASE", divDec(await BASE.balanceOf(hiveDistro.address)));
+    console.log("TOKEN", divDec(await TOKEN.balanceOf(hiveDistro.address)));
+    console.log("oTOKEN", divDec(await OTOKEN.balanceOf(hiveDistro.address)));
     console.log();
-    console.log("TEST0", divDec(await TEST0.balanceOf(relayDistro.address)));
-    console.log("TEST1", divDec(await TEST1.balanceOf(relayDistro.address)));
-    console.log("TEST2", divDec(await TEST2.balanceOf(relayDistro.address)));
-    console.log("TEST3", divDec(await TEST3.balanceOf(relayDistro.address)));
+    console.log("TEST0", divDec(await TEST0.balanceOf(hiveDistro.address)));
+    console.log("TEST1", divDec(await TEST1.balanceOf(hiveDistro.address)));
+    console.log("TEST2", divDec(await TEST2.balanceOf(hiveDistro.address)));
+    console.log("TEST3", divDec(await TEST3.balanceOf(hiveDistro.address)));
   });
 
   it("AuctionData", async function () {
     console.log("******************************************************");
-    let res = await relayMulticall.getAuction(relayToken.address);
+    let res = await hiveMulticall.getAuction(hiveToken.address);
     console.log(
       util.inspect(res, { showHidden: false, depth: null, colors: true })
     );
   });
 
-  it("RelayFeeFlow buy", async function () {
+  it("HiveFeeFlow buy", async function () {
     console.log("******************************************************");
-    const price = await relayFeeFlow.getPrice();
-    await BASE.connect(user1).approve(relayMulticall.address, price);
-    await relayMulticall
+    const price = await hiveFeeFlow.getPrice();
+    await BASE.connect(user1).approve(hiveMulticall.address, price);
+    await hiveMulticall
       .connect(user1)
-      .buyAuction(relayToken.address, 1792282187);
+      .buyAuction(hiveToken.address, 1792282187);
   });
 
-  it("RelayToken balances", async function () {
+  it("HiveToken balances", async function () {
     console.log("******************************************************");
-    console.log("BASE", divDec(await BASE.balanceOf(relayToken.address)));
-    console.log("TOKEN", divDec(await TOKEN.balanceOf(relayToken.address)));
-    console.log("oTOKEN", divDec(await OTOKEN.balanceOf(relayToken.address)));
+    console.log("BASE", divDec(await BASE.balanceOf(hiveToken.address)));
+    console.log("TOKEN", divDec(await TOKEN.balanceOf(hiveToken.address)));
+    console.log("oTOKEN", divDec(await OTOKEN.balanceOf(hiveToken.address)));
     console.log();
-    console.log("TEST0", divDec(await TEST0.balanceOf(relayToken.address)));
-    console.log("TEST1", divDec(await TEST1.balanceOf(relayToken.address)));
-    console.log("TEST2", divDec(await TEST2.balanceOf(relayToken.address)));
-    console.log("TEST3", divDec(await TEST3.balanceOf(relayToken.address)));
+    console.log("TEST0", divDec(await TEST0.balanceOf(hiveToken.address)));
+    console.log("TEST1", divDec(await TEST1.balanceOf(hiveToken.address)));
+    console.log("TEST2", divDec(await TEST2.balanceOf(hiveToken.address)));
+    console.log("TEST3", divDec(await TEST3.balanceOf(hiveToken.address)));
   });
 
-  it("RelayFeeFlow balances", async function () {
+  it("HiveFeeFlow balances", async function () {
     console.log("******************************************************");
-    console.log("BASE", divDec(await BASE.balanceOf(relayFeeFlow.address)));
-    console.log("TOKEN", divDec(await TOKEN.balanceOf(relayFeeFlow.address)));
-    console.log("oTOKEN", divDec(await OTOKEN.balanceOf(relayFeeFlow.address)));
+    console.log("BASE", divDec(await BASE.balanceOf(hiveFeeFlow.address)));
+    console.log("TOKEN", divDec(await TOKEN.balanceOf(hiveFeeFlow.address)));
+    console.log("oTOKEN", divDec(await OTOKEN.balanceOf(hiveFeeFlow.address)));
     console.log();
-    console.log("TEST0", divDec(await TEST0.balanceOf(relayFeeFlow.address)));
-    console.log("TEST1", divDec(await TEST1.balanceOf(relayFeeFlow.address)));
-    console.log("TEST2", divDec(await TEST2.balanceOf(relayFeeFlow.address)));
-    console.log("TEST3", divDec(await TEST3.balanceOf(relayFeeFlow.address)));
+    console.log("TEST0", divDec(await TEST0.balanceOf(hiveFeeFlow.address)));
+    console.log("TEST1", divDec(await TEST1.balanceOf(hiveFeeFlow.address)));
+    console.log("TEST2", divDec(await TEST2.balanceOf(hiveFeeFlow.address)));
+    console.log("TEST3", divDec(await TEST3.balanceOf(hiveFeeFlow.address)));
   });
 
-  it("RelayDistro balances", async function () {
+  it("HiveDistro balances", async function () {
     console.log("******************************************************");
-    console.log("BASE", divDec(await BASE.balanceOf(relayDistro.address)));
-    console.log("TOKEN", divDec(await TOKEN.balanceOf(relayDistro.address)));
-    console.log("oTOKEN", divDec(await OTOKEN.balanceOf(relayDistro.address)));
+    console.log("BASE", divDec(await BASE.balanceOf(hiveDistro.address)));
+    console.log("TOKEN", divDec(await TOKEN.balanceOf(hiveDistro.address)));
+    console.log("oTOKEN", divDec(await OTOKEN.balanceOf(hiveDistro.address)));
     console.log();
-    console.log("TEST0", divDec(await TEST0.balanceOf(relayDistro.address)));
-    console.log("TEST1", divDec(await TEST1.balanceOf(relayDistro.address)));
-    console.log("TEST2", divDec(await TEST2.balanceOf(relayDistro.address)));
-    console.log("TEST3", divDec(await TEST3.balanceOf(relayDistro.address)));
+    console.log("TEST0", divDec(await TEST0.balanceOf(hiveDistro.address)));
+    console.log("TEST1", divDec(await TEST1.balanceOf(hiveDistro.address)));
+    console.log("TEST2", divDec(await TEST2.balanceOf(hiveDistro.address)));
+    console.log("TEST3", divDec(await TEST3.balanceOf(hiveDistro.address)));
   });
 
-  it("RelayRewarder balances", async function () {
+  it("HiveRewarder balances", async function () {
     console.log("******************************************************");
-    console.log("BASE", divDec(await BASE.balanceOf(relayRewarder.address)));
-    console.log("TOKEN", divDec(await TOKEN.balanceOf(relayRewarder.address)));
-    console.log(
-      "oTOKEN",
-      divDec(await OTOKEN.balanceOf(relayRewarder.address))
-    );
+    console.log("BASE", divDec(await BASE.balanceOf(hiveRewarder.address)));
+    console.log("TOKEN", divDec(await TOKEN.balanceOf(hiveRewarder.address)));
+    console.log("oTOKEN", divDec(await OTOKEN.balanceOf(hiveRewarder.address)));
     console.log();
-    console.log("TEST0", divDec(await TEST0.balanceOf(relayRewarder.address)));
-    console.log("TEST1", divDec(await TEST1.balanceOf(relayRewarder.address)));
-    console.log("TEST2", divDec(await TEST2.balanceOf(relayRewarder.address)));
-    console.log("TEST3", divDec(await TEST3.balanceOf(relayRewarder.address)));
+    console.log("TEST0", divDec(await TEST0.balanceOf(hiveRewarder.address)));
+    console.log("TEST1", divDec(await TEST1.balanceOf(hiveRewarder.address)));
+    console.log("TEST2", divDec(await TEST2.balanceOf(hiveRewarder.address)));
+    console.log("TEST3", divDec(await TEST3.balanceOf(hiveRewarder.address)));
   });
 
-  it("RelayFeeFlow stats", async function () {
+  it("HiveFeeFlow stats", async function () {
     console.log("******************************************************");
-    console.log("Auction Price: ", divDec(await relayFeeFlow.getPrice()));
+    console.log("Auction Price: ", divDec(await hiveFeeFlow.getPrice()));
   });
 
   it("Owner adds base as bribe reward for plugin0", async function () {
@@ -940,7 +931,7 @@ describe("Relay token testing multicall", function () {
 
   it("AuctionData", async function () {
     console.log("******************************************************");
-    let res = await relayMulticall.getAuction(relayToken.address);
+    let res = await hiveMulticall.getAuction(hiveToken.address);
     console.log(
       util.inspect(res, { showHidden: false, depth: null, colors: true })
     );
@@ -962,69 +953,63 @@ describe("Relay token testing multicall", function () {
 
   it("AuctionData", async function () {
     console.log("******************************************************");
-    let res = await relayMulticall.getAuction(relayToken.address);
+    let res = await hiveMulticall.getAuction(hiveToken.address);
     console.log(
       util.inspect(res, { showHidden: false, depth: null, colors: true })
     );
   });
 
-  it("RelayRewarder balances", async function () {
+  it("HiveRewarder balances", async function () {
     console.log("******************************************************");
-    console.log("BASE", divDec(await BASE.balanceOf(relayRewarder.address)));
-    console.log("TOKEN", divDec(await TOKEN.balanceOf(relayRewarder.address)));
-    console.log(
-      "oTOKEN",
-      divDec(await OTOKEN.balanceOf(relayRewarder.address))
-    );
+    console.log("BASE", divDec(await BASE.balanceOf(hiveRewarder.address)));
+    console.log("TOKEN", divDec(await TOKEN.balanceOf(hiveRewarder.address)));
+    console.log("oTOKEN", divDec(await OTOKEN.balanceOf(hiveRewarder.address)));
     console.log();
-    console.log("TEST0", divDec(await TEST0.balanceOf(relayRewarder.address)));
-    console.log("TEST1", divDec(await TEST1.balanceOf(relayRewarder.address)));
-    console.log("TEST2", divDec(await TEST2.balanceOf(relayRewarder.address)));
-    console.log("TEST3", divDec(await TEST3.balanceOf(relayRewarder.address)));
+    console.log("TEST0", divDec(await TEST0.balanceOf(hiveRewarder.address)));
+    console.log("TEST1", divDec(await TEST1.balanceOf(hiveRewarder.address)));
+    console.log("TEST2", divDec(await TEST2.balanceOf(hiveRewarder.address)));
+    console.log("TEST3", divDec(await TEST3.balanceOf(hiveRewarder.address)));
   });
 
-  it("RelayFeeFlow buy", async function () {
+  it("HiveFeeFlow buy", async function () {
     console.log("******************************************************");
-    const price = await relayFeeFlow.getPrice();
-    await BASE.connect(owner).approve(relayMulticall.address, price);
-    await relayMulticall
+    const price = await hiveFeeFlow.getPrice();
+    await BASE.connect(owner).approve(hiveMulticall.address, price);
+    await hiveMulticall
       .connect(owner)
-      .buyAuction(relayToken.address, 1792282187);
+      .buyAuction(hiveToken.address, 1792282187);
   });
 
-  it("RelayRewarder balances", async function () {
+  it("HiveRewarder balances", async function () {
     console.log("******************************************************");
-    console.log("BASE", divDec(await BASE.balanceOf(relayRewarder.address)));
-    console.log("TOKEN", divDec(await TOKEN.balanceOf(relayRewarder.address)));
-    console.log(
-      "oTOKEN",
-      divDec(await OTOKEN.balanceOf(relayRewarder.address))
-    );
+    console.log("BASE", divDec(await BASE.balanceOf(hiveRewarder.address)));
+    console.log("TOKEN", divDec(await TOKEN.balanceOf(hiveRewarder.address)));
+    console.log("oTOKEN", divDec(await OTOKEN.balanceOf(hiveRewarder.address)));
     console.log();
-    console.log("TEST0", divDec(await TEST0.balanceOf(relayRewarder.address)));
-    console.log("TEST1", divDec(await TEST1.balanceOf(relayRewarder.address)));
-    console.log("TEST2", divDec(await TEST2.balanceOf(relayRewarder.address)));
-    console.log("TEST3", divDec(await TEST3.balanceOf(relayRewarder.address)));
+    console.log("TEST0", divDec(await TEST0.balanceOf(hiveRewarder.address)));
+    console.log("TEST1", divDec(await TEST1.balanceOf(hiveRewarder.address)));
+    console.log("TEST2", divDec(await TEST2.balanceOf(hiveRewarder.address)));
+    console.log("TEST3", divDec(await TEST3.balanceOf(hiveRewarder.address)));
   });
 
   it("AuctionData", async function () {
     console.log("******************************************************");
-    let res = await relayMulticall.getAuction(relayToken.address);
+    let res = await hiveMulticall.getAuction(hiveToken.address);
     console.log(
       util.inspect(res, { showHidden: false, depth: null, colors: true })
     );
   });
 
-  it("RelayData", async function () {
+  it("HiveData", async function () {
     console.log("******************************************************");
-    let res = await relayMulticall.getRelay(relayToken.address, user0.address);
+    let res = await hiveMulticall.getHive(hiveToken.address, user0.address);
     console.log(res);
   });
 
-  it("User0 claim relay rewards", async function () {
+  it("User0 claim hive rewards", async function () {
     console.log("******************************************************");
     console.log("BASE", divDec(await BASE.balanceOf(user0.address)));
-    await relayRewarder.connect(user0).getReward(user0.address);
+    await hiveRewarder.connect(user0).getReward(user0.address);
     console.log("BASE", divDec(await BASE.balanceOf(user0.address)));
   });
 
@@ -1034,10 +1019,10 @@ describe("Relay token testing multicall", function () {
     await network.provider.send("evm_mine");
   });
 
-  it("User0 claim relay rewards", async function () {
+  it("User0 claim hive rewards", async function () {
     console.log("******************************************************");
     console.log("BASE", divDec(await BASE.balanceOf(user0.address)));
-    await relayRewarder.connect(user0).getReward(user0.address);
+    await hiveRewarder.connect(user0).getReward(user0.address);
     console.log("BASE", divDec(await BASE.balanceOf(user0.address)));
   });
 
@@ -1047,25 +1032,25 @@ describe("Relay token testing multicall", function () {
     await network.provider.send("evm_mine");
   });
 
-  it("RelayFeeFlow buy", async function () {
+  it("HiveFeeFlow buy", async function () {
     console.log("******************************************************");
-    const price = await relayFeeFlow.getPrice();
-    await BASE.connect(owner).approve(relayMulticall.address, price);
-    await relayMulticall
+    const price = await hiveFeeFlow.getPrice();
+    await BASE.connect(owner).approve(hiveMulticall.address, price);
+    await hiveMulticall
       .connect(owner)
-      .buyAuction(relayToken.address, 1792282187);
+      .buyAuction(hiveToken.address, 1792282187);
   });
 
   it("Owner sets Fee Flow", async function () {
     console.log("******************************************************");
-    await relayFactory
+    await hiveFactory
       .connect(owner)
-      .setRelayFeeFlow(relayToken.address, fiveHundred, ten);
+      .setHiveFeeFlow(hiveToken.address, fiveHundred, ten);
   });
 
   it("AuctionData", async function () {
     console.log("******************************************************");
-    let res = await relayMulticall.getAuction(relayToken.address);
+    let res = await hiveMulticall.getAuction(hiveToken.address);
     console.log(
       util.inspect(res, { showHidden: false, depth: null, colors: true })
     );
@@ -1086,7 +1071,7 @@ describe("Relay token testing multicall", function () {
 
   it("AuctionData", async function () {
     console.log("******************************************************");
-    let res = await relayMulticall.getAuction(relayToken.address);
+    let res = await hiveMulticall.getAuction(hiveToken.address);
     console.log(
       util.inspect(res, { showHidden: false, depth: null, colors: true })
     );
@@ -1098,47 +1083,41 @@ describe("Relay token testing multicall", function () {
     await network.provider.send("evm_mine");
   });
 
-  it("RelayRewarder balances", async function () {
+  it("HiveRewarder balances", async function () {
     console.log("******************************************************");
-    console.log("BASE", divDec(await BASE.balanceOf(relayRewarder.address)));
-    console.log("TOKEN", divDec(await TOKEN.balanceOf(relayRewarder.address)));
-    console.log(
-      "oTOKEN",
-      divDec(await OTOKEN.balanceOf(relayRewarder.address))
-    );
+    console.log("BASE", divDec(await BASE.balanceOf(hiveRewarder.address)));
+    console.log("TOKEN", divDec(await TOKEN.balanceOf(hiveRewarder.address)));
+    console.log("oTOKEN", divDec(await OTOKEN.balanceOf(hiveRewarder.address)));
     console.log();
-    console.log("TEST0", divDec(await TEST0.balanceOf(relayRewarder.address)));
-    console.log("TEST1", divDec(await TEST1.balanceOf(relayRewarder.address)));
-    console.log("TEST2", divDec(await TEST2.balanceOf(relayRewarder.address)));
-    console.log("TEST3", divDec(await TEST3.balanceOf(relayRewarder.address)));
+    console.log("TEST0", divDec(await TEST0.balanceOf(hiveRewarder.address)));
+    console.log("TEST1", divDec(await TEST1.balanceOf(hiveRewarder.address)));
+    console.log("TEST2", divDec(await TEST2.balanceOf(hiveRewarder.address)));
+    console.log("TEST3", divDec(await TEST3.balanceOf(hiveRewarder.address)));
   });
 
-  it("RelayFeeFlow buy", async function () {
+  it("HiveFeeFlow buy", async function () {
     console.log("******************************************************");
-    const price = await relayMulticall.getFeeFlowPrice(relayToken.address);
+    const price = await hiveMulticall.getFeeFlowPrice(hiveToken.address);
     console.log(
       "User1 BASE Balance: ",
       divDec(await BASE.balanceOf(user1.address))
     );
     console.log("Cost: ", divDec(price));
-    await BASE.connect(user1).approve(relayMulticall.address, price);
-    await relayMulticall
+    await BASE.connect(user1).approve(hiveMulticall.address, price);
+    await hiveMulticall
       .connect(user1)
-      .buyAuction(relayToken.address, 1792282187);
+      .buyAuction(hiveToken.address, 1792282187);
   });
 
-  it("RelayRewarder balances", async function () {
+  it("HiveRewarder balances", async function () {
     console.log("******************************************************");
-    console.log("BASE", divDec(await BASE.balanceOf(relayRewarder.address)));
-    console.log("TOKEN", divDec(await TOKEN.balanceOf(relayRewarder.address)));
-    console.log(
-      "oTOKEN",
-      divDec(await OTOKEN.balanceOf(relayRewarder.address))
-    );
+    console.log("BASE", divDec(await BASE.balanceOf(hiveRewarder.address)));
+    console.log("TOKEN", divDec(await TOKEN.balanceOf(hiveRewarder.address)));
+    console.log("oTOKEN", divDec(await OTOKEN.balanceOf(hiveRewarder.address)));
     console.log();
-    console.log("TEST0", divDec(await TEST0.balanceOf(relayRewarder.address)));
-    console.log("TEST1", divDec(await TEST1.balanceOf(relayRewarder.address)));
-    console.log("TEST2", divDec(await TEST2.balanceOf(relayRewarder.address)));
-    console.log("TEST3", divDec(await TEST3.balanceOf(relayRewarder.address)));
+    console.log("TEST0", divDec(await TEST0.balanceOf(hiveRewarder.address)));
+    console.log("TEST1", divDec(await TEST1.balanceOf(hiveRewarder.address)));
+    console.log("TEST2", divDec(await TEST2.balanceOf(hiveRewarder.address)));
+    console.log("TEST3", divDec(await TEST3.balanceOf(hiveRewarder.address)));
   });
 });

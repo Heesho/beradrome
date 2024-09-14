@@ -6,7 +6,7 @@ import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/utils/math/Math.sol";
 
-contract RelayRewarder is ReentrancyGuard, Ownable {
+contract HiveRewarder is ReentrancyGuard, Ownable {
     using SafeERC20 for IERC20;
 
     /*----------  CONSTANTS  --------------------------------------------*/
@@ -23,8 +23,8 @@ contract RelayRewarder is ReentrancyGuard, Ownable {
         uint256 rewardPerTokenStored;   // reward per virtual token stored
     }
 
-    address public immutable relayFactory;          // address of relay factory contract
-    address public immutable relayToken;            // address of relay token contract
+    address public immutable hiveFactory;          // address of hive factory contract
+    address public immutable hiveToken;            // address of hive token contract
 
     mapping(address => Reward) public rewardData;   // reward token -> reward data
     mapping(address => bool) public isRewardToken;  // reward token -> true if reward token
@@ -38,19 +38,19 @@ contract RelayRewarder is ReentrancyGuard, Ownable {
 
     /*----------  ERRORS ------------------------------------------------*/
 
-    error RelayRewarder__NotAuthorizedUser();
-    error RelayRewarder__NotRewardToken();
-    error RelayRewarder__RewardTokenAlreadyAdded();
-    error RelayRewarder__InvalidZeroInput();
-    error RelayRewarder__NotAdmin();
+    error HiveRewarder__NotAuthorizedUser();
+    error HiveRewarder__NotRewardToken();
+    error HiveRewarder__RewardTokenAlreadyAdded();
+    error HiveRewarder__InvalidZeroInput();
+    error HiveRewarder__NotAdmin();
 
     /*----------  EVENTS ------------------------------------------------*/
 
-    event RelayRewarder__RewardAdded(address indexed rewardToken);
-    event RelayRewarder__RewardNotified(address indexed rewardToken, uint256 reward);
-    event RelayRewarder__Deposited(address indexed user, uint256 amount);
-    event RelayRewarder__Withdrawn(address indexed user, uint256 amount);
-    event RelayRewarder__RewardPaid(address indexed user, address indexed rewardsToken, uint256 reward);
+    event HiveRewarder__RewardAdded(address indexed rewardToken);
+    event HiveRewarder__RewardNotified(address indexed rewardToken, uint256 reward);
+    event HiveRewarder__Deposited(address indexed user, uint256 amount);
+    event HiveRewarder__Withdrawn(address indexed user, uint256 amount);
+    event HiveRewarder__RewardPaid(address indexed user, address indexed rewardsToken, uint256 reward);
 
     /*----------  MODIFIERS  --------------------------------------------*/
 
@@ -68,20 +68,20 @@ contract RelayRewarder is ReentrancyGuard, Ownable {
     }
 
     modifier nonZeroInput(uint256 _amount) {
-        if (_amount == 0) revert RelayRewarder__InvalidZeroInput();
+        if (_amount == 0) revert HiveRewarder__InvalidZeroInput();
         _;
     }
 
     modifier onlyAdmin() {
-        if (msg.sender != relayFactory && msg.sender != owner()) revert RelayRewarder__NotAdmin();
+        if (msg.sender != hiveFactory && msg.sender != owner()) revert HiveRewarder__NotAdmin();
         _;
     }
     
     /*----------  FUNCTIONS  --------------------------------------------*/
 
-    constructor(address _relayFactory, address _relayToken) {
-        relayFactory = _relayFactory;
-        relayToken = _relayToken;
+    constructor(address _hiveFactory, address _hiveToken) {
+        hiveFactory = _hiveFactory;
+        hiveToken = _hiveToken;
     }
 
     /**
@@ -98,7 +98,7 @@ contract RelayRewarder is ReentrancyGuard, Ownable {
             uint256 reward = rewards[account][_rewardsToken];
             if (reward > 0) {
                 rewards[account][_rewardsToken] = 0;
-                emit RelayRewarder__RewardPaid(account, _rewardsToken, reward);
+                emit HiveRewarder__RewardPaid(account, _rewardsToken, reward);
                 IERC20(_rewardsToken).safeTransfer(account, reward);
             }
         }
@@ -116,7 +116,7 @@ contract RelayRewarder is ReentrancyGuard, Ownable {
         nonReentrant
         updateReward(address(0))
     {
-        if (!isRewardToken[_rewardsToken]) revert RelayRewarder__NotRewardToken();
+        if (!isRewardToken[_rewardsToken]) revert HiveRewarder__NotRewardToken();
 
         IERC20(_rewardsToken).safeTransferFrom(msg.sender, address(this), reward);
         if (block.timestamp >= rewardData[_rewardsToken].periodFinish) {
@@ -128,7 +128,7 @@ contract RelayRewarder is ReentrancyGuard, Ownable {
         }
         rewardData[_rewardsToken].lastUpdateTime = block.timestamp;
         rewardData[_rewardsToken].periodFinish = block.timestamp + DURATION;
-        emit RelayRewarder__RewardNotified(_rewardsToken, reward);
+        emit HiveRewarder__RewardNotified(_rewardsToken, reward);
     }
 
     function deposit(address account, uint256 amount) 
@@ -138,8 +138,8 @@ contract RelayRewarder is ReentrancyGuard, Ownable {
     {
         _totalSupply = _totalSupply + amount;
         _balances[account] = _balances[account] + amount;
-        emit RelayRewarder__Deposited(account, amount);
-        IERC20(relayToken).safeTransferFrom(msg.sender, address(this), amount);
+        emit HiveRewarder__Deposited(account, amount);
+        IERC20(hiveToken).safeTransferFrom(msg.sender, address(this), amount);
     }
 
     function withdraw(address account, uint256 amount) 
@@ -149,8 +149,8 @@ contract RelayRewarder is ReentrancyGuard, Ownable {
     {
         _totalSupply = _totalSupply - amount;
         _balances[msg.sender] = _balances[msg.sender] - amount;
-        emit RelayRewarder__Withdrawn(msg.sender, amount);
-        IERC20(relayToken).safeTransfer(account, amount);
+        emit HiveRewarder__Withdrawn(msg.sender, amount);
+        IERC20(hiveToken).safeTransfer(account, amount);
     }
 
     /*----------  RESTRICTED FUNCTIONS  ---------------------------------*/
@@ -163,10 +163,10 @@ contract RelayRewarder is ReentrancyGuard, Ownable {
         external 
         onlyAdmin()
     {
-        if (isRewardToken[_rewardsToken]) revert RelayRewarder__RewardTokenAlreadyAdded();
+        if (isRewardToken[_rewardsToken]) revert HiveRewarder__RewardTokenAlreadyAdded();
         rewardTokens.push(_rewardsToken);
         isRewardToken[_rewardsToken] = true;
-        emit RelayRewarder__RewardAdded(_rewardsToken);
+        emit HiveRewarder__RewardAdded(_rewardsToken);
     }
 
     /*----------  VIEW FUNCTIONS  ---------------------------------------*/
@@ -208,37 +208,37 @@ contract RelayRewarder is ReentrancyGuard, Ownable {
 
 }
 
-contract RelayRewarderFactory {
+contract HiveRewarderFactory {
 
-    address public relayFactory;
-    address public lastRelayRewarder;
+    address public hiveFactory;
+    address public lastHiveRewarder;
 
-    error RelayRewarderFactory__Unathorized();
-    error RelayRewarderFactory__InvalidZeroAddress();
+    error HiveRewarderFactory__Unathorized();
+    error HiveRewarderFactory__InvalidZeroAddress();
 
-    event RelayRewarderFactory__RelayFactorySet(address indexed account);
-    event RelayRewarderFactory__RelayRewarderCreated(address indexed relayRewarder);
+    event HiveRewarderFactory__HiveFactorySet(address indexed account);
+    event HiveRewarderFactory__HiveRewarderCreated(address indexed hiveRewarder);
 
-    modifier onlyRelayFactory() {
-        if (msg.sender != relayFactory) revert RelayRewarderFactory__Unathorized();
+    modifier onlyHiveFactory() {
+        if (msg.sender != hiveFactory) revert HiveRewarderFactory__Unathorized();
         _;
     }
 
-    constructor(address _relayFactory) {
-        relayFactory = _relayFactory;
+    constructor(address _hiveFactory) {
+        hiveFactory = _hiveFactory;
     }
 
-    function setRelayFactory(address _relayFactory) external onlyRelayFactory {
-        if (_relayFactory == address(0)) revert RelayRewarderFactory__InvalidZeroAddress();
-        relayFactory = _relayFactory;
-        emit RelayRewarderFactory__RelayFactorySet(_relayFactory);
+    function setHiveFactory(address _hiveFactory) external onlyHiveFactory {
+        if (_hiveFactory == address(0)) revert HiveRewarderFactory__InvalidZeroAddress();
+        hiveFactory = _hiveFactory;
+        emit HiveRewarderFactory__HiveFactorySet(_hiveFactory);
     }
 
-    function createRelayRewarder(address owner, address relayToken) external onlyRelayFactory returns (address) {
-        RelayRewarder relayRewarder = new RelayRewarder(relayFactory, relayToken);
-        relayRewarder.transferOwnership(owner);
-        lastRelayRewarder = address(relayRewarder);
-        emit RelayRewarderFactory__RelayRewarderCreated(lastRelayRewarder);
-        return lastRelayRewarder;
+    function createHiveRewarder(address owner, address hiveToken) external onlyHiveFactory returns (address) {
+        HiveRewarder hiveRewarder = new HiveRewarder(hiveFactory, hiveToken);
+        hiveRewarder.transferOwnership(owner);
+        lastHiveRewarder = address(hiveRewarder);
+        emit HiveRewarderFactory__HiveRewarderCreated(lastHiveRewarder);
+        return lastHiveRewarder;
     }
 }

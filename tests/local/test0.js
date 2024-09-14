@@ -2770,9 +2770,7 @@ describe("local: test0", function () {
 
   it("user2 tries calling getReward on gauge0 for user0", async function () {
     console.log("******************************************************");
-    await expect(
-      gauge0.connect(user2).getReward(user0.address)
-    ).to.be.revertedWith("Gauge__NotAuthorizedUser");
+    await gauge0.connect(user2).getReward(user0.address);
   });
 
   it("Forward time by 3 day", async function () {

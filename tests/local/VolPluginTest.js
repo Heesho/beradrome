@@ -31,7 +31,7 @@ let pluginFactory;
 let LP0, plugin0, gauge0, bribe0;
 let LP1, plugin1, gauge1, bribe1;
 
-describe.only("Vol Plugin testing", function () {
+describe("Vol Plugin testing", function () {
   before("Initial set up", async function () {
     console.log("Begin Initialization");
 

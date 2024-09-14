@@ -738,7 +738,7 @@ contract MinimalEVCClient {
 /// @title FeeFlowController
 /// @author Euler Labs (https://eulerlabs.com)
 /// @notice Continous back to back dutch auctions selling any asset received by this contract
-contract RelayFeeFlow is MinimalEVCClient {
+contract HiveFeeFlow is MinimalEVCClient {
     using SafeTransferLib for ERC20;
 
     uint256 constant public MIN_EPOCH_PERIOD = 1 hours;
@@ -910,40 +910,40 @@ contract RelayFeeFlow is MinimalEVCClient {
     }
 }
 
-contract RelayFeeFlowFactory {
+contract HiveFeeFlowFactory {
 
     uint256 constant public EPOCH_PERIOD = 10 days;
     uint256 constant public PRICE_MULTIPLIER = 2 * 1e18;
 
-    address public relayFactory;
-    address public lastRelayFeeFlow;
+    address public hiveFactory;
+    address public lastHiveFeeFlow;
 
-    error RelayFeeFlowFactory__Unathorized();
-    error RelayFeeFlowFactory__InvalidZeroAddress();
+    error HiveFeeFlowFactory__Unathorized();
+    error HiveFeeFlowFactory__InvalidZeroAddress();
 
-    event RelayFeeFlowFactory__RelayFactorySet(address indexed account);
-    event RelayFeeFlowFactory__RelayFeeFlowCreated(address indexed relayToken);
+    event HiveFeeFlowFactory__HiveFactorySet(address indexed account);
+    event HiveFeeFlowFactory__HiveFeeFlowCreated(address indexed hiveToken);
 
-    modifier onlyRelayFactory() {
-        if (msg.sender != relayFactory) revert RelayFeeFlowFactory__Unathorized();
+    modifier onlyHiveFactory() {
+        if (msg.sender != hiveFactory) revert HiveFeeFlowFactory__Unathorized();
         _;
     }
 
-    constructor(address _relayFactory) {
-        relayFactory = _relayFactory;
+    constructor(address _hiveFactory) {
+        hiveFactory = _hiveFactory;
     }
 
-    function setRelayFactory(address _relayFactory) external onlyRelayFactory {
-        if (_relayFactory == address(0)) revert RelayFeeFlowFactory__InvalidZeroAddress();
-        relayFactory = _relayFactory;
-        emit RelayFeeFlowFactory__RelayFactorySet(_relayFactory);
+    function setHiveFactory(address _hiveFactory) external onlyHiveFactory {
+        if (_hiveFactory == address(0)) revert HiveFeeFlowFactory__InvalidZeroAddress();
+        hiveFactory = _hiveFactory;
+        emit HiveFeeFlowFactory__HiveFactorySet(_hiveFactory);
     }
 
-    function createRelayFeeFlow(address relayDistro, address rewardToken, uint256 initPrice, uint256 minInitPrice) external onlyRelayFactory returns (address) {
-        RelayFeeFlow relayFeeFlow = new RelayFeeFlow(address(0), initPrice, rewardToken, relayDistro, EPOCH_PERIOD, PRICE_MULTIPLIER, minInitPrice);
-        lastRelayFeeFlow = address(relayFeeFlow);
-        emit RelayFeeFlowFactory__RelayFeeFlowCreated(lastRelayFeeFlow);
-        return lastRelayFeeFlow;
+    function createHiveFeeFlow(address hiveDistro, address rewardToken, uint256 initPrice, uint256 minInitPrice) external onlyHiveFactory returns (address) {
+        HiveFeeFlow hiveFeeFlow = new HiveFeeFlow(address(0), initPrice, rewardToken, hiveDistro, EPOCH_PERIOD, PRICE_MULTIPLIER, minInitPrice);
+        lastHiveFeeFlow = address(hiveFeeFlow);
+        emit HiveFeeFlowFactory__HiveFeeFlowCreated(lastHiveFeeFlow);
+        return lastHiveFeeFlow;
     }
 
 }

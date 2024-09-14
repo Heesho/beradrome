@@ -30,7 +30,7 @@ interface IWBERA {
     function deposit() external payable;
 }
 
-interface IRelayFactory {
+interface IHiveFactory {
     function protocol() external view returns (address);
     function developer() external view returns (address);
     function oToken() external view returns (address);
@@ -40,7 +40,7 @@ interface IRelayFactory {
     function mintFee() external view returns (uint256);
 }
 
-contract RelayToken is ERC20, ERC20Permit, ERC20Votes, Ownable, ReentrancyGuard {
+contract HiveToken is ERC20, ERC20Permit, ERC20Votes, Ownable, ReentrancyGuard {
     using SafeERC20 for IERC20;
 
     /*----------  CONSTANTS  --------------------------------------------*/
@@ -52,7 +52,7 @@ contract RelayToken is ERC20, ERC20Permit, ERC20Votes, Ownable, ReentrancyGuard 
 
     /*----------  STATE VARIABLES  --------------------------------------*/
 
-    address public immutable relayFactory;
+    address public immutable hiveFactory;
     address public immutable oToken;
     address public immutable vToken;
     address public immutable vTokenRewarder;
@@ -69,48 +69,48 @@ contract RelayToken is ERC20, ERC20Permit, ERC20Votes, Ownable, ReentrancyGuard 
 
     /*----------  ERRORS ------------------------------------------------*/
 
-    error RelayToken__InvalidInput();
-    error RelayToken__InvalidZeroInput();
-    error RelayToken__InvalidZeroAddress();
-    error RelayToken__NotDelegate();
-    error RelayToken__InvalidVote();
-    error RelayToken__NotAuthorized();
+    error HiveToken__InvalidInput();
+    error HiveToken__InvalidZeroInput();
+    error HiveToken__InvalidZeroAddress();
+    error HiveToken__NotDelegate();
+    error HiveToken__InvalidVote();
+    error HiveToken__NotAuthorized();
 
     /*----------  EVENTS ------------------------------------------------*/
 
-    event RelayToken__Mint(address indexed minter, address indexed account, uint256 amount, uint256 fee);
-    event RelayToken__Vote(address[] plugins, uint256[] weights);
-    event RelayToken__ClaimBribes(address[] bribes);
-    event RelayToken__TransferToFeeFlow(address token);
-    event RelayToken__ClaimRewards();
-    event RelayToken__SetVotes(address[] plugins, uint256[] weights);
-    event RelayToken__SetDelegate(address delegate);
-    event RelayToken__SetFeeFlow(address feeFlow);
-    event RelayToken__SetUri(string uri);
-    event RelayToken__SetDescription(string description);
-    event RelayToken__SetTreasury(address treasury);
+    event HiveToken__Mint(address indexed minter, address indexed account, uint256 amount, uint256 fee);
+    event HiveToken__Vote(address[] plugins, uint256[] weights);
+    event HiveToken__ClaimBribes(address[] bribes);
+    event HiveToken__TransferToFeeFlow(address token);
+    event HiveToken__ClaimRewards();
+    event HiveToken__SetVotes(address[] plugins, uint256[] weights);
+    event HiveToken__SetDelegate(address delegate);
+    event HiveToken__SetFeeFlow(address feeFlow);
+    event HiveToken__SetUri(string uri);
+    event HiveToken__SetDescription(string description);
+    event HiveToken__SetTreasury(address treasury);
 
     /*----------  MODIFIERS  --------------------------------------------*/
 
     modifier nonZeroInput(uint256 _amount) {
-        if (_amount == 0) revert RelayToken__InvalidZeroInput();
+        if (_amount == 0) revert HiveToken__InvalidZeroInput();
         _;
     }
 
     modifier nonZeroAddress(address _account) {
-        if (_account == address(0)) revert RelayToken__InvalidZeroAddress();
+        if (_account == address(0)) revert HiveToken__InvalidZeroAddress();
         _;
     }
 
     modifier onlyDelegate() {
-        if (msg.sender != owner() && msg.sender != delegate) revert RelayToken__NotDelegate();
+        if (msg.sender != owner() && msg.sender != delegate) revert HiveToken__NotDelegate();
         _;
     }
 
     /*----------  FUNCTIONS  --------------------------------------------*/
 
     constructor(
-        address _relayFactory,
+        address _hiveFactory,
         address _owner,
         string memory _name,
         string memory _symbol,
@@ -123,10 +123,10 @@ contract RelayToken is ERC20, ERC20Permit, ERC20Votes, Ownable, ReentrancyGuard 
         uri = _uri;
         description = _description;
 
-        relayFactory = _relayFactory;
-        oToken = IRelayFactory(relayFactory).oToken();
-        vToken = IRelayFactory(relayFactory).vToken();
-        vTokenRewarder = IRelayFactory(relayFactory).vTokenRewarder();
+        hiveFactory = _hiveFactory;
+        oToken = IHiveFactory(hiveFactory).oToken();
+        vToken = IHiveFactory(hiveFactory).vToken();
+        vTokenRewarder = IHiveFactory(hiveFactory).vTokenRewarder();
 
         delegate = _owner;
         feeFlow = _owner;
@@ -138,42 +138,42 @@ contract RelayToken is ERC20, ERC20Permit, ERC20Votes, Ownable, ReentrancyGuard 
         nonReentrant
         nonZeroInput(amount)
     {
-        uint256 fee = amount * IRelayFactory(relayFactory).mintFee() / DIVISOR;
+        uint256 fee = amount * IHiveFactory(hiveFactory).mintFee() / DIVISOR;
         amount -= fee;
         _mint(account, amount);
         IERC20(oToken).safeTransferFrom(msg.sender, address(this), amount);
 
         IERC20(oToken).safeTransferFrom(msg.sender, treasury, fee / 3);
-        IERC20(oToken).safeTransferFrom(msg.sender, IRelayFactory(relayFactory).protocol(), fee / 3);
-        IERC20(oToken).safeTransferFrom(msg.sender, IRelayFactory(relayFactory).developer(), fee / 3);
+        IERC20(oToken).safeTransferFrom(msg.sender, IHiveFactory(hiveFactory).protocol(), fee / 3);
+        IERC20(oToken).safeTransferFrom(msg.sender, IHiveFactory(hiveFactory).developer(), fee / 3);
         
         IERC20(oToken).safeApprove(vToken, 0);
         IERC20(oToken).safeApprove(vToken, amount);
         IVTOKEN(vToken).burnFor(address(this), amount);
-        emit RelayToken__Mint(msg.sender, account, amount, fee);
+        emit HiveToken__Mint(msg.sender, account, amount, fee);
     }
 
     function vote()
         external
     {
-        address voter = IRelayFactory(relayFactory).voter();
+        address voter = IHiveFactory(hiveFactory).voter();
         IVoter(voter).vote(plugins, weights);
-        emit RelayToken__Vote(plugins, weights);
+        emit HiveToken__Vote(plugins, weights);
     }
 
     function claimRewards() 
         external
     {
         IVTOKENRewarder(vTokenRewarder).getReward(address(this));
-        emit RelayToken__ClaimRewards();
+        emit HiveToken__ClaimRewards();
     }
 
     function claimBribes(address[] calldata bribes) 
         external
     {
-        address voter = IRelayFactory(relayFactory).voter();
+        address voter = IHiveFactory(hiveFactory).voter();
         IVoter(voter).claimBribes(bribes);
-        emit RelayToken__ClaimBribes(bribes);
+        emit HiveToken__ClaimBribes(bribes);
     }
     
     function transferToFeeFlow(address[] calldata tokens) 
@@ -182,13 +182,13 @@ contract RelayToken is ERC20, ERC20Permit, ERC20Votes, Ownable, ReentrancyGuard 
         for (uint256 i = 0; i < tokens.length; i++) {
             if (tokens[i] != BGT) {
                 IERC20(tokens[i]).safeTransfer(feeFlow, IERC20(tokens[i]).balanceOf(address(this)));
-                emit RelayToken__TransferToFeeFlow(tokens[i]);
+                emit HiveToken__TransferToFeeFlow(tokens[i]);
             } else {
                 uint256 balance = IBGT(BGT).unboostedBalanceOf(address(this));
                 IBGT(BGT).redeem(address(this), balance);
                 IWBERA(WBERA).deposit{value: balance}();
                 IERC20(WBERA).safeTransfer(feeFlow, IERC20(WBERA).balanceOf(address(this)));
-                emit RelayToken__TransferToFeeFlow(WBERA);
+                emit HiveToken__TransferToFeeFlow(WBERA);
             }
         }
     }
@@ -199,10 +199,10 @@ contract RelayToken is ERC20, ERC20Permit, ERC20Votes, Ownable, ReentrancyGuard 
         external 
         onlyDelegate() 
     {
-        if (_plugins.length != _weights.length) revert RelayToken__InvalidVote();
+        if (_plugins.length != _weights.length) revert HiveToken__InvalidVote();
         plugins = _plugins;
         weights = _weights;
-        emit RelayToken__SetVotes(_plugins, _weights);
+        emit HiveToken__SetVotes(_plugins, _weights);
     }
 
     function setDelegate(address _delegate) 
@@ -211,35 +211,35 @@ contract RelayToken is ERC20, ERC20Permit, ERC20Votes, Ownable, ReentrancyGuard 
         nonZeroAddress(_delegate) 
     {
         delegate = _delegate;
-        emit RelayToken__SetDelegate(_delegate);
+        emit HiveToken__SetDelegate(_delegate);
     }
 
     function setFeeFlow(address _feeFlow) 
         external 
         nonZeroAddress(_feeFlow) 
     {
-        if (msg.sender != relayFactory) revert RelayToken__NotAuthorized();
+        if (msg.sender != hiveFactory) revert HiveToken__NotAuthorized();
         feeFlow = _feeFlow;
-        emit RelayToken__SetFeeFlow(_feeFlow);
+        emit HiveToken__SetFeeFlow(_feeFlow);
     }
 
     function setUri(string calldata _uri) 
         external 
         onlyOwner() 
     {
-        if (bytes(_uri).length == 0) revert RelayToken__InvalidInput();
+        if (bytes(_uri).length == 0) revert HiveToken__InvalidInput();
         uri = _uri;
-        emit RelayToken__SetUri(_uri);
+        emit HiveToken__SetUri(_uri);
     }
 
     function setDescription(string calldata _description) 
         external 
         onlyOwner() 
     {
-        if (bytes(_description).length == 0) revert RelayToken__InvalidInput();
-        if (bytes(_description).length > 256) revert RelayToken__InvalidInput();
+        if (bytes(_description).length == 0) revert HiveToken__InvalidInput();
+        if (bytes(_description).length > 256) revert HiveToken__InvalidInput();
         description = _description;
-        emit RelayToken__SetDescription(_description);
+        emit HiveToken__SetDescription(_description);
     }
 
     function setTreasury(address _treasury) 
@@ -248,7 +248,7 @@ contract RelayToken is ERC20, ERC20Permit, ERC20Votes, Ownable, ReentrancyGuard 
         nonZeroAddress(_treasury) 
     {
         treasury = _treasury;
-        emit RelayToken__SetTreasury(_treasury);
+        emit HiveToken__SetTreasury(_treasury);
     }
 
     /*----------  FUNCTION OVERRIDES  -----------------------------------*/
@@ -315,37 +315,37 @@ contract RelayToken is ERC20, ERC20Permit, ERC20Votes, Ownable, ReentrancyGuard 
 
 }
 
-contract RelayTokenFactory {
+contract HiveTokenFactory {
 
-    address public relayFactory;
-    address public lastRelayToken;
+    address public hiveFactory;
+    address public lastHiveToken;
 
-    error RelayTokenFactory__Unathorized();
-    error RelayTokenFactory__InvalidZeroAddress();
+    error HiveTokenFactory__Unathorized();
+    error HiveTokenFactory__InvalidZeroAddress();
 
-    event RelayTokenFactory__RelayFactorySet(address indexed account);
-    event RelayTokenFactory__RelayTokenCreated(address indexed relayToken);
+    event HiveTokenFactory__HiveFactorySet(address indexed account);
+    event HiveTokenFactory__HiveTokenCreated(address indexed hiveToken);
 
-    modifier onlyRelayFactory() {
-        if (msg.sender != relayFactory) revert RelayTokenFactory__Unathorized();
+    modifier onlyHiveFactory() {
+        if (msg.sender != hiveFactory) revert HiveTokenFactory__Unathorized();
         _;
     }
 
-    constructor(address _relayFactory) {
-        relayFactory = _relayFactory;
+    constructor(address _hiveFactory) {
+        hiveFactory = _hiveFactory;
     }
 
-    function setRelayFactory(address _relayFactory) external onlyRelayFactory {
-        if (_relayFactory == address(0)) revert RelayTokenFactory__InvalidZeroAddress();
-        relayFactory = _relayFactory;
-        emit RelayTokenFactory__RelayFactorySet(_relayFactory);
+    function setHiveFactory(address _hiveFactory) external onlyHiveFactory {
+        if (_hiveFactory == address(0)) revert HiveTokenFactory__InvalidZeroAddress();
+        hiveFactory = _hiveFactory;
+        emit HiveTokenFactory__HiveFactorySet(_hiveFactory);
     }
 
-    function createRelayToken(address owner, string calldata name, string calldata symbol, string calldata uri, string calldata description) external onlyRelayFactory returns (address) {
-        RelayToken relayToken = new RelayToken(relayFactory, owner, name, symbol, uri, description);
-        relayToken.transferOwnership(owner);
-        lastRelayToken = address(relayToken);
-        emit RelayTokenFactory__RelayTokenCreated(lastRelayToken);
-        return lastRelayToken;
+    function createHiveToken(address owner, string calldata name, string calldata symbol, string calldata uri, string calldata description) external onlyHiveFactory returns (address) {
+        HiveToken hiveToken = new HiveToken(hiveFactory, owner, name, symbol, uri, description);
+        hiveToken.transferOwnership(owner);
+        lastHiveToken = address(hiveToken);
+        emit HiveTokenFactory__HiveTokenCreated(lastHiveToken);
+        return lastHiveToken;
     }
 }
