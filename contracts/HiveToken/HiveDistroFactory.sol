@@ -7,7 +7,6 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 
 interface IHiveFactory {
     function protocol() external view returns (address);
-    function developer() external view returns (address);
     function rewardFee() external view returns (uint256);
 }
 
@@ -56,9 +55,8 @@ contract HiveDistro is Ownable, ReentrancyGuard {
                 uint256 fee = balance * IHiveFactory(hiveFactory).rewardFee() / DIVISOR;
                 balance -= fee;
                 
-                IERC20(rewardTokens[i]).safeTransfer(IHiveToken(hiveToken).treasury(), fee / 3);
-                IERC20(rewardTokens[i]).safeTransfer(IHiveFactory(hiveFactory).protocol(), fee  /3);
-                IERC20(rewardTokens[i]).safeTransfer(IHiveFactory(hiveFactory).developer(), fee / 3);
+                IERC20(rewardTokens[i]).safeTransfer(IHiveToken(hiveToken).treasury(), fee * 10 / 100);
+                IERC20(rewardTokens[i]).safeTransfer(IHiveFactory(hiveFactory).protocol(), fee * 90 / 100);
 
                 IERC20(rewardTokens[i]).safeApprove(hiveRewarder, 0);
                 IERC20(rewardTokens[i]).safeApprove(hiveRewarder, balance);

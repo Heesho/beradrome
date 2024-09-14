@@ -45,7 +45,6 @@ contract HiveFactory is Ownable {
     address public hiveFeeFlowFactory;
 
     address public protocol;
-    address public developer;
 
     uint256 public mintFee = 100;
     uint256 public rewardFee = 1000;
@@ -75,7 +74,6 @@ contract HiveFactory is Ownable {
     event HiveFactory__FeeFlowSet(uint256 index, address hiveToken, address hiveFeeFlow);
     event HiveFactory__VoterSet(address voter);
     event HiveFactory__ProtocolSet(address protocol);
-    event HiveFactory__DeveloperSet(address developer);
     event HiveFactory__MintFeeSet(uint256 mintFee);
     event HiveFactory__RewardFeeSet(uint256 rewardFee);
 
@@ -90,7 +88,6 @@ contract HiveFactory is Ownable {
         vTokenRewarder = _vTokenRewarder;
         voter = _voter;
         protocol = msg.sender;
-        developer = msg.sender;
     }
 
     function createHive(
@@ -166,13 +163,6 @@ contract HiveFactory is Ownable {
         if (_protocol == address(0)) revert HiveFactory__InvalidZeroAddress();
         protocol = _protocol;
         emit HiveFactory__ProtocolSet(_protocol);
-    }
-
-    function setDeveloper(address _developer) external {
-        if (msg.sender != developer) revert HiveFactory__Unauthorized();
-        if (_developer == address(0)) revert HiveFactory__InvalidZeroAddress();
-        developer = _developer;
-        emit HiveFactory__DeveloperSet(_developer);
     }
 
     function setMintFee(uint256 fee) external onlyOwner() {

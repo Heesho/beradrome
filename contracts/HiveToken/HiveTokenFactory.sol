@@ -32,7 +32,6 @@ interface IWBERA {
 
 interface IHiveFactory {
     function protocol() external view returns (address);
-    function developer() external view returns (address);
     function oToken() external view returns (address);
     function vToken() external view returns (address);
     function vTokenRewarder() external view returns (address);
@@ -143,9 +142,8 @@ contract HiveToken is ERC20, ERC20Permit, ERC20Votes, Ownable, ReentrancyGuard {
         _mint(account, amount);
         IERC20(oToken).safeTransferFrom(msg.sender, address(this), amount);
 
-        IERC20(oToken).safeTransferFrom(msg.sender, treasury, fee / 3);
-        IERC20(oToken).safeTransferFrom(msg.sender, IHiveFactory(hiveFactory).protocol(), fee / 3);
-        IERC20(oToken).safeTransferFrom(msg.sender, IHiveFactory(hiveFactory).developer(), fee / 3);
+        IERC20(oToken).safeTransferFrom(msg.sender, treasury, fee * 10 / 100);
+        IERC20(oToken).safeTransferFrom(msg.sender, IHiveFactory(hiveFactory).protocol(), fee * 90 / 100);
         
         IERC20(oToken).safeApprove(vToken, 0);
         IERC20(oToken).safeApprove(vToken, amount);
