@@ -730,7 +730,7 @@ async function main() {
   //   await multicall
   //     .connect(wallet)
   //     .bribeCardData(
-  //       "0x170d64FB2FCD6bB6639eD0D37b981F6Af0E26C3a",
+  //       "0x62c310059A7d84805c675d2458234d3D137D9a1c",
   //       "0x0000000000000000000000000000000000000000"
   //     )
   // );
@@ -739,7 +739,7 @@ async function main() {
   //   await multicall
   //     .connect(wallet)
   //     .gaugeCardData(
-  //       "0x9C8366e5fb3B818e7C8c04F080f36f56BFf335Ee",
+  //       "0xb3D10C15360e444aBB2673D772D6f2EE32AAaB34",
   //       "0x0000000000000000000000000000000000000000"
   //     )
   // );
@@ -778,7 +778,7 @@ async function main() {
   //   .addBribeReward(
   //     "0xf045e041A63bC5Aa3523067F3C593FF3bb3d7827",
   //     "0x0E4aaF1351de4c0264C5c7056Ef3777b41BD8e03"
-  //   ); // xKDK added to YEET-WBERA Island Gauge
+  //   );
   // console.log("- HONEY added as bribe rewards");
   // await voter
   //   .connect(wallet)
@@ -794,6 +794,14 @@ async function main() {
   //     "0x414B50157a5697F14e91417C5275A7496DcF429D"
   //   ); // xKDK added to oBERO-WBERA Island Gauge
   // console.log("- xKDK added as gauge rewards");
+
+  // await voter
+  //   .connect(wallet)
+  //   .addBribeReward(
+  //     "0x17a415355Af5eDEb973ffA8290e651d14D4B5A99",
+  //     "0x0E4aaF1351de4c0264C5c7056Ef3777b41BD8e03"
+  //   );
+  // console.log("- HONEY added as bribe rewards for oBERO-WBERA Island Bribe");
 
   //===================================================================
   // 13. Deploy Trifecta Multicall
