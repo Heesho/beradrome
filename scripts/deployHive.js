@@ -376,7 +376,7 @@ async function main() {
   // await deployHiveDistroFactory();
   // await deployHiveFeeFlowFactory();
   // await deployHiveMulticall();
-  await printFactoryAddresses();
+  // await printFactoryAddresses();
 
   /*********** UPDATE getContracts() with new addresses *************/
 
