@@ -37,55 +37,47 @@ let hiveToken, hiveRewarder, hiveDistro, hiveFeeFlow;
 async function getContracts() {
   console.log("Retrieving Contracts");
 
-  // hiveFactory = await ethers.getContractAt(
-  //   "contracts/HiveToken/HiveFactory.sol:HiveFactory",
-  //   ""
-  // );
+  hiveFactory = await ethers.getContractAt(
+    "contracts/HiveToken/HiveFactory.sol:HiveFactory",
+    "0xbcf01F7870E53239208e2887eD9dE2c71B79eC17"
+  );
+  hiveTokenFactory = await ethers.getContractAt(
+    "contracts/HiveToken/HiveTokenFactory.sol:HiveTokenFactory",
+    "0x9B63760aE3C9eE4dd42bcfA31d9d2cfA1E9791b7"
+  );
+  hiveRewarderFactory = await ethers.getContractAt(
+    "contracts/HiveToken/HiveRewarderFactory.sol:HiveRewarderFactory",
+    "0x07338e6E3e82a73BA3501A940D25DDEE426213B1"
+  );
+  hiveDistroFactory = await ethers.getContractAt(
+    "contracts/HiveToken/HiveDistroFactory.sol:HiveDistroFactory",
+    "0xDaA8Ce57Ed7B1D37F1D6B687cB56b76964c912B6"
+  );
+  hiveFeeFlowFactory = await ethers.getContractAt(
+    "contracts/HiveToken/HiveFeeFlowFactory.sol:HiveFeeFlowFactory",
+    "0x7C2eCAF30455b15813e0E792b60834cf181E23Fb"
+  );
+  hiveMulticall = await ethers.getContractAt(
+    "contracts/HiveToken/HiveMulticall.sol:HiveMulticall",
+    "0x05C879CB6d37e97979c5bD2d07AD9b420af876e3"
+  );
 
-  // hiveTokenFactory = await ethers.getContractAt(
-  //   "contracts/HiveToken/HiveTokenFactory.sol:HiveTokenFactory",
-  //   ""
-  // );
-
-  // hiveRewarderFactory = await ethers.getContractAt(
-  //   "contracts/HiveToken/HiveRewarderFactory.sol:HiveRewarderFactory",
-  //   ""
-  // );
-
-  // hiveDistroFactory = await ethers.getContractAt(
-  //   "contracts/HiveToken/HiveDistroFactory.sol:HiveDistroFactory",
-  //   ""
-  // );
-
-  // hiveFeeFlowFactory = await ethers.getContractAt(
-  //   "contracts/HiveToken/HiveFeeFlowFactory.sol:HiveFeeFlowFactory",
-  //   ""
-  // );
-
-  // hiveMulticall = await ethers.getContractAt(
-  //   "contracts/HiveToken/HiveMulticall.sol:HiveMulticall",
-  //   ""
-  // );
-
-  // hiveToken = await ethers.getContractAt(
-  //   "contracts/HiveToken/HiveTokenFactory.sol:HiveToken",
-  //   ""
-  // );
-
-  // hiveRewarder = await ethers.getContractAt(
-  //   "contracts/HiveToken/HiveRewarderFactory.sol:HiveRewarder",
-  //   ""
-  // );
-
-  // hiveDistro = await ethers.getContractAt(
-  //   "contracts/HiveToken/HiveDistroFactory.sol:HiveDistro",
-  //   ""
-  // );
-
-  // hiveFeeFlow = await ethers.getContractAt(
-  //   "contracts/HiveToken/HiveFeeFlowFactory.sol:HiveFeeFlow",
-  //   ""
-  // );
+  hiveToken = await ethers.getContractAt(
+    "contracts/HiveToken/HiveTokenFactory.sol:HiveToken",
+    "0x6467757C4d8502947d66691E4D680E47e113C972"
+  );
+  hiveRewarder = await ethers.getContractAt(
+    "contracts/HiveToken/HiveRewarderFactory.sol:HiveRewarder",
+    "0xc08a9EC746bc6f56b1FFd93A7B9EA4Ab112a9885"
+  );
+  hiveDistro = await ethers.getContractAt(
+    "contracts/HiveToken/HiveDistroFactory.sol:HiveDistro",
+    "0xe0e8C605d326EF3bA8659939D8e0ab402872D4a5"
+  );
+  hiveFeeFlow = await ethers.getContractAt(
+    "contracts/HiveToken/HiveFeeFlowFactory.sol:HiveFeeFlow",
+    "0xe7474CB185E657C1b0B5fE8B2001a1C43AE74282"
+  );
 
   console.log("Contracts Retrieved");
 }
@@ -290,16 +282,16 @@ async function setUpSystem() {
 
 async function deployHive() {
   console.log("Starting Hive Deployment");
-  await hiveFactory.createHive(
-    HIVE_NAME,
-    HIVE_SYMBOL,
-    HIVE_URI,
-    HIVE_DESCRIPTION,
-    HIVE_REWARD,
-    oneHundred,
-    ten,
-    { gasPrice: ethers.gasPrice }
-  );
+  // await hiveFactory.createHive(
+  //   HIVE_NAME,
+  //   HIVE_SYMBOL,
+  //   HIVE_URI,
+  //   HIVE_DESCRIPTION,
+  //   HIVE_REWARD,
+  //   oneHundred,
+  //   ten,
+  //   { gasPrice: ethers.gasPrice }
+  // );
   console.log("Hive Deployed");
   let res = await hiveFactory.index_Hive(0);
   console.log("HiveToken: ", res.hiveToken);
@@ -384,6 +376,7 @@ async function main() {
   // await deployHiveDistroFactory();
   // await deployHiveFeeFlowFactory();
   // await deployHiveMulticall();
+  await printFactoryAddresses();
 
   /*********** UPDATE getContracts() with new addresses *************/
 

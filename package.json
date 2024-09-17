@@ -10,7 +10,7 @@
   "scripts": {
     "deploy": "hardhat run ./scripts/deploy.js  --network mainnet",
     "deployMerkle": "hardhat run ./scripts/deployMerkle.js  --network mainnet",
-    "deployRelay": "hardhat run ./scripts/deployRelay.js  --network mainnet",
+    "deployHive": "hardhat run ./scripts/deployHive.js  --network mainnet",
     "deployTestPlugins": "hardhat run ./scripts/local/deployPlugins.js  --network mainnet",
     "deployBexPlugins": "hardhat run ./scripts/berachain/deployBexPlugin.js  --network mainnet",
     "deployBerpPlugins": "hardhat run ./scripts/berachain/deployBerpPlugin.js  --network mainnet",
