@@ -690,6 +690,8 @@ async function main() {
   // console.log("Plugins added to Voter");
   // console.log("Adding Plugin15 to Voter");
   // await voter.addPlugin("0x9C8366e5fb3B818e7C8c04F080f36f56BFf335Ee"); // BUllas BULL ISH Game Plugin 3
+  // console.log("Adding Plugin16 to Voter");
+  // await voter.addPlugin("0xa1b0D1CC5Ca0F68Fa70B0575c9782e7B5b02859c"); // BUllas BULL ISH Game Plugin 4
   // console.log("Plugins added to Voter");
 
   //===================================================================
@@ -739,7 +741,7 @@ async function main() {
   //   await multicall
   //     .connect(wallet)
   //     .gaugeCardData(
-  //       "0xb3D10C15360e444aBB2673D772D6f2EE32AAaB34",
+  //       "0xa1b0D1CC5Ca0F68Fa70B0575c9782e7B5b02859c",
   //       "0x0000000000000000000000000000000000000000"
   //     )
   // );
@@ -820,7 +822,7 @@ async function main() {
   // console.log("Removing Plugin from Voter"); // Remove BULL ISH plugin
   // await voter
   //   .connect(wallet)
-  //   .killGauge("0x50b0e61620769c19695EB9Ebf24ffcB500346Ee3");
+  //   .killGauge("0x9502d6e880824f85369F532cD3088C7E3c258778");
   // console.log("Plugin removed from Voter");
 }
 
