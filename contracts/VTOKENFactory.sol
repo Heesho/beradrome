@@ -14,6 +14,27 @@ import "contracts/interfaces/IOTOKEN.sol";
 import "contracts/interfaces/IVTOKENRewarder.sol";
 import "contracts/interfaces/IVTOKENRewarderFactory.sol";
 
+interface IBerachainRewardsVaultFactory {
+    function createRewardsVault(address _stakingToken) external returns (address);
+}
+
+interface IRewardVault {
+    function delegateStake(address account, uint256 amount) external;
+    function delegateWithdraw(address account, uint256 amount) external;
+}
+
+contract StakingToken is ERC20, Ownable {
+    constructor() ERC20("StakingToken", "STK") {}
+
+    function mint(address to, uint256 amount) external onlyOwner {
+        _mint(to, amount);
+    }
+
+    function burn(address from, uint256 amount) external onlyOwner {
+        _burn(from, amount);
+    }
+}
+
 /**
  * @title VTOKEN
  * @author heesho
@@ -50,6 +71,9 @@ contract VTOKEN is ERC20, ERC20Permit, ERC20Votes, ReentrancyGuard, Ownable {
     IERC20 public immutable TOKEN;      // TOKEN address
     IERC20 public immutable OTOKEN;     // OTOKEN address
     address public voter;               // voter address where voting power is used
+
+    address public immutable stakingToken;  // staking token address for Berachain Rewards Vault Delegate Stake
+    address public immutable rewardVault;   // reward vault address for Berachain Rewards Vault Delegate Stake
 
     uint256 private _totalSupplyTOKEN;                   // total supply of TOKEN deposited
     mapping(address => uint256) private _balancesTOKEN;  // balances of TOKEN deposited
@@ -93,14 +117,18 @@ contract VTOKEN is ERC20, ERC20Permit, ERC20Votes, ReentrancyGuard, Ownable {
      * @notice constructs a new VTOKEN contract
      * @param _TOKEN address of TOKEN contract
      * @param _OTOKEN address of OTOKEN contract
+     * @param _VTOKENRewarderFactory address of VTOKENRewarderFactory contract
+     * @param _vaultFactory address of Berachain Rewards Vault Factory contract
      */
-    constructor(address _TOKEN, address _OTOKEN, address _VTOKENRewarderFactory) 
+    constructor(address _TOKEN, address _OTOKEN, address _VTOKENRewarderFactory, address _vaultFactory) 
         ERC20(NAME, SYMBOL)
         ERC20Permit(NAME)
     {
         TOKEN = IERC20(_TOKEN);
         OTOKEN = IERC20(_OTOKEN);
         rewarder = IVTOKENRewarderFactory(_VTOKENRewarderFactory).createVTokenRewarder(address(this));
+        stakingToken = address(new StakingToken());
+        rewardVault = IBerachainRewardsVaultFactory(_vaultFactory).createRewardsVault(address(stakingToken));
     }
 
     /**
@@ -120,6 +148,11 @@ contract VTOKEN is ERC20, ERC20Permit, ERC20Votes, ReentrancyGuard, Ownable {
 
         TOKEN.safeTransferFrom(account, address(this), amount);
         IVTOKENRewarder(rewarder)._deposit(amount, account);
+
+        // Berachain Rewards Vault Delegate Stake
+        StakingToken(stakingToken).mint(address(this), amount);
+        StakingToken(stakingToken).approve(rewardVault, amount);
+        IRewardVault(rewardVault).delegateStake(account,amount);
     }
 
     /**
@@ -142,6 +175,10 @@ contract VTOKEN is ERC20, ERC20Permit, ERC20Votes, ReentrancyGuard, Ownable {
         
         IVTOKENRewarder(rewarder)._withdraw(amount, account);
         TOKEN.safeTransfer(account, amount);
+
+        // Berachain Rewards Vault Delegate Stake
+        IRewardVault(rewardVault).delegateWithdraw(account, amount);
+        StakingToken(stakingToken).burn(address(this), amount);
     }
 
     /**
@@ -163,6 +200,11 @@ contract VTOKEN is ERC20, ERC20Permit, ERC20Votes, ReentrancyGuard, Ownable {
 
         IOTOKEN(address(OTOKEN)).burnFrom(msg.sender, amount);
         IVTOKENRewarder(rewarder)._deposit(amount, account);
+
+        // Berachain Rewards Vault Delegate Stake
+        StakingToken(stakingToken).mint(address(this), amount);
+        StakingToken(stakingToken).approve(rewardVault, amount);
+        IRewardVault(rewardVault).delegateStake(account,amount);
     }
 
     /*----------  FUNCTION OVERRIDES  -----------------------------------*/
@@ -253,8 +295,8 @@ contract VTOKENFactory {
 
     constructor() {}
 
-    function createVToken(address _TOKEN, address _OTOKEN, address _VTOKENRewarderFactory, address _owner) external returns (address, address) {
-        address vToken = address(new VTOKEN(_TOKEN, _OTOKEN, _VTOKENRewarderFactory));
+    function createVToken(address _TOKEN, address _OTOKEN, address _VTOKENRewarderFactory, address _vaultFactory, address _owner) external returns (address, address) {
+        address vToken = address(new VTOKEN(_TOKEN, _OTOKEN, _VTOKENRewarderFactory, _vaultFactory));
         VTOKEN(vToken).transferOwnership(_owner);
         emit VTOKENFactory__VTokenCreated(vToken);
         return (vToken, VTOKEN(vToken).rewarder());

@@ -26,6 +26,7 @@ let OTOKENFactory, VTOKENFactory, rewarderFactory;
 let voter, minter, gaugeFactory, bribeFactory;
 let multicall, controller;
 let trifectaMulticall;
+let berachainVaultConnector;
 
 /*===================================================================*/
 /*===========================  CONTRACT DATA  =======================*/
@@ -102,6 +103,11 @@ async function getContracts() {
   trifectaMulticall = await ethers.getContractAt(
     "contracts/TrifectaMulticall.sol:TrifectaMulticall",
     "0x6d6C42723Dea7C2077AFF8a8fdB6417c6e20D041"
+  );
+
+  berachainVaultConnector = await ethers.getContractAt(
+    "contracts/BerachainVaultConnector.sol:BerachainVaultConnector",
+    "0xe4aF526F8e21e682F8E80A620E2FAceAB771F76a"
   );
 
   console.log("Contracts Retrieved");
@@ -550,6 +556,46 @@ async function transferOwnership() {
   console.log("VTOKEN ownership transferred to governor");
 }
 
+async function deployBerachainVaultConnector() {
+  console.log("Starting BerachainVaultConnector Deployment");
+  const berachainVaultConnectorArtifact = await ethers.getContractFactory(
+    "BerachainVaultConnector"
+  );
+  const berachainVaultConnectorContract =
+    await berachainVaultConnectorArtifact.deploy(rewarder.address, {
+      gasPrice: ethers.gasPrice,
+    });
+  berachainVaultConnector = await berachainVaultConnectorContract.deployed();
+  await sleep(5000);
+  console.log(
+    "BerachainVaultConnector Deployed at:",
+    berachainVaultConnector.address
+  );
+  console.log(
+    "BerachainVaultToken deployed at: ",
+    await berachainVaultConnector.vaultToken()
+  );
+}
+
+async function verifyBerachainVaultConnector() {
+  console.log("Starting BerachainVaultConnector Verification");
+  await hre.run("verify:verify", {
+    address: berachainVaultConnector.address,
+    contract: "contracts/BerachainVaultConnector.sol:BerachainVaultConnector",
+    constructorArguments: [rewarder.address],
+  });
+  console.log("BerachainVaultConnector Verified");
+}
+
+async function verifyBerachainVaultToken() {
+  console.log("Starting BerachainVaultToken Verification");
+  await hre.run("verify:verify", {
+    address: await berachainVaultConnector.vaultToken(),
+    contract: "contracts/BerachainVaultConnector.sol:VaultToken",
+  });
+  console.log("BerachainVaultToken Verified");
+}
+
 async function main() {
   const [wallet] = await ethers.getSigners();
   console.log("Using wallet: ", wallet.address);
@@ -720,7 +766,7 @@ async function main() {
   //   "0x120E4B564D608ab8ea110df0a1429998cCA580D0", // Infrared HONEY-WBERA Plugin
   // ]);
   // await voter.distributeToBribes([
-  //   "0x9C8366e5fb3B818e7C8c04F080f36f56BFf335Ee", // BULL ISH
+  //   "0xa1b0D1CC5Ca0F68Fa70B0575c9782e7B5b02859c", // BULL ISH
   // ]);
   // console.log("Bribe Rewards Distributed");
 
@@ -732,7 +778,7 @@ async function main() {
   //   await multicall
   //     .connect(wallet)
   //     .bribeCardData(
-  //       "0x62c310059A7d84805c675d2458234d3D137D9a1c",
+  //       "0x9C8366e5fb3B818e7C8c04F080f36f56BFf335Ee",
   //       "0x0000000000000000000000000000000000000000"
   //     )
   // );
@@ -824,6 +870,16 @@ async function main() {
   //   .connect(wallet)
   //   .killGauge("0x9502d6e880824f85369F532cD3088C7E3c258778");
   // console.log("Plugin removed from Voter");
+
+  //===================================================================
+  // 15. Deploy BerachainVaultConnector
+  //===================================================================
+
+  // console.log("Starting BerachainVaultConnector Deployment");
+  // await deployBerachainVaultConnector();
+  // await verifyBerachainVaultConnector();
+  await verifyBerachainVaultToken();
+  // console.log("BerachainVaultConnector Deployed");
 }
 
 main()
