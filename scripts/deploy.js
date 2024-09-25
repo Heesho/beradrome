@@ -738,6 +738,8 @@ async function main() {
   // await voter.addPlugin("0x9C8366e5fb3B818e7C8c04F080f36f56BFf335Ee"); // BUllas BULL ISH Game Plugin 3
   // console.log("Adding Plugin16 to Voter");
   // await voter.addPlugin("0xa1b0D1CC5Ca0F68Fa70B0575c9782e7B5b02859c"); // BUllas BULL ISH Game Plugin 4
+  // console.log("Adding Plugin16 to Voter");
+  // await voter.addPlugin("0x5aD441790c3114e0AB27816abdB0c9693cd96399"); // BUllas BULL ISH Game Plugin 5
   // console.log("Plugins added to Voter");
 
   //===================================================================
@@ -766,7 +768,7 @@ async function main() {
   //   "0x120E4B564D608ab8ea110df0a1429998cCA580D0", // Infrared HONEY-WBERA Plugin
   // ]);
   // await voter.distributeToBribes([
-  //   "0xa1b0D1CC5Ca0F68Fa70B0575c9782e7B5b02859c", // BULL ISH
+  //   "0x5aD441790c3114e0AB27816abdB0c9693cd96399", // BULL ISH
   // ]);
   // console.log("Bribe Rewards Distributed");
 
@@ -787,7 +789,7 @@ async function main() {
   //   await multicall
   //     .connect(wallet)
   //     .gaugeCardData(
-  //       "0xa1b0D1CC5Ca0F68Fa70B0575c9782e7B5b02859c",
+  //       "0x5aD441790c3114e0AB27816abdB0c9693cd96399",
   //       "0x0000000000000000000000000000000000000000"
   //     )
   // );
@@ -868,7 +870,7 @@ async function main() {
   // console.log("Removing Plugin from Voter"); // Remove BULL ISH plugin
   // await voter
   //   .connect(wallet)
-  //   .killGauge("0x9502d6e880824f85369F532cD3088C7E3c258778");
+  //   .killGauge("0xa803256FBc450303fE7fAf1F90956B924780dc97");
   // console.log("Plugin removed from Voter");
 
   //===================================================================
@@ -878,7 +880,7 @@ async function main() {
   // console.log("Starting BerachainVaultConnector Deployment");
   // await deployBerachainVaultConnector();
   // await verifyBerachainVaultConnector();
-  await verifyBerachainVaultToken();
+  // await verifyBerachainVaultToken();
   // console.log("BerachainVaultConnector Deployed");
 }
 
