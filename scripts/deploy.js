@@ -596,6 +596,26 @@ async function verifyBerachainVaultToken() {
   console.log("BerachainVaultToken Verified");
 }
 
+async function verifyGauge(pluginAddress, gaugeAddress) {
+  console.log("Starting Gauge Verification");
+  await hre.run("verify:verify", {
+    address: gaugeAddress,
+    contract: "contracts/GaugeFactory.sol:Gauge",
+    constructorArguments: [pluginAddress, voter.address],
+  });
+  console.log("Gauge Verified");
+}
+
+async function verifyBribe(bribeAddress) {
+  console.log("Starting Bribe Verification");
+  await hre.run("verify:verify", {
+    address: bribeAddress,
+    contract: "contracts/BribeFactory.sol:Bribe",
+    constructorArguments: [voter.address],
+  });
+  console.log("Bribe Verified");
+}
+
 async function main() {
   const [wallet] = await ethers.getSigners();
   console.log("Using wallet: ", wallet.address);
@@ -672,6 +692,11 @@ async function main() {
   // await verifyBribeFactory(wallet.address);
   // await verifyVoter();
   // await verifyMinter();
+  // await verifyGauge(
+  //   "0x5aD441790c3114e0AB27816abdB0c9693cd96399",
+  //   "0xF3Ef842E1572E13d8A59Aa51cC7b7c51F37e1456"
+  // );
+  // await verifyBribe("0x37C63496f564fC3098f6629efe80dfCbe16AF06e");
   // console.log("Voting Contracts Verified")
 
   //===================================================================
@@ -767,29 +792,29 @@ async function main() {
   //   "0x170d64FB2FCD6bB6639eD0D37b981F6Af0E26C3a", // Infrared HONEY-WETH Plugin
   //   "0x120E4B564D608ab8ea110df0a1429998cCA580D0", // Infrared HONEY-WBERA Plugin
   // ]);
-  await voter.distributeToBribes([
-    "0x5aD441790c3114e0AB27816abdB0c9693cd96399", // BULL ISH
-  ]);
+  // await voter.distributeToBribes([
+  //   "0x5aD441790c3114e0AB27816abdB0c9693cd96399", // BULL ISH
+  // ]);
   // console.log("Bribe Rewards Distributed");
 
   //===================================================================
   // 12. Plugin Data
   //===================================================================
 
-  // console.log(
-  //   await multicall
-  //     .connect(wallet)
-  //     .bribeCardData(
-  //       "0x9C8366e5fb3B818e7C8c04F080f36f56BFf335Ee",
-  //       "0x0000000000000000000000000000000000000000"
-  //     )
-  // );
+  console.log(
+    await multicall
+      .connect(wallet)
+      .bribeCardData(
+        "0x170d64FB2FCD6bB6639eD0D37b981F6Af0E26C3a",
+        "0x0000000000000000000000000000000000000000"
+      )
+  );
 
   // console.log(
   //   await multicall
   //     .connect(wallet)
   //     .gaugeCardData(
-  //       "0x5aD441790c3114e0AB27816abdB0c9693cd96399",
+  //       "0x170d64FB2FCD6bB6639eD0D37b981F6Af0E26C3a",
   //       "0x0000000000000000000000000000000000000000"
   //     )
   // );
