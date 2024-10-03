@@ -15,7 +15,7 @@ import "contracts/interfaces/IVTOKENRewarder.sol";
 import "contracts/interfaces/IVTOKENRewarderFactory.sol";
 
 interface IBerachainRewardsVaultFactory {
-    function createRewardsVault(address _stakingToken) external returns (address);
+    function createRewardsVault(address _vaultToken) external returns (address);
 }
 
 interface IRewardVault {
@@ -23,8 +23,8 @@ interface IRewardVault {
     function delegateWithdraw(address account, uint256 amount) external;
 }
 
-contract StakingToken is ERC20, Ownable {
-    constructor() ERC20("StakingToken", "STK") {}
+contract VaultToken is ERC20, Ownable {
+    constructor() ERC20("Beradrome Vault Token", "BVT") {}
 
     function mint(address to, uint256 amount) external onlyOwner {
         _mint(to, amount);
@@ -72,7 +72,7 @@ contract VTOKEN is ERC20, ERC20Permit, ERC20Votes, ReentrancyGuard, Ownable {
     IERC20 public immutable OTOKEN;     // OTOKEN address
     address public voter;               // voter address where voting power is used
 
-    address public immutable stakingToken;  // staking token address for Berachain Rewards Vault Delegate Stake
+    address public immutable vaultToken;  // staking token address for Berachain Rewards Vault Delegate Stake
     address public immutable rewardVault;   // reward vault address for Berachain Rewards Vault Delegate Stake
 
     uint256 private _totalSupplyTOKEN;                   // total supply of TOKEN deposited
@@ -127,8 +127,8 @@ contract VTOKEN is ERC20, ERC20Permit, ERC20Votes, ReentrancyGuard, Ownable {
         TOKEN = IERC20(_TOKEN);
         OTOKEN = IERC20(_OTOKEN);
         rewarder = IVTOKENRewarderFactory(_VTOKENRewarderFactory).createVTokenRewarder(address(this));
-        stakingToken = address(new StakingToken());
-        rewardVault = IBerachainRewardsVaultFactory(_vaultFactory).createRewardsVault(address(stakingToken));
+        vaultToken = address(new VaultToken());
+        rewardVault = IBerachainRewardsVaultFactory(_vaultFactory).createRewardsVault(address(vaultToken));
     }
 
     /**
@@ -150,9 +150,9 @@ contract VTOKEN is ERC20, ERC20Permit, ERC20Votes, ReentrancyGuard, Ownable {
         IVTOKENRewarder(rewarder)._deposit(amount, account);
 
         // Berachain Rewards Vault Delegate Stake
-        StakingToken(stakingToken).mint(address(this), amount);
-        StakingToken(stakingToken).approve(rewardVault, amount);
-        IRewardVault(rewardVault).delegateStake(account,amount);
+        VaultToken(vaultToken).mint(address(this), amount);
+        VaultToken(vaultToken).approve(rewardVault, amount);
+        IRewardVault(rewardVault).delegateStake(account, amount);
     }
 
     /**
@@ -178,7 +178,7 @@ contract VTOKEN is ERC20, ERC20Permit, ERC20Votes, ReentrancyGuard, Ownable {
 
         // Berachain Rewards Vault Delegate Stake
         IRewardVault(rewardVault).delegateWithdraw(account, amount);
-        StakingToken(stakingToken).burn(address(this), amount);
+        VaultToken(vaultToken).burn(address(this), amount);
     }
 
     /**
@@ -202,8 +202,8 @@ contract VTOKEN is ERC20, ERC20Permit, ERC20Votes, ReentrancyGuard, Ownable {
         IVTOKENRewarder(rewarder)._deposit(amount, account);
 
         // Berachain Rewards Vault Delegate Stake
-        StakingToken(stakingToken).mint(address(this), amount);
-        StakingToken(stakingToken).approve(rewardVault, amount);
+        VaultToken(vaultToken).mint(address(this), amount);
+        VaultToken(vaultToken).approve(rewardVault, amount);
         IRewardVault(rewardVault).delegateStake(account,amount);
     }
 

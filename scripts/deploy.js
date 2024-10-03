@@ -767,9 +767,9 @@ async function main() {
   //   "0x170d64FB2FCD6bB6639eD0D37b981F6Af0E26C3a", // Infrared HONEY-WETH Plugin
   //   "0x120E4B564D608ab8ea110df0a1429998cCA580D0", // Infrared HONEY-WBERA Plugin
   // ]);
-  // await voter.distributeToBribes([
-  //   "0x5aD441790c3114e0AB27816abdB0c9693cd96399", // BULL ISH
-  // ]);
+  await voter.distributeToBribes([
+    "0x5aD441790c3114e0AB27816abdB0c9693cd96399", // BULL ISH
+  ]);
   // console.log("Bribe Rewards Distributed");
 
   //===================================================================
