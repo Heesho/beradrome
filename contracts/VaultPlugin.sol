@@ -77,7 +77,8 @@ contract VaultPlugin is Plugin {
 
         // Berachain Rewards Vault Delegate Stake
         VaultToken(vaultToken).mint(address(this), amount);
-        VaultToken(vaultToken).approve(rewardVault, amount);
+        IERC20(vaultToken).safeApprove(rewardVault, 0);
+        IERC20(vaultToken).safeApprove(rewardVault, amount);
         IRewardVault(rewardVault).delegateStake(account, amount);
     }
 
@@ -103,11 +104,5 @@ contract VaultPlugin is Plugin {
     function getRewardVault() external view returns (address) {
         return rewardVault;
     }
-
-    // Function to receive Ether. msg.data must be empty
-    receive() external payable {}
-
-    // Fallback function is called when msg.data is not empty
-    fallback() external payable {}
 
 }
