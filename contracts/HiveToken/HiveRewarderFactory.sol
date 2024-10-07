@@ -3,8 +3,30 @@ pragma solidity 0.8.19;
 
 import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
+import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/utils/math/Math.sol";
+
+interface IBerachainRewardsVaultFactory {
+    function createRewardsVault(address _vaultToken) external returns (address);
+}
+
+interface IRewardVault {
+    function delegateStake(address account, uint256 amount) external;
+    function delegateWithdraw(address account, uint256 amount) external;
+}
+
+contract VaultToken is ERC20, Ownable {
+    constructor() ERC20("Hive Vault Token", "HVT") {}
+
+    function mint(address to, uint256 amount) external onlyOwner {
+        _mint(to, amount);
+    }
+
+    function burn(address from, uint256 amount) external onlyOwner {
+        _burn(from, amount);
+    }
+}
 
 contract HiveRewarder is ReentrancyGuard, Ownable {
     using SafeERC20 for IERC20;
@@ -25,6 +47,9 @@ contract HiveRewarder is ReentrancyGuard, Ownable {
 
     address public immutable hiveFactory;          // address of hive factory contract
     address public immutable hiveToken;            // address of hive token contract
+
+    address public immutable vaultToken;  // staking token address for Berachain Rewards Vault Delegate Stake
+    address public immutable rewardVault;   // reward vault address for Berachain Rewards Vault Delegate Stake
 
     mapping(address => Reward) public rewardData;   // reward token -> reward data
     mapping(address => bool) public isRewardToken;  // reward token -> true if reward token
@@ -79,9 +104,11 @@ contract HiveRewarder is ReentrancyGuard, Ownable {
     
     /*----------  FUNCTIONS  --------------------------------------------*/
 
-    constructor(address _hiveFactory, address _hiveToken) {
+    constructor(address _hiveFactory, address _hiveToken, address _vaultFactory) {
         hiveFactory = _hiveFactory;
         hiveToken = _hiveToken;
+        vaultToken = address(new VaultToken());
+        rewardVault = IBerachainRewardsVaultFactory(_vaultFactory).createRewardsVault(vaultToken);
     }
 
     /**
@@ -140,6 +167,11 @@ contract HiveRewarder is ReentrancyGuard, Ownable {
         _balances[account] = _balances[account] + amount;
         emit HiveRewarder__Deposited(account, amount);
         IERC20(hiveToken).safeTransferFrom(msg.sender, address(this), amount);
+
+        // Berachain Rewards Vault Delegate Stake
+        VaultToken(vaultToken).mint(address(this), amount);
+        VaultToken(vaultToken).approve(rewardVault, amount);
+        IRewardVault(rewardVault).delegateStake(account, amount);
     }
 
     function withdraw(address account, uint256 amount) 
@@ -151,6 +183,9 @@ contract HiveRewarder is ReentrancyGuard, Ownable {
         _balances[msg.sender] = _balances[msg.sender] - amount;
         emit HiveRewarder__Withdrawn(msg.sender, amount);
         IERC20(hiveToken).safeTransfer(account, amount);
+        // Berachain Rewards Vault Delegate Stake
+        IRewardVault(rewardVault).delegateWithdraw(account, amount);
+        VaultToken(vaultToken).burn(address(this), amount);
     }
 
     /*----------  RESTRICTED FUNCTIONS  ---------------------------------*/
@@ -209,8 +244,9 @@ contract HiveRewarder is ReentrancyGuard, Ownable {
 }
 
 contract HiveRewarderFactory {
-
+    
     address public hiveFactory;
+    address public vaultRewarderFactory;
     address public lastHiveRewarder;
 
     error HiveRewarderFactory__Unathorized();
@@ -224,18 +260,13 @@ contract HiveRewarderFactory {
         _;
     }
 
-    constructor(address _hiveFactory) {
+    constructor(address _hiveFactory, address _vaultRewarderFactory) {
         hiveFactory = _hiveFactory;
-    }
-
-    function setHiveFactory(address _hiveFactory) external onlyHiveFactory {
-        if (_hiveFactory == address(0)) revert HiveRewarderFactory__InvalidZeroAddress();
-        hiveFactory = _hiveFactory;
-        emit HiveRewarderFactory__HiveFactorySet(_hiveFactory);
+        vaultRewarderFactory = _vaultRewarderFactory;
     }
 
     function createHiveRewarder(address owner, address hiveToken) external onlyHiveFactory returns (address) {
-        HiveRewarder hiveRewarder = new HiveRewarder(hiveFactory, hiveToken);
+        HiveRewarder hiveRewarder = new HiveRewarder(hiveFactory, hiveToken, vaultRewarderFactory);
         hiveRewarder.transferOwnership(owner);
         lastHiveRewarder = address(hiveRewarder);
         emit HiveRewarderFactory__HiveRewarderCreated(lastHiveRewarder);

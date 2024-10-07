@@ -88,12 +88,6 @@ contract HiveDistroFactory {
         hiveFactory = _hiveFactory;
     }
 
-    function setHiveFactory(address _hiveFactory) external onlyHiveFactory {
-        if (_hiveFactory == address(0)) revert HiveDistroFactory__InvalidZeroAddress();
-        hiveFactory = _hiveFactory;
-        emit HiveDistroFactory__HiveFactorySet(_hiveFactory);
-    }
-
     function createHiveDistro(address owner, address hiveToken, address hiveRewarder) external onlyHiveFactory returns (address) {
         HiveDistro hiveDistro = new HiveDistro(hiveFactory, hiveToken, hiveRewarder);
         hiveDistro.transferOwnership(owner);

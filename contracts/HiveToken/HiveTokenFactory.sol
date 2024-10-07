@@ -333,12 +333,6 @@ contract HiveTokenFactory {
         hiveFactory = _hiveFactory;
     }
 
-    function setHiveFactory(address _hiveFactory) external onlyHiveFactory {
-        if (_hiveFactory == address(0)) revert HiveTokenFactory__InvalidZeroAddress();
-        hiveFactory = _hiveFactory;
-        emit HiveTokenFactory__HiveFactorySet(_hiveFactory);
-    }
-
     function createHiveToken(address owner, string calldata name, string calldata symbol, string calldata uri, string calldata description) external onlyHiveFactory returns (address) {
         HiveToken hiveToken = new HiveToken(hiveFactory, owner, name, symbol, uri, description);
         hiveToken.transferOwnership(owner);

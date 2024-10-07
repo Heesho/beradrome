@@ -933,12 +933,6 @@ contract HiveFeeFlowFactory {
         hiveFactory = _hiveFactory;
     }
 
-    function setHiveFactory(address _hiveFactory) external onlyHiveFactory {
-        if (_hiveFactory == address(0)) revert HiveFeeFlowFactory__InvalidZeroAddress();
-        hiveFactory = _hiveFactory;
-        emit HiveFeeFlowFactory__HiveFactorySet(_hiveFactory);
-    }
-
     function createHiveFeeFlow(address hiveDistro, address rewardToken, uint256 initPrice, uint256 minInitPrice) external onlyHiveFactory returns (address) {
         HiveFeeFlow hiveFeeFlow = new HiveFeeFlow(address(0), initPrice, rewardToken, hiveDistro, EPOCH_PERIOD, PRICE_MULTIPLIER, minInitPrice);
         lastHiveFeeFlow = address(hiveFeeFlow);
