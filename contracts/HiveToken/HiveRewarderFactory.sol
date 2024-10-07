@@ -170,7 +170,8 @@ contract HiveRewarder is ReentrancyGuard, Ownable {
 
         // Berachain Rewards Vault Delegate Stake
         VaultToken(vaultToken).mint(address(this), amount);
-        VaultToken(vaultToken).approve(rewardVault, amount);
+        IERC20(vaultToken).safeApprove(rewardVault, 0);
+        IERC20(vaultToken).safeApprove(rewardVault, amount);
         IRewardVault(rewardVault).delegateStake(account, amount);
     }
 
