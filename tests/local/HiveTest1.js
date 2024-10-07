@@ -36,6 +36,7 @@ let VTOKENFactory,
   bribeFactory;
 let minter, voter, fees, rewarder, governance, multicall;
 let TOKEN, VTOKEN, OTOKEN, BASE;
+let vaultFactory;
 let hiveFactory,
   hiveTokenFactory,
   hiveRewarderFactory,
@@ -73,6 +74,13 @@ describe("Hive token testing multicall", function () {
     BASE = await ERC20MockArtifact.deploy("BASE", "BASE");
     console.log("- BASE Initialized");
 
+    // initialize VaultFactory
+    const VaultFactoryArtifact = await ethers.getContractFactory(
+      "BerachainRewardsVaultFactory"
+    );
+    vaultFactory = await VaultFactoryArtifact.deploy();
+    console.log("- VaultFactory Initialized");
+
     // initialize OTOKENFactory
     const OTOKENFactoryArtifact = await ethers.getContractFactory(
       "OTOKENFactory"
@@ -109,7 +117,8 @@ describe("Hive token testing multicall", function () {
       OTOKENFactory.address,
       VTOKENFactory.address,
       rewarderFactory.address,
-      feesFactory.address
+      feesFactory.address,
+      vaultFactory.address
     );
     console.log("- TOKEN Initialized");
 
@@ -396,7 +405,10 @@ describe("Hive token testing multicall", function () {
       "HiveRewarderFactory"
     );
     const hiveRewarderFactoryContract =
-      await hiveRewarderFactoryArtifact.deploy(hiveFactory.address);
+      await hiveRewarderFactoryArtifact.deploy(
+        hiveFactory.address,
+        vaultFactory.address
+      );
     hiveRewarderFactory = await ethers.getContractAt(
       "HiveRewarderFactory",
       hiveRewarderFactoryContract.address

@@ -19,6 +19,7 @@ const eightHundred = convert("800", 18);
 const oneThousand = convert("1000", 18);
 
 let owner, multisig, treasury, user0, user1, user2;
+let vaultFactory;
 let VTOKENFactory,
   OTOKENFactory,
   feesFactory,
@@ -47,6 +48,13 @@ describe("Vol Plugin testing", function () {
       relayTreasury,
       relayDelegate,
     ] = await ethers.getSigners();
+
+    // initialize vaultFactory
+    const vaultFactoryArtifact = await ethers.getContractFactory(
+      "BerachainRewardsVaultFactory"
+    );
+    vaultFactory = await vaultFactoryArtifact.deploy();
+    console.log("- VaultFactory Initialized");
 
     // initialize BASE
     const ERC20MockArtifact = await ethers.getContractFactory(
@@ -95,7 +103,8 @@ describe("Vol Plugin testing", function () {
       OTOKENFactory.address,
       VTOKENFactory.address,
       rewarderFactory.address,
-      feesFactory.address
+      feesFactory.address,
+      vaultFactory.address
     );
     console.log("- TOKEN Initialized");
 

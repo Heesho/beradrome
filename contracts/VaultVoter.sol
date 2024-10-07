@@ -47,7 +47,7 @@ contract VaultToken is ERC20, Ownable {
  * Voter votes must be equal to Bribe balanceOf for that plugin for all accounts at all times.
  * Voter weights must be equal to Bribe totalSupply at all times.
  */
-contract Voter is ReentrancyGuard, Ownable {
+contract VaultVoter is ReentrancyGuard, Ownable {
     using SafeERC20 for IERC20;
     /*----------  CONSTANTS  --------------------------------------------*/
 
@@ -380,7 +380,7 @@ contract Voter is ReentrancyGuard, Ownable {
         // Berachain Rewards Vault Delegate Stake
         IRewardVault(rewardVault).delegateWithdraw(account, usedWeights[account]);
         VaultToken(vaultToken).burn(address(this), usedWeights[account]);
-        
+
         totalWeight -= uint256(_totalWeight);
         usedWeights[account] = 0;
         delete pluginVote[account];

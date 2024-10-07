@@ -22,6 +22,7 @@ const threeThousand = convert("3000", 18);
 const twentyThousand = convert("20000", 18);
 
 let owner, multisig, treasury, user0, user1, user2;
+let vaultFactory;
 let VTOKENFactory,
   OTOKENFactory,
   feesFactory,
@@ -60,6 +61,13 @@ describe("local: test3", function () {
     BASE = await ERC20MockArtifact.deploy("BASE", "BASE");
     console.log("- ERC20Mocks Initialized");
 
+    // initialize vaultFactory
+    const vaultFactoryArtifact = await ethers.getContractFactory(
+      "BerachainRewardsVaultFactory"
+    );
+    vaultFactory = await vaultFactoryArtifact.deploy();
+    console.log("- VaultFactory Initialized");
+
     // initialize OTOKENFactory
     const OTOKENFactoryArtifact = await ethers.getContractFactory(
       "OTOKENFactory"
@@ -96,7 +104,8 @@ describe("local: test3", function () {
       OTOKENFactory.address,
       VTOKENFactory.address,
       rewarderFactory.address,
-      feesFactory.address
+      feesFactory.address,
+      vaultFactory.address
     );
     console.log("- TOKEN Initialized");
 
