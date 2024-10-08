@@ -16,6 +16,7 @@ import "contracts/interfaces/IBribeFactory.sol";
 /**
  * @title Voter
  * @author heesho
+ * @notice This is a modified version of the Voter contract from Solidly by Andre Cronje
  * 
  * Voter contract is used to vote on plugins. When a Plugin is added a Gauge and Bribe are deployed for that Plugin.
  * VTOKEN holders can cast votes on Plugins in the Voter contract. The Voter will distribute OTOKEN to those Plugin's

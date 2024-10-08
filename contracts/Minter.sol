@@ -12,6 +12,7 @@ import "contracts/interfaces/IVoter.sol";
 /**
  * @title Minter
  * @author heesho
+ * @notice This is a modified version of the Minter contract from Solidly by Andre Cronje
  * 
  * Mints OTOKEN and distributes them to the Voter (to diribute to gauges), the team
  * and the growth fund (VTOKEN stakers).
