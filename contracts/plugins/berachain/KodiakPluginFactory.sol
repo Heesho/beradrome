@@ -19,7 +19,7 @@ interface ICommunalFarm {
     function lockedStakesOf(address account) external view returns (LockedStake[] memory);
 }
 
-contract KodiakFarmPlugin is Plugin {
+contract KodiakPlugin is Plugin {
     using SafeERC20 for IERC20;
 
     /*----------  CONSTANTS  --------------------------------------------*/
@@ -27,31 +27,34 @@ contract KodiakFarmPlugin is Plugin {
     /*----------  STATE VARIABLES  --------------------------------------*/
 
     address public farm;
-    string public symbol;
 
     /*----------  ERRORS ------------------------------------------------*/
 
     /*----------  FUNCTIONS  --------------------------------------------*/
 
     constructor(
-        address _underlying, 
+        address _token, 
         address _voter, 
-        address[] memory _tokensInUnderlying, 
+        address[] memory _assetTokens, 
         address[] memory _bribeTokens,
+        address _vaultFactory,
         address _farm,
         string memory _protocol,
-        string memory _symbol
+        string memory _name,
+        string memory _vaultName
     )
         Plugin(
-            _underlying, 
+            _token, 
             _voter, 
-            _tokensInUnderlying, 
+            _assetTokens, 
             _bribeTokens,
-            _protocol
+            _vaultFactory,
+            _protocol,
+            _name,
+            _vaultName
         )
     {
         farm = _farm;
-        symbol = _symbol;
     }
 
     function claimAndDistribute() 
@@ -78,9 +81,9 @@ contract KodiakFarmPlugin is Plugin {
     {
         super.depositFor(account, amount);
         ICommunalFarm(farm).withdrawLockedAll();
-        uint256 balance = IERC20(getUnderlyingAddress()).balanceOf(address(this));
-        IERC20(getUnderlyingAddress()).safeApprove(farm, 0);
-        IERC20(getUnderlyingAddress()).safeApprove(farm, balance);
+        uint256 balance = IERC20(getToken()).balanceOf(address(this));
+        IERC20(getToken()).safeApprove(farm, 0);
+        IERC20(getToken()).safeApprove(farm, balance);
         ICommunalFarm(farm).stakeLocked(balance, 0);
     }
 
@@ -90,23 +93,15 @@ contract KodiakFarmPlugin is Plugin {
     {
         ICommunalFarm(farm).withdrawLockedAll(); 
         super.withdrawTo(account, amount);
-        uint256 balance = IERC20(getUnderlyingAddress()).balanceOf(address(this));
-        IERC20(getUnderlyingAddress()).safeApprove(farm, 0);
-        IERC20(getUnderlyingAddress()).safeApprove(farm, balance);
+        uint256 balance = IERC20(getToken()).balanceOf(address(this));
+        IERC20(getToken()).safeApprove(farm, 0);
+        IERC20(getToken()).safeApprove(farm, balance);
         ICommunalFarm(farm).stakeLocked(balance, 0);
     }
 
     /*----------  RESTRICTED FUNCTIONS  ---------------------------------*/
 
     /*----------  VIEW FUNCTIONS  ---------------------------------------*/
-
-    function getUnderlyingName() public view override returns (string memory) {
-        return symbol;
-    }
-
-    function getUnderlyingSymbol() public view override returns (string memory) {
-        return symbol;
-    }
 
     function getLockedLiquidity() public view returns (uint256) {
         return ICommunalFarm(farm).lockedLiquidityOf(address(this));
@@ -118,11 +113,12 @@ contract KodiakFarmPlugin is Plugin {
 
 }
 
-contract KodiakFarmPluginFactory is Ownable {
+contract KodiakPluginFactory is Ownable {
 
     string public constant PROTOCOL = 'Kodiak';
     address public constant KDK = 0xfd27998fa0eaB1A6372Db14Afd4bF7c4a58C5364;
     address public constant XKDK = 0x414B50157a5697F14e91417C5275A7496DcF429D;
+    address public constant REWARDS_VAULT_FACTORY = 0x2B6e40f65D82A0cB98795bC7587a71bfa49fBB2B;
 
     address public immutable VOTER;
 
@@ -140,12 +136,13 @@ contract KodiakFarmPluginFactory is Ownable {
         address _token0,
         address _token1,
         address[] calldata _otherRewards,
-        string memory _symbol // ex 50WETH-50HONEY or 50WBTC-50HONEY or 50WBERA-50HONEY
+        string memory _name, // ex 50WETH-50HONEY or 50WBTC-50HONEY or 50WBERA-50HONEY
+        string memory _vaultName
     ) external returns (address) {
 
-        address[] memory tokensInUnderlying = new address[](2);
-        tokensInUnderlying[0] = _token0;
-        tokensInUnderlying[1] = _token1;
+        address[] memory assetTokens = new address[](2);
+        assetTokens[0] = _token0;
+        assetTokens[1] = _token1;
 
         address[] memory bribeTokens = new address[](2 + _otherRewards.length);
         bribeTokens[0] = KDK;
@@ -154,14 +151,16 @@ contract KodiakFarmPluginFactory is Ownable {
             bribeTokens[2 + i] = _otherRewards[i];
         }
 
-        KodiakFarmPlugin lastPlugin = new KodiakFarmPlugin(
+        KodiakPlugin lastPlugin = new KodiakPlugin(
             _lpToken,
             VOTER,
-            tokensInUnderlying,
+            assetTokens,
             bribeTokens,
+            REWARDS_VAULT_FACTORY,
             _farm,
             PROTOCOL,
-            _symbol
+            _name,
+            _vaultName
         );
         last_plugin = address(lastPlugin);
         emit Plugin__PluginCreated(last_plugin);

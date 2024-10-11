@@ -10,39 +10,42 @@ interface IInfraredVault {
     function getReward() external;
 }
 
-contract InfraredVaultPlugin is Plugin {
+contract InfraredPlugin is Plugin {
     using SafeERC20 for IERC20;
 
     /*----------  CONSTANTS  --------------------------------------------*/
 
     /*----------  STATE VARIABLES  --------------------------------------*/
 
-    address public vault;
-    string public symbol;
+    address public infraredVault;
 
     /*----------  ERRORS ------------------------------------------------*/
 
     /*----------  FUNCTIONS  --------------------------------------------*/
 
     constructor(
-        address _underlying, 
+        address _token, 
         address _voter, 
-        address[] memory _tokensInUnderlying, 
+        address[] memory _assetTokens, 
         address[] memory _bribeTokens,
-        address _vault,
+        address _vaultFactory,
+        address _infraredVault,
         string memory _protocol,
-        string memory _symbol
+        string memory _name,
+        string memory _vaultName
     )
         Plugin(
-            _underlying, 
+            _token, 
             _voter, 
-            _tokensInUnderlying, 
+            _assetTokens, 
             _bribeTokens,
-            _protocol
+            _vaultFactory,
+            _protocol,
+            _name,
+            _vaultName
         )
     {
-        vault = _vault;
-        symbol = _symbol;
+        infraredVault = _infraredVault;
     }
 
     function claimAndDistribute() 
@@ -50,7 +53,7 @@ contract InfraredVaultPlugin is Plugin {
         override 
     {
         super.claimAndDistribute();
-        IInfraredVault(vault).getReward();
+        IInfraredVault(infraredVault).getReward();
         address bribe = getBribe();
         uint256 duration = IBribe(bribe).DURATION();
         address[] memory rewardTokens = IBribe(bribe).getRewardTokens();
@@ -69,16 +72,16 @@ contract InfraredVaultPlugin is Plugin {
         override 
     {
         super.depositFor(account, amount);
-        IERC20(getUnderlyingAddress()).safeApprove(vault, 0);
-        IERC20(getUnderlyingAddress()).safeApprove(vault, amount);
-        IInfraredVault(vault).stake(amount);
+        IERC20(getToken()).safeApprove(infraredVault, 0);
+        IERC20(getToken()).safeApprove(infraredVault, amount);
+        IInfraredVault(infraredVault).stake(amount);
     }
 
     function withdrawTo(address account, uint256 amount) 
         public 
         override 
     {
-        IInfraredVault(vault).withdraw(amount); 
+        IInfraredVault(infraredVault).withdraw(amount); 
         super.withdrawTo(account, amount);
     }
 
@@ -86,18 +89,11 @@ contract InfraredVaultPlugin is Plugin {
 
     /*----------  VIEW FUNCTIONS  ---------------------------------------*/
 
-    function getUnderlyingName() public view override returns (string memory) {
-        return symbol;
-    }
-
-    function getUnderlyingSymbol() public view override returns (string memory) {
-        return symbol;
-    }
-
 }
 
-contract InfraredVaultPluginFactory {
+contract InfraredPluginFactory {
 
+    address public constant REWARDS_VAULT_FACTORY = 0x2B6e40f65D82A0cB98795bC7587a71bfa49fBB2B;
     string public constant PROTOCOL = 'Infrared';
 
     address public immutable VOTER;
@@ -111,20 +107,23 @@ contract InfraredVaultPluginFactory {
     }
 
     function createPlugin(
-        address _vault,
-        address[] memory _tokensInUnderlying,
+        address _infraredVault,
+        address[] memory _assetTokens,
         address[] memory _bribeTokens,
-        string memory _symbol // ex 50WETH-50HONEY or 50WBTC-50HONEY or 50WBERA-50HONEY
+        string memory _name, // ex 50WETH-50HONEY or 50WBTC-50HONEY or 50WBERA-50HONEY
+        string memory _vaultName
     ) external returns (address) {
 
-        InfraredVaultPlugin lastPlugin = new InfraredVaultPlugin(
-            IInfraredVault(_vault).stakingToken(),
+        InfraredPlugin lastPlugin = new InfraredPlugin(
+            IInfraredVault(_infraredVault).stakingToken(),
             VOTER,
-            _tokensInUnderlying,
+            _assetTokens,
             _bribeTokens,
-            _vault,
+            REWARDS_VAULT_FACTORY,
+            _infraredVault,
             PROTOCOL,
-            _symbol
+            _name,
+            _vaultName
         );
         last_plugin = address(lastPlugin);
         emit Plugin__PluginCreated(last_plugin);

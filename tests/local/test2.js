@@ -229,7 +229,8 @@ describe("local: test2", function () {
       "MockPluginFactory"
     );
     const PluginFactoryContract = await PluginFactoryArtifact.deploy(
-      voter.address
+      voter.address,
+      vaultFactory.address
     );
     pluginFactory = await ethers.getContractAt(
       "MockPluginFactory",
@@ -268,7 +269,7 @@ describe("local: test2", function () {
     // Initialize Mock Tokens
     xTEST0 = await ethers.getContractAt(
       "contracts/plugins/local/MockPluginFactory.sol:ERC20Mock",
-      await plugin0.getUnderlyingAddress()
+      await plugin0.getToken()
     );
     TEST0 = await ethers.getContractAt(
       "contracts/plugins/local/MockPluginFactory.sol:ERC20Mock",
@@ -278,7 +279,7 @@ describe("local: test2", function () {
     );
     xTEST1 = await ethers.getContractAt(
       "contracts/plugins/local/MockPluginFactory.sol:ERC20Mock",
-      await plugin1.getUnderlyingAddress()
+      await plugin1.getToken()
     );
     TEST1 = await ethers.getContractAt(
       "contracts/plugins/local/MockPluginFactory.sol:ERC20Mock",
@@ -288,7 +289,7 @@ describe("local: test2", function () {
     );
     LP0 = await ethers.getContractAt(
       "contracts/plugins/local/MockPluginFactory.sol:ERC20Mock",
-      await plugin2.getUnderlyingAddress()
+      await plugin2.getToken()
     );
     TEST2 = await ethers.getContractAt(
       "contracts/plugins/local/MockPluginFactory.sol:ERC20Mock",
@@ -298,7 +299,7 @@ describe("local: test2", function () {
     );
     LP1 = await ethers.getContractAt(
       "contracts/plugins/local/MockPluginFactory.sol:ERC20Mock",
-      await plugin3.getUnderlyingAddress()
+      await plugin3.getToken()
     );
     TEST3 = await ethers.getContractAt(
       "contracts/plugins/local/MockPluginFactory.sol:ERC20Mock",

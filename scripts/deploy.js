@@ -801,14 +801,14 @@ async function main() {
   // 12. Plugin Data
   //===================================================================
 
-  console.log(
-    await multicall
-      .connect(wallet)
-      .bribeCardData(
-        "0x170d64FB2FCD6bB6639eD0D37b981F6Af0E26C3a",
-        "0x0000000000000000000000000000000000000000"
-      )
-  );
+  // console.log(
+  //   await multicall
+  //     .connect(wallet)
+  //     .bribeCardData(
+  //       "0x170d64FB2FCD6bB6639eD0D37b981F6Af0E26C3a",
+  //       "0x0000000000000000000000000000000000000000"
+  //     )
+  // );
 
   // console.log(
   //   await multicall

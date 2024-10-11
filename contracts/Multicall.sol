@@ -61,81 +61,81 @@ contract Multicall {
     }
 
     struct BondingCurve {
-        uint256 priceBASE;              // C1
-        uint256 priceTOKEN;             // C2
-        uint256 priceOTOKEN;            // C3
-        uint256 maxMarketSell;          // C4
+        uint256 priceBASE;              
+        uint256 priceTOKEN;             
+        uint256 priceOTOKEN;            
+        uint256 maxMarketSell;          
 
-        uint256 tvl;                    // C5
-        uint256 supplyTOKEN;            // C6
-        uint256 supplyVTOKEN;           // C7
-        uint256 apr;                    // C8
-        uint256 ltv;                    // C9
-        uint256 marketCap;              // C10
-        uint256 weekly;                 // C11
+        uint256 tvl;                    
+        uint256 supplyTOKEN;            
+        uint256 supplyVTOKEN;           
+        uint256 apr;                   
+        uint256 ltv;                   
+        uint256 marketCap;             
+        uint256 weekly;                
 
-        uint256 accountBASE;            // C12
-        uint256 accountTOKEN;           // C13
-        uint256 accountOTOKEN;          // C14
+        uint256 accountBASE;            
+        uint256 accountTOKEN;           
+        uint256 accountOTOKEN;          
 
-        uint256 accountEarnedBASE;      // C15
-        uint256 accountEarnedTOKEN;     // C16    
-        uint256 accountEarnedOTOKEN;    // C17 
+        uint256 accountEarnedBASE;      
+        uint256 accountEarnedTOKEN;     
+        uint256 accountEarnedOTOKEN;    
 
-        uint256 accountVTOKEN;          // C18
-        uint256 accountVotingPower;     // C19
-        uint256 accountUsedWeights;     // C20
+        uint256 accountVTOKEN;          
+        uint256 accountVotingPower;     
+        uint256 accountUsedWeights;    
 
-        uint256 accountBorrowCredit;    // C21
-        uint256 accountBorrowDebt;      // C22
-        uint256 accountMaxWithdraw;     // C23         
+        uint256 accountBorrowCredit;    
+        uint256 accountBorrowDebt;      
+        uint256 accountMaxWithdraw;      
 
-        uint256 accountLastVoted;       // C24
+        uint256 accountLastVoted;       
 
     }
 
     struct GaugeCard {
-        address plugin;                     // G1
-        address underlying;                 // G2
-        uint8 underlyingDecimals;           // G3
+        address plugin;                     
+        address token;
+        uint8 tokenDecimals;
 
-        address gauge;                      // G4
-        bool isAlive;                       // G5
+        address gauge;                       
+        bool isAlive;                       
 
-        string protocol;                    // G6
-        string symbol;                      // G7
-        address[] tokensInUnderlying;       // G8
+        string protocol;                   
+        string name;                       
+        address[] assetTokens;              
 
-        uint256 priceBase;                  // G9
-        uint256 priceOTOKEN;                // G10
+        uint256 priceBase;
+        uint256 priceOTOKEN;
 
-        uint256 rewardPerToken;             // G11
-        uint256 rewardPerTokenUSD;          // G12
-        uint256 votingWeight;               // G13
-        uint256 totalSupply;                // G14
+        uint256 rewardPerToken;            
+        uint256 rewardPerTokenUSD;          
+        uint256 votingWeight;               
+        uint256 totalSupply;                
 
-        uint256 accountUnderlyingBalance;   // G15
-        uint256 accountStakedBalance;       // G16
-        uint256 accountEarnedOTOKEN;        // G17
+        uint256 accountTokenBalance;   
+        uint256 accountStakedBalance;      
+        uint256 accountEarnedOTOKEN;        
     }
 
     struct BribeCard {
-        address plugin;                 // B1
-        address bribe;                  // B2
-        bool isAlive;                   // B3
+        address plugin;                 
+        address bribe;                  
+        bool isAlive;                   
 
-        string protocol;                // B4
-        string symbol;                  // B5
+        string protocol;                
+        string name;                  
 
-        address[] rewardTokens;         // B6
-        uint8[] rewardTokenDecimals;    // B7
-        uint256[] rewardsPerToken;      // B8
-        uint256[] accountRewardsEarned; // B9
+        address[] rewardTokens;          
+        uint8[] rewardTokenDecimals;    
+        uint256[] rewardsPerToken;      
+        uint256[] accountRewardsEarned; 
 
-        uint256 voteWeight;             // B10
-        uint256 votePercent;            // B11
+        uint256 voteWeight;             
+        uint256 votePercent;            
 
-        uint256 accountVote;            // B12
+        uint256 accountVote;            
     }
 
     struct Portfolio {
@@ -225,15 +225,15 @@ contract Multicall {
 
     function gaugeCardData(address plugin, address account) public view returns (GaugeCard memory gaugeCard) {
         gaugeCard.plugin = plugin;
-        gaugeCard.underlying = IPlugin(plugin).getUnderlyingAddress();
-        gaugeCard.underlyingDecimals = IPlugin(plugin).getUnderlyingDecimals();
+        gaugeCard.token = IPlugin(plugin).getToken();
+        gaugeCard.tokenDecimals = IERC20Metadata(gaugeCard.token).decimals();
 
         gaugeCard.gauge = IVoter(voter).gauges(plugin);
         gaugeCard.isAlive = IVoter(voter).isAlive(gaugeCard.gauge);
         
-        gaugeCard.protocol = IPlugin(plugin).getProtocol();
-        gaugeCard.symbol = IPlugin(plugin).getUnderlyingSymbol();
-        gaugeCard.tokensInUnderlying = IPlugin(plugin).getTokensInUnderlying();
+        gaugeCard.protocol = IPlugin(plugin).getProtocol(); 
+        gaugeCard.name = IPlugin(plugin).getName();
+        gaugeCard.assetTokens = IPlugin(plugin).getAssetTokens();
 
         gaugeCard.priceBase = getBasePrice();
         gaugeCard.priceOTOKEN = ITOKEN(TOKEN).getOTokenPrice() * (gaugeCard.priceBase) / 1e18;
@@ -243,7 +243,7 @@ contract Multicall {
         gaugeCard.votingWeight = (IVoter(voter).totalWeight() == 0 ? 0 : 100 * IVoter(voter).weights(plugin) * 1e18 / IVoter(voter).totalWeight());
         gaugeCard.totalSupply = IGauge(gaugeCard.gauge).totalSupply();
 
-        gaugeCard.accountUnderlyingBalance = (account == address(0) ? 0 : IERC20(gaugeCard.underlying).balanceOf(account));
+        gaugeCard.accountTokenBalance = (account == address(0) ? 0 : IERC20(gaugeCard.token).balanceOf(account));
         gaugeCard.accountStakedBalance = (account == address(0) ? 0 : IPlugin(plugin).balanceOf(account));
         gaugeCard.accountEarnedOTOKEN = (account == address(0) ? 0 : IGauge(IVoter(voter).gauges(plugin)).earned(account, OTOKEN));
 
@@ -256,7 +256,7 @@ contract Multicall {
         bribeCard.isAlive = IVoter(voter).isAlive(IVoter(voter).gauges(plugin));
 
         bribeCard.protocol = IPlugin(plugin).getProtocol();
-        bribeCard.symbol = IPlugin(plugin).getUnderlyingSymbol();
+        bribeCard.name = IPlugin(plugin).getName();
         bribeCard.rewardTokens = IBribe(IVoter(voter).bribes(plugin)).getRewardTokens();
 
         uint8[] memory _rewardTokenDecimals = new uint8[](bribeCard.rewardTokens.length);

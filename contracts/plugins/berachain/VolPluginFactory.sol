@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.19;
 
-import "@openzeppelin/contracts/token/ERC20/extensions/IERC20Metadata.sol";
 import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 import "contracts/interfaces/IGauge.sol";
@@ -9,7 +8,7 @@ import "contracts/interfaces/IBribe.sol";
 import "contracts/interfaces/IVoter.sol";
 
 contract VolPlugin is ReentrancyGuard {
-    using SafeERC20 for IERC20Metadata;
+    using SafeERC20 for IERC20;
 
     /*----------  CONSTANTS  --------------------------------------------*/
 
@@ -21,14 +20,14 @@ contract VolPlugin is ReentrancyGuard {
 
     /*----------  STATE VARIABLES  --------------------------------------*/
 
-    IERC20Metadata private immutable underlying; // payment token
+    IERC20 private immutable token; // payment token
     address private immutable OTOKEN;
     address private immutable voter;
     address private gauge;
     address private bribe;
     string private  protocol;
-    string private symbol;
-    address[] private tokensInUnderlying;
+    string private name;
+    address[] private assetTokens;
     address[] private bribeTokens;
 
     uint256 public immutable minInitPrice;
@@ -71,21 +70,21 @@ contract VolPlugin is ReentrancyGuard {
     /*----------  FUNCTIONS  --------------------------------------------*/
 
     constructor(
-        address _underlying, 
+        address _token, 
         address _voter, 
-        address[] memory _tokensInUnderlying, 
+        address[] memory _assetTokens, 
         address[] memory _bribeTokens,
         string memory _protocol,
-        string memory _symbol,
+        string memory _name,
         uint256 _initPrice,
         uint256 _minInitPrice
     ) {
-        underlying = IERC20Metadata(_underlying);
+        token = IERC20(_token);
         voter = _voter;
-        tokensInUnderlying = _tokensInUnderlying;
+        assetTokens = _assetTokens;
         bribeTokens = _bribeTokens;
         protocol = _protocol;
-        symbol = _symbol;
+        name = _name;
         OTOKEN = IVoter(_voter).OTOKEN();
 
         auction.initPrice = _initPrice;
@@ -95,11 +94,11 @@ contract VolPlugin is ReentrancyGuard {
     }
 
     function claimAndDistribute() public virtual nonReentrant {
-        uint256 balance = underlying.balanceOf(address(this));
+        uint256 balance = token.balanceOf(address(this));
         if (balance > DURATION) {
-            underlying.safeApprove(bribe, 0);
-            underlying.safeApprove(bribe, balance);
-            IBribe(bribe).notifyRewardAmount(address(underlying), balance);
+            token.safeApprove(bribe, 0);
+            token.safeApprove(bribe, balance);
+            IBribe(bribe).notifyRewardAmount(address(token), balance);
         }
         emit Plugin__ClaimedAnDistributed();
     }
@@ -116,12 +115,12 @@ contract VolPlugin is ReentrancyGuard {
         if (paymentAmount > maxPaymentTokenAmount) revert Plugin__MaxPaymentAmountExceeded();
 
         if (paymentAmount > 0) {
-            underlying.safeTransferFrom(msg.sender, address(this), paymentAmount);
+            token.safeTransferFrom(msg.sender, address(this), paymentAmount);
         }
 
         IGauge(gauge).getReward(address(this));
-        uint256 balance = IERC20Metadata(OTOKEN).balanceOf(address(this));
-        IERC20Metadata(OTOKEN).safeTransfer(assetReceiver, balance);
+        uint256 balance = IERC20(OTOKEN).balanceOf(address(this));
+        IERC20(OTOKEN).safeTransfer(assetReceiver, balance);
 
         uint256 newInitPrice = paymentAmount * PRICE_MULITPLIER / PRECISION;
 
@@ -190,24 +189,16 @@ contract VolPlugin is ReentrancyGuard {
         return AMOUNT;
     }
 
-    function getUnderlyingName() public view virtual returns (string memory) {
-        return symbol;
-    }
-
-    function getUnderlyingSymbol() public view virtual returns (string memory) {
-        return symbol;
-    }
-
-    function getUnderlyingAddress() public view virtual returns (address) {
-        return address(underlying);
-    }
-
-    function getUnderlyingDecimals() public view virtual returns (uint8) {
-        return underlying.decimals();
+    function getToken() public view virtual returns (address) {
+        return address(token);
     }
 
     function getProtocol() public view virtual returns (string memory) {
         return protocol;
+    }
+
+    function getName() public view virtual returns (string memory) {
+        return name;
     }
 
     function getVoter() public view returns (address) {
@@ -222,12 +213,20 @@ contract VolPlugin is ReentrancyGuard {
         return bribe;
     }
 
-    function getTokensInUnderlying() public view virtual returns (address[] memory) {
-        return tokensInUnderlying;
+    function getAssetTokens() public view returns (address[] memory) {
+        return assetTokens;
     }
 
     function getBribeTokens() public view returns (address[] memory) {
         return bribeTokens;
+    }
+
+    function getVaultToken() public pure returns (address) {
+        return address(0);
+    }
+
+    function getRewardVault() public pure returns (address) {
+        return address(0);
     }
 }
 
@@ -247,8 +246,8 @@ contract VolPluginFactory {
 
     function createPlugin(
         address _paymentToken,
-        address[] memory _tokensInUnderlying,
-        string memory _symbol,
+        address[] memory _assetTokens,
+        string memory _name,
         uint256 _initPrice,
         uint256 _minInitPrice
     ) external returns (address) {
@@ -259,10 +258,10 @@ contract VolPluginFactory {
         VolPlugin lastPlugin = new VolPlugin(
             _paymentToken,
             VOTER,
-            _tokensInUnderlying,
+            _assetTokens,
             bribeTokens,
             PROTOCOL,
-            _symbol,
+            _name,
             _initPrice,
             _minInitPrice
         );

@@ -1,12 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.19;
 
-import "@openzeppelin/contracts/token/ERC20/extensions/IERC20Metadata.sol";
-import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
-import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 import 'contracts/Plugin.sol';
-import "@openzeppelin/contracts/access/Ownable.sol";
-import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 
 contract ERC20Mock is ERC20 {
     constructor(string memory name, string memory symbol)
@@ -24,28 +19,30 @@ contract MockPlugin is Plugin {
     /*----------  STATE VARIABLES  --------------------------------------*/
 
     uint256 public constant DURATION = 604800;
-    string public symbol;
 
     /*----------  FUNCTIONS  --------------------------------------------*/
 
     constructor(
-        address _underlying, 
+        address _token, 
         address _voter, 
-        address[] memory _tokensInUnderlying, 
+        address[] memory _assetTokens, 
         address[] memory _bribeTokens,
+        address _vaultFactory,
         string memory _protocol,
-        string memory _symbol
+        string memory _name,
+        string memory _vaultName
     )
         Plugin(
-            _underlying, 
+            _token, 
             _voter, 
-            _tokensInUnderlying, 
+            _assetTokens, 
             _bribeTokens,
-            _protocol
+            _vaultFactory,
+            _protocol,
+            _name,
+            _vaultName
         )
-    {
-        symbol = _symbol;
-    }
+    {}
 
     function claimAndDistribute() 
         public 
@@ -58,7 +55,7 @@ contract MockPlugin is Plugin {
         for (uint256 i = 0; i < getBribeTokens().length; i++) {
             address token = getBribeTokens()[i];
             uint256 balance = IERC20(token).balanceOf(address(this));
-            if (balance > DURATION && token != getUnderlyingAddress()) {
+            if (balance > DURATION && token != getToken()) {
                 IERC20(token).safeApprove(getBribe(), 0);
                 IERC20(token).safeApprove(getBribe(), balance);
                 IBribe(getBribe()).notifyRewardAmount(token, balance);
@@ -69,47 +66,43 @@ contract MockPlugin is Plugin {
     /*----------  RESTRICTED FUNCTIONS  ---------------------------------*/
 
     /*----------  VIEW FUNCTIONS  ---------------------------------------*/
-
-    function getUnderlyingName() public view override returns (string memory) {
-        return symbol;
-    }
-
-    function getUnderlyingSymbol() public view override returns (string memory) {
-        return symbol;
-    }
     
 }
 
-contract MockPluginFactory is Ownable {
+contract MockPluginFactory {
 
     address public immutable VOTER;
+    address public immutable VAULT_FACTORY;
     mapping(string => address) tokens;
 
     address public last_plugin;
 
     event Plugin__LPMockPluginCreated(address plugin);
 
-    constructor(address _VOTER) {
+    constructor(address _VOTER, address _VAULT_FACTORY) {
         VOTER = _VOTER;
+        VAULT_FACTORY = _VAULT_FACTORY;
     }
 
     function createLPMockPlugin(string memory lpSymbol, string memory symbol0, string memory symbol1) external returns (address plugin) {
 
-        address token0 = tokens[symbol0] == address(0) ? createERC20Mock(symbol0) : tokens[symbol0];
-        address token1 = tokens[symbol1] == address(0) ? createERC20Mock(symbol1) : tokens[symbol1];
-        address lpToken = tokens[lpSymbol] == address(0) ? createERC20Mock(lpSymbol) : tokens[lpSymbol];
+        // address token0 = tokens[symbol0] == address(0) ? createERC20Mock(symbol0) : tokens[symbol0];
+        // address token1 = tokens[symbol1] == address(0) ? createERC20Mock(symbol1) : tokens[symbol1];
+        // address lpToken = tokens[lpSymbol] == address(0) ? createERC20Mock(lpSymbol) : tokens[lpSymbol];
 
-        address[] memory tokensInUnderlying = new address[](2);
-        tokensInUnderlying[0] = token0;
-        tokensInUnderlying[1] = token1;
+        address[] memory assetTokens = new address[](2);
+        assetTokens[0] = tokens[symbol0] == address(0) ? createERC20Mock(symbol0) : tokens[symbol0];
+        assetTokens[1] = tokens[symbol1] == address(0) ? createERC20Mock(symbol1) : tokens[symbol1];
 
         MockPlugin lastPlugin = new MockPlugin(
-            address(lpToken),
+            tokens[lpSymbol] == address(0) ? createERC20Mock(lpSymbol) : tokens[lpSymbol],
             VOTER,
-            tokensInUnderlying,
-            tokensInUnderlying,
+            assetTokens,
+            assetTokens,
+            VAULT_FACTORY,
             "LPMockPlugin",
-            lpSymbol
+            lpSymbol,
+            "MockLpPluginVaultToken"
         );
         last_plugin = address(lastPlugin);
         emit Plugin__LPMockPluginCreated(last_plugin);
@@ -118,25 +111,22 @@ contract MockPluginFactory is Ownable {
 
     function createLPMockFarmPlugin(string memory lpSymbol, string memory symbol0, string memory symbol1, string memory rewardSymbol) external returns (address plugin) {
 
-        address token0 = tokens[symbol0] == address(0) ? createERC20Mock(symbol0) : tokens[symbol0];
-        address token1 = tokens[symbol1] == address(0) ? createERC20Mock(symbol1) : tokens[symbol1];
-        address reward = tokens[rewardSymbol] == address(0) ? createERC20Mock(rewardSymbol) : tokens[rewardSymbol];
-        address lpToken = tokens[lpSymbol] == address(0) ? createERC20Mock(lpSymbol) : tokens[lpSymbol];
-
-        address[] memory tokensInUnderlying = new address[](2);
-        tokensInUnderlying[0] = token0;
-        tokensInUnderlying[1] = token1;
+        address[] memory assetTokens = new address[](2);
+        assetTokens[0] = tokens[symbol0] == address(0) ? createERC20Mock(symbol0) : tokens[symbol0];
+        assetTokens[1] = tokens[symbol1] == address(0) ? createERC20Mock(symbol1) : tokens[symbol1];
 
         address[] memory bribeTokens = new address[](1);
-        bribeTokens[0] = reward;
+        bribeTokens[0] = tokens[rewardSymbol] == address(0) ? createERC20Mock(rewardSymbol) : tokens[rewardSymbol];
 
         MockPlugin lastPlugin = new MockPlugin(
-            address(lpToken),
+            tokens[lpSymbol] == address(0) ? createERC20Mock(lpSymbol) : tokens[lpSymbol],
             VOTER,
-            tokensInUnderlying,
+            assetTokens,
             bribeTokens,
+            VAULT_FACTORY,
             "LPMockFarmPlugin",
-            lpSymbol
+            lpSymbol,
+            "MockLpFarmPluginVaultToken"
         );
         last_plugin = address(lastPlugin);
         emit Plugin__LPMockPluginCreated(last_plugin);
@@ -146,21 +136,22 @@ contract MockPluginFactory is Ownable {
     function createSingleStakePlugin(string memory tokenSymbol, string memory rewardSymbol) external returns (address plugin) {
 
         address token = tokens[tokenSymbol] == address(0) ? createERC20Mock(tokenSymbol) : tokens[tokenSymbol];
-        address reward = tokens[rewardSymbol] == address(0) ? createERC20Mock(rewardSymbol) : tokens[rewardSymbol];
 
-        address[] memory tokensInUnderlying = new address[](1);
-        tokensInUnderlying[0] = token;
+        address[] memory assetTokens = new address[](1);
+        assetTokens[0] = token;
 
         address[] memory bribeTokens = new address[](1);
-        bribeTokens[0] = reward;
+        bribeTokens[0] = tokens[rewardSymbol] == address(0) ? createERC20Mock(rewardSymbol) : tokens[rewardSymbol];
 
         MockPlugin lastPlugin = new MockPlugin(
             token,
             VOTER,
-            tokensInUnderlying,
+            assetTokens,
             bribeTokens,
+            VAULT_FACTORY,
             "SingleStakePlugin",
-            tokenSymbol
+            tokenSymbol,
+            "MockSingleStakePluginVaultToken"
         );
         last_plugin = address(lastPlugin);
         emit Plugin__LPMockPluginCreated(last_plugin);

@@ -10,13 +10,16 @@ interface IPlugin {
     /*----------  VIEW FUNCTIONS  ---------------------------------------*/
     function balanceOf(address account) external view returns (uint256);
     function totalSupply() external view returns (uint256);
-    function getUnderlyingName() external view returns (string memory);
-    function getUnderlyingSymbol() external view returns (string memory);
-    function getUnderlyingAddress() external view returns (address);
+    function getToken() external view returns (address);
     function getProtocol() external view returns (string memory);
-    function getTokensInUnderlying() external view returns (address[] memory);
+    function getName() external view returns (string memory);
+    function getVoter() external view returns (address);
+    function getGauge() external view returns (address);
+    function getBribe() external view returns (address);
+    function getAssetTokens() external view returns (address[] memory);
     function getBribeTokens() external view returns (address[] memory);
-    function getUnderlyingDecimals() external view returns (uint8);
+    function getVaultToken() external view returns (address);
+    function getRewardVault() external view returns (address);
 }
 
 

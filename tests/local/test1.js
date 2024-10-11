@@ -229,7 +229,8 @@ describe("local: test1", function () {
       "MockPluginFactory"
     );
     const PluginFactoryContract = await PluginFactoryArtifact.deploy(
-      voter.address
+      voter.address,
+      vaultFactory.address
     );
     pluginFactory = await ethers.getContractAt(
       "MockPluginFactory",
@@ -268,7 +269,7 @@ describe("local: test1", function () {
     // Initialize Mock Tokens
     xTEST0 = await ethers.getContractAt(
       "contracts/plugins/local/MockPluginFactory.sol:ERC20Mock",
-      await plugin0.getUnderlyingAddress()
+      await plugin0.getToken()
     );
     TEST0 = await ethers.getContractAt(
       "contracts/plugins/local/MockPluginFactory.sol:ERC20Mock",
@@ -278,7 +279,7 @@ describe("local: test1", function () {
     );
     xTEST1 = await ethers.getContractAt(
       "contracts/plugins/local/MockPluginFactory.sol:ERC20Mock",
-      await plugin1.getUnderlyingAddress()
+      await plugin1.getToken()
     );
     TEST1 = await ethers.getContractAt(
       "contracts/plugins/local/MockPluginFactory.sol:ERC20Mock",
@@ -288,7 +289,7 @@ describe("local: test1", function () {
     );
     LP0 = await ethers.getContractAt(
       "contracts/plugins/local/MockPluginFactory.sol:ERC20Mock",
-      await plugin2.getUnderlyingAddress()
+      await plugin2.getToken()
     );
     TEST2 = await ethers.getContractAt(
       "contracts/plugins/local/MockPluginFactory.sol:ERC20Mock",
@@ -298,7 +299,7 @@ describe("local: test1", function () {
     );
     LP1 = await ethers.getContractAt(
       "contracts/plugins/local/MockPluginFactory.sol:ERC20Mock",
-      await plugin3.getUnderlyingAddress()
+      await plugin3.getToken()
     );
     TEST3 = await ethers.getContractAt(
       "contracts/plugins/local/MockPluginFactory.sol:ERC20Mock",
@@ -782,17 +783,17 @@ describe("local: test1", function () {
     console.log("INFORMATION");
     console.log("Gauge: ", res.gauge);
     console.log("Plugin: ", res.plugin);
-    console.log("Underlying: ", res.underlying);
+    console.log("Underlying: ", res.token);
     console.log("Tokens in Underlying: ");
-    for (let i = 0; i < res.tokensInUnderlying.length; i++) {
-      console.log(" - ", res.tokensInUnderlying[i]);
+    for (let i = 0; i < res.assetTokens.length; i++) {
+      console.log(" - ", res.assetTokens[i]);
     }
-    console.log("Underlying Decimals: ", res.underlyingDecimals);
+    console.log("Underlying Decimals: ", res.tokenDecimals);
     console.log("Is Alive: ", res.isAlive);
     console.log();
     console.log("GLOBAL DATA");
     console.log("Protocol: ", res.protocol);
-    console.log("Symbol: ", res.symbol);
+    console.log("Symbol: ", res.name);
     console.log("Price OTOKEN: $", divDec(res.priceOTOKEN));
     console.log("Reward Per token: ", divDec(res.rewardPerToken));
     console.log("Reward Per token: $", divDec(res.rewardPerTokenUSD));
@@ -874,17 +875,17 @@ describe("local: test1", function () {
     console.log("INFORMATION");
     console.log("Gauge: ", res.gauge);
     console.log("Plugin: ", res.plugin);
-    console.log("Underlying: ", res.underlying);
+    console.log("Underlying: ", res.token);
     console.log("Tokens in Underlying: ");
-    for (let i = 0; i < res.tokensInUnderlying.length; i++) {
-      console.log(" - ", res.tokensInUnderlying[i]);
+    for (let i = 0; i < res.assetTokens.length; i++) {
+      console.log(" - ", res.assetTokens[i]);
     }
-    console.log("Underlying Decimals: ", res.underlyingDecimals);
+    console.log("Underlying Decimals: ", res.tokenDecimals);
     console.log("Is Alive: ", res.isAlive);
     console.log();
     console.log("GLOBAL DATA");
     console.log("Protocol: ", res.protocol);
-    console.log("Symbol: ", res.symbol);
+    console.log("Symbol: ", res.name);
     console.log("Price OTOKEN: $", divDec(res.priceOTOKEN));
     console.log("Reward Per token: ", divDec(res.rewardPerToken));
     console.log("Reward Per token: $", divDec(res.rewardPerTokenUSD));
@@ -931,7 +932,7 @@ describe("local: test1", function () {
     await expect(
       plugin0.connect(user2).depositFor(user2.address, 0)
     ).to.be.revertedWith("Plugin__InvalidZeroInput");
-    await plugin3.getUnderlyingName();
+    await plugin3.getName();
     await plugin2.getGauge();
   });
 
@@ -1006,17 +1007,17 @@ describe("local: test1", function () {
     console.log("INFORMATION");
     console.log("Gauge: ", res.gauge);
     console.log("Plugin: ", res.plugin);
-    console.log("Underlying: ", res.underlying);
+    console.log("Underlying: ", res.token);
     console.log("Tokens in Underlying: ");
-    for (let i = 0; i < res.tokensInUnderlying.length; i++) {
-      console.log(" - ", res.tokensInUnderlying[i]);
+    for (let i = 0; i < res.assetTokens.length; i++) {
+      console.log(" - ", res.assetTokens[i]);
     }
-    console.log("Underlying Decimals: ", res.underlyingDecimals);
+    console.log("Underlying Decimals: ", res.tokenDecimals);
     console.log("Is Alive: ", res.isAlive);
     console.log();
     console.log("GLOBAL DATA");
     console.log("Protocol: ", res.protocol);
-    console.log("Symbol: ", res.symbol);
+    console.log("Symbol: ", res.name);
     console.log("Price OTOKEN: $", divDec(res.priceOTOKEN));
     console.log("Reward Per token: ", divDec(res.rewardPerToken));
     console.log("Reward Per token: $", divDec(res.rewardPerTokenUSD));

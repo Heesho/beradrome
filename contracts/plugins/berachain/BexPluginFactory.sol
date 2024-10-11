@@ -12,17 +12,7 @@ interface IWBERA {
     function deposit() external payable;
 }
 
-interface IBerachainRewardsVaultFactory {
-    function getVault(address stakingToken) external view returns (address);
-}
-
-interface IBerachainRewardsVault {
-    function stake(uint256 amount) external;
-    function withdraw(uint256 amount) external;
-    function getReward(address account) external;
-}
-
-contract BexVaultPlugin is Plugin {
+contract BexPlugin is Plugin {
     using SafeERC20 for IERC20;
 
     /*----------  CONSTANTS  --------------------------------------------*/
@@ -32,8 +22,7 @@ contract BexVaultPlugin is Plugin {
 
     /*----------  STATE VARIABLES  --------------------------------------*/
 
-    address public rewardsVault;
-    string public symbol;
+    address public bexVault;
 
     /*----------  ERRORS ------------------------------------------------*/
 
@@ -42,22 +31,26 @@ contract BexVaultPlugin is Plugin {
     constructor(
         address _underlying, 
         address _voter, 
-        address[] memory _tokensInUnderlying, 
+        address[] memory _assetTokens, 
         address[] memory _bribeTokens,
-        address _rewardsVault,
+        address _vaultFactory,
+        address _bexVault,
         string memory _protocol,
-        string memory _symbol
+        string memory _name,
+        string memory _vaultName   
     )
         Plugin(
             _underlying, 
             _voter, 
-            _tokensInUnderlying, 
+            _assetTokens, 
             _bribeTokens,
-            _protocol
+            _vaultFactory,
+            _protocol,
+            _name,
+            _vaultName
         )
     {
-        rewardsVault = _rewardsVault;
-        symbol = _symbol;
+        bexVault = _bexVault;
     }
 
     function claimAndDistribute() 
@@ -65,7 +58,7 @@ contract BexVaultPlugin is Plugin {
         override 
     {
         super.claimAndDistribute();
-        IBerachainRewardsVault(rewardsVault).getReward(address(this));
+        IBerachainRewardsVault(bexVault).getReward(address(this));
         address bribe = getBribe();
         uint256 duration = IBribe(bribe).DURATION();
         uint256 balance = IBGT(BGT).unboostedBalanceOf(address(this));
@@ -83,30 +76,22 @@ contract BexVaultPlugin is Plugin {
         override 
     {
         super.depositFor(account, amount);
-        IERC20(getUnderlyingAddress()).safeApprove(rewardsVault, 0);
-        IERC20(getUnderlyingAddress()).safeApprove(rewardsVault, amount);
-        IBerachainRewardsVault(rewardsVault).stake(amount);
+        IERC20(getToken()).safeApprove(bexVault, 0);
+        IERC20(getToken()).safeApprove(bexVault, amount);
+        IBerachainRewardsVault(bexVault).stake(amount);
     }
 
     function withdrawTo(address account, uint256 amount) 
         public 
         override 
     {
-        IBerachainRewardsVault(rewardsVault).withdraw(amount); 
+        IBerachainRewardsVault(bexVault).withdraw(amount); 
         super.withdrawTo(account, amount);
     }
 
     /*----------  RESTRICTED FUNCTIONS  ---------------------------------*/
 
     /*----------  VIEW FUNCTIONS  ---------------------------------------*/
-
-    function getUnderlyingName() public view override returns (string memory) {
-        return symbol;
-    }
-
-    function getUnderlyingSymbol() public view override returns (string memory) {
-        return symbol;
-    }
 
     // Function to receive Ether. msg.data must be empty
     receive() external payable {}
@@ -116,11 +101,11 @@ contract BexVaultPlugin is Plugin {
 
 }
 
-contract BexVaultPluginFactory {
+contract BexPluginFactory {
 
+    string public constant PROTOCOL = "BEX";
     address public constant REWARDS_VAULT_FACTORY = 0x2B6e40f65D82A0cB98795bC7587a71bfa49fBB2B;
     address public constant WBERA = 0x7507c1dc16935B82698e4C63f2746A2fCf994dF8;
-    string public constant PROTOCOL = 'BEX';
 
     address public immutable VOTER;
 
@@ -136,24 +121,27 @@ contract BexVaultPluginFactory {
         address _lpToken,
         address _token0,
         address _token1,
-        string memory _symbol // ex 50WETH-50HONEY or 50WBTC-50HONEY or 50WBERA-50HONEY
+        string memory _name,
+        string memory _vaultName
     ) external returns (address) {
 
-        address[] memory tokensInUnderlying = new address[](2);
-        tokensInUnderlying[0] = _token0;
-        tokensInUnderlying[1] = _token1;
+        address[] memory assetTokens = new address[](2);
+        assetTokens[0] = _token0;
+        assetTokens[1] = _token1;
 
         address[] memory bribeTokens = new address[](1);
         bribeTokens[0] = WBERA;
 
-        BexVaultPlugin lastPlugin = new BexVaultPlugin(
+        BexPlugin lastPlugin = new BexPlugin(
             _lpToken,
             VOTER,
-            tokensInUnderlying,
+            assetTokens,
             bribeTokens,
+            REWARDS_VAULT_FACTORY,
             IBerachainRewardsVaultFactory(REWARDS_VAULT_FACTORY).getVault(_lpToken),
             PROTOCOL,
-            _symbol
+            _name,
+            _vaultName
         );
         last_plugin = address(lastPlugin);
         emit Plugin__PluginCreated(last_plugin);

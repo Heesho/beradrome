@@ -40,11 +40,11 @@ contract Controller {
     function getPluginInfo(uint256 index) public view returns (Plugin memory plugin) {
         plugin.index = index;
         plugin.plugin = IVoter(voter).plugins(index);
-        plugin.underlying = IPlugin(plugin.plugin).getUnderlyingAddress();
+        plugin.underlying = IPlugin(plugin.plugin).getToken();
         plugin.gauge = IVoter(voter).gauges(plugin.plugin);
         plugin.bribe = IVoter(voter).bribes(plugin.plugin);
         plugin.isAlive = IVoter(voter).isAlive(plugin.gauge);
-        plugin.symbol = IPlugin(plugin.plugin).getUnderlyingSymbol();
+        plugin.symbol = IPlugin(plugin.plugin).getName();
         plugin.protocol = IPlugin(plugin.plugin).getProtocol();
     }
 
