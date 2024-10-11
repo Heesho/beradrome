@@ -18,7 +18,7 @@ interface IBerachainRewardsVaultFactory {
     function createRewardsVault(address _stakingToken) external returns (address);
 }
 
-interface IRewardVault {
+interface IBerachainRewardsVault {
     function delegateStake(address account, uint256 amount) external;
     function delegateWithdraw(address account, uint256 amount) external;
 }
@@ -378,7 +378,7 @@ contract VaultVoter is ReentrancyGuard, Ownable {
         }
 
         // Berachain Rewards Vault Delegate Stake
-        IRewardVault(rewardVault).delegateWithdraw(account, usedWeights[account]);
+        IBerachainRewardsVault(rewardVault).delegateWithdraw(account, usedWeights[account]);
         VaultToken(vaultToken).burn(address(this), usedWeights[account]);
 
         totalWeight -= uint256(_totalWeight);
@@ -430,7 +430,7 @@ contract VaultVoter is ReentrancyGuard, Ownable {
         VaultToken(vaultToken).mint(address(this), _usedWeight);
         IERC20(vaultToken).safeApprove(rewardVault, 0);
         IERC20(vaultToken).safeApprove(rewardVault, _usedWeight);
-        IRewardVault(rewardVault).delegateStake(account, _usedWeight);
+        IBerachainRewardsVault(rewardVault).delegateStake(account, _usedWeight);
     }
 
     function _updateFor(address _gauge) internal {

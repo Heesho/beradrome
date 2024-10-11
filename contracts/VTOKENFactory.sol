@@ -18,7 +18,7 @@ interface IBerachainRewardsVaultFactory {
     function createRewardsVault(address _vaultToken) external returns (address);
 }
 
-interface IRewardVault {
+interface IBerachainRewardsVault {
     function delegateStake(address account, uint256 amount) external;
     function delegateWithdraw(address account, uint256 amount) external;
 }
@@ -153,7 +153,7 @@ contract VTOKEN is ERC20, ERC20Permit, ERC20Votes, ReentrancyGuard, Ownable {
         VaultToken(vaultToken).mint(address(this), amount);
         IERC20(vaultToken).safeApprove(rewardVault, 0);
         IERC20(vaultToken).safeApprove(rewardVault, amount);
-        IRewardVault(rewardVault).delegateStake(account, amount);
+        IBerachainRewardsVault(rewardVault).delegateStake(account, amount);
     }
 
     /**
@@ -178,7 +178,7 @@ contract VTOKEN is ERC20, ERC20Permit, ERC20Votes, ReentrancyGuard, Ownable {
         TOKEN.safeTransfer(account, amount);
 
         // Berachain Rewards Vault Delegate Stake
-        IRewardVault(rewardVault).delegateWithdraw(account, amount);
+        IBerachainRewardsVault(rewardVault).delegateWithdraw(account, amount);
         VaultToken(vaultToken).burn(address(this), amount);
     }
 
@@ -206,7 +206,7 @@ contract VTOKEN is ERC20, ERC20Permit, ERC20Votes, ReentrancyGuard, Ownable {
         VaultToken(vaultToken).mint(address(this), amount);
         IERC20(vaultToken).safeApprove(rewardVault, 0);
         IERC20(vaultToken).safeApprove(rewardVault, amount);
-        IRewardVault(rewardVault).delegateStake(account,amount);
+        IBerachainRewardsVault(rewardVault).delegateStake(account,amount);
     }
 
     /*----------  FUNCTION OVERRIDES  -----------------------------------*/
