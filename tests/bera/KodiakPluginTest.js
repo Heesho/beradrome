@@ -60,14 +60,15 @@ const WBERA_ADDR = "0x7507c1dc16935B82698e4C63f2746A2fCf994dF8";
 const YEET_ADDR = "0x1740F679325ef3686B2f574e392007A92e4BeD41";
 const KODIAK3_ADDR = "0xE5A2ab5D2fb268E5fF43A5564e44c3309609aFF9"; // Kodiak Vault V1 YEET/WBERA
 const KODIAK3_FARM = "0xbdEE3F788a5efDdA1FcFe6bfe7DbbDa5690179e6";
-const KODIAK3_HOLDER = "0x2268606f89189Ae4F87DF5e4Dc4855737dbf7e94";
+const KODIAK3_HOLDER = "0xE6666Cd611439A9A3500E8c0E14670Dfbb5027C5";
 
 const HONEY_ADDR = "0x0E4aaF1351de4c0264C5c7056Ef3777b41BD8e03";
 const KODIAK1_ADDR = "0x12C195768f65F282EA5F1B5C42755FBc910B0D8F"; // Kodiak Vault V1 HONEY/WBERA
 const KODIAK1_FARM = "0x1878eb1cA6Da5e2fC4B5213F7D170CA668A0E225";
-const KODIAK1_HOLDER = "0x531a0BaeC4B799eE894007f8E839A27E0746Dc19";
+const KODIAK1_HOLDER = "0x65e24442b16602d95883d2379ae7069A6de8910a";
 
 let owner, multisig, treasury, user0, user1, user2;
+let vaultFactory;
 let VTOKENFactory,
   OTOKENFactory,
   feesFactory,
@@ -106,6 +107,13 @@ describe("berachain: kodiak farm testing", function () {
     BASE = await ERC20MockArtifact.deploy("BASE", "BASE");
     console.log("- ERC20Mocks Initialized");
 
+    // initialize VaultFactory
+    const VaultFactoryArtifact = await ethers.getContractFactory(
+      "BerachainRewardsVaultFactory"
+    );
+    vaultFactory = await VaultFactoryArtifact.deploy();
+    console.log("- VaultFactory Initialized");
+
     // initialize OTOKENFactory
     const OTOKENFactoryArtifact = await ethers.getContractFactory(
       "OTOKENFactory"
@@ -142,7 +150,8 @@ describe("berachain: kodiak farm testing", function () {
       OTOKENFactory.address,
       VTOKENFactory.address,
       rewarderFactory.address,
-      feesFactory.address
+      feesFactory.address,
+      vaultFactory.address
     );
     console.log("- TOKEN Initialized");
 
@@ -260,13 +269,13 @@ describe("berachain: kodiak farm testing", function () {
 
     // initialize Plugin Factory
     const pluginFactoryArtifact = await ethers.getContractFactory(
-      "KodiakFarmPluginFactory"
+      "KodiakPluginFactory"
     );
     const pluginFactoryContract = await pluginFactoryArtifact.deploy(
       voter.address
     );
     pluginFactory = await ethers.getContractAt(
-      "KodiakFarmPluginFactory",
+      "KodiakPluginFactory",
       pluginFactoryContract.address
     );
     console.log("- Plugin Factory Initialized");
@@ -278,10 +287,11 @@ describe("berachain: kodiak farm testing", function () {
       YEET_ADDR,
       WBERA_ADDR,
       [YEET_ADDR],
-      "YEET-WBERA Island"
+      "YEET-WBERA Island",
+      "KODIAK3 Vault Token"
     );
     plugin0 = await ethers.getContractAt(
-      "contracts/plugins/berachain/KodiakFarmPluginFactory.sol:KodiakFarmPlugin",
+      "contracts/plugins/berachain/KodiakPluginFactory.sol:KodiakPlugin",
       await pluginFactory.last_plugin()
     );
 
@@ -292,10 +302,11 @@ describe("berachain: kodiak farm testing", function () {
       HONEY_ADDR,
       WBERA_ADDR,
       [],
-      "HONEY-WBERA Island"
+      "HONEY-WBERA Island",
+      "KODIAK1 Vault Token"
     );
     plugin1 = await ethers.getContractAt(
-      "contracts/plugins/berachain/KodiakFarmPluginFactory.sol:KodiakFarmPlugin",
+      "contracts/plugins/berachain/KodiakPluginFactory.sol:KodiakPlugin",
       await pluginFactory.last_plugin()
     );
 
@@ -510,17 +521,17 @@ describe("berachain: kodiak farm testing", function () {
     console.log("INFORMATION");
     console.log("Gauge: ", res.gauge);
     console.log("Plugin: ", res.plugin);
-    console.log("Underlying: ", res.underlying);
+    console.log("Underlying: ", res.token);
     console.log("Tokens in Underlying: ");
-    for (let i = 0; i < res.tokensInUnderlying.length; i++) {
-      console.log(" - ", res.tokensInUnderlying[i]);
+    for (let i = 0; i < res.assetTokens.length; i++) {
+      console.log(" - ", res.assetTokens[i]);
     }
-    console.log("Underlying Decimals: ", res.underlyingDecimals);
+    console.log("Underlying Decimals: ", res.tokenDecimals);
     console.log("Is Alive: ", res.isAlive);
     console.log();
     console.log("GLOBAL DATA");
     console.log("Protocol: ", res.protocol);
-    console.log("Symbol: ", res.symbol);
+    console.log("Symbol: ", res.name);
     console.log("Price OTOKEN: $", divDec(res.priceOTOKEN));
     console.log("Reward Per token: ", divDec(res.rewardPerToken));
     console.log("Reward Per token: $", divDec(res.rewardPerTokenUSD));
@@ -528,7 +539,7 @@ describe("berachain: kodiak farm testing", function () {
     console.log("Voting Weight: ", divDec(res.votingWeight), "%");
     console.log();
     console.log("ACCOUNT DATA");
-    console.log("Balance Underlying: ", divDec(res.accountUnderlyingBalance));
+    console.log("Balance Underlying: ", divDec(res.accountTokenBalance));
     console.log("Balance Deposited: ", divDec(res.accountStakedBalance));
     console.log("Earned OTOKEN: ", divDec(res.accountEarnedOTOKEN));
   });
@@ -547,7 +558,7 @@ describe("berachain: kodiak farm testing", function () {
     console.log();
     console.log("GLOBAL DATA");
     console.log("Protocol: ", res.protocol);
-    console.log("Symbol: ", res.symbol);
+    console.log("Symbol: ", res.name);
     console.log("Voting Weight: ", divDec(res.voteWeight));
     console.log("Voting percent: ", divDec(res.votePercent), "%");
     console.log("Reward Per Token: ");
@@ -569,17 +580,17 @@ describe("berachain: kodiak farm testing", function () {
     console.log("INFORMATION");
     console.log("Gauge: ", res.gauge);
     console.log("Plugin: ", res.plugin);
-    console.log("Underlying: ", res.underlying);
+    console.log("Underlying: ", res.token);
     console.log("Tokens in Underlying: ");
-    for (let i = 0; i < res.tokensInUnderlying.length; i++) {
-      console.log(" - ", res.tokensInUnderlying[i]);
+    for (let i = 0; i < res.assetTokens.length; i++) {
+      console.log(" - ", res.assetTokens[i]);
     }
-    console.log("Underlying Decimals: ", res.underlyingDecimals);
+    console.log("Underlying Decimals: ", res.tokenDecimals);
     console.log("Is Alive: ", res.isAlive);
     console.log();
     console.log("GLOBAL DATA");
     console.log("Protocol: ", res.protocol);
-    console.log("Symbol: ", res.symbol);
+    console.log("Symbol: ", res.name);
     console.log("Price OTOKEN: $", divDec(res.priceOTOKEN));
     console.log("Reward Per token: ", divDec(res.rewardPerToken));
     console.log("Reward Per token: $", divDec(res.rewardPerTokenUSD));
@@ -587,7 +598,7 @@ describe("berachain: kodiak farm testing", function () {
     console.log("Voting Weight: ", divDec(res.votingWeight), "%");
     console.log();
     console.log("ACCOUNT DATA");
-    console.log("Balance Underlying: ", divDec(res.accountUnderlyingBalance));
+    console.log("Balance Underlying: ", divDec(res.accountTokenBalance));
     console.log("Balance Deposited: ", divDec(res.accountStakedBalance));
     console.log("Earned OTOKEN: ", divDec(res.accountEarnedOTOKEN));
   });
@@ -604,17 +615,17 @@ describe("berachain: kodiak farm testing", function () {
     console.log("INFORMATION");
     console.log("Gauge: ", res.gauge);
     console.log("Plugin: ", res.plugin);
-    console.log("Underlying: ", res.underlying);
+    console.log("Underlying: ", res.token);
     console.log("Tokens in Underlying: ");
-    for (let i = 0; i < res.tokensInUnderlying.length; i++) {
-      console.log(" - ", res.tokensInUnderlying[i]);
+    for (let i = 0; i < res.assetTokens.length; i++) {
+      console.log(" - ", res.assetTokens[i]);
     }
-    console.log("Underlying Decimals: ", res.underlyingDecimals);
+    console.log("Underlying Decimals: ", res.tokenDecimals);
     console.log("Is Alive: ", res.isAlive);
     console.log();
     console.log("GLOBAL DATA");
     console.log("Protocol: ", res.protocol);
-    console.log("Symbol: ", res.symbol);
+    console.log("Symbol: ", res.name);
     console.log("Price OTOKEN: $", divDec(res.priceOTOKEN));
     console.log("Reward Per token: ", divDec(res.rewardPerToken));
     console.log("Reward Per token: $", divDec(res.rewardPerTokenUSD));
@@ -622,7 +633,7 @@ describe("berachain: kodiak farm testing", function () {
     console.log("Voting Weight: ", divDec(res.votingWeight), "%");
     console.log();
     console.log("ACCOUNT DATA");
-    console.log("Balance Underlying: ", divDec(res.accountUnderlyingBalance));
+    console.log("Balance Underlying: ", divDec(res.accountTokenBalance));
     console.log("Balance Deposited: ", divDec(res.accountStakedBalance));
     console.log("Earned OTOKEN: ", divDec(res.accountEarnedOTOKEN));
   });
@@ -633,8 +644,24 @@ describe("berachain: kodiak farm testing", function () {
     await network.provider.send("evm_mine");
   });
 
+  it("Transfer ETH to XKDK_OWNER", async function () {
+    console.log("******************************************************");
+
+    // Transfer 1 ETH to XKDK_OWNER using the 'owner' signer
+    const tx = await owner.sendTransaction({
+      to: XKDK_OWNER,
+      value: ethers.utils.parseEther("1.0"), // Amount of ETH to send
+    });
+
+    // Wait for the transaction to be mined
+    await tx.wait();
+
+    console.log(`Transferred 1 ETH to XKDK_OWNER: ${XKDK_OWNER}`);
+  });
+
   it("Whitelist plugin and bribe contract to transfer xKDK", async function () {
     console.log("******************************************************");
+
     await network.provider.request({
       method: "hardhat_impersonateAccount",
       params: [XKDK_OWNER],
@@ -665,7 +692,7 @@ describe("berachain: kodiak farm testing", function () {
     console.log();
     console.log("GLOBAL DATA");
     console.log("Protocol: ", res.protocol);
-    console.log("Symbol: ", res.symbol);
+    console.log("Symbol: ", res.name);
     console.log("Voting Weight: ", divDec(res.voteWeight));
     console.log("Voting percent: ", divDec(res.votePercent), "%");
     console.log("Reward Per Token: ");
@@ -701,7 +728,7 @@ describe("berachain: kodiak farm testing", function () {
     console.log();
     console.log("GLOBAL DATA");
     console.log("Protocol: ", res.protocol);
-    console.log("Symbol: ", res.symbol);
+    console.log("Symbol: ", res.name);
     console.log("Voting Weight: ", divDec(res.voteWeight));
     console.log("Voting percent: ", divDec(res.votePercent), "%");
     console.log("Reward Per Token: ");
@@ -740,17 +767,17 @@ describe("berachain: kodiak farm testing", function () {
     console.log("INFORMATION");
     console.log("Gauge: ", res.gauge);
     console.log("Plugin: ", res.plugin);
-    console.log("Underlying: ", res.underlying);
+    console.log("Underlying: ", res.token);
     console.log("Tokens in Underlying: ");
-    for (let i = 0; i < res.tokensInUnderlying.length; i++) {
-      console.log(" - ", res.tokensInUnderlying[i]);
+    for (let i = 0; i < res.assetTokens.length; i++) {
+      console.log(" - ", res.assetTokens[i]);
     }
-    console.log("Underlying Decimals: ", res.underlyingDecimals);
+    console.log("Underlying Decimals: ", res.tokenDecimals);
     console.log("Is Alive: ", res.isAlive);
     console.log();
     console.log("GLOBAL DATA");
     console.log("Protocol: ", res.protocol);
-    console.log("Symbol: ", res.symbol);
+    console.log("Symbol: ", res.name);
     console.log("Price OTOKEN: $", divDec(res.priceOTOKEN));
     console.log("Reward Per token: ", divDec(res.rewardPerToken));
     console.log("Reward Per token: $", divDec(res.rewardPerTokenUSD));
@@ -758,7 +785,7 @@ describe("berachain: kodiak farm testing", function () {
     console.log("Voting Weight: ", divDec(res.votingWeight), "%");
     console.log();
     console.log("ACCOUNT DATA");
-    console.log("Balance Underlying: ", divDec(res.accountUnderlyingBalance));
+    console.log("Balance Underlying: ", divDec(res.accountTokenBalance));
     console.log("Balance Deposited: ", divDec(res.accountStakedBalance));
     console.log("Earned OTOKEN: ", divDec(res.accountEarnedOTOKEN));
   });
@@ -786,7 +813,7 @@ describe("berachain: kodiak farm testing", function () {
     console.log();
     console.log("GLOBAL DATA");
     console.log("Protocol: ", res.protocol);
-    console.log("Symbol: ", res.symbol);
+    console.log("Symbol: ", res.name);
     console.log("Voting Weight: ", divDec(res.voteWeight));
     console.log("Voting percent: ", divDec(res.votePercent), "%");
     console.log("Reward Per Token: ");

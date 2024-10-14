@@ -12,7 +12,7 @@ interface IWBERA {
     function deposit() external payable;
 }
 
-contract BexPlugin is Plugin {
+contract StationPlugin is Plugin {
     using SafeERC20 for IERC20;
 
     /*----------  CONSTANTS  --------------------------------------------*/
@@ -22,7 +22,7 @@ contract BexPlugin is Plugin {
 
     /*----------  STATE VARIABLES  --------------------------------------*/
 
-    address public bexVault;
+    address public berachainRewardsVault;
 
     /*----------  ERRORS ------------------------------------------------*/
 
@@ -34,7 +34,7 @@ contract BexPlugin is Plugin {
         address[] memory _assetTokens, 
         address[] memory _bribeTokens,
         address _vaultFactory,
-        address _bexVault,
+        address _berachainRewardsVault,
         string memory _protocol,
         string memory _name,
         string memory _vaultName   
@@ -50,7 +50,7 @@ contract BexPlugin is Plugin {
             _vaultName
         )
     {
-        bexVault = _bexVault;
+        berachainRewardsVault = _berachainRewardsVault;
     }
 
     function claimAndDistribute() 
@@ -58,7 +58,7 @@ contract BexPlugin is Plugin {
         override 
     {
         super.claimAndDistribute();
-        IBerachainRewardsVault(bexVault).getReward(address(this));
+        IBerachainRewardsVault(berachainRewardsVault).getReward(address(this));
         address bribe = getBribe();
         uint256 duration = IBribe(bribe).DURATION();
         uint256 balance = IBGT(BGT).unboostedBalanceOf(address(this));
@@ -76,16 +76,16 @@ contract BexPlugin is Plugin {
         override 
     {
         super.depositFor(account, amount);
-        IERC20(getToken()).safeApprove(bexVault, 0);
-        IERC20(getToken()).safeApprove(bexVault, amount);
-        IBerachainRewardsVault(bexVault).stake(amount);
+        IERC20(getToken()).safeApprove(berachainRewardsVault, 0);
+        IERC20(getToken()).safeApprove(berachainRewardsVault, amount);
+        IBerachainRewardsVault(berachainRewardsVault).stake(amount);
     }
 
     function withdrawTo(address account, uint256 amount) 
         public 
         override 
     {
-        IBerachainRewardsVault(bexVault).withdraw(amount); 
+        IBerachainRewardsVault(berachainRewardsVault).withdraw(amount); 
         super.withdrawTo(account, amount);
     }
 
@@ -101,9 +101,9 @@ contract BexPlugin is Plugin {
 
 }
 
-contract BexPluginFactory {
+contract StationPluginFactory {
 
-    string public constant PROTOCOL = "BEX";
+    string public constant PROTOCOL = "BGT Station";
     address public constant REWARDS_VAULT_FACTORY = 0x2B6e40f65D82A0cB98795bC7587a71bfa49fBB2B;
     address public constant WBERA = 0x7507c1dc16935B82698e4C63f2746A2fCf994dF8;
 
@@ -118,27 +118,22 @@ contract BexPluginFactory {
     }
 
     function createPlugin(
-        address _lpToken,
-        address _token0,
-        address _token1,
+        address _token,
+        address[] memory _assetTokens,
         string memory _name,
         string memory _vaultName
     ) external returns (address) {
 
-        address[] memory assetTokens = new address[](2);
-        assetTokens[0] = _token0;
-        assetTokens[1] = _token1;
-
         address[] memory bribeTokens = new address[](1);
         bribeTokens[0] = WBERA;
 
-        BexPlugin lastPlugin = new BexPlugin(
-            _lpToken,
+        StationPlugin lastPlugin = new StationPlugin(
+            _token,
             VOTER,
-            assetTokens,
+            _assetTokens,
             bribeTokens,
             REWARDS_VAULT_FACTORY,
-            IBerachainRewardsVaultFactory(REWARDS_VAULT_FACTORY).getVault(_lpToken),
+            IBerachainRewardsVaultFactory(REWARDS_VAULT_FACTORY).getVault(_token),
             PROTOCOL,
             _name,
             _vaultName

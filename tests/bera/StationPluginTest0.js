@@ -51,9 +51,10 @@ function timer(t) {
 const WBERA_ADDR = "0x7507c1dc16935B82698e4C63f2746A2fCf994dF8";
 const HONEY_ADDR = "0x0E4aaF1351de4c0264C5c7056Ef3777b41BD8e03";
 const BHONEY_ADDR = "0x1306D3c36eC7E38dd2c128fBe3097C2C2449af64";
-const BHONEY_HOLDER = "0x19dfeFF54ff73008e3fc384D0484E79a2b224D0a";
+const BHONEY_HOLDER = "0xd5AD558b09Ebfe1b7F037db7398C456A0ba56409";
 
 let owner, multisig, treasury, user0, user1, user2;
+let vaultFactory;
 let VTOKENFactory,
   OTOKENFactory,
   feesFactory,
@@ -86,6 +87,13 @@ describe("berachain: berps vault testing", function () {
     const ERC20MockArtifact = await ethers.getContractFactory("ERC20Mock");
     BASE = await ERC20MockArtifact.deploy("BASE", "BASE");
     console.log("- ERC20Mocks Initialized");
+
+    // initialize VaultFactory
+    const VaultFactoryArtifact = await ethers.getContractFactory(
+      "BerachainRewardsVaultFactory"
+    );
+    vaultFactory = await VaultFactoryArtifact.deploy();
+    console.log("- VaultFactory Initialized");
 
     // initialize OTOKENFactory
     const OTOKENFactoryArtifact = await ethers.getContractFactory(
@@ -123,7 +131,8 @@ describe("berachain: berps vault testing", function () {
       OTOKENFactory.address,
       VTOKENFactory.address,
       rewarderFactory.address,
-      feesFactory.address
+      feesFactory.address,
+      vaultFactory.address
     );
     console.log("- TOKEN Initialized");
 
@@ -240,19 +249,28 @@ describe("berachain: berps vault testing", function () {
     console.log("- System set up");
 
     // initialize Plugin Factory
-    const pluginArtifact = await ethers.getContractFactory("BerpsVaultPlugin");
-    const pluginContract = await pluginArtifact.deploy(
-      voter.address,
+    const pluginFactoryArtifact = await ethers.getContractFactory(
+      "StationPluginFactory"
+    );
+    const pluginFactoryContract = await pluginFactoryArtifact.deploy(
+      voter.address
+    );
+    pluginFactory = await ethers.getContractAt(
+      "StationPluginFactory",
+      pluginFactoryContract.address
+    );
+    console.log("- PluginFactory Initialized");
+
+    await pluginFactory.createPlugin(
+      BHONEY_ADDR,
       [HONEY_ADDR],
-      [WBERA_ADDR],
-      "BERPS",
-      "bHONEY"
+      "BERPS bHONEY",
+      "BERPS bHONEY Vault Token"
     );
     plugin0 = await ethers.getContractAt(
-      "BerpsVaultPlugin",
-      pluginContract.address
+      "contracts/plugins/berachain/StationPluginFactory.sol:StationPlugin",
+      await pluginFactory.last_plugin()
     );
-    console.log("- Plugin Initialized");
 
     // add Plugin to Voter
     await voter.addPlugin(plugin0.address);
@@ -398,17 +416,17 @@ describe("berachain: berps vault testing", function () {
     console.log("INFORMATION");
     console.log("Gauge: ", res.gauge);
     console.log("Plugin: ", res.plugin);
-    console.log("Underlying: ", res.underlying);
+    console.log("Underlying: ", res.token);
     console.log("Tokens in Underlying: ");
-    for (let i = 0; i < res.tokensInUnderlying.length; i++) {
-      console.log(" - ", res.tokensInUnderlying[i]);
+    for (let i = 0; i < res.assetTokens.length; i++) {
+      console.log(" - ", res.assetTokens[i]);
     }
-    console.log("Underlying Decimals: ", res.underlyingDecimals);
+    console.log("Underlying Decimals: ", res.tokenDecimals);
     console.log("Is Alive: ", res.isAlive);
     console.log();
     console.log("GLOBAL DATA");
     console.log("Protocol: ", res.protocol);
-    console.log("Symbol: ", res.symbol);
+    console.log("Symbol: ", res.name);
     console.log("Price OTOKEN: $", divDec(res.priceOTOKEN));
     console.log("Reward Per token: ", divDec(res.rewardPerToken));
     console.log("Reward Per token: $", divDec(res.rewardPerTokenUSD));
@@ -416,7 +434,7 @@ describe("berachain: berps vault testing", function () {
     console.log("Voting Weight: ", divDec(res.votingWeight), "%");
     console.log();
     console.log("ACCOUNT DATA");
-    console.log("Balance Underlying: ", divDec(res.accountUnderlyingBalance));
+    console.log("Balance Underlying: ", divDec(res.accountTokenBalance));
     console.log("Balance Deposited: ", divDec(res.accountStakedBalance));
     console.log("Earned OTOKEN: ", divDec(res.accountEarnedOTOKEN));
   });
@@ -435,7 +453,7 @@ describe("berachain: berps vault testing", function () {
     console.log();
     console.log("GLOBAL DATA");
     console.log("Protocol: ", res.protocol);
-    console.log("Symbol: ", res.symbol);
+    console.log("Symbol: ", res.name);
     console.log("Voting Weight: ", divDec(res.voteWeight));
     console.log("Voting percent: ", divDec(res.votePercent), "%");
     console.log("Reward Per Token: ");
@@ -457,17 +475,17 @@ describe("berachain: berps vault testing", function () {
     console.log("INFORMATION");
     console.log("Gauge: ", res.gauge);
     console.log("Plugin: ", res.plugin);
-    console.log("Underlying: ", res.underlying);
+    console.log("Underlying: ", res.token);
     console.log("Tokens in Underlying: ");
-    for (let i = 0; i < res.tokensInUnderlying.length; i++) {
-      console.log(" - ", res.tokensInUnderlying[i]);
+    for (let i = 0; i < res.assetTokens.length; i++) {
+      console.log(" - ", res.assetTokens[i]);
     }
-    console.log("Underlying Decimals: ", res.underlyingDecimals);
+    console.log("Underlying Decimals: ", res.tokenDecimals);
     console.log("Is Alive: ", res.isAlive);
     console.log();
     console.log("GLOBAL DATA");
     console.log("Protocol: ", res.protocol);
-    console.log("Symbol: ", res.symbol);
+    console.log("Symbol: ", res.name);
     console.log("Price OTOKEN: $", divDec(res.priceOTOKEN));
     console.log("Reward Per token: ", divDec(res.rewardPerToken));
     console.log("Reward Per token: $", divDec(res.rewardPerTokenUSD));
@@ -475,7 +493,7 @@ describe("berachain: berps vault testing", function () {
     console.log("Voting Weight: ", divDec(res.votingWeight), "%");
     console.log();
     console.log("ACCOUNT DATA");
-    console.log("Balance Underlying: ", divDec(res.accountUnderlyingBalance));
+    console.log("Balance Underlying: ", divDec(res.accountTokenBalance));
     console.log("Balance Deposited: ", divDec(res.accountStakedBalance));
     console.log("Earned OTOKEN: ", divDec(res.accountEarnedOTOKEN));
   });
@@ -492,17 +510,17 @@ describe("berachain: berps vault testing", function () {
     console.log("INFORMATION");
     console.log("Gauge: ", res.gauge);
     console.log("Plugin: ", res.plugin);
-    console.log("Underlying: ", res.underlying);
+    console.log("Underlying: ", res.token);
     console.log("Tokens in Underlying: ");
-    for (let i = 0; i < res.tokensInUnderlying.length; i++) {
-      console.log(" - ", res.tokensInUnderlying[i]);
+    for (let i = 0; i < res.assetTokens.length; i++) {
+      console.log(" - ", res.assetTokens[i]);
     }
-    console.log("Underlying Decimals: ", res.underlyingDecimals);
+    console.log("Underlying Decimals: ", res.tokenDecimals);
     console.log("Is Alive: ", res.isAlive);
     console.log();
     console.log("GLOBAL DATA");
     console.log("Protocol: ", res.protocol);
-    console.log("Symbol: ", res.symbol);
+    console.log("Symbol: ", res.name);
     console.log("Price OTOKEN: $", divDec(res.priceOTOKEN));
     console.log("Reward Per token: ", divDec(res.rewardPerToken));
     console.log("Reward Per token: $", divDec(res.rewardPerTokenUSD));
@@ -510,7 +528,7 @@ describe("berachain: berps vault testing", function () {
     console.log("Voting Weight: ", divDec(res.votingWeight), "%");
     console.log();
     console.log("ACCOUNT DATA");
-    console.log("Balance Underlying: ", divDec(res.accountUnderlyingBalance));
+    console.log("Balance Underlying: ", divDec(res.accountTokenBalance));
     console.log("Balance Deposited: ", divDec(res.accountStakedBalance));
     console.log("Earned OTOKEN: ", divDec(res.accountEarnedOTOKEN));
   });
@@ -542,7 +560,7 @@ describe("berachain: berps vault testing", function () {
     console.log();
     console.log("GLOBAL DATA");
     console.log("Protocol: ", res.protocol);
-    console.log("Symbol: ", res.symbol);
+    console.log("Symbol: ", res.name);
     console.log("Voting Weight: ", divDec(res.voteWeight));
     console.log("Voting percent: ", divDec(res.votePercent), "%");
     console.log("Reward Per Token: ");
@@ -578,7 +596,7 @@ describe("berachain: berps vault testing", function () {
     console.log();
     console.log("GLOBAL DATA");
     console.log("Protocol: ", res.protocol);
-    console.log("Symbol: ", res.symbol);
+    console.log("Symbol: ", res.name);
     console.log("Voting Weight: ", divDec(res.voteWeight));
     console.log("Voting percent: ", divDec(res.votePercent), "%");
     console.log("Reward Per Token: ");
@@ -610,17 +628,17 @@ describe("berachain: berps vault testing", function () {
     console.log("INFORMATION");
     console.log("Gauge: ", res.gauge);
     console.log("Plugin: ", res.plugin);
-    console.log("Underlying: ", res.underlying);
+    console.log("Underlying: ", res.token);
     console.log("Tokens in Underlying: ");
-    for (let i = 0; i < res.tokensInUnderlying.length; i++) {
-      console.log(" - ", res.tokensInUnderlying[i]);
+    for (let i = 0; i < res.assetTokens.length; i++) {
+      console.log(" - ", res.assetTokens[i]);
     }
-    console.log("Underlying Decimals: ", res.underlyingDecimals);
+    console.log("Underlying Decimals: ", res.tokenDecimals);
     console.log("Is Alive: ", res.isAlive);
     console.log();
     console.log("GLOBAL DATA");
     console.log("Protocol: ", res.protocol);
-    console.log("Symbol: ", res.symbol);
+    console.log("Symbol: ", res.name);
     console.log("Price OTOKEN: $", divDec(res.priceOTOKEN));
     console.log("Reward Per token: ", divDec(res.rewardPerToken));
     console.log("Reward Per token: $", divDec(res.rewardPerTokenUSD));
@@ -628,7 +646,7 @@ describe("berachain: berps vault testing", function () {
     console.log("Voting Weight: ", divDec(res.votingWeight), "%");
     console.log();
     console.log("ACCOUNT DATA");
-    console.log("Balance Underlying: ", divDec(res.accountUnderlyingBalance));
+    console.log("Balance Underlying: ", divDec(res.accountTokenBalance));
     console.log("Balance Deposited: ", divDec(res.accountStakedBalance));
     console.log("Earned OTOKEN: ", divDec(res.accountEarnedOTOKEN));
   });

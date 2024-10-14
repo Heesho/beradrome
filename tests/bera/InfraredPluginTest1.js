@@ -50,10 +50,12 @@ function timer(t) {
 
 const WBERA_ADDR = "0x7507c1dc16935B82698e4C63f2746A2fCf994dF8";
 const HONEY_ADDR = "0x0E4aaF1351de4c0264C5c7056Ef3777b41BD8e03";
-const WBERA_HONEY_LP_ADDR = "0xd28d852cbcc68DCEC922f6d5C7a8185dBaa104B7";
-const WBERA_HONEY_LP_HOLDER = "0xBEB4e1a4954cF6554574A183Eaa04c11c20747D7";
+const VAULT_ADDR = "0x31e6458c83c4184a23c761fdaffb61941665e012";
+const IBGT_ADDR = "0x46efc86f0d7455f135cc9df501673739d513e982";
+const IBGT_HOLDER = "0xb0d2c2996067350b3bb2a8998AEF07a183ccbE1B";
 
 let owner, multisig, treasury, user0, user1, user2;
+let vaultFactory;
 let VTOKENFactory,
   OTOKENFactory,
   feesFactory,
@@ -62,10 +64,10 @@ let VTOKENFactory,
   bribeFactory;
 let minter, voter, fees, rewarder, governance, multicall, pluginFactory;
 let TOKEN, VTOKEN, OTOKEN, BASE;
-let WBERA, HONEY;
+let WBERA, HONEY, IBGT;
 let LP0, LP0Gauge, plugin0, gauge0, bribe0;
 
-describe("berachain: bex vault testing", function () {
+describe("berachain: infrared vault testing", function () {
   before("Initial set up", async function () {
     console.log("Begin Initialization");
 
@@ -80,13 +82,20 @@ describe("berachain: bex vault testing", function () {
     // initialize ERC20s
     WBERA = new ethers.Contract(WBERA_ADDR, ERC20_ABI, provider);
     HONEY = new ethers.Contract(HONEY_ADDR, ERC20_ABI, provider);
-    LP0 = new ethers.Contract(WBERA_HONEY_LP_ADDR, ERC20_ABI, provider);
+    IBGT = new ethers.Contract(IBGT_ADDR, ERC20_ABI, provider);
     console.log("- ERC20s Initialized");
 
     // initialize ERC20Mocks
     const ERC20MockArtifact = await ethers.getContractFactory("ERC20Mock");
     BASE = await ERC20MockArtifact.deploy("BASE", "BASE");
     console.log("- ERC20Mocks Initialized");
+
+    // initialize VaultFactory
+    const VaultFactoryArtifact = await ethers.getContractFactory(
+      "BerachainRewardsVaultFactory"
+    );
+    vaultFactory = await VaultFactoryArtifact.deploy();
+    console.log("- VaultFactory Initialized");
 
     // initialize OTOKENFactory
     const OTOKENFactoryArtifact = await ethers.getContractFactory(
@@ -124,7 +133,8 @@ describe("berachain: bex vault testing", function () {
       OTOKENFactory.address,
       VTOKENFactory.address,
       rewarderFactory.address,
-      feesFactory.address
+      feesFactory.address,
+      vaultFactory.address
     );
     console.log("- TOKEN Initialized");
 
@@ -242,26 +252,27 @@ describe("berachain: bex vault testing", function () {
 
     // initialize Plugin Factory
     const pluginFactoryArtifact = await ethers.getContractFactory(
-      "BexVaultPluginFactory"
+      "InfraredPluginFactory"
     );
     const pluginFactoryContract = await pluginFactoryArtifact.deploy(
       voter.address
     );
     pluginFactory = await ethers.getContractAt(
-      "BexVaultPluginFactory",
+      "InfraredPluginFactory",
       pluginFactoryContract.address
     );
     console.log("- Plugin Factory Initialized");
 
     // initialize LP0
     await pluginFactory.createPlugin(
-      WBERA_HONEY_LP_ADDR,
-      HONEY_ADDR,
-      WBERA_ADDR,
-      "HONEY-WBERA"
+      VAULT_ADDR,
+      [IBGT_ADDR],
+      [HONEY_ADDR],
+      "iBGT",
+      "Infrared iBGT Vault Token"
     );
     plugin0 = await ethers.getContractAt(
-      "contracts/plugins/berachain/BexVaultPluginFactory.sol:BexVaultPlugin",
+      "contracts/plugins/berachain/InfraredPluginFactory.sol:InfraredPlugin",
       await pluginFactory.last_plugin()
     );
 
@@ -277,7 +288,7 @@ describe("berachain: bex vault testing", function () {
       "contracts/BribeFactory.sol:Bribe",
       Bribe0Address
     );
-    console.log("- LP0 Added in Voter");
+    console.log("- IBGT Added in Voter");
 
     console.log("Initialization Complete");
     console.log();
@@ -285,46 +296,43 @@ describe("berachain: bex vault testing", function () {
 
   it("first test", async function () {
     console.log("******************************************************");
-    console.log(
-      "Balance of LP0 holder",
-      await LP0.balanceOf(WBERA_HONEY_LP_HOLDER)
-    );
+    console.log("Balance of LP0 holder", await IBGT.balanceOf(IBGT_HOLDER));
   });
 
-  it("Impersonate SCALE holder and send to user0", async function () {
+  it("Impersonate LP holder and send to user0", async function () {
     console.log("******************************************************");
     await network.provider.request({
       method: "hardhat_impersonateAccount",
-      params: [WBERA_HONEY_LP_HOLDER],
+      params: [IBGT_HOLDER],
     });
-    const signer = ethers.provider.getSigner(WBERA_HONEY_LP_HOLDER);
+    const signer = ethers.provider.getSigner(IBGT_HOLDER);
 
-    await LP0.connect(signer).transfer(
+    await IBGT.connect(signer).transfer(
       user0.address,
-      await LP0.connect(owner).balanceOf(WBERA_HONEY_LP_HOLDER)
+      await IBGT.connect(owner).balanceOf(IBGT_HOLDER)
     );
 
     console.log(
       "Holder LP0 balance: ",
-      divDec(await LP0.connect(owner).balanceOf(WBERA_HONEY_LP_HOLDER))
+      divDec(await IBGT.connect(owner).balanceOf(IBGT_HOLDER))
     );
     console.log(
       "User0 LP0 balance: ",
-      divDec(await LP0.connect(owner).balanceOf(user0.address))
+      divDec(await IBGT.connect(owner).balanceOf(user0.address))
     );
   });
 
   it("User0 deposits in all plugins", async function () {
     console.log("******************************************************");
-    await LP0.connect(user0).approve(
+    await IBGT.connect(user0).approve(
       plugin0.address,
-      await LP0.connect(owner).balanceOf(user0.address)
+      await IBGT.connect(owner).balanceOf(user0.address)
     );
     await plugin0
       .connect(user0)
       .depositFor(
         user0.address,
-        await LP0.connect(owner).balanceOf(user0.address)
+        await IBGT.connect(owner).balanceOf(user0.address)
       );
   });
 
@@ -409,17 +417,17 @@ describe("berachain: bex vault testing", function () {
     console.log("INFORMATION");
     console.log("Gauge: ", res.gauge);
     console.log("Plugin: ", res.plugin);
-    console.log("Underlying: ", res.underlying);
+    console.log("Underlying: ", res.token);
     console.log("Tokens in Underlying: ");
-    for (let i = 0; i < res.tokensInUnderlying.length; i++) {
-      console.log(" - ", res.tokensInUnderlying[i]);
+    for (let i = 0; i < res.assetTokens.length; i++) {
+      console.log(" - ", res.assetTokens[i]);
     }
-    console.log("Underlying Decimals: ", res.underlyingDecimals);
+    console.log("Underlying Decimals: ", res.tokenDecimals);
     console.log("Is Alive: ", res.isAlive);
     console.log();
     console.log("GLOBAL DATA");
     console.log("Protocol: ", res.protocol);
-    console.log("Symbol: ", res.symbol);
+    console.log("Symbol: ", res.name);
     console.log("Price OTOKEN: $", divDec(res.priceOTOKEN));
     console.log("Reward Per token: ", divDec(res.rewardPerToken));
     console.log("Reward Per token: $", divDec(res.rewardPerTokenUSD));
@@ -427,7 +435,7 @@ describe("berachain: bex vault testing", function () {
     console.log("Voting Weight: ", divDec(res.votingWeight), "%");
     console.log();
     console.log("ACCOUNT DATA");
-    console.log("Balance Underlying: ", divDec(res.accountUnderlyingBalance));
+    console.log("Balance Underlying: ", divDec(res.accountTokenBalance));
     console.log("Balance Deposited: ", divDec(res.accountStakedBalance));
     console.log("Earned OTOKEN: ", divDec(res.accountEarnedOTOKEN));
   });
@@ -446,7 +454,7 @@ describe("berachain: bex vault testing", function () {
     console.log();
     console.log("GLOBAL DATA");
     console.log("Protocol: ", res.protocol);
-    console.log("Symbol: ", res.symbol);
+    console.log("Symbol: ", res.name);
     console.log("Voting Weight: ", divDec(res.voteWeight));
     console.log("Voting percent: ", divDec(res.votePercent), "%");
     console.log("Reward Per Token: ");
@@ -468,17 +476,17 @@ describe("berachain: bex vault testing", function () {
     console.log("INFORMATION");
     console.log("Gauge: ", res.gauge);
     console.log("Plugin: ", res.plugin);
-    console.log("Underlying: ", res.underlying);
+    console.log("Underlying: ", res.token);
     console.log("Tokens in Underlying: ");
-    for (let i = 0; i < res.tokensInUnderlying.length; i++) {
-      console.log(" - ", res.tokensInUnderlying[i]);
+    for (let i = 0; i < res.assetTokens.length; i++) {
+      console.log(" - ", res.assetTokens[i]);
     }
-    console.log("Underlying Decimals: ", res.underlyingDecimals);
+    console.log("Underlying Decimals: ", res.tokenDecimals);
     console.log("Is Alive: ", res.isAlive);
     console.log();
     console.log("GLOBAL DATA");
     console.log("Protocol: ", res.protocol);
-    console.log("Symbol: ", res.symbol);
+    console.log("Symbol: ", res.name);
     console.log("Price OTOKEN: $", divDec(res.priceOTOKEN));
     console.log("Reward Per token: ", divDec(res.rewardPerToken));
     console.log("Reward Per token: $", divDec(res.rewardPerTokenUSD));
@@ -486,7 +494,7 @@ describe("berachain: bex vault testing", function () {
     console.log("Voting Weight: ", divDec(res.votingWeight), "%");
     console.log();
     console.log("ACCOUNT DATA");
-    console.log("Balance Underlying: ", divDec(res.accountUnderlyingBalance));
+    console.log("Balance Underlying: ", divDec(res.accountTokenBalance));
     console.log("Balance Deposited: ", divDec(res.accountStakedBalance));
     console.log("Earned OTOKEN: ", divDec(res.accountEarnedOTOKEN));
   });
@@ -503,17 +511,17 @@ describe("berachain: bex vault testing", function () {
     console.log("INFORMATION");
     console.log("Gauge: ", res.gauge);
     console.log("Plugin: ", res.plugin);
-    console.log("Underlying: ", res.underlying);
+    console.log("Underlying: ", res.token);
     console.log("Tokens in Underlying: ");
-    for (let i = 0; i < res.tokensInUnderlying.length; i++) {
-      console.log(" - ", res.tokensInUnderlying[i]);
+    for (let i = 0; i < res.assetTokens.length; i++) {
+      console.log(" - ", res.assetTokens[i]);
     }
-    console.log("Underlying Decimals: ", res.underlyingDecimals);
+    console.log("Underlying Decimals: ", res.tokenDecimals);
     console.log("Is Alive: ", res.isAlive);
     console.log();
     console.log("GLOBAL DATA");
     console.log("Protocol: ", res.protocol);
-    console.log("Symbol: ", res.symbol);
+    console.log("Symbol: ", res.name);
     console.log("Price OTOKEN: $", divDec(res.priceOTOKEN));
     console.log("Reward Per token: ", divDec(res.rewardPerToken));
     console.log("Reward Per token: $", divDec(res.rewardPerTokenUSD));
@@ -521,7 +529,7 @@ describe("berachain: bex vault testing", function () {
     console.log("Voting Weight: ", divDec(res.votingWeight), "%");
     console.log();
     console.log("ACCOUNT DATA");
-    console.log("Balance Underlying: ", divDec(res.accountUnderlyingBalance));
+    console.log("Balance Underlying: ", divDec(res.accountTokenBalance));
     console.log("Balance Deposited: ", divDec(res.accountStakedBalance));
     console.log("Earned OTOKEN: ", divDec(res.accountEarnedOTOKEN));
   });
@@ -553,7 +561,7 @@ describe("berachain: bex vault testing", function () {
     console.log();
     console.log("GLOBAL DATA");
     console.log("Protocol: ", res.protocol);
-    console.log("Symbol: ", res.symbol);
+    console.log("Symbol: ", res.name);
     console.log("Voting Weight: ", divDec(res.voteWeight));
     console.log("Voting percent: ", divDec(res.votePercent), "%");
     console.log("Reward Per Token: ");
@@ -589,7 +597,7 @@ describe("berachain: bex vault testing", function () {
     console.log();
     console.log("GLOBAL DATA");
     console.log("Protocol: ", res.protocol);
-    console.log("Symbol: ", res.symbol);
+    console.log("Symbol: ", res.name);
     console.log("Voting Weight: ", divDec(res.voteWeight));
     console.log("Voting percent: ", divDec(res.votePercent), "%");
     console.log("Reward Per Token: ");
@@ -621,17 +629,17 @@ describe("berachain: bex vault testing", function () {
     console.log("INFORMATION");
     console.log("Gauge: ", res.gauge);
     console.log("Plugin: ", res.plugin);
-    console.log("Underlying: ", res.underlying);
+    console.log("Underlying: ", res.token);
     console.log("Tokens in Underlying: ");
-    for (let i = 0; i < res.tokensInUnderlying.length; i++) {
-      console.log(" - ", res.tokensInUnderlying[i]);
+    for (let i = 0; i < res.assetTokens.length; i++) {
+      console.log(" - ", res.assetTokens[i]);
     }
-    console.log("Underlying Decimals: ", res.underlyingDecimals);
+    console.log("Underlying Decimals: ", res.tokenDecimals);
     console.log("Is Alive: ", res.isAlive);
     console.log();
     console.log("GLOBAL DATA");
     console.log("Protocol: ", res.protocol);
-    console.log("Symbol: ", res.symbol);
+    console.log("Symbol: ", res.name);
     console.log("Price OTOKEN: $", divDec(res.priceOTOKEN));
     console.log("Reward Per token: ", divDec(res.rewardPerToken));
     console.log("Reward Per token: $", divDec(res.rewardPerTokenUSD));
@@ -639,7 +647,7 @@ describe("berachain: bex vault testing", function () {
     console.log("Voting Weight: ", divDec(res.votingWeight), "%");
     console.log();
     console.log("ACCOUNT DATA");
-    console.log("Balance Underlying: ", divDec(res.accountUnderlyingBalance));
+    console.log("Balance Underlying: ", divDec(res.accountTokenBalance));
     console.log("Balance Deposited: ", divDec(res.accountStakedBalance));
     console.log("Earned OTOKEN: ", divDec(res.accountEarnedOTOKEN));
   });

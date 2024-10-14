@@ -51,11 +51,10 @@ function timer(t) {
 const WBERA_ADDR = "0x7507c1dc16935B82698e4C63f2746A2fCf994dF8";
 const HONEY_ADDR = "0x0E4aaF1351de4c0264C5c7056Ef3777b41BD8e03";
 const WBERA_HONEY_LP_ADDR = "0xd28d852cbcc68DCEC922f6d5C7a8185dBaa104B7";
-const WBERA_HONEY_LP_HOLDER = "0xBEB4e1a4954cF6554574A183Eaa04c11c20747D7";
-const VAULT_ADDR = "0x5c5f9a838747fb83678ece15d85005fd4f558237";
-const IBGT_ADDR = "0x46efc86f0d7455f135cc9df501673739d513e982";
+const WBERA_HONEY_LP_HOLDER = "0xb5f7Cc95997b28f6b36b8aAfE8eFcB5d3682860a";
 
 let owner, multisig, treasury, user0, user1, user2;
+let vaultFactory;
 let VTOKENFactory,
   OTOKENFactory,
   feesFactory,
@@ -64,10 +63,10 @@ let VTOKENFactory,
   bribeFactory;
 let minter, voter, fees, rewarder, governance, multicall, pluginFactory;
 let TOKEN, VTOKEN, OTOKEN, BASE;
-let WBERA, HONEY, IBGT;
+let WBERA, HONEY;
 let LP0, LP0Gauge, plugin0, gauge0, bribe0;
 
-describe("berachain: infrared vault testing", function () {
+describe("berachain: bex vault testing", function () {
   before("Initial set up", async function () {
     console.log("Begin Initialization");
 
@@ -83,13 +82,19 @@ describe("berachain: infrared vault testing", function () {
     WBERA = new ethers.Contract(WBERA_ADDR, ERC20_ABI, provider);
     HONEY = new ethers.Contract(HONEY_ADDR, ERC20_ABI, provider);
     LP0 = new ethers.Contract(WBERA_HONEY_LP_ADDR, ERC20_ABI, provider);
-    IBGT = new ethers.Contract(IBGT_ADDR, ERC20_ABI, provider);
     console.log("- ERC20s Initialized");
 
     // initialize ERC20Mocks
     const ERC20MockArtifact = await ethers.getContractFactory("ERC20Mock");
     BASE = await ERC20MockArtifact.deploy("BASE", "BASE");
     console.log("- ERC20Mocks Initialized");
+
+    // initialize VaultFactory
+    const VaultFactoryArtifact = await ethers.getContractFactory(
+      "BerachainRewardsVaultFactory"
+    );
+    vaultFactory = await VaultFactoryArtifact.deploy();
+    console.log("- VaultFactory Initialized");
 
     // initialize OTOKENFactory
     const OTOKENFactoryArtifact = await ethers.getContractFactory(
@@ -127,7 +132,8 @@ describe("berachain: infrared vault testing", function () {
       OTOKENFactory.address,
       VTOKENFactory.address,
       rewarderFactory.address,
-      feesFactory.address
+      feesFactory.address,
+      vaultFactory.address
     );
     console.log("- TOKEN Initialized");
 
@@ -245,26 +251,26 @@ describe("berachain: infrared vault testing", function () {
 
     // initialize Plugin Factory
     const pluginFactoryArtifact = await ethers.getContractFactory(
-      "InfraredVaultPluginFactory"
+      "StationPluginFactory"
     );
     const pluginFactoryContract = await pluginFactoryArtifact.deploy(
       voter.address
     );
     pluginFactory = await ethers.getContractAt(
-      "InfraredVaultPluginFactory",
+      "StationPluginFactory",
       pluginFactoryContract.address
     );
-    console.log("- Plugin Factory Initialized");
+    console.log("- PluginFactory Initialized");
 
     // initialize LP0
     await pluginFactory.createPlugin(
-      VAULT_ADDR,
+      WBERA_HONEY_LP_ADDR,
       [HONEY_ADDR, WBERA_ADDR],
-      [IBGT_ADDR],
-      "HONEY-WBERA"
+      "BEX HONEY-WBERA",
+      "BEX HONEY-WBERA Vault Token"
     );
     plugin0 = await ethers.getContractAt(
-      "contracts/plugins/berachain/InfraredVaultPluginFactory.sol:InfraredVaultPlugin",
+      "contracts/plugins/berachain/StationPluginFactory.sol:StationPlugin",
       await pluginFactory.last_plugin()
     );
 
@@ -294,7 +300,7 @@ describe("berachain: infrared vault testing", function () {
     );
   });
 
-  it("Impersonate LP holder and send to user0", async function () {
+  it("Impersonate SCALE holder and send to user0", async function () {
     console.log("******************************************************");
     await network.provider.request({
       method: "hardhat_impersonateAccount",
@@ -412,17 +418,17 @@ describe("berachain: infrared vault testing", function () {
     console.log("INFORMATION");
     console.log("Gauge: ", res.gauge);
     console.log("Plugin: ", res.plugin);
-    console.log("Underlying: ", res.underlying);
+    console.log("Underlying: ", res.token);
     console.log("Tokens in Underlying: ");
-    for (let i = 0; i < res.tokensInUnderlying.length; i++) {
-      console.log(" - ", res.tokensInUnderlying[i]);
+    for (let i = 0; i < res.assetTokens.length; i++) {
+      console.log(" - ", res.assetTokens[i]);
     }
-    console.log("Underlying Decimals: ", res.underlyingDecimals);
+    console.log("Underlying Decimals: ", res.tokenDecimals);
     console.log("Is Alive: ", res.isAlive);
     console.log();
     console.log("GLOBAL DATA");
     console.log("Protocol: ", res.protocol);
-    console.log("Symbol: ", res.symbol);
+    console.log("Symbol: ", res.name);
     console.log("Price OTOKEN: $", divDec(res.priceOTOKEN));
     console.log("Reward Per token: ", divDec(res.rewardPerToken));
     console.log("Reward Per token: $", divDec(res.rewardPerTokenUSD));
@@ -430,7 +436,7 @@ describe("berachain: infrared vault testing", function () {
     console.log("Voting Weight: ", divDec(res.votingWeight), "%");
     console.log();
     console.log("ACCOUNT DATA");
-    console.log("Balance Underlying: ", divDec(res.accountUnderlyingBalance));
+    console.log("Balance Underlying: ", divDec(res.accountTokenBalance));
     console.log("Balance Deposited: ", divDec(res.accountStakedBalance));
     console.log("Earned OTOKEN: ", divDec(res.accountEarnedOTOKEN));
   });
@@ -449,7 +455,7 @@ describe("berachain: infrared vault testing", function () {
     console.log();
     console.log("GLOBAL DATA");
     console.log("Protocol: ", res.protocol);
-    console.log("Symbol: ", res.symbol);
+    console.log("Symbol: ", res.name);
     console.log("Voting Weight: ", divDec(res.voteWeight));
     console.log("Voting percent: ", divDec(res.votePercent), "%");
     console.log("Reward Per Token: ");
@@ -471,17 +477,17 @@ describe("berachain: infrared vault testing", function () {
     console.log("INFORMATION");
     console.log("Gauge: ", res.gauge);
     console.log("Plugin: ", res.plugin);
-    console.log("Underlying: ", res.underlying);
+    console.log("Underlying: ", res.token);
     console.log("Tokens in Underlying: ");
-    for (let i = 0; i < res.tokensInUnderlying.length; i++) {
-      console.log(" - ", res.tokensInUnderlying[i]);
+    for (let i = 0; i < res.assetTokens.length; i++) {
+      console.log(" - ", res.assetTokens[i]);
     }
-    console.log("Underlying Decimals: ", res.underlyingDecimals);
+    console.log("Underlying Decimals: ", res.tokenDecimals);
     console.log("Is Alive: ", res.isAlive);
     console.log();
     console.log("GLOBAL DATA");
     console.log("Protocol: ", res.protocol);
-    console.log("Symbol: ", res.symbol);
+    console.log("Symbol: ", res.name);
     console.log("Price OTOKEN: $", divDec(res.priceOTOKEN));
     console.log("Reward Per token: ", divDec(res.rewardPerToken));
     console.log("Reward Per token: $", divDec(res.rewardPerTokenUSD));
@@ -489,7 +495,7 @@ describe("berachain: infrared vault testing", function () {
     console.log("Voting Weight: ", divDec(res.votingWeight), "%");
     console.log();
     console.log("ACCOUNT DATA");
-    console.log("Balance Underlying: ", divDec(res.accountUnderlyingBalance));
+    console.log("Balance Underlying: ", divDec(res.accountTokenBalance));
     console.log("Balance Deposited: ", divDec(res.accountStakedBalance));
     console.log("Earned OTOKEN: ", divDec(res.accountEarnedOTOKEN));
   });
@@ -506,17 +512,17 @@ describe("berachain: infrared vault testing", function () {
     console.log("INFORMATION");
     console.log("Gauge: ", res.gauge);
     console.log("Plugin: ", res.plugin);
-    console.log("Underlying: ", res.underlying);
+    console.log("Underlying: ", res.token);
     console.log("Tokens in Underlying: ");
-    for (let i = 0; i < res.tokensInUnderlying.length; i++) {
-      console.log(" - ", res.tokensInUnderlying[i]);
+    for (let i = 0; i < res.assetTokens.length; i++) {
+      console.log(" - ", res.assetTokens[i]);
     }
-    console.log("Underlying Decimals: ", res.underlyingDecimals);
+    console.log("Underlying Decimals: ", res.tokenDecimals);
     console.log("Is Alive: ", res.isAlive);
     console.log();
     console.log("GLOBAL DATA");
     console.log("Protocol: ", res.protocol);
-    console.log("Symbol: ", res.symbol);
+    console.log("Symbol: ", res.name);
     console.log("Price OTOKEN: $", divDec(res.priceOTOKEN));
     console.log("Reward Per token: ", divDec(res.rewardPerToken));
     console.log("Reward Per token: $", divDec(res.rewardPerTokenUSD));
@@ -524,7 +530,7 @@ describe("berachain: infrared vault testing", function () {
     console.log("Voting Weight: ", divDec(res.votingWeight), "%");
     console.log();
     console.log("ACCOUNT DATA");
-    console.log("Balance Underlying: ", divDec(res.accountUnderlyingBalance));
+    console.log("Balance Underlying: ", divDec(res.accountTokenBalance));
     console.log("Balance Deposited: ", divDec(res.accountStakedBalance));
     console.log("Earned OTOKEN: ", divDec(res.accountEarnedOTOKEN));
   });
@@ -556,7 +562,7 @@ describe("berachain: infrared vault testing", function () {
     console.log();
     console.log("GLOBAL DATA");
     console.log("Protocol: ", res.protocol);
-    console.log("Symbol: ", res.symbol);
+    console.log("Symbol: ", res.name);
     console.log("Voting Weight: ", divDec(res.voteWeight));
     console.log("Voting percent: ", divDec(res.votePercent), "%");
     console.log("Reward Per Token: ");
@@ -592,7 +598,7 @@ describe("berachain: infrared vault testing", function () {
     console.log();
     console.log("GLOBAL DATA");
     console.log("Protocol: ", res.protocol);
-    console.log("Symbol: ", res.symbol);
+    console.log("Symbol: ", res.name);
     console.log("Voting Weight: ", divDec(res.voteWeight));
     console.log("Voting percent: ", divDec(res.votePercent), "%");
     console.log("Reward Per Token: ");
@@ -624,17 +630,17 @@ describe("berachain: infrared vault testing", function () {
     console.log("INFORMATION");
     console.log("Gauge: ", res.gauge);
     console.log("Plugin: ", res.plugin);
-    console.log("Underlying: ", res.underlying);
+    console.log("Underlying: ", res.token);
     console.log("Tokens in Underlying: ");
-    for (let i = 0; i < res.tokensInUnderlying.length; i++) {
-      console.log(" - ", res.tokensInUnderlying[i]);
+    for (let i = 0; i < res.assetTokens.length; i++) {
+      console.log(" - ", res.assetTokens[i]);
     }
-    console.log("Underlying Decimals: ", res.underlyingDecimals);
+    console.log("Underlying Decimals: ", res.tokenDecimals);
     console.log("Is Alive: ", res.isAlive);
     console.log();
     console.log("GLOBAL DATA");
     console.log("Protocol: ", res.protocol);
-    console.log("Symbol: ", res.symbol);
+    console.log("Symbol: ", res.name);
     console.log("Price OTOKEN: $", divDec(res.priceOTOKEN));
     console.log("Reward Per token: ", divDec(res.rewardPerToken));
     console.log("Reward Per token: $", divDec(res.rewardPerTokenUSD));
@@ -642,7 +648,7 @@ describe("berachain: infrared vault testing", function () {
     console.log("Voting Weight: ", divDec(res.votingWeight), "%");
     console.log();
     console.log("ACCOUNT DATA");
-    console.log("Balance Underlying: ", divDec(res.accountUnderlyingBalance));
+    console.log("Balance Underlying: ", divDec(res.accountTokenBalance));
     console.log("Balance Deposited: ", divDec(res.accountStakedBalance));
     console.log("Earned OTOKEN: ", divDec(res.accountEarnedOTOKEN));
   });

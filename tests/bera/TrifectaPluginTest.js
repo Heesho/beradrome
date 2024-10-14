@@ -66,9 +66,10 @@ const YEET_ADDR = "0x1740F679325ef3686B2f574e392007A92e4BeD41";
 const KDK_ADDR = "0xfd27998fa0eaB1A6372Db14Afd4bF7c4a58C5364";
 const KODIAK3_ADDR = "0xE5A2ab5D2fb268E5fF43A5564e44c3309609aFF9"; // Kodiak Vault V1 YEET/WBERA
 const KODIAK3_FARM = "0xbdEE3F788a5efDdA1FcFe6bfe7DbbDa5690179e6";
-const KODIAK3_HOLDER = "0x2268606f89189Ae4F87DF5e4Dc4855737dbf7e94";
+const KODIAK3_HOLDER = "0xE6666Cd611439A9A3500E8c0E14670Dfbb5027C5";
 
 let owner, multisig, treasury, user0, user1, user2;
+let vaultFactory;
 let VTOKENFactory,
   OTOKENFactory,
   feesFactory,
@@ -112,6 +113,13 @@ describe("berachain: trifecta testing", function () {
     BASE = await ERC20MockArtifact.deploy("BASE", "BASE");
     console.log("- ERC20Mocks Initialized");
 
+    // initialize VaultFactory
+    const VaultFactoryArtifact = await ethers.getContractFactory(
+      "BerachainRewardsVaultFactory"
+    );
+    vaultFactory = await VaultFactoryArtifact.deploy();
+    console.log("- VaultFactory Initialized");
+
     // initialize OTOKENFactory
     const OTOKENFactoryArtifact = await ethers.getContractFactory(
       "OTOKENFactory"
@@ -148,7 +156,8 @@ describe("berachain: trifecta testing", function () {
       OTOKENFactory.address,
       VTOKENFactory.address,
       rewarderFactory.address,
-      feesFactory.address
+      feesFactory.address,
+      vaultFactory.address
     );
     console.log("- TOKEN Initialized");
 
@@ -297,7 +306,8 @@ describe("berachain: trifecta testing", function () {
       YEET_ADDR,
       WBERA_ADDR,
       [YEET_ADDR],
-      "YEET-WBERA Island"
+      "YEET-WBERA Island",
+      "KODIAK3 Vault Token"
     );
     plugin0 = await ethers.getContractAt(
       "contracts/plugins/berachain/TrifectaPluginFactory.sol:TrifectaPlugin",
@@ -506,17 +516,17 @@ describe("berachain: trifecta testing", function () {
     console.log("INFORMATION");
     console.log("Gauge: ", res.gauge);
     console.log("Plugin: ", res.plugin);
-    console.log("Underlying: ", res.underlying);
+    console.log("Underlying: ", res.token);
     console.log("Tokens in Underlying: ");
-    for (let i = 0; i < res.tokensInUnderlying.length; i++) {
-      console.log(" - ", res.tokensInUnderlying[i]);
+    for (let i = 0; i < res.assetTokens.length; i++) {
+      console.log(" - ", res.assetTokens[i]);
     }
-    console.log("Underlying Decimals: ", res.underlyingDecimals);
+    console.log("Underlying Decimals: ", res.tokenDecimals);
     console.log("Is Alive: ", res.isAlive);
     console.log();
     console.log("GLOBAL DATA");
     console.log("Protocol: ", res.protocol);
-    console.log("Symbol: ", res.symbol);
+    console.log("Symbol: ", res.name);
     console.log("Price OTOKEN: $", divDec(res.priceOTOKEN));
     console.log("Reward Per token: ", divDec(res.rewardPerToken));
     console.log("Reward Per token: $", divDec(res.rewardPerTokenUSD));
@@ -524,7 +534,7 @@ describe("berachain: trifecta testing", function () {
     console.log("Voting Weight: ", divDec(res.votingWeight), "%");
     console.log();
     console.log("ACCOUNT DATA");
-    console.log("Balance Underlying: ", divDec(res.accountUnderlyingBalance));
+    console.log("Balance Underlying: ", divDec(res.accountTokenBalance));
     console.log("Balance Deposited: ", divDec(res.accountStakedBalance));
     console.log("Earned OTOKEN: ", divDec(res.accountEarnedOTOKEN));
   });
@@ -543,7 +553,7 @@ describe("berachain: trifecta testing", function () {
     console.log();
     console.log("GLOBAL DATA");
     console.log("Protocol: ", res.protocol);
-    console.log("Symbol: ", res.symbol);
+    console.log("Symbol: ", res.name);
     console.log("Voting Weight: ", divDec(res.voteWeight));
     console.log("Voting percent: ", divDec(res.votePercent), "%");
     console.log("Reward Per Token: ");
@@ -565,17 +575,17 @@ describe("berachain: trifecta testing", function () {
     console.log("INFORMATION");
     console.log("Gauge: ", res.gauge);
     console.log("Plugin: ", res.plugin);
-    console.log("Underlying: ", res.underlying);
+    console.log("Underlying: ", res.token);
     console.log("Tokens in Underlying: ");
-    for (let i = 0; i < res.tokensInUnderlying.length; i++) {
-      console.log(" - ", res.tokensInUnderlying[i]);
+    for (let i = 0; i < res.assetTokens.length; i++) {
+      console.log(" - ", res.assetTokens[i]);
     }
-    console.log("Underlying Decimals: ", res.underlyingDecimals);
+    console.log("Underlying Decimals: ", res.tokenDecimals);
     console.log("Is Alive: ", res.isAlive);
     console.log();
     console.log("GLOBAL DATA");
     console.log("Protocol: ", res.protocol);
-    console.log("Symbol: ", res.symbol);
+    console.log("Symbol: ", res.name);
     console.log("Price OTOKEN: $", divDec(res.priceOTOKEN));
     console.log("Reward Per token: ", divDec(res.rewardPerToken));
     console.log("Reward Per token: $", divDec(res.rewardPerTokenUSD));
@@ -583,7 +593,7 @@ describe("berachain: trifecta testing", function () {
     console.log("Voting Weight: ", divDec(res.votingWeight), "%");
     console.log();
     console.log("ACCOUNT DATA");
-    console.log("Balance Underlying: ", divDec(res.accountUnderlyingBalance));
+    console.log("Balance Underlying: ", divDec(res.accountTokenBalance));
     console.log("Balance Deposited: ", divDec(res.accountStakedBalance));
     console.log("Earned OTOKEN: ", divDec(res.accountEarnedOTOKEN));
   });
@@ -600,17 +610,17 @@ describe("berachain: trifecta testing", function () {
     console.log("INFORMATION");
     console.log("Gauge: ", res.gauge);
     console.log("Plugin: ", res.plugin);
-    console.log("Underlying: ", res.underlying);
+    console.log("Underlying: ", res.token);
     console.log("Tokens in Underlying: ");
-    for (let i = 0; i < res.tokensInUnderlying.length; i++) {
-      console.log(" - ", res.tokensInUnderlying[i]);
+    for (let i = 0; i < res.assetTokens.length; i++) {
+      console.log(" - ", res.assetTokens[i]);
     }
-    console.log("Underlying Decimals: ", res.underlyingDecimals);
+    console.log("Underlying Decimals: ", res.tokenDecimals);
     console.log("Is Alive: ", res.isAlive);
     console.log();
     console.log("GLOBAL DATA");
     console.log("Protocol: ", res.protocol);
-    console.log("Symbol: ", res.symbol);
+    console.log("Symbol: ", res.name);
     console.log("Price OTOKEN: $", divDec(res.priceOTOKEN));
     console.log("Reward Per token: ", divDec(res.rewardPerToken));
     console.log("Reward Per token: $", divDec(res.rewardPerTokenUSD));
@@ -618,7 +628,7 @@ describe("berachain: trifecta testing", function () {
     console.log("Voting Weight: ", divDec(res.votingWeight), "%");
     console.log();
     console.log("ACCOUNT DATA");
-    console.log("Balance Underlying: ", divDec(res.accountUnderlyingBalance));
+    console.log("Balance Underlying: ", divDec(res.accountTokenBalance));
     console.log("Balance Deposited: ", divDec(res.accountStakedBalance));
     console.log("Earned OTOKEN: ", divDec(res.accountEarnedOTOKEN));
   });
@@ -627,6 +637,21 @@ describe("berachain: trifecta testing", function () {
     console.log("******************************************************");
     await network.provider.send("evm_increaseTime", [24 * 3600]);
     await network.provider.send("evm_mine");
+  });
+
+  it("Transfer ETH to XKDK_OWNER", async function () {
+    console.log("******************************************************");
+
+    // Transfer 1 ETH to XKDK_OWNER using the 'owner' signer
+    const tx = await owner.sendTransaction({
+      to: XKDK_OWNER,
+      value: ethers.utils.parseEther("1.0"), // Amount of ETH to send
+    });
+
+    // Wait for the transaction to be mined
+    await tx.wait();
+
+    console.log(`Transferred 1 ETH to XKDK_OWNER: ${XKDK_OWNER}`);
   });
 
   it("Whitelist plugin and bribe contract to transfer xKDK", async function () {
@@ -671,7 +696,7 @@ describe("berachain: trifecta testing", function () {
     console.log();
     console.log("GLOBAL DATA");
     console.log("Protocol: ", res.protocol);
-    console.log("Symbol: ", res.symbol);
+    console.log("Symbol: ", res.name);
     console.log("Voting Weight: ", divDec(res.voteWeight));
     console.log("Voting percent: ", divDec(res.votePercent), "%");
     console.log("Reward Per Token: ");
@@ -707,7 +732,7 @@ describe("berachain: trifecta testing", function () {
     console.log();
     console.log("GLOBAL DATA");
     console.log("Protocol: ", res.protocol);
-    console.log("Symbol: ", res.symbol);
+    console.log("Symbol: ", res.name);
     console.log("Voting Weight: ", divDec(res.voteWeight));
     console.log("Voting percent: ", divDec(res.votePercent), "%");
     console.log("Reward Per Token: ");
@@ -757,17 +782,17 @@ describe("berachain: trifecta testing", function () {
     console.log("INFORMATION");
     console.log("Gauge: ", res.gauge);
     console.log("Plugin: ", res.plugin);
-    console.log("Underlying: ", res.underlying);
+    console.log("Underlying: ", res.token);
     console.log("Tokens in Underlying: ");
-    for (let i = 0; i < res.tokensInUnderlying.length; i++) {
-      console.log(" - ", res.tokensInUnderlying[i]);
+    for (let i = 0; i < res.assetTokens.length; i++) {
+      console.log(" - ", res.assetTokens[i]);
     }
-    console.log("Underlying Decimals: ", res.underlyingDecimals);
+    console.log("Underlying Decimals: ", res.tokenDecimals);
     console.log("Is Alive: ", res.isAlive);
     console.log();
     console.log("GLOBAL DATA");
     console.log("Protocol: ", res.protocol);
-    console.log("Symbol: ", res.symbol);
+    console.log("Symbol: ", res.name);
     console.log("Price OTOKEN: $", divDec(res.priceOTOKEN));
     console.log("Reward Per token: ", divDec(res.rewardPerToken));
     console.log("Reward Per token: $", divDec(res.rewardPerTokenUSD));
@@ -775,7 +800,7 @@ describe("berachain: trifecta testing", function () {
     console.log("Voting Weight: ", divDec(res.votingWeight), "%");
     console.log();
     console.log("ACCOUNT DATA");
-    console.log("Balance Underlying: ", divDec(res.accountUnderlyingBalance));
+    console.log("Balance Underlying: ", divDec(res.accountTokenBalance));
     console.log("Balance Deposited: ", divDec(res.accountStakedBalance));
     console.log("Earned OTOKEN: ", divDec(res.accountEarnedOTOKEN));
   });
@@ -803,7 +828,7 @@ describe("berachain: trifecta testing", function () {
     console.log();
     console.log("GLOBAL DATA");
     console.log("Protocol: ", res.protocol);
-    console.log("Symbol: ", res.symbol);
+    console.log("Symbol: ", res.name);
     console.log("Voting Weight: ", divDec(res.voteWeight));
     console.log("Voting percent: ", divDec(res.votePercent), "%");
     console.log("Reward Per Token: ");

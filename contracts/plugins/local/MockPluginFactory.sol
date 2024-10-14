@@ -86,10 +86,6 @@ contract MockPluginFactory {
 
     function createLPMockPlugin(string memory lpSymbol, string memory symbol0, string memory symbol1) external returns (address plugin) {
 
-        // address token0 = tokens[symbol0] == address(0) ? createERC20Mock(symbol0) : tokens[symbol0];
-        // address token1 = tokens[symbol1] == address(0) ? createERC20Mock(symbol1) : tokens[symbol1];
-        // address lpToken = tokens[lpSymbol] == address(0) ? createERC20Mock(lpSymbol) : tokens[lpSymbol];
-
         address[] memory assetTokens = new address[](2);
         assetTokens[0] = tokens[symbol0] == address(0) ? createERC20Mock(symbol0) : tokens[symbol0];
         assetTokens[1] = tokens[symbol1] == address(0) ? createERC20Mock(symbol1) : tokens[symbol1];

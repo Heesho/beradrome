@@ -93,8 +93,8 @@ contract InfraredPlugin is Plugin {
 
 contract InfraredPluginFactory {
 
-    address public constant REWARDS_VAULT_FACTORY = 0x2B6e40f65D82A0cB98795bC7587a71bfa49fBB2B;
     string public constant PROTOCOL = 'Infrared';
+    address public constant REWARDS_VAULT_FACTORY = 0x2B6e40f65D82A0cB98795bC7587a71bfa49fBB2B;
 
     address public immutable VOTER;
 
