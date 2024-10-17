@@ -11,12 +11,121 @@ const BASE_ADDRESS = "0x0E4aaF1351de4c0264C5c7056Ef3777b41BD8e03"; // HONEY addr
 const MULTISIG = "0x34D023ACa5A227789B45A62D377b5B18A680BE01"; // Multisig Address
 const VAULT_FACTORY = "0x2B6e40f65D82A0cB98795bC7587a71bfa49fBB2B"; // Vault Factory Address
 
-const BHONEY = "";
+const BHONEY = "0x1306D3c36eC7E38dd2c128fBe3097C2C2449af64";
 const HONEY = "";
 const WBERA = "";
-const IBGT = "";
+const USDC = "";
+const WBTC = "";
+const WETH = "";
+const STGUSDC = "";
+const YEET = "";
+const NECT = "";
+const tHPOT = "";
+const IBGT = "0x46efc86f0d7455f135cc9df501673739d513e982";
 
-const BHONEY_INFRARED_VAULT = "";
+// Infrared Berps bHONEY
+const INFRARED_VAULT_0 = "";
+const INFRARED_TOKENS_0 = [HONEY];
+const INFRARED_REWARDS_0 = [IBGT];
+const INFRARED_SYMBOL_0 = "Berps bHONEY";
+const INFRARED_NAME_0 = "Beradrome Infrared Berps bHONEY Vault Token";
+
+// Infrared Bex HONEY-USDC
+const INFRARED_VAULT_1 = "";
+const INFRARED_TOKENS_1 = [HONEY, USDC];
+const INFRARED_REWARDS_1 = [IBGT];
+const INFRARED_SYMBOL_1 = "Bex HONEY-USDC";
+const INFRARED_NAME_1 = "Beradrome Infrared Bex HONEY-USDC Vault Token";
+
+// Infrared Bex HONEY-WBERA
+const INFRARED_VAULT_2 = "";
+const INFRARED_TOKENS_2 = [HONEY, WBERA];
+const INFRARED_REWARDS_2 = [IBGT];
+const INFRARED_SYMBOL_2 = "Bex HONEY-WBERA";
+const INFRARED_NAME_2 = "Beradrome Infrared Bex HONEY-WBERA Vault Token";
+
+// Infrared Bex HONEY-WBTC
+const INFRARED_VAULT_3 = "";
+const INFRARED_TOKENS_3 = [HONEY, WBTC];
+const INFRARED_REWARDS_3 = [IBGT];
+const INFRARED_SYMBOL_3 = "Bex HONEY-WBTC";
+const INFRARED_NAME_3 = "Beradrome Infrared Bex HONEY-WBTC Vault Token";
+
+// Infrared Bex HONEY-WETH
+const INFRARED_VAULT_4 = "";
+const INFRARED_TOKENS_4 = [HONEY, WETH];
+const INFRARED_REWARDS_4 = [IBGT];
+const INFRARED_SYMBOL_4 = "Bex HONEY-WETH";
+const INFRARED_NAME_4 = "Beradrome Infrared Bex HONEY-WETH Vault Token";
+
+// Infrared iBGT
+const INFRARED_VAULT_5 = "";
+const INFRARED_TOKENS_5 = [IBGT];
+const INFRARED_REWARDS_5 = [HONEY];
+const INFRARED_SYMBOL_5 = "iBGT";
+const INFRARED_NAME_5 = "Beradrome Infrared iBGT Vault Token";
+
+// Infrared Kodiak iBGT-WBERA
+const INFRARED_VAULT_6 = "";
+const INFRARED_TOKENS_6 = [IBGT, WBERA];
+const INFRARED_REWARDS_6 = [IBGT];
+const INFRARED_SYMBOL_6 = "Kodiak iBGT-WBERA";
+const INFRARED_NAME_6 = "Beradrome Infrared Kodiak iBGT-WBERA Vault Token";
+
+// Infrared Kodiak HONEY-STGUSDC
+const INFRARED_VAULT_7 = "";
+const INFRARED_TOKENS_7 = [HONEY, STGUSDC];
+const INFRARED_REWARDS_7 = [IBGT];
+const INFRARED_SYMBOL_7 = "Kodiak HONEY-STGUSDC";
+const INFRARED_NAME_7 = "Beradrome Infrared Kodiak HONEY-STGUSDC Vault Token";
+
+// Infrared Kodiak YEET-BERA
+const INFRARED_VAULT_8 = "";
+const INFRARED_TOKENS_8 = [YEET, WBERA];
+const INFRARED_REWARDS_8 = [IBGT];
+const INFRARED_SYMBOL_8 = "Kodiak YEET-BERA";
+const INFRARED_NAME_8 = "Beradrome Infrared Kodiak YEET-BERA Vault Token";
+
+// Infrared Kodiak NECT-HONEY
+const INFRARED_VAULT_9 = "";
+const INFRARED_TOKENS_9 = [NECT, HONEY];
+const INFRARED_REWARDS_9 = [IBGT];
+const INFRARED_SYMBOL_9 = "Kodiak NECT-HONEY";
+const INFRARED_NAME_9 = "Beradrome Infrared Kodiak NECT-HONEY Vault Token";
+
+// Infrared Honeypot WBERA-tHPOT
+const INFRARED_VAULT_10 = "";
+const INFRARED_TOKENS_10 = [WBERA, tHPOT];
+const INFRARED_REWARDS_10 = [IBGT];
+const INFRARED_SYMBOL_10 = "Honeypot WBERA-tHPOT";
+const INFRARED_NAME_10 = "Beradrome Infrared Honeypot WBERA-tHPOT Vault Token";
+
+// Kodiak HONEY-BERA Island
+const KODIAK1 = "";
+const KODIAK1_FARM = "";
+const KODIAK1_TOKEN0 = HONEY;
+const KODIAK1_TOKEN1 = WBERA;
+const KODIAK1_OTHER_REWARDS = [];
+const KODIAK1_SYMBOL = "HONEY-WBERA Island";
+const KODIAK1_NAME = "Beradrome Kodiak HONEY-WBERA Island Vault Token";
+
+// Kodiak HONEY-STGUSDC Island
+const KODIAK2 = "";
+const KODIAK2_FARM = "";
+const KODIAK2_TOKEN0 = HONEY;
+const KODIAK2_TOKEN1 = STGUSDC;
+const KODIAK2_OTHER_REWARDS = [];
+const KODIAK2_SYMBOL = "HONEY-STGUSDC Island";
+const KODIAK2_NAME = "Beradrome Kodiak HONEY-STGUSDC Island Vault Token";
+
+// Kodiak YEET-WBERA Island
+const KODIAK3 = "";
+const KODIAK3_FARM = "";
+const KODIAK3_TOKEN0 = YEET;
+const KODIAK3_TOKEN1 = WBERA;
+const KODIAK3_OTHER_REWARDS = [YEET];
+const KODIAK3_SYMBOL = "YEET-WBERA Island";
+const KODIAK3_NAME = "Beradrome Kodiak YEET-WBERA Island Vault Token";
 
 /*===========================  END SETTINGS  ========================*/
 /*===================================================================*/

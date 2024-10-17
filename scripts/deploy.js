@@ -26,7 +26,6 @@ let OTOKENFactory, VTOKENFactory, rewarderFactory;
 let voter, minter, gaugeFactory, bribeFactory;
 let multicall, controller;
 let trifectaMulticall;
-let berachainVaultConnector;
 
 /*===================================================================*/
 /*===========================  CONTRACT DATA  =======================*/
@@ -103,11 +102,6 @@ async function getContracts() {
   trifectaMulticall = await ethers.getContractAt(
     "contracts/TrifectaMulticall.sol:TrifectaMulticall",
     "0x6d6C42723Dea7C2077AFF8a8fdB6417c6e20D041"
-  );
-
-  berachainVaultConnector = await ethers.getContractAt(
-    "contracts/BerachainVaultConnector.sol:BerachainVaultConnector",
-    "0xe4aF526F8e21e682F8E80A620E2FAceAB771F76a"
   );
 
   console.log("Contracts Retrieved");
@@ -556,46 +550,6 @@ async function transferOwnership() {
   console.log("VTOKEN ownership transferred to governor");
 }
 
-async function deployBerachainVaultConnector() {
-  console.log("Starting BerachainVaultConnector Deployment");
-  const berachainVaultConnectorArtifact = await ethers.getContractFactory(
-    "BerachainVaultConnector"
-  );
-  const berachainVaultConnectorContract =
-    await berachainVaultConnectorArtifact.deploy(rewarder.address, {
-      gasPrice: ethers.gasPrice,
-    });
-  berachainVaultConnector = await berachainVaultConnectorContract.deployed();
-  await sleep(5000);
-  console.log(
-    "BerachainVaultConnector Deployed at:",
-    berachainVaultConnector.address
-  );
-  console.log(
-    "BerachainVaultToken deployed at: ",
-    await berachainVaultConnector.vaultToken()
-  );
-}
-
-async function verifyBerachainVaultConnector() {
-  console.log("Starting BerachainVaultConnector Verification");
-  await hre.run("verify:verify", {
-    address: berachainVaultConnector.address,
-    contract: "contracts/BerachainVaultConnector.sol:BerachainVaultConnector",
-    constructorArguments: [rewarder.address],
-  });
-  console.log("BerachainVaultConnector Verified");
-}
-
-async function verifyBerachainVaultToken() {
-  console.log("Starting BerachainVaultToken Verification");
-  await hre.run("verify:verify", {
-    address: await berachainVaultConnector.vaultToken(),
-    contract: "contracts/BerachainVaultConnector.sol:VaultToken",
-  });
-  console.log("BerachainVaultToken Verified");
-}
-
 async function verifyGauge(pluginAddress, gaugeAddress) {
   console.log("Starting Gauge Verification");
   await hre.run("verify:verify", {
@@ -771,31 +725,31 @@ async function main() {
   // 11. Distro Rewards
   //===================================================================
 
-  // console.log("Distributing Rewards");
-  // await voter.distro();
-  // console.log("Voter Rewards Distributed");
-  // await fees.distribute();
-  // console.log("Fees Rewards Distributed");
-  // await voter.distributeToBribes([
-  //   "0x37e888f8a28BF1DA9761bbDd914fA4280dA434a8", // BEX HONEY-WBERA
-  //   "0x9D7A7198eCfe07414C5e9B3e233878Fcc30B9048", // BERPS bHONEY
-  //   "0xfE12B5f5adb8E20F7C43A6014844479e7dC8Dc49", // Kodiak HONEY-WBERA Island
-  //   "0xb3D10C15360e444aBB2673D772D6f2EE32AAaB34", // Kodiak HONEY-USDC Island
-  //   "0x80D7759Fa55f6a1F661D5FCBB3bC5164Dc63eb4D", // Kodiak Trifecta YEET-WBERA Island
-  //   "0x62c310059A7d84805c675d2458234d3D137D9a1c", // Kodiak Trifecta oBERO-WBERA Island
-  // ]);
-  // await voter.distributeToBribes([
-  //   "0xE9EE66a91F540A6E5297b1B1780061278AB1ac78", // Infrared iBGT Plugin
-  //   "0x7Ab142C0FD1aF1EE0C52e80b251b3CF153Ad4033", // Infrared bHONEY Plugin
-  //   "0x017A47E19e02d4aAf88738B8C78DE2a48904b2e1", // Infrared HONEY-USDC Plugin
-  //   "0xb5469370776D165E82D726F36e3e0933c307d4c4", // Infrared HONEY-WBTC Plugin
-  //   "0x170d64FB2FCD6bB6639eD0D37b981F6Af0E26C3a", // Infrared HONEY-WETH Plugin
-  //   "0x120E4B564D608ab8ea110df0a1429998cCA580D0", // Infrared HONEY-WBERA Plugin
-  // ]);
-  // await voter.distributeToBribes([
-  //   "0x5aD441790c3114e0AB27816abdB0c9693cd96399", // BULL ISH
-  // ]);
-  // console.log("Bribe Rewards Distributed");
+  console.log("Distributing Rewards");
+  await voter.distro();
+  console.log("Voter Rewards Distributed");
+  await fees.distribute();
+  console.log("Fees Rewards Distributed");
+  await voter.distributeToBribes([
+    "0x37e888f8a28BF1DA9761bbDd914fA4280dA434a8", // BEX HONEY-WBERA
+    "0x9D7A7198eCfe07414C5e9B3e233878Fcc30B9048", // BERPS bHONEY
+    "0xfE12B5f5adb8E20F7C43A6014844479e7dC8Dc49", // Kodiak HONEY-WBERA Island
+    "0xb3D10C15360e444aBB2673D772D6f2EE32AAaB34", // Kodiak HONEY-USDC Island
+    "0x80D7759Fa55f6a1F661D5FCBB3bC5164Dc63eb4D", // Kodiak Trifecta YEET-WBERA Island
+    "0x62c310059A7d84805c675d2458234d3D137D9a1c", // Kodiak Trifecta oBERO-WBERA Island
+  ]);
+  await voter.distributeToBribes([
+    "0xE9EE66a91F540A6E5297b1B1780061278AB1ac78", // Infrared iBGT Plugin
+    "0x7Ab142C0FD1aF1EE0C52e80b251b3CF153Ad4033", // Infrared bHONEY Plugin
+    "0x017A47E19e02d4aAf88738B8C78DE2a48904b2e1", // Infrared HONEY-USDC Plugin
+    "0xb5469370776D165E82D726F36e3e0933c307d4c4", // Infrared HONEY-WBTC Plugin
+    "0x170d64FB2FCD6bB6639eD0D37b981F6Af0E26C3a", // Infrared HONEY-WETH Plugin
+    "0x120E4B564D608ab8ea110df0a1429998cCA580D0", // Infrared HONEY-WBERA Plugin
+  ]);
+  await voter.distributeToBribes([
+    "0x5aD441790c3114e0AB27816abdB0c9693cd96399", // BULL ISH
+  ]);
+  console.log("Bribe Rewards Distributed");
 
   //===================================================================
   // 12. Plugin Data
@@ -897,16 +851,6 @@ async function main() {
   //   .connect(wallet)
   //   .killGauge("0xa803256FBc450303fE7fAf1F90956B924780dc97");
   // console.log("Plugin removed from Voter");
-
-  //===================================================================
-  // 15. Deploy BerachainVaultConnector
-  //===================================================================
-
-  // console.log("Starting BerachainVaultConnector Deployment");
-  // await deployBerachainVaultConnector();
-  // await verifyBerachainVaultConnector();
-  // await verifyBerachainVaultToken();
-  // console.log("BerachainVaultConnector Deployed");
 }
 
 main()
