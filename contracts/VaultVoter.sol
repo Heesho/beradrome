@@ -36,7 +36,7 @@ contract VaultToken is ERC20, Ownable {
 }
 
 /**
- * @title Voter
+ * @title VaultVoter
  * @author heesho
  * 
  * Voter contract is used to vote on plugins. When a Plugin is added a Gauge and Bribe are deployed for that Plugin.
