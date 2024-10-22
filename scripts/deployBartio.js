@@ -344,6 +344,18 @@ const KODIAK10_OTHER_REWARDS = [];
 const KODIAK10_SYMBOL = "iBGT-BERA Island";
 const KODIAK10_NAME = "Beradrome Kodiak iBGT-BERA Island Vault Token";
 
+// Trifecta Kodiak YEET-WBERA Island
+// plugin = 0x99F09C041EB780fBDb6bFe7A4Aac3E1dE9f9496b
+// bribe =
+// gauge =
+const TRIFECTA3 = "0xE5A2ab5D2fb268E5fF43A5564e44c3309609aFF9";
+const TRIFECTA3_FARM = "0xbdEE3F788a5efDdA1FcFe6bfe7DbbDa5690179e6";
+const TRIFECTA3_TOKEN0 = YEET;
+const TRIFECTA3_TOKEN1 = WBERA;
+const TRIFECTA3_OTHER_REWARDS = [YEET];
+const TRIFECTA3_SYMBOL = "YEET-WBERA Island";
+const TRIFECTA3_NAME = "Beradrome Trifecta YEET-WBERA Island Vault Token";
+
 /*===========================  END SETTINGS  ========================*/
 /*===================================================================*/
 
@@ -357,8 +369,7 @@ const BUILDER_ADDRESS = "0xDeb7d9B443a3ab779DFe9Ff2Aa855b1eA5fD318e";
 // Contract Variables
 let TOKEN, OTOKEN, VTOKEN, fees, rewarder, governor;
 let voter, minter, gaugeFactory, bribeFactory;
-let multicall, controller;
-let trifectaMulticall;
+let multicall, controller, trifectaMulticall;
 
 let stationPlugin;
 let stationPluginFactory;
@@ -368,6 +379,9 @@ let infraredPluginFactory;
 
 let kodiakPlugin;
 let kodiakPluginFactory;
+
+let trifectaPlugin;
+let trifectaPluginFactory;
 
 /*===================================================================*/
 /*===========================  CONTRACT DATA  =======================*/
@@ -424,10 +438,10 @@ async function getContracts() {
     "0x5dcAc080Fe375E36399591651ecA8012A1Ab2014"
   );
 
-  //   trifectaMulticall = await ethers.getContractAt(
-  //     "contracts/TrifectaMulticall.sol:TrifectaMulticall",
-  //     ""
-  //   );
+  trifectaMulticall = await ethers.getContractAt(
+    "contracts/TrifectaMulticall.sol:TrifectaMulticall",
+    "0xae3122F79cfE8ABf75C77872A102752b7Ad0EbE8"
+  );
 
   stationPluginFactory = await ethers.getContractAt(
     "contracts/plugins/berachain/StationPluginFactory.sol:StationPluginFactory",
@@ -457,6 +471,16 @@ async function getContracts() {
   kodiakPlugin = await ethers.getContractAt(
     "contracts/plugins/berachain/KodiakPluginFactory.sol:KodiakPlugin",
     "0x3b83BCa772156D558E275579a983E23BA8948097"
+  );
+
+  trifectaPluginFactory = await ethers.getContractAt(
+    "contracts/plugins/berachain/TrifectaPluginFactory.sol:TrifectaPluginFactory",
+    "0x2992055a0D9029cF55c7A0Bc5a598BceC25C1073"
+  );
+
+  trifectaPlugin = await ethers.getContractAt(
+    "contracts/plugins/berachain/TrifectaPluginFactory.sol:TrifectaPlugin",
+    "0x588F7383508AFB1b69E3a2A1521125C49D53Fa00"
   );
 
   console.log("Contracts Retrieved");
@@ -611,6 +635,16 @@ async function verifyMulticall() {
     ],
   });
   console.log("Multicall Verified");
+}
+
+async function verifyTrifectaMulticall() {
+  console.log("Starting TrifectaMulticall Verification");
+  await hre.run("verify:verify", {
+    address: trifectaMulticall.address,
+    contract: "contracts/TrifectaMulticall.sol:TrifectaMulticall",
+    constructorArguments: [voter.address],
+  });
+  console.log("TrifectaMulticall Verified");
 }
 
 async function verifyController() {
@@ -864,6 +898,70 @@ async function verifyKodiakPlugin() {
   console.log("KodiakPlugin Verified");
 }
 
+async function deployTrifectaPluginFactory() {
+  console.log("Starting TrifectaPluginFactory Deployment");
+  const trifectaPluginFactoryArtifact = await ethers.getContractFactory(
+    "TrifectaPluginFactory"
+  );
+  const trifectaPluginFactoryContract =
+    await trifectaPluginFactoryArtifact.deploy(voter.address, {
+      gasPrice: ethers.gasPrice,
+    });
+  trifectaPluginFactory = await trifectaPluginFactoryContract.deployed();
+  console.log(
+    "TrifectaPluginFactory Deployed at:",
+    trifectaPluginFactory.address
+  );
+}
+
+async function verifyTrifectaPluginFactory() {
+  console.log("Starting TrifectaPluginFactory Verification");
+  await hre.run("verify:verify", {
+    address: trifectaPluginFactory.address,
+    contract:
+      "contracts/plugins/berachain/TrifectaPluginFactory.sol:TrifectaPluginFactory",
+    constructorArguments: [voter.address],
+  });
+  console.log("TrifectaPluginFactory Verified");
+}
+
+async function deployTrifectaPlugin() {
+  console.log("Starting TrifectaPlugin Deployment");
+  await trifectaPluginFactory.createPlugin(
+    TRIFECTA3,
+    TRIFECTA3_FARM,
+    TRIFECTA3_TOKEN0,
+    TRIFECTA3_TOKEN1,
+    TRIFECTA3_OTHER_REWARDS,
+    TRIFECTA3_SYMBOL,
+    TRIFECTA3_NAME
+  );
+  console.log(
+    "TrifectaPlugin Deployed at:",
+    await trifectaPluginFactory.last_plugin()
+  );
+}
+
+async function verifyTrifectaPlugin() {
+  console.log("Starting TrifectaPlugin Verification");
+  await hre.run("verify:verify", {
+    address: trifectaPlugin.address,
+    contract:
+      "contracts/plugins/berachain/TrifectaPluginFactory.sol:TrifectaPlugin",
+    constructorArguments: [
+      TRIFECTA3,
+      voter.address,
+      [TRIFECTA3_TOKEN0, TRIFECTA3_TOKEN1],
+      TRIFECTA3_OTHER_REWARDS,
+      VAULT_FACTORY,
+      TRIFECTA3_FARM,
+      "Kodiak Trifecta",
+      TRIFECTA3_SYMBOL,
+      TRIFECTA3_NAME,
+    ],
+  });
+}
+
 async function main() {
   const [wallet] = await ethers.getSigners();
   console.log("Using wallet: ", wallet.address);
@@ -888,6 +986,7 @@ async function main() {
 
   // console.log("Starting Ancillary Deployment");
   // await deployMulticall();
+  // await deployTrifectaMulticall();
   // await deployController();
   // await printAncillaryAddresses();
 
@@ -909,6 +1008,7 @@ async function main() {
 
   // console.log('Starting Ancillary Verification');
   // await verifyMulticall();
+  // await verifyTrifectaMulticall();
   // await verifyController();
   // console.log("Ancillary Contracts Verified")
 
@@ -994,6 +1094,10 @@ async function main() {
   // console.log("Adding KODIAK10 to Voter");
   // await voter.addPlugin("0x6a0e8b97e0259E438722A3c84a9FEaFEa89e3FbA"); // Kodiak iBGT-BERA Island
 
+  // Add trifecta plugins
+  // console.log("Adding TRIFECTA3 to Voter");
+  // await voter.addPlugin("0x588F7383508AFB1b69E3a2A1521125C49D53Fa00"); // Kodiak Trifecta YEET-WBERA Island
+
   //===================================================================
   // 11. Deploy Station Plugin Factory
   //===================================================================
@@ -1047,6 +1151,24 @@ async function main() {
   // await deployKodiakPlugin();
   // await verifyKodiakPlugin();
   // console.log("KodiakPlugin Deployed and Verified");
+
+  //===================================================================
+  // 17. Deploy Trifecta Plugin
+  //===================================================================
+
+  // console.log("Starting TrifectaPluginFactory Deployment");
+  // await deployTrifectaPluginFactory();
+  // await verifyTrifectaPluginFactory();
+  // console.log("TrifectaPluginFactory Deployed and Verified");
+
+  //===================================================================
+  // 18. Deploy Trifecta Plugin
+  //===================================================================
+
+  // console.log("Starting TrifectaPlugin Deployment");
+  // await deployTrifectaPlugin();
+  // await verifyTrifectaPlugin();
+  // console.log("TrifectaPlugin Deployed and Verified");
 }
 
 main()
