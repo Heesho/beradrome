@@ -932,8 +932,67 @@ async function main() {
   // 10. Add plugins to voter
   //===================================================================
 
-  // console.log("Adding Plugin0 to Voter");
-  // await voter.addPlugin("");
+  // Add station plugins
+  // console.log("Adding STATION0 to Voter");
+  // await voter.addPlugin("0x755245C2B77AB532a1f0b0b7B219577B96Dd7b4D"); // Station Berps bHONEY
+  // console.log("Adding STATION1 to Voter");
+  // await voter.addPlugin("0xF66e61Fb9Fbcf61f1A5B0BC663b3403a6f02e8E5"); // Station Bex HONEY-WBERA
+  // console.log("Adding STATION2 to Voter");
+  // await voter.addPlugin("0x949016989C0F842e0a3919D11c8A054dBfd42fDE"); // Station Bex HONEY-USDC
+  // console.log("Adding STATION3 to Voter");
+  // await voter.addPlugin("0x6F18EC487012DAD0354468899073aeCcB928fA8E"); // Station Bex HONEY-WBTC
+  // console.log("Adding STATION4 to Voter");
+  // await voter.addPlugin("0x209C698Cd291583784C81156BCf20Ca1116F55ae"); // Station Bex HONEY-WETH
+  // console.log("Adding STATION5 to Voter");
+  // await voter.addPlugin("0x7275aC27F11B857611D5bF1635d4E1F8ed7C5b48"); // Station Bex PAW-HONEY
+  // console.log("Adding STATION6 to Voter");
+  // await voter.addPlugin("0x0883Fa4F81e41aAF223e2e499aaCdcaa0050B292"); // Station Kodiak HONEY-STGUSDC
+  // console.log("Adding STATION7 to Voter");
+  // await voter.addPlugin("0x61862a592417705BeA695d81D48013ef0635afC4"); // Station Kodiak iBGT-WBERA
+  // console.log("Adding STATION8 to Voter");
+  // await voter.addPlugin("0xb528FFe1D65369dA7a5BBbF03a097694988D0336"); // Station Kodiak YEET-WBERA
+  // console.log("Adding STATION9 to Voter");
+  // await voter.addPlugin("0x56622f88ccFC11E3B1B8Dfe2108042615E590328"); // Station Kodiak NECT-HONEY
+
+  // Add infrared plugins
+  // console.log("Adding INFRARED0 to Voter");
+  // await voter.addPlugin("0xD3Db2860632d38409D714cF46BEe5FFFc93A44a9"); // Infrared Berps bHONEY
+  // console.log("Adding INFRARED1 to Voter");
+  // await voter.addPlugin("0xf1B921F7fFd927d61F83680B06083Dc7c90E28fb"); // Infrared Bex HONEY-USDC
+  // console.log("Adding INFRARED2 to Voter");
+  // await voter.addPlugin("0x4D95408d27aAf02892178d066e7416BFa3089568"); // Infrared Bex HONEY-WBERA
+  // console.log("Adding INFRARED3 to Voter");
+  // await voter.addPlugin("0x7257a4F430cB503B69d19a7013FE51BcEE5B1BE4"); // Infrared Bex HONEY-WBTC
+  // console.log("Adding INFRARED4 to Voter");
+  // await voter.addPlugin("0x7B8D0F745300279bA5021dF3cD763Dc6d548aa0c"); // Infrared Bex HONEY-WETH
+  // console.log("Adding INFRARED5 to Voter");
+  // await voter.addPlugin("0x8579DC87C932396f72499b689eCd2bA87236D9Dc"); // Infrared iBGT
+  // console.log("Adding INFRARED6 to Voter");
+  // await voter.addPlugin("0x63666Bf1eef32484d1947892eD3aFaB2a05Fbb47"); // Infrared Kodiak iBGT-WBERA
+  // console.log("Adding INFRARED7 to Voter");
+  // await voter.addPlugin("0xe808f8f9bf151d785349f93aA4E846DAf6Be029D"); // Infrared Kodiak HONEY-STGUSDC
+  // console.log("Adding INFRARED8 to Voter");
+  // await voter.addPlugin("0x90Da4BC50f346179b3f6A990454B3a84fd5b8211"); // Infrared Kodiak YEET-BERA
+  // console.log("Adding INFRARED9 to Voter");
+  // await voter.addPlugin("0xD6fD8FF282DE1a95F2CA53CC8529d4BbEE3D6848"); // Infrared Kodiak NECT-HONEY
+
+  // Add kodiak plugins
+  // console.log("Adding KODIAK1 to Voter");
+  // await voter.addPlugin("0x3b83BCa772156D558E275579a983E23BA8948097"); // Kodiak HONEY-BERA Island
+  // console.log("Adding KODIAK2 to Voter");
+  // await voter.addPlugin("0x3BDDE87861ffc4223fBFF8eC7f17A5B855120390"); // Kodiak HONEY-STGUSDC Island
+  // console.log("Adding KODIAK3 to Voter");
+  // await voter.addPlugin("0x9215260f5bf6A4Ea2cbdbBc2823b31C5d37c616E"); // Kodiak YEET-WBERA Island
+  // console.log("Adding KODIAK4 to Voter");
+  // await voter.addPlugin("0x235DAEc901c90c026772EF4C66f1c3909a6b464B"); // Kodiak HONEY-DIRAC Island
+  // console.log("Adding KODIAK5 to Voter");
+  // await voter.addPlugin("0x16D91F0aaeeB44eD03836Ab336D73618610CbEF3"); // Kodiak MIM-HONEY Island
+  // console.log("Adding KODIAK8 to Voter");
+  // await voter.addPlugin("0xE1cD8A17f957776D84ea3611F8c4807d6122E8De"); // Kodiak BERA-oBERO Island
+  // console.log("Adding KODIAK9 to Voter");
+  // await voter.addPlugin("0x2563d7008F68c967b80CD2C2e2e675618079DD84"); // Kodiak HONEY-NECT Island
+  // console.log("Adding KODIAK10 to Voter");
+  // await voter.addPlugin("0x6a0e8b97e0259E438722A3c84a9FEaFEa89e3FbA"); // Kodiak iBGT-BERA Island
 
   //===================================================================
   // 11. Deploy Station Plugin Factory
