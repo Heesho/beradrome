@@ -33,8 +33,8 @@ const XKDK = "0x414B50157a5697F14e91417C5275A7496DcF429D";
 // Station Berps bHONEY
 // get from https://bartio.berps.berachain.com/vault
 // plugin = 0x755245C2B77AB532a1f0b0b7B219577B96Dd7b4D
-// bribe =
-// gauge =
+// bribe = 0xeF9c23F12aE7a33Fed1d741152819Ce0e53E1B71
+// gauge = 0x88189A515d126F267F973682ECB7b5e65CbFc3b7
 const STATION0 = "0x1306D3c36eC7E38dd2c128fBe3097C2C2449af64";
 const STATION0_TOKENS = [HONEY];
 const STATION0_SYMBOL = "Berps bHONEY";
@@ -43,8 +43,8 @@ const STATION0_NAME = "Beradrome Station Berps bHONEY Vault Token";
 // Station Bex HONEY-WBERA
 // get from https://bartio.bex.berachain.com/add-liquidity/0xd28d852cbcc68DCEC922f6d5C7a8185dBaa104B7
 // plugin = 0xF66e61Fb9Fbcf61f1A5B0BC663b3403a6f02e8E5
-// bribe =
-// gauge =
+// bribe = 0x0e5Ab69ad31aB2e79c086F3cC91FBA212580b9E4
+// gauge = 0x840A9C4F063853BbbebEaE82828f5f90fe50a209
 const STATION1 = "0xd28d852cbcc68DCEC922f6d5C7a8185dBaa104B7";
 const STATION1_TOKENS = [HONEY, WBERA];
 const STATION1_SYMBOL = "Bex HONEY-WBERA";
@@ -53,8 +53,8 @@ const STATION1_NAME = "Beradrome Station Bex HONEY-WBERA Vault Token";
 // Station Bex HONEY-USDC
 // get from https://bartio.bex.berachain.com/add-liquidity/0xd69adb6fb5fd6d06e6ceec5405d95a37f96e3b96
 // plugin = 0x949016989C0F842e0a3919D11c8A054dBfd42fDE
-// bribe =
-// gauge =
+// bribe = 0x0e5Ab69ad31aB2e79c086F3cC91FBA212580b9E4
+// gauge = 0x840A9C4F063853BbbebEaE82828f5f90fe50a209
 const STATION2 = "0xD69ADb6FB5fD6D06E6ceEc5405D95A37F96E3b96";
 const STATION2_TOKENS = [HONEY, USDC];
 const STATION2_SYMBOL = "Bex HONEY-USDC";
@@ -63,8 +63,8 @@ const STATION2_NAME = "Beradrome Station Bex HONEY-USDC Vault Token";
 // Station Bex HONEY-WBTC
 // get from https://bartio.bex.berachain.com/add-liquidity/0x9df84a72e6eb08ecd074626b931c93f92a134e23
 // plugin = 0x6F18EC487012DAD0354468899073aeCcB928fA8E
-// bribe =
-// gauge =
+// bribe = 0x327913F1B64B239aAd8873E907E8FCe1e9467D49
+// gauge = 0xa5f4532daF8E825b361CdE09ddF9e0A6a8feC5B4
 const STATION3 = "0x9df84A72E6Eb08ecD074626b931c93f92a134e23";
 const STATION3_TOKENS = [HONEY, WBTC];
 const STATION3_SYMBOL = "Bex HONEY-WBTC";
@@ -73,8 +73,8 @@ const STATION3_NAME = "Beradrome Station Bex HONEY-WBTC Vault Token";
 // Station Bex HONEY-WETH
 // get from https://bartio.bex.berachain.com/add-liquidity/0xfbe71d98f9d2c658d52a2d72994c717637c3dda1
 // plugin = 0x209C698Cd291583784C81156BCf20Ca1116F55ae
-// bribe =
-// gauge =
+// bribe = 0xB36339dd70664A1b76a5fc64d1fac14Ffd481376
+// gauge = 0xB92f191a543D1E497E4552CAEc47dFDE7004f847
 const STATION4 = "0xfbE71d98f9D2c658d52a2d72994c717637C3ddA1";
 const STATION4_TOKENS = [HONEY, WETH];
 const STATION4_SYMBOL = "Bex HONEY-WETH";
@@ -83,8 +83,8 @@ const STATION4_NAME = "Beradrome Station Bex HONEY-WETH Vault Token";
 // Station Bex PAW-HONEY
 // get from https://bartio.bex.berachain.com/add-liquidity/0xa51afaf359d044f8e56fe74b9575f23142cd4b76
 // plugin = 0x7275aC27F11B857611D5bF1635d4E1F8ed7C5b48
-// bribe =
-// gauge =
+// bribe = 0xDcBcF59D00CA1CCb21F1f3eabae89473a5Fa52a8
+// gauge = 0xbE79aC14b911878048B8FC991F1eb1Df26bbA794
 const STATION5 = "0xa51afAF359d044F8e56fE74B9575f23142cD4B76";
 const STATION5_TOKENS = [PAW, HONEY];
 const STATION5_SYMBOL = "Bex PAW-HONEY";
@@ -93,8 +93,8 @@ const STATION5_NAME = "Beradrome Station Bex PAW-HONEY Vault Token";
 // Station Kodiak HONEY-STGUSDC
 // get from https://app.kodiak.finance/#/liquidity/islands/0xb73dee52f38539ba854979eab6342a60dd4c8c03?chain=berachain_bartio
 // plugin = 0x0883Fa4F81e41aAF223e2e499aaCdcaa0050B292
-// bribe =
-// gauge =
+// bribe = 0x27bD9683df38Af382a03f83322F580F5abCc1BA4
+// gauge = 0xFdF28C47B7dFe3bA432c62917D7424Ad549867C9
 const STATION6 = "0xb73deE52F38539bA854979eab6342A60dD4C8c03";
 const STATION6_TOKENS = [HONEY, STGUSDC];
 const STATION6_SYMBOL = "Kodiak HONEY-STGUSDC";
@@ -103,8 +103,8 @@ const STATION6_NAME = "Beradrome Station Kodiak HONEY-STGUSDC Vault Token";
 // Station Kodiak iBGT-WBERA
 // get from https://app.kodiak.finance/#/liquidity/islands/0x7fd165b73775884a38aa8f2b384a53a3ca7400e6?chain=berachain_bartio
 // plugin = 0x61862a592417705BeA695d81D48013ef0635afC4
-// bribe =
-// gauge =
+// bribe = 0x33Fe49B95Ba1BF2B18f2C33c290359c7b3B527c1
+// gauge = 0x280574389B39C1B5F94456ad38Bbf19e498678B9
 const STATION7 = "0x7fd165B73775884a38AA8f2B384A53A3Ca7400E6";
 const STATION7_TOKENS = [IBGT, WBERA];
 const STATION7_SYMBOL = "Kodiak iBGT-WBERA";
@@ -113,8 +113,8 @@ const STATION7_NAME = "Beradrome Station Kodiak iBGT-WBERA Vault Token";
 // Station Kodiak YEET-WBERA
 // get from https://app.kodiak.finance/#/liquidity/islands/0xe5a2ab5d2fb268e5ff43a5564e44c3309609aff9?chain=berachain_bartio
 // plugin = 0xb528FFe1D65369dA7a5BBbF03a097694988D0336
-// bribe =
-// gauge =
+// bribe = 0x38894aaA66b597a8A5959aE34e319fEdF82519A2
+// gauge = 0x00783CD6C541041373F71F5691D96916D359eF23
 const STATION8 = "0xE5A2ab5D2fb268E5fF43A5564e44c3309609aFF9";
 const STATION8_TOKENS = [YEET, WBERA];
 const STATION8_SYMBOL = "Kodiak YEET-WBERA";
@@ -123,8 +123,8 @@ const STATION8_NAME = "Beradrome Station Kodiak YEET-WBERA Vault Token";
 // Station Kodiak NECT-HONEY
 // get from https://app.kodiak.finance/#/liquidity/islands/0x63b0edc427664d4330f72eec890a86b3f98ce225?chain=berachain_bartio
 // plugin = 0x56622f88ccFC11E3B1B8Dfe2108042615E590328
-// bribe =
-// gauge =
+// bribe = 0x9DdfA54C3DF56B2BF512a897c9bF7bDd8d375A57
+// gauge = 0xB14dbe2A418b1E59beae84D9a5Ee3c2c15f82112
 const STATION9 = "0x63b0EdC427664D4330F72eEc890A86b3F98ce225";
 const STATION9_TOKENS = [NECT, HONEY];
 const STATION9_SYMBOL = "Kodiak NECT-HONEY";
@@ -133,8 +133,8 @@ const STATION9_NAME = "Beradrome Station Kodiak NECT-HONEY Vault Token";
 // Infrared Berps bHONEY
 // get from https://bartio.berps.berachain.com/vault
 // plugin = 0xD3Db2860632d38409D714cF46BEe5FFFc93A44a9
-// bribe =
-// gauge =
+// bribe = 0x4699A29Be1C95eE6C2863014FE3d56F09e19668d
+// gauge = 0x3494d3F08fbCAc0b95aa6Dd05D2FE0Df34db0423
 const INFRARED_VAULT_0 = "0x7d91bf5851b3a8bcf8c39a69af2f0f98a4e2202a";
 const INFRARED_TOKENS_0 = [HONEY];
 const INFRARED_REWARDS_0 = [IBGT];
@@ -144,8 +144,8 @@ const INFRARED_NAME_0 = "Beradrome Infrared Berps bHONEY Vault Token";
 // Infrared Bex HONEY-USDC
 // get from https://bartio.bex.berachain.com/add-liquidity/0xd69adb6fb5fd6d06e6ceec5405d95a37f96e3b96
 // plugin = 0xf1B921F7fFd927d61F83680B06083Dc7c90E28fb
-// bribe =
-// gauge =
+// bribe = 0x567928552b7eBf7542692538E8954b6f70b91133
+// gauge = 0x1d3FAe4318295881832667B85E2483e73858EE04
 const INFRARED_VAULT_1 = "0x675547750f4acdf64ed72e9426293f38d8138ca8";
 const INFRARED_TOKENS_1 = [HONEY, USDC];
 const INFRARED_REWARDS_1 = [IBGT];
@@ -155,8 +155,8 @@ const INFRARED_NAME_1 = "Beradrome Infrared Bex HONEY-USDC Vault Token";
 // Infrared Bex HONEY-WBERA
 // get from https://bartio.bex.berachain.com/add-liquidity/0xd28d852cbcc68DCEC922f6d5C7a8185dBaa104B7
 // plugin = 0x4D95408d27aAf02892178d066e7416BFa3089568
-// bribe =
-// gauge =
+// bribe = 0xDd08BFa5812995E3A8c38ac83AC4b3945DaBe35D
+// gauge = 0x471aa745132dF1bAf0E1A3A663588702477a5fE3
 const INFRARED_VAULT_2 = "0x5c5f9a838747fb83678ece15d85005fd4f558237";
 const INFRARED_TOKENS_2 = [HONEY, WBERA];
 const INFRARED_REWARDS_2 = [IBGT];
@@ -166,8 +166,8 @@ const INFRARED_NAME_2 = "Beradrome Infrared Bex HONEY-WBERA Vault Token";
 // Infrared Bex HONEY-WBTC
 // get from https://bartio.bex.berachain.com/add-liquidity/0x9df84a72e6eb08ecd074626b931c93f92a134e23
 // plugin = 0x7257a4F430cB503B69d19a7013FE51BcEE5B1BE4
-// bribe =
-// gauge =
+// bribe = 0xAC52E09B4001D3a3b7E6c31E21bCb05faFfd64b5
+// gauge = 0x13844cbF1F34cAc6AE2c65c7C3469D2C25f83a4A
 const INFRARED_VAULT_3 = "0x42faa63ab12825ec2efb6ff01d7c1cf1327c3bab";
 const INFRARED_TOKENS_3 = [HONEY, WBTC];
 const INFRARED_REWARDS_3 = [IBGT];
@@ -177,8 +177,8 @@ const INFRARED_NAME_3 = "Beradrome Infrared Bex HONEY-WBTC Vault Token";
 // Infrared Bex HONEY-WETH
 // get from https://bartio.bex.berachain.com/add-liquidity/0xfbe71d98f9d2c658d52a2d72994c717637c3dda1
 // plugin = 0x7B8D0F745300279bA5021dF3cD763Dc6d548aa0c
-// bribe =
-// gauge =
+// bribe = 0x52b02Cb188a31837995940f64556269Ea26BF597
+// gauge = 0x178941499BE8d1bf31D4E84e1d7E93D328dA5699
 const INFRARED_VAULT_4 = "0x18800fD6b9fC335cDDEa49144fDd49bacce96362";
 const INFRARED_TOKENS_4 = [HONEY, WETH];
 const INFRARED_REWARDS_4 = [IBGT];
@@ -188,8 +188,8 @@ const INFRARED_NAME_4 = "Beradrome Infrared Bex HONEY-WETH Vault Token";
 // Infrared iBGT
 // get from https://infrared.finance/vaults
 // plugin = 0x8579DC87C932396f72499b689eCd2bA87236D9Dc
-// bribe =
-// gauge =
+// bribe = 0xdBa87b31ECa8EA7dC18867412892404F5E93aDC1
+// gauge = 0x49af1a353a0f6081883E56B107E586BBA5F7C0e8
 const INFRARED_VAULT_5 = "0x31e6458c83c4184a23c761fdaffb61941665e012";
 const INFRARED_TOKENS_5 = [IBGT];
 const INFRARED_REWARDS_5 = [HONEY];
@@ -199,8 +199,8 @@ const INFRARED_NAME_5 = "Beradrome Infrared iBGT Vault Token";
 // Infrared Kodiak iBGT-WBERA
 // get from https://app.kodiak.finance/#/liquidity/islands/0x7fd165b73775884a38aa8f2b384a53a3ca7400e6?chain=berachain_bartio
 // plugin = 0x63666Bf1eef32484d1947892eD3aFaB2a05Fbb47
-// bribe =
-// gauge =
+// bribe = 0x0A3412bf4842B030c6a85666603B506BfE897680
+// gauge = 0x0E24f5DF264Ae066b80390b6DF769D7d5Cc1Cc7D
 const INFRARED_VAULT_6 = "0x763F65E5F02371aD6C24bD60BCCB0b14E160d49b";
 const INFRARED_TOKENS_6 = [IBGT, WBERA];
 const INFRARED_REWARDS_6 = [IBGT];
@@ -210,8 +210,8 @@ const INFRARED_NAME_6 = "Beradrome Infrared Kodiak iBGT-WBERA Vault Token";
 // Infrared Kodiak HONEY-STGUSDC
 // get from https://app.kodiak.finance/#/liquidity/islands/0xb73dee52f38539ba854979eab6342a60dd4c8c03?chain=berachain_bartio
 // plugin = 0xe808f8f9bf151d785349f93aA4E846DAf6Be029D
-// bribe =
-// gauge =
+// bribe = 0x09E3a0d56116Faee6f4258c3a28848801a405123
+// gauge = 0xA90b1F5B52aa7C9c7df953AcF987619e02c6D09B
 const INFRARED_VAULT_7 = "0x1B602728805Ca854e0DFDbbBA9060345fB26bc20";
 const INFRARED_TOKENS_7 = [HONEY, STGUSDC];
 const INFRARED_REWARDS_7 = [IBGT];
@@ -221,8 +221,8 @@ const INFRARED_NAME_7 = "Beradrome Infrared Kodiak HONEY-STGUSDC Vault Token";
 // Infrared Kodiak YEET-BERA
 // get from https://app.kodiak.finance/#/liquidity/islands/0xe5a2ab5d2fb268e5ff43a5564e44c3309609aff9?chain=berachain_bartio
 // plugin = 0x90Da4BC50f346179b3f6A990454B3a84fd5b8211
-// bribe =
-// gauge =
+// bribe = 0x38DC59a8a86Ee24Ca7C5058F569a1Bf566e1f678
+// gauge = 0x11ba1e4a9c6cD478aB30CE525691a8B46a8DB55A
 const INFRARED_VAULT_8 = "0x89DAFF790313d0Cc5cC9971472f0C73A19D9C167";
 const INFRARED_TOKENS_8 = [YEET, WBERA];
 const INFRARED_REWARDS_8 = [IBGT];
@@ -232,8 +232,8 @@ const INFRARED_NAME_8 = "Beradrome Infrared Kodiak YEET-BERA Vault Token";
 // Infrared Kodiak NECT-HONEY
 // get from https://app.kodiak.finance/#/liquidity/islands/0x63b0edc427664d4330f72eec890a86b3f98ce225?chain=berachain_bartio
 // plugin = 0xD6fD8FF282DE1a95F2CA53CC8529d4BbEE3D6848
-// bribe =
-// gauge =
+// bribe = 0x0f44d061ea6b634F96575986D2691afcAA367d39
+// gauge = 0xbf77C8Cf23D2b44f9646EcB50D86cc4501E546Ab
 const INFRARED_VAULT_9 = "0x584084216b8D0193EB26f6e28466535f29f3B20c";
 const INFRARED_TOKENS_9 = [NECT, HONEY];
 const INFRARED_REWARDS_9 = [IBGT];
@@ -243,8 +243,8 @@ const INFRARED_NAME_9 = "Beradrome Infrared Kodiak NECT-HONEY Vault Token";
 // Kodiak HONEY-BERA Island
 // get from https://app.kodiak.finance/#/liquidity/islands/0x12c195768f65f282ea5f1b5c42755fbc910b0d8f?chain=berachain_bartio
 // plugin = 0x3b83BCa772156D558E275579a983E23BA8948097
-// bribe =
-// gauge =
+// bribe = 0x4fFd983c13bFeF21Dc1e0666c415D2dAf7F4C1fc
+// gauge = 0x75A8331a579db106eE877dfeF18B97eA080bdc28
 const KODIAK1 = "0x12C195768f65F282EA5F1B5C42755FBc910B0D8F";
 const KODIAK1_FARM = "0x1878eb1cA6Da5e2fC4B5213F7D170CA668A0E225";
 const KODIAK1_TOKEN0 = HONEY;
@@ -256,8 +256,8 @@ const KODIAK1_NAME = "Beradrome Kodiak HONEY-WBERA Island Vault Token";
 // Kodiak HONEY-STGUSDC Island
 // get from https://app.kodiak.finance/#/liquidity/islands/0xb73dee52f38539ba854979eab6342a60dd4c8c03?chain=berachain_bartio
 // plugin = 0x3BDDE87861ffc4223fBFF8eC7f17A5B855120390
-// bribe =
-// gauge =
+// bribe = 0x526609B87394Bc10a710185Bc7AfA89724f7FbA7
+// gauge = 0x9e16281278d9a41dF291e0E6aCF1D8326867a553
 const KODIAK2 = "0xb73deE52F38539bA854979eab6342A60dD4C8c03";
 const KODIAK2_FARM = "0x43340e50807c1244c04e74C6539fe8632597Ca39";
 const KODIAK2_TOKEN0 = HONEY;
@@ -269,8 +269,8 @@ const KODIAK2_NAME = "Beradrome Kodiak HONEY-STGUSDC Island Vault Token";
 // Kodiak YEET-WBERA Island
 // get from https://app.kodiak.finance/#/liquidity/islands/0xe5a2ab5d2fb268e5ff43a5564e44c3309609aff9?chain=berachain_bartio
 // plugin = 0x9215260f5bf6A4Ea2cbdbBc2823b31C5d37c616E
-// bribe =
-// gauge =
+// bribe = 0x9eF56F2A09Ef74b5CAF5B56c8b65C6854547A152
+// gauge = 0xcC5F0893d186a0d69a0660F889B0F17CcBdAecD8
 const KODIAK3 = "0xE5A2ab5D2fb268E5fF43A5564e44c3309609aFF9";
 const KODIAK3_FARM = "0xbdEE3F788a5efDdA1FcFe6bfe7DbbDa5690179e6";
 const KODIAK3_TOKEN0 = YEET;
@@ -282,8 +282,8 @@ const KODIAK3_NAME = "Beradrome Kodiak YEET-WBERA Island Vault Token";
 // Kodiak HONEY-DIRAC Island
 // get from https://app.kodiak.finance/#/liquidity/islands/0x1afe9c399b40a65c783049e732d7ad5d37e68f78?chain=berachain_bartio
 // plugin = 0x235DAEc901c90c026772EF4C66f1c3909a6b464B
-// bribe =
-// gauge =
+// bribe = 0x7108De50B0fa0538aE2797116Ce19197bf8368B7
+// gauge = 0x4Be5953530137F6801947c823cd02b6aA971d465
 const KODIAK4 = "0x1Afe9c399B40A65C783049E732d7Ad5D37e68F78";
 const KODIAK4_FARM = "0x3575E94C542c9217E8E0bcc844FFbb10B84C56be";
 const KODIAK4_TOKEN0 = HONEY;
@@ -295,8 +295,8 @@ const KODIAK4_NAME = "Beradrome Kodiak HONEY-DIRAC Island Vault Token";
 // Kodiak MIM-HONEY Island
 // get from https://app.kodiak.finance/#/liquidity/islands/0x74e852a4f88bfbeff01275bb95d5ed77f2967d12?chain=berachain_bartio
 // plugin = 0x16D91F0aaeeB44eD03836Ab336D73618610CbEF3
-// bribe =
-// gauge =
+// bribe = 0xb6f053b08ca269dE826C9D6ae581461b58536EC2
+// gauge = 0xD1435B5D064473E1F6ceBa5dc8e7FaED513D3421
 const KODIAK5 = "0x74E852a4f88bfbEff01275bB95d5ed77f2967d12";
 const KODIAK5_FARM = "0xB494C42b5FB24cC2B7eEaD56B1c087C76ec74255";
 const KODIAK5_TOKEN0 = MIM;
@@ -308,8 +308,8 @@ const KODIAK5_NAME = "Beradrome Kodiak MIM-HONEY Island Vault Token";
 // Kodiak BERA-oBERO Island
 // get from https://app.kodiak.finance/#/liquidity/islands/0xbfbefcfae7a58c14292b53c2ccd95bf2c5742eb0?chain=berachain_bartio
 // plugin = 0xE1cD8A17f957776D84ea3611F8c4807d6122E8De
-// bribe =
-// gauge =
+// bribe = 0x185A6c9B44f6449695828ece82a8a697df00F53e
+// gauge = 0x674f5D2FfCeDF638B3a09fBE56589Ba9e739E896
 const KODIAK8 = "0xbfbEfcfAE7a58C14292B53C2CcD95bF2c5742EB0";
 const KODIAK8_FARM = "0x1812FC946EF5809f8efCEF28Afa6ec9030907748";
 const KODIAK8_TOKEN0 = WBERA;
@@ -321,8 +321,8 @@ const KODIAK8_NAME = "Beradrome Kodiak BERA-oBERO Island Vault Token";
 // Kodiak HONEY-NECT Island
 // get from https://app.kodiak.finance/#/liquidity/islands/0x63b0edc427664d4330f72eec890a86b3f98ce225?chain=berachain_bartio
 // plugin = 0x2563d7008F68c967b80CD2C2e2e675618079DD84
-// bribe =
-// gauge =
+// bribe = 0x868E85e7EA3eD151269b0C60945f57f6858E0562
+// gauge = 0xDc82c6af99a51bFD8D69f4fa2145fd502C914513
 const KODIAK9 = "0x63b0EdC427664D4330F72eEc890A86b3F98ce225";
 const KODIAK9_FARM = "0x09347F35B29bD3B8a581a8507F0831aA4d1Af8a9";
 const KODIAK9_TOKEN0 = HONEY;
@@ -334,8 +334,8 @@ const KODIAK9_NAME = "Beradrome Kodiak HONEY-NECT Island Vault Token";
 // Kodiak iBGT-BERA Island
 // get from https://app.kodiak.finance/#/liquidity/islands/0x7fd165b73775884a38aa8f2b384a53a3ca7400e6?chain=berachain_bartio
 // plugin = 0x6a0e8b97e0259E438722A3c84a9FEaFEa89e3FbA
-// bribe =
-// gauge =
+// bribe = 0x0cf4aA75b562969589a5fEc3BAEbbce90A23cBd4
+// gauge = 0xEF1c4EdF612a5b534f6E135b1f8EF9CB1063dF40
 const KODIAK10 = "0x7fd165B73775884a38AA8f2B384A53A3Ca7400E6";
 const KODIAK10_FARM = "0x6a283822F6F03dD886c2afABA0A731e35F129391";
 const KODIAK10_TOKEN0 = IBGT;
@@ -345,9 +345,9 @@ const KODIAK10_SYMBOL = "iBGT-BERA Island";
 const KODIAK10_NAME = "Beradrome Kodiak iBGT-BERA Island Vault Token";
 
 // Trifecta Kodiak YEET-WBERA Island
-// plugin = 0x99F09C041EB780fBDb6bFe7A4Aac3E1dE9f9496b
-// bribe =
-// gauge =
+// plugin = 0x588F7383508AFB1b69E3a2A1521125C49D53Fa00
+// bribe = 0xc492a342100a8881844d670120234747d52b7AfA
+// gauge = 0xdfE2FE32c08b3F41C5BAC8cC15DFD6d886969a66
 const TRIFECTA3 = "0xE5A2ab5D2fb268E5fF43A5564e44c3309609aFF9";
 const TRIFECTA3_FARM = "0xbdEE3F788a5efDdA1FcFe6bfe7DbbDa5690179e6";
 const TRIFECTA3_TOKEN0 = YEET;
@@ -660,19 +660,19 @@ async function verifyController() {
 async function setUpSystem(wallet) {
   console.log("Starting System Set Up");
 
-  await sleep(5000);
-  await gaugeFactory.setVoter(voter.address);
-  await sleep(5000);
-  await bribeFactory.setVoter(voter.address);
-  await sleep(5000);
-  console.log("Factories Set Up");
+  // await sleep(5000);
+  // await gaugeFactory.setVoter(voter.address);
+  // await sleep(5000);
+  // await bribeFactory.setVoter(voter.address);
+  // await sleep(5000);
+  // console.log("Factories Set Up");
 
-  //   await VTOKEN.setVoter(voter.address);
-  //   await sleep(5000);
-  //   console.log("Token-Voting Set Up");
+  // await VTOKEN.setVoter(voter.address);
+  // await sleep(5000);
+  // console.log("Token-Voting Set Up");
 
-  //   await voter.initialize(minter.address);
-  //   await sleep(5000);
+  // await voter.initialize(minter.address);
+  // await sleep(5000);
   //   await minter.setVoter(voter.address);
   //   await sleep(5000);
   //   console.log("Minter Set Up");
@@ -1035,6 +1035,7 @@ async function main() {
   // Add station plugins
   // console.log("Adding STATION0 to Voter");
   // await voter.addPlugin("0x755245C2B77AB532a1f0b0b7B219577B96Dd7b4D"); // Station Berps bHONEY
+  // await sleep(5000);
   // console.log("Adding STATION1 to Voter");
   // await voter.addPlugin("0xF66e61Fb9Fbcf61f1A5B0BC663b3403a6f02e8E5"); // Station Bex HONEY-WBERA
   // console.log("Adding STATION2 to Voter");
@@ -1097,6 +1098,17 @@ async function main() {
   // Add trifecta plugins
   // console.log("Adding TRIFECTA3 to Voter");
   // await voter.addPlugin("0x588F7383508AFB1b69E3a2A1521125C49D53Fa00"); // Kodiak Trifecta YEET-WBERA Island
+
+  // console.log("Plugin: ", "");
+  // await sleep(5000);
+  // console.log(
+  //   "Bribe: ",
+  //   await voter.bribes("")
+  // );
+  // console.log(
+  //   "Gauge: ",
+  //   await voter.gauges("")
+  // );
 
   //===================================================================
   // 11. Deploy Station Plugin Factory
@@ -1169,6 +1181,25 @@ async function main() {
   // await deployTrifectaPlugin();
   // await verifyTrifectaPlugin();
   // console.log("TrifectaPlugin Deployed and Verified");
+
+  //===================================================================
+  // 13. Add Gauge Rewards
+  //===================================================================
+
+  // await voter
+  //   .connect(wallet)
+  //   .addGaugeReward(
+  //     "0xdfE2FE32c08b3F41C5BAC8cC15DFD6d886969a66",
+  //     "0xfd27998fa0eaB1A6372Db14Afd4bF7c4a58C5364"
+  //   ); // KDK added to Trifecta YEET-WBERA Island Gauge
+  // console.log("- KDK added as gauge reward");
+  // await voter
+  //   .connect(wallet)
+  //   .addGaugeReward(
+  //     "0xdfE2FE32c08b3F41C5BAC8cC15DFD6d886969a66",
+  //     "0x414B50157a5697F14e91417C5275A7496DcF429D"
+  //   ); // xKDK added to Trifecta YEET-WBERA Island Gauge
+  // console.log("- xKDK added as gauge rewards");
 }
 
 main()
