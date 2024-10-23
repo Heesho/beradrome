@@ -11,30 +11,7 @@ import "contracts/interfaces/IBribe.sol";
 import "contracts/interfaces/IVoter.sol";
 import "contracts/interfaces/IPlugin.sol";
 
-interface IChainlinkOracle {
-    function latestAnswer() external view returns (uint256);
-}
-
-interface IPythOracle {
-    struct Price {
-        int64 price;
-        uint64 conf;
-        int32 expo;
-        uint256 publishTime;
-    }
-    function getPriceUnsafe(bytes32 id) external view returns (Price memory price);
-}
-
 contract Multicall {
-
-    /*===================================================================*/
-    /*===========================  SETTINGS  ============================*/
-
-    address public constant ORACLE = 0x0000000000000000000000000000000000000000;
-    bytes32 public constant FEED_ID = 0x0;
-
-    /*===========================  END SETTINGS  ========================*/
-    /*===================================================================*/
 
     /*----------  CONSTANTS  --------------------------------------------*/
 
@@ -166,15 +143,8 @@ contract Multicall {
 
     /*----------  VIEW FUNCTIONS  ---------------------------------------*/
 
-    function getBasePrice() public view returns (uint256) {
-        if (ORACLE == address(0)) {
-            return 1e18;
-        } else if (FEED_ID == 0x0) {
-            return IChainlinkOracle(ORACLE).latestAnswer() * 1e18 / 1e8;
-        } else {
-            int64 price = IPythOracle(ORACLE).getPriceUnsafe(FEED_ID).price;
-            return uint256(int256(price)) * 1e18 / 1e8;  
-        }
+    function getBasePrice() public pure returns (uint256) {
+        return 1e18;
     }
 
     function swapCardData() external view returns (SwapCard memory swapCard) {
