@@ -3,22 +3,16 @@ pragma solidity 0.8.19;
 
 import 'contracts/Plugin.sol';
 
-interface IBGT {
-    function unboostedBalanceOf(address account) external view returns (uint256);
-    function redeem(address receiver, uint256 amount) external;
+interface ILBGT {
+    function mintLbgtTo(address rewardsVault, address recipient) external returns (uint256);
 }
 
-interface IWBERA {
-    function deposit() external payable;
-}
-
-contract StationPlugin is Plugin {
+contract BeraPawPlugin is Plugin {
     using SafeERC20 for IERC20;
 
     /*----------  CONSTANTS  --------------------------------------------*/
 
-    address public constant BGT = 0xbDa130737BDd9618301681329bF2e46A016ff9Ad;
-    address public constant WBERA = 0x7507c1dc16935B82698e4C63f2746A2fCf994dF8;
+    address public constant LBGT = 0x32Cf940DB5d7ea3e95e799A805B1471341241264;
 
     /*----------  STATE VARIABLES  --------------------------------------*/
 
@@ -51,6 +45,7 @@ contract StationPlugin is Plugin {
         )
     {
         berachainRewardsVault = _berachainRewardsVault;
+        IBerachainRewardsVault(berachainRewardsVault).setOperator(LBGT);
     }
 
     function claimAndDistribute() 
@@ -58,16 +53,14 @@ contract StationPlugin is Plugin {
         override 
     {
         super.claimAndDistribute();
-        IBerachainRewardsVault(berachainRewardsVault).getReward(address(this));
+        ILBGT(LBGT).mintLbgtTo(berachainRewardsVault, address(this));
         address bribe = getBribe();
         uint256 duration = IBribe(bribe).DURATION();
-        uint256 balance = IBGT(BGT).unboostedBalanceOf(address(this));
+        uint256 balance = IERC20(LBGT).balanceOf(address(this));
         if (balance > duration) {
-            IBGT(BGT).redeem(address(this), balance);
-            IWBERA(WBERA).deposit{value: balance}();
-            IERC20(WBERA).safeApprove(bribe, 0);
-            IERC20(WBERA).safeApprove(bribe, balance);
-            IBribe(bribe).notifyRewardAmount(WBERA, balance);
+            IERC20(LBGT).safeApprove(bribe, 0);
+            IERC20(LBGT).safeApprove(bribe, balance);
+            IBribe(bribe).notifyRewardAmount(LBGT, balance);
         }
     }
 
@@ -93,19 +86,13 @@ contract StationPlugin is Plugin {
 
     /*----------  VIEW FUNCTIONS  ---------------------------------------*/
 
-    // Function to receive Ether. msg.data must be empty
-    receive() external payable {}
-
-    // Fallback function is called when msg.data is not empty
-    fallback() external payable {}
-
 }
 
-contract StationPluginFactory {
+contract BeraPawPluginFactory {
 
-    string public constant PROTOCOL = "BGT Station";
+    string public constant PROTOCOL = "BeraPaw";
     address public constant REWARDS_VAULT_FACTORY = 0x2B6e40f65D82A0cB98795bC7587a71bfa49fBB2B;
-    address public constant WBERA = 0x7507c1dc16935B82698e4C63f2746A2fCf994dF8;
+    address public constant LBGT = 0x32Cf940DB5d7ea3e95e799A805B1471341241264;
 
     address public immutable VOTER;
 
@@ -125,9 +112,9 @@ contract StationPluginFactory {
     ) external returns (address) {
 
         address[] memory bribeTokens = new address[](1);
-        bribeTokens[0] = WBERA;
+        bribeTokens[0] = LBGT;
 
-        StationPlugin lastPlugin = new StationPlugin(
+        BeraPawPlugin lastPlugin = new BeraPawPlugin(
             _token,
             VOTER,
             _assetTokens,

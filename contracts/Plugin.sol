@@ -20,6 +20,7 @@ interface IBerachainRewardsVault {
     function stake(uint256 amount) external;
     function withdraw(uint256 amount) external;
     function getReward(address account) external;
+    function setOperator(address operator) external;
 }
 
 contract VaultToken is ERC20, Ownable {
