@@ -115,7 +115,6 @@ contract HiveMulticall {
         uint256 amount;
     }
 
-
     struct Auction {
         address hiveToken;
         address hiveRewarder;

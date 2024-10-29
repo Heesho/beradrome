@@ -155,7 +155,7 @@ abstract contract Plugin is ReentrancyGuard {
 
         IGauge(gauge)._withdraw(msg.sender, amount);
 
-        IBerachainRewardsVault(rewardVault).delegateWithdraw(account, amount);
+        IBerachainRewardsVault(rewardVault).delegateWithdraw(msg.sender, amount);
         VaultToken(vaultToken).burn(address(this), amount);
 
     }

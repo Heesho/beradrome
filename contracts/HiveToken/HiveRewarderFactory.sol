@@ -185,7 +185,7 @@ contract HiveRewarder is ReentrancyGuard, Ownable {
         emit HiveRewarder__Withdrawn(msg.sender, amount);
         IERC20(hiveToken).safeTransfer(account, amount);
         // Berachain Rewards Vault Delegate Stake
-        IRewardVault(rewardVault).delegateWithdraw(account, amount);
+        IRewardVault(rewardVault).delegateWithdraw(msg.sender, amount);
         VaultToken(vaultToken).burn(address(this), amount);
     }
 
