@@ -26,7 +26,7 @@ let VTOKENFactory,
   rewarderFactory,
   gaugeFactory,
   bribeFactory;
-let minter, voter, fees, rewarder, governance, multicall;
+let minter, voter, fees, rewarder, governance, multicall, controller;
 let TOKEN, VTOKEN, OTOKEN, BASE;
 let pluginFactory;
 let TEST0, xTEST0, plugin0, gauge0, bribe0;
@@ -34,7 +34,7 @@ let TEST1, xTEST1, plugin1, gauge1, bribe1;
 let TEST2, LP0, plugin2, gauge2, bribe2;
 let TEST3, LP1, plugin3, gauge3, bribe3;
 
-describe.only("local: test5", function () {
+describe("local: test5", function () {
   before("Initial set up", async function () {
     console.log("Begin Initialization");
 
@@ -196,6 +196,18 @@ describe.only("local: test5", function () {
       multicallContract.address
     );
     console.log("- Multicall Initialized");
+
+    // initialize Controller
+    const controllerArtifact = await ethers.getContractFactory("Controller");
+    const controllerContract = await controllerArtifact.deploy(
+      voter.address,
+      fees.address
+    );
+    controller = await ethers.getContractAt(
+      "Controller",
+      controllerContract.address
+    );
+    console.log("- Controller Initialized");
 
     // System set-up
     await gaugeFactory.setVoter(voter.address);
@@ -369,5 +381,17 @@ describe.only("local: test5", function () {
   it("User1 withdraws from Plugin0 to user0", async function () {
     console.log("******************************************************");
     await plugin0.connect(user1).withdrawTo(user0.address, ten);
+  });
+
+  it("Get Plugin0 Card", async function () {
+    console.log("******************************************************");
+    const pluginCard = await controller.getPlugin(plugin0.address);
+    console.log(pluginCard);
+  });
+
+  it("Get Plugin0 Card", async function () {
+    console.log("******************************************************");
+    const pluginCard = await controller.getPluginInfo(0);
+    console.log(pluginCard);
   });
 });
