@@ -409,11 +409,11 @@ async function setUpSystem(wallet) {
   // await sleep(5000);
   // console.log("Token-Voting Set Up");
 
-  //   await voter.initialize(minter.address);
+  // await voter.initialize(minter.address);
   // await sleep(5000);
-  //   await minter.setVoter(voter.address);
-  //   await sleep(5000);
-  //   console.log("Minter Set Up");
+  // await minter.setVoter(voter.address);
+  // await sleep(5000);
+  // console.log("Minter Set Up");
 
   console.log("System Initialized");
 }
@@ -694,9 +694,9 @@ async function main() {
   // 8. Set Up System
   //===================================================================
 
-  //   console.log("Starting System Set Up");
-  //   await setUpSystem(wallet.address);
-  //   console.log("System Set Up");
+  // console.log("Starting System Set Up");
+  // await setUpSystem(wallet.address);
+  // console.log("System Set Up");
 
   //===================================================================
   // 9. Transfer Ownership
@@ -832,6 +832,9 @@ async function main() {
   //   console.log("StationPluginFactory: ", await stationPluginFactory.address);
   //   console.log("InfraredPluginFactory: ", await infraredPluginFactory.address);
   //   console.log("TrifectaPluginFactory: ", await trifectaPluginFactory.address);
+  // console.log();
+  // console.log("Reward Vault: ", await voter.rewardVault());
+  // console.log("Vault Token: ", await voter.vaultToken());
 
   //===================================================================
   // 13. Print Plugins
@@ -863,6 +866,35 @@ async function main() {
   //     console.log("Reward Vault: ", plugin.rewardVault);
   //     console.log();
   //   }
+
+  //===================================================================
+  // 13. Print Plugins
+  //===================================================================
+
+  // console.log("Distributing Rewards");
+  // await voter.distro();
+  // console.log("Voter Rewards Distributed");
+  // await fees.distribute();
+  // console.log("Fees Rewards Distributed");
+  // await voter.distributeToBribes([
+  //   "0xD9431A6800Fbd31089a7B816fdd4689f413C07cc", // Station Berps bHONEY
+  //   "0x716129c60B5e9aCE74330becb2dC82DC45386679", // Station Bex HONEY-WBERA
+  //   "0x7dcDBd9CaDfD8Fad1622f83d1F4d6b527881fDA6", // Station Bex HONEY-USDC
+  // ]);
+  // console.log("Station Bribe Rewards Distributed");
+  // await voter.distributeToBribes([
+  //   "0xa792a5f7d9B1Bfd572e6b7AbBe9344ca3eAE9345", // Infrared Berps bHONEY
+  //   "0xc3520c7F0d101c4b4Cc2089D9896aD8C3C1c2691", // Infrared Bex HONEY-USDC
+  //   "0x1b5f2161fF46eEd74dC777F7BD9a78d565036349", // Infrared Bex HONEY-WBERA
+  //   "0xB6a8d4fb828FA9014568FbF85A65485194356C85", // Infrared HONEY-WBTC Plugin
+  // ]);
+  // console.log("Infrared Bribe Rewards Distributed");
+  // await voter.distributeToBribes([
+  //   "0x7852c68E4959f056BC2DFD952C9C892daBe75Ce8", // Kodiak Trifecta YEET-WBERA Island
+  //   "0x6392624B35CB280048311ac66e320a3F45f4fDCa", // Kodiak Trifecta BERA-oBERO Island
+  //   "0xcc6Cb6821DF1629297C8CC8998229c600DE4ab0d", // Kodiak Trifecta HONEY-NECT Island
+  // ]);
+  // console.log("Kodiak TrifectaBribe Rewards Distributed");
 }
 
 main()
