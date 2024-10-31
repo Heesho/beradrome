@@ -36,6 +36,7 @@ const STATION0 = "0x1306D3c36eC7E38dd2c128fBe3097C2C2449af64";
 const STATION0_TOKENS = [HONEY];
 const STATION0_SYMBOL = "Berps bHONEY";
 const STATION0_NAME = "Beradrome Station Berps bHONEY Vault Token";
+const STATION0_PLUGIN = "0x9E16AA20B5c9F9dD3F364A1d212672E5356C8CF9";
 
 // Station Bex HONEY-WBERA
 // get from https://bartio.bex.berachain.com/add-liquidity/0xd28d852cbcc68DCEC922f6d5C7a8185dBaa104B7
@@ -43,6 +44,7 @@ const STATION1 = "0xd28d852cbcc68DCEC922f6d5C7a8185dBaa104B7";
 const STATION1_TOKENS = [HONEY, WBERA];
 const STATION1_SYMBOL = "Bex HONEY-WBERA";
 const STATION1_NAME = "Beradrome Station Bex HONEY-WBERA Vault Token";
+const STATION1_PLUGIN = "0xe94f91E6e320EBFB4d6b94E64Bc6Cd599AE26456";
 
 // Station Bex HONEY-USDC
 // get from https://bartio.bex.berachain.com/add-liquidity/0xd69adb6fb5fd6d06e6ceec5405d95a37f96e3b96
@@ -50,6 +52,7 @@ const STATION2 = "0xD69ADb6FB5fD6D06E6ceEc5405D95A37F96E3b96";
 const STATION2_TOKENS = [HONEY, USDC];
 const STATION2_SYMBOL = "Bex HONEY-USDC";
 const STATION2_NAME = "Beradrome Station Bex HONEY-USDC Vault Token";
+const STATION2_PLUGIN = "0xf0Fd3496Dd46b001f416C4314317D6453Bf26B94";
 
 // Infrared Berps bHONEY
 // get from https://bartio.berps.berachain.com/vault
@@ -58,6 +61,7 @@ const INFRARED_TOKENS_0 = [HONEY];
 const INFRARED_REWARDS_0 = [IBGT];
 const INFRARED_SYMBOL_0 = "Berps bHONEY";
 const INFRARED_NAME_0 = "Beradrome Infrared Berps bHONEY Vault Token";
+const INFRARED0_PLUGIN = "0x8769b893684A72E8b018dB1a6760Ed8ae00f55B7";
 
 // Infrared Bex HONEY-USDC
 // get from https://bartio.bex.berachain.com/add-liquidity/0xd69adb6fb5fd6d06e6ceec5405d95a37f96e3b96
@@ -66,6 +70,7 @@ const INFRARED_TOKENS_1 = [HONEY, USDC];
 const INFRARED_REWARDS_1 = [IBGT];
 const INFRARED_SYMBOL_1 = "Bex HONEY-USDC";
 const INFRARED_NAME_1 = "Beradrome Infrared Bex HONEY-USDC Vault Token";
+const INFRARED1_PLUGIN = "0x3701B7427d85787A6FD2761eEa2243bD155939fA";
 
 // Infrared Bex HONEY-WBERA
 // get from https://bartio.bex.berachain.com/add-liquidity/0xd28d852cbcc68DCEC922f6d5C7a8185dBaa104B7
@@ -74,6 +79,7 @@ const INFRARED_TOKENS_2 = [HONEY, WBERA];
 const INFRARED_REWARDS_2 = [IBGT];
 const INFRARED_SYMBOL_2 = "Bex HONEY-WBERA";
 const INFRARED_NAME_2 = "Beradrome Infrared Bex HONEY-WBERA Vault Token";
+const INFRARED2_PLUGIN = "0x1D4483F516722E600D9Ce7157bEf8092908EE4d8";
 
 // Infrared iBGT
 // get from https://infrared.finance/vaults
@@ -82,6 +88,7 @@ const INFRARED_TOKENS_5 = [IBGT];
 const INFRARED_REWARDS_5 = [HONEY];
 const INFRARED_SYMBOL_5 = "iBGT";
 const INFRARED_NAME_5 = "Beradrome Infrared iBGT Vault Token";
+const INFRARED5_PLUGIN = "0xA11935019cd3f2554d257f5Ccfa82e712f78e6A5";
 
 // Trifecta Kodiak YEET-WBERA Island
 const TRIFECTA3 = "0xE5A2ab5D2fb268E5fF43A5564e44c3309609aFF9";
@@ -91,6 +98,7 @@ const TRIFECTA3_TOKEN1 = WBERA;
 const TRIFECTA3_OTHER_REWARDS = [YEET];
 const TRIFECTA3_SYMBOL = "YEET-WBERA Island";
 const TRIFECTA3_NAME = "Beradrome Trifecta YEET-WBERA Island Vault Token";
+const TRIFECTA3_PLUGIN = "0x0D71CdcC3686535479F6B153848519eFAfa87105";
 
 // Triefcta Kodiak BERA-oBERO Island
 const TRIFECTA8 = "0xbfbEfcfAE7a58C14292B53C2CcD95bF2c5742EB0";
@@ -100,6 +108,7 @@ const TRIFECTA8_TOKEN1 = oBERO;
 const TRIFECTA8_OTHER_REWARDS = [oBERO, HONEY];
 const TRIFECTA8_SYMBOL = "BERA-oBERO Island";
 const TRIFECTA8_NAME = "Beradrome Trifecta BERA-oBERO Island Vault Token";
+const TRIFECTA8_PLUGIN = "0xA61f669A0335Ada0e5c3FE04aD8E29e7e55B51Ce";
 
 // Trifecta Kodiak HONEY-NECT Island
 const TRIFECTA9 = "0x63b0EdC427664D4330F72eEc890A86b3F98ce225";
@@ -109,6 +118,7 @@ const TRIFECTA9_TOKEN1 = NECT;
 const TRIFECTA9_OTHER_REWARDS = [POLLEN];
 const TRIFECTA9_SYMBOL = "HONEY-NECT Island";
 const TRIFECTA9_NAME = "Beradrome Trifecta HONEY-NECT Island Vault Token";
+const TRIFECTA9_PLUGIN = "0x398A242f9F9452C1fF0308D4b4bf7ae6F6323868";
 
 /*===========================  END SETTINGS  ========================*/
 /*===================================================================*/
@@ -161,65 +171,65 @@ async function getContracts() {
     "0x5e608DfC40ACcBC1B830daA9350398e8017A2E0D"
   );
 
-  // gaugeFactory = await ethers.getContractAt(
-  //   "contracts/GaugeFactory.sol:GaugeFactory",
-  //   ""
-  // );
-  // bribeFactory = await ethers.getContractAt(
-  //   "contracts/BribeFactory.sol:BribeFactory",
-  //   ""
-  // );
-  // voter = await ethers.getContractAt(
-  //   "contracts/VaultVoter.sol:VaultVoter",
-  //   ""
-  // );
+  gaugeFactory = await ethers.getContractAt(
+    "contracts/GaugeFactory.sol:GaugeFactory",
+    "0x71b54d9B707d2cE431Fb7079C03376f4B8463B34"
+  );
+  bribeFactory = await ethers.getContractAt(
+    "contracts/BribeFactory.sol:BribeFactory",
+    "0x7552B6F945C57BB99C82a4324456DE9661B7B589"
+  );
+  voter = await ethers.getContractAt(
+    "contracts/VaultVoter.sol:VaultVoter",
+    "0x1f9505Ae18755915DcD2a95f38c7560Cab149d9C"
+  );
   minter = await ethers.getContractAt(
     "contracts/Minter.sol:Minter",
     "0x8A832cd3f401f6D32689B2ea2f2E1f7009BE00AC"
   );
 
-  // multicall = await ethers.getContractAt(
-  //   "contracts/Multicall.sol:Multicall",
-  //   ""
-  // );
-  // trifectaMulticall = await ethers.getContractAt(
-  //   "contracts/TrifectaMulticall.sol:TrifectaMulticall",
-  //   ""
-  // );
-  // controller = await ethers.getContractAt(
-  //   "contracts/Controller.sol:Controller",
-  //   ""
-  // );
+  multicall = await ethers.getContractAt(
+    "contracts/Multicall.sol:Multicall",
+    "0x0a205b57f39C8E085d2c864DA1055Aa1Fe482A4b"
+  );
+  trifectaMulticall = await ethers.getContractAt(
+    "contracts/TrifectaMulticall.sol:TrifectaMulticall",
+    "0x41482D319CbB505e2ccA6Fe708f639F084B0De06"
+  );
+  controller = await ethers.getContractAt(
+    "contracts/Controller.sol:Controller",
+    "0xBCE40Bf197Efbad68dc5CF3624e16EE374A9E251"
+  );
 
-  // stationPluginFactory = await ethers.getContractAt(
-  //   "contracts/plugins/berachain/StationPluginFactory.sol:StationPluginFactory",
-  //   ""
-  // );
+  stationPluginFactory = await ethers.getContractAt(
+    "contracts/plugins/berachain/StationPluginFactory.sol:StationPluginFactory",
+    "0xB0e1edbd2D4BA5932F39E43445Cea7cA788b0A6E"
+  );
 
-  // stationPlugin = await ethers.getContractAt(
-  //   "contracts/plugins/berachain/StationPluginFactory.sol:StationPlugin",
-  //   ""
-  // );
+  stationPlugin = await ethers.getContractAt(
+    "contracts/plugins/berachain/StationPluginFactory.sol:StationPlugin",
+    STATION0_PLUGIN
+  );
 
-  // infraredPluginFactory = await ethers.getContractAt(
-  //   "contracts/plugins/berachain/InfraredPluginFactory.sol:InfraredPluginFactory",
-  //   ""
-  // );
+  infraredPluginFactory = await ethers.getContractAt(
+    "contracts/plugins/berachain/InfraredPluginFactory.sol:InfraredPluginFactory",
+    "0x1157be01468518A5422dC128ceBc1C0B900f488e"
+  );
 
-  // infraredPlugin = await ethers.getContractAt(
-  //   "contracts/plugins/berachain/InfraredPluginFactory.sol:InfraredPlugin",
-  //   ""
-  // );
+  infraredPlugin = await ethers.getContractAt(
+    "contracts/plugins/berachain/InfraredPluginFactory.sol:InfraredPlugin",
+    INFRARED0_PLUGIN
+  );
 
-  // trifectaPluginFactory = await ethers.getContractAt(
-  //   "contracts/plugins/berachain/TrifectaPluginFactory.sol:TrifectaPluginFactory",
-  //   ""
-  // );
+  trifectaPluginFactory = await ethers.getContractAt(
+    "contracts/plugins/berachain/TrifectaPluginFactory.sol:TrifectaPluginFactory",
+    "0x708CAe5A63A25B5e1b2B07df6CeBeD8934960b49"
+  );
 
-  // trifectaPlugin = await ethers.getContractAt(
-  //   "contracts/plugins/berachain/TrifectaPluginFactory.sol:TrifectaPlugin",
-  //   ""
-  // );
+  trifectaPlugin = await ethers.getContractAt(
+    "contracts/plugins/berachain/TrifectaPluginFactory.sol:TrifectaPlugin",
+    TRIFECTA3_PLUGIN
+  );
 
   console.log("Contracts Retrieved");
 }
@@ -398,22 +408,22 @@ async function verifyController() {
 async function setUpSystem(wallet) {
   console.log("Starting System Set Up");
 
-  await sleep(5000);
-  await gaugeFactory.setVoter(voter.address);
-  await sleep(5000);
-  await bribeFactory.setVoter(voter.address);
-  await sleep(5000);
-  console.log("Factories Set Up");
-
-  // await VTOKEN.setVoter(voter.address);
   // await sleep(5000);
-  // console.log("Token-Voting Set Up");
-
-  await voter.initialize(minter.address);
-  await sleep(5000);
-  // await minter.setVoter(voter.address);
+  // await gaugeFactory.setVoter(voter.address);
   // await sleep(5000);
-  // console.log("Minter Set Up");
+  // await bribeFactory.setVoter(voter.address);
+  // await sleep(5000);
+  // console.log("Factories Set Up");
+
+  await VTOKEN.setVoter(voter.address);
+  await sleep(5000);
+  console.log("Token-Voting Set Up");
+
+  // await voter.initialize(minter.address);
+  // await sleep(5000);
+  await minter.setVoter(voter.address);
+  await sleep(5000);
+  console.log("Minter Set Up");
 
   console.log("System Initialized");
 }
@@ -476,10 +486,10 @@ async function verifyStationPluginFactory() {
 async function deployStationPlugin() {
   console.log("Starting StationPlugin Deployment");
   await stationPluginFactory.createPlugin(
-    STATION0,
-    STATION0_TOKENS,
-    STATION0_SYMBOL,
-    STATION0_NAME,
+    STATION2,
+    STATION2_TOKENS,
+    STATION2_SYMBOL,
+    STATION2_NAME,
     { gasPrice: ethers.gasPrice }
   );
   await sleep(10000);
@@ -650,11 +660,11 @@ async function main() {
   // 3. Deploy Voting System
   //===================================================================
 
-  console.log("Starting Voting Deployment");
-  await deployGaugeFactory(wallet.address);
-  await deployBribeFactory(wallet.address);
-  await deployVoter();
-  await printVotingAddresses();
+  // console.log("Starting Voting Deployment");
+  // await deployGaugeFactory(wallet.address);
+  // await deployBribeFactory(wallet.address);
+  // await deployVoter();
+  // await printVotingAddresses();
 
   /*********** UPDATE getContracts() with new addresses *************/
 
@@ -721,7 +731,7 @@ async function main() {
 
   // console.log("Starting StationPlugin Deployment");
   // await deployStationPlugin();
-  //   await verifyStationPlugin();
+  // await verifyStationPlugin();
   // console.log("StationPlugin Deployed and Verified");
 
   //===================================================================
@@ -729,8 +739,8 @@ async function main() {
   //===================================================================
 
   // console.log("Starting InfraredPluginFactory Deployment");
-  //   await deployInfraredPluginFactory();
-  //   await verifyInfraredPluginFactory();
+  // await deployInfraredPluginFactory();
+  // await verifyInfraredPluginFactory();
   // console.log("InfraredPluginFactory Deployed and Verified");
 
   //===================================================================
@@ -738,8 +748,8 @@ async function main() {
   //===================================================================
 
   // console.log("Starting InfraredPlugin Deployment");
-  //   await deployInfraredPlugin();
-  //   await verifyInfraredPlugin();
+  // await deployInfraredPlugin();
+  // await verifyInfraredPlugin();
   // console.log("InfraredPlugin Deployed and Verified");
 
   //===================================================================
@@ -747,8 +757,8 @@ async function main() {
   //===================================================================
 
   // console.log("Starting TrifectaPluginFactory Deployment");
-  //   await deployTrifectaPluginFactory();
-  //   await verifyTrifectaPluginFactory();
+  // await deployTrifectaPluginFactory();
+  // await verifyTrifectaPluginFactory();
   // console.log("TrifectaPluginFactory Deployed and Verified");
 
   //===================================================================
@@ -756,82 +766,82 @@ async function main() {
   //===================================================================
 
   // console.log("Starting TrifectaPlugin Deployment");
-  //   await deployTrifectaPlugin();
-  //   await verifyTrifectaPlugin();
+  // await deployTrifectaPlugin();
+  // await verifyTrifectaPlugin();
   // console.log("TrifectaPlugin Deployed and Verified");
 
   //===================================================================
   // 13. Add Gauge Rewards
   //===================================================================
 
-  //   await voter.connect(wallet).addGaugeReward(
-  //     "",
-  //     KDK // KDK
-  //   ); // KDK added to Trifecta YEET-WBERA Island Gauge
-  //   console.log("- KDK added as gauge reward");
-  //   await voter.connect(wallet).addGaugeReward(
-  //     "",
-  //     XKDK // xKDK
-  //   ); // xKDK added to Trifecta YEET-WBERA Island Gauge
-  //   console.log("- xKDK added as gauge rewards");
+  // await voter.connect(wallet).addGaugeReward(
+  //   await voter.gauges(TRIFECTA9_PLUGIN),
+  //   KDK // KDK
+  // ); // KDK added to Trifecta YEET-WBERA Island Gauge
+  // console.log("- KDK added as gauge reward");
+  // await voter.connect(wallet).addGaugeReward(
+  //   await voter.gauges(TRIFECTA9_PLUGIN),
+  //   XKDK // xKDK
+  // ); // xKDK added to Trifecta YEET-WBERA Island Gauge
+  // console.log("- xKDK added as gauge rewards");
 
   //===================================================================
   // 10. Add plugins to voter
   //===================================================================
 
-  //   Add station plugins
+  // Add station plugins
   // console.log("Adding STATION0 to Voter");
-  // await voter.addPlugin(""); // Station Berps
-  //   await sleep(10000);
-  //   console.log("Adding STATION1 to Voter");
-  //   await voter.addPlugin(""); // Station Bex HONEY-WBERA
-  //   await sleep(10000);
-  //   console.log("Adding STATION2 to Voter");
-  //   await voter.addPlugin(""); // Station Bex HONEY-USDC
-  //   await sleep(10000);
+  // await voter.addPlugin(STATION0_PLUGIN); // Station Berps
+  // await sleep(10000);
+  // console.log("Adding STATION1 to Voter");
+  // await voter.addPlugin(STATION1_PLUGIN); // Station Bex HONEY-WBERA
+  // await sleep(10000);
+  // console.log("Adding STATION2 to Voter");
+  // await voter.addPlugin(STATION2_PLUGIN); // Station Bex HONEY-USDC
+  // await sleep(10000);
 
   //   Add infrared plugins
-  //   console.log("Adding INFRARED0 to Voter");
-  //   await voter.addPlugin(""); // Infrared Berps bHONEY
-  //   await sleep(10000);
-  //   console.log("Adding INFRARED1 to Voter");
-  //   await voter.addPlugin(""); // Infrared Bex HONEY-USDC
-  //   await sleep(10000);
-  //   console.log("Adding INFRARED2 to Voter");
-  //   await voter.addPlugin(""); // Infrared Bex HONEY-WBERA
-  //   await sleep(10000);
-  //   console.log("Adding INFRARED5 to Voter");
-  //   await voter.addPlugin(""); // Infrared iBGT
-  //   await sleep(10000);
+  // console.log("Adding INFRARED0 to Voter");
+  // await voter.addPlugin(INFRARED0_PLUGIN); // Infrared Berps bHONEY
+  // await sleep(10000);
+  // console.log("Adding INFRARED1 to Voter");
+  // await voter.addPlugin(INFRARED1_PLUGIN); // Infrared Bex HONEY-USDC
+  // await sleep(10000);
+  // console.log("Adding INFRARED2 to Voter");
+  // await voter.addPlugin(INFRARED2_PLUGIN); // Infrared Bex HONEY-WBERA
+  // await sleep(10000);
+  // console.log("Adding INFRARED5 to Voter");
+  // await voter.addPlugin(INFRARED5_PLUGIN); // Infrared iBGT
+  // await sleep(10000);
 
   //   Add trifecta plugins
-  //   console.log("Adding TRIFECTA3 to Voter");
-  //   await voter.addPlugin(""); // Kodiak Trifecta YEET-WBERA Island
-  //   await sleep(10000);
-  //   console.log("Adding TRIFECTA8 to Voter");
-  //   await voter.addPlugin(""); // Kodiak Trifecta BERA-oBERO Island
-  //   await sleep(10000);
-  //   console.log("Adding TRIFECTA9 to Voter");
-  //   await voter.addPlugin(""); // Kodiak Trifecta HONEY-NECT Island
-  //   await sleep(10000);
+  // console.log("Adding TRIFECTA3 to Voter");
+  // await voter.addPlugin(TRIFECTA3_PLUGIN); // Kodiak Trifecta YEET-WBERA Island
+  // await sleep(10000);
+  // console.log("Adding TRIFECTA8 to Voter");
+  // await voter.addPlugin(TRIFECTA8_PLUGIN); // Kodiak Trifecta BERA-oBERO Island
+  // await sleep(10000);
+  // console.log("Adding TRIFECTA9 to Voter");
+  // await voter.addPlugin(TRIFECTA9_PLUGIN); // Kodiak Trifecta HONEY-NECT Island
+  // await sleep(10000);
 
   //===================================================================
   // 13. Print Deployment
   //===================================================================
 
-  //   console.log("BerachainV2 Bartio Deployment");
-  //   console.log();
-  //   console.log("voter: ", await voter.address);
-  //   console.log("gaugeFactory: ", await gaugeFactory.address);
-  //   console.log("bribeFactory: ", await bribeFactory.address);
-  //   console.log();
-  //   console.log("multicall: ", await multicall.address);
-  //   console.log("trifectaMulticall: ", await trifectaMulticall.address);
-  //   console.log("controller: ", await controller.address);
-  //   console.log();
-  //   console.log("StationPluginFactory: ", await stationPluginFactory.address);
-  //   console.log("InfraredPluginFactory: ", await infraredPluginFactory.address);
-  //   console.log("TrifectaPluginFactory: ", await trifectaPluginFactory.address);
+  // console.log("BerachainV2 Bartio Deployment");
+  // console.log();
+  // console.log("voter: ", await voter.address);
+  // console.log("gaugeFactory: ", await gaugeFactory.address);
+  // console.log("bribeFactory: ", await bribeFactory.address);
+  // console.log();
+  // console.log("multicall: ", await multicall.address);
+  // console.log("trifectaMulticall: ", await trifectaMulticall.address);
+  // console.log("controller: ", await controller.address);
+  // console.log();
+  // console.log("StationPluginFactory: ", await stationPluginFactory.address);
+  // console.log("InfraredPluginFactory: ", await infraredPluginFactory.address);
+  // console.log("TrifectaPluginFactory: ", await trifectaPluginFactory.address);
   // console.log();
   // console.log("Reward Vault: ", await voter.rewardVault());
   // console.log("Vault Token: ", await voter.vaultToken());
@@ -840,35 +850,35 @@ async function main() {
   // 13. Print Plugins
   //===================================================================
 
-  //   let plugins = [
-  //     "",
-  //     "",
-  //     "",
-  //     "",
-  //     "",
-  //     "",
-  //     "",
-  //     "",
-  //     "",
-  //     "",
-  //   ];
+  // let plugins = [
+  //   STATION0_PLUGIN,
+  //   STATION1_PLUGIN,
+  //   STATION2_PLUGIN,
+  //   INFRARED0_PLUGIN,
+  //   INFRARED1_PLUGIN,
+  //   INFRARED2_PLUGIN,
+  //   INFRARED5_PLUGIN,
+  //   TRIFECTA3_PLUGIN,
+  //   TRIFECTA8_PLUGIN,
+  //   TRIFECTA9_PLUGIN,
+  // ];
 
-  //   for (let i = 0; i < plugins.length; i++) {
-  //     let plugin = await controller.getPlugin(plugins[i]);
+  // for (let i = 0; i < plugins.length; i++) {
+  //   let plugin = await controller.getPlugin(plugins[i]);
 
-  //     console.log("Protocol: ", plugin.protocol);
-  //     console.log("Name: ", plugin.name);
-  //     console.log("Token: ", plugin.token);
-  //     console.log("Plugin: ", plugin.plugin);
-  //     console.log("Gauge: ", plugin.gauge);
-  //     console.log("Bribe: ", plugin.bribe);
-  //     console.log("Vault Token: ", plugin.vaultToken);
-  //     console.log("Reward Vault: ", plugin.rewardVault);
-  //     console.log();
-  //   }
+  //   console.log("Protocol: ", plugin.protocol);
+  //   console.log("Name: ", plugin.name);
+  //   console.log("Token: ", plugin.token);
+  //   console.log("Plugin: ", plugin.plugin);
+  //   console.log("Gauge: ", plugin.gauge);
+  //   console.log("Bribe: ", plugin.bribe);
+  //   console.log("Vault Token: ", plugin.vaultToken);
+  //   console.log("Reward Vault: ", plugin.rewardVault);
+  //   console.log();
+  // }
 
   //===================================================================
-  // 13. Print Plugins
+  // 13. Distro
   //===================================================================
 
   // console.log("Distributing Rewards");
@@ -877,22 +887,22 @@ async function main() {
   // await fees.distribute();
   // console.log("Fees Rewards Distributed");
   // await voter.distributeToBribes([
-  //   "", // Station Berps bHONEY
-  //   "", // Station Bex HONEY-WBERA
-  //   "", // Station Bex HONEY-USDC
+  //   STATION0_PLUGIN, // Station Berps bHONEY
+  //   STATION1_PLUGIN, // Station Bex HONEY-WBERA
+  //   STATION2_PLUGIN, // Station Bex HONEY-USDC
   // ]);
   // console.log("Station Bribe Rewards Distributed");
   // await voter.distributeToBribes([
-  //   "", // Infrared Berps bHONEY
-  //   "", // Infrared Bex HONEY-USDC
-  //   "", // Infrared Bex HONEY-WBERA
-  //   "", // Infrared HONEY-WBTC Plugin
+  //   INFRARED0_PLUGIN, // Infrared Berps bHONEY
+  //   INFRARED1_PLUGIN, // Infrared Bex HONEY-USDC
+  //   INFRARED2_PLUGIN, // Infrared Bex HONEY-WBERA
+  //   INFRARED5_PLUGIN, // Infrared HONEY-WBTC Plugin
   // ]);
   // console.log("Infrared Bribe Rewards Distributed");
   // await voter.distributeToBribes([
-  //   "", // Kodiak Trifecta YEET-WBERA Island
-  //   "", // Kodiak Trifecta BERA-oBERO Island
-  //   "", // Kodiak Trifecta HONEY-NECT Island
+  //   TRIFECTA3_PLUGIN, // Kodiak Trifecta YEET-WBERA Island
+  //   TRIFECTA8_PLUGIN, // Kodiak Trifecta BERA-oBERO Island
+  //   TRIFECTA9_PLUGIN, // Kodiak Trifecta HONEY-NECT Island
   // ]);
   // console.log("Kodiak TrifectaBribe Rewards Distributed");
 }
