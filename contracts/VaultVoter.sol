@@ -37,7 +37,7 @@ contract VaultToken is ERC20, Ownable {
 
 /**
  * @title VaultVoter
- * @author heesho
+ * @author heesho modified from solidity
  * 
  * Voter contract is used to vote on plugins. When a Plugin is added a Gauge and Bribe are deployed for that Plugin.
  * VTOKEN holders can cast votes on Plugins in the Voter contract. The Voter will distribute OTOKEN to those Plugin's
@@ -378,8 +378,10 @@ contract VaultVoter is ReentrancyGuard, Ownable {
         }
 
         // Berachain Rewards Vault Delegate Stake
-        IBerachainRewardsVault(rewardVault).delegateWithdraw(account, usedWeights[account]);
-        VaultToken(vaultToken).burn(address(this), usedWeights[account]);
+        if (usedWeights[account] > 0) {
+            IBerachainRewardsVault(rewardVault).delegateWithdraw(account, usedWeights[account]);
+            VaultToken(vaultToken).burn(address(this), usedWeights[account]);
+        }
 
         totalWeight -= uint256(_totalWeight);
         usedWeights[account] = 0;

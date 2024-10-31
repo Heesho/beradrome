@@ -161,65 +161,65 @@ async function getContracts() {
     "0x5e608DfC40ACcBC1B830daA9350398e8017A2E0D"
   );
 
-  gaugeFactory = await ethers.getContractAt(
-    "contracts/GaugeFactory.sol:GaugeFactory",
-    "0x7Be2f10657e9caE26362928bBC5BC57213daCbfC"
-  );
-  bribeFactory = await ethers.getContractAt(
-    "contracts/BribeFactory.sol:BribeFactory",
-    "0xe4dc780a0cd539C9a76f02a1315EdF50561eED6d"
-  );
-  voter = await ethers.getContractAt(
-    "contracts/VaultVoter.sol:VaultVoter",
-    "0xCb31ac33f2fa669FD043fA5539f5b28a0Bd21339"
-  );
+  // gaugeFactory = await ethers.getContractAt(
+  //   "contracts/GaugeFactory.sol:GaugeFactory",
+  //   ""
+  // );
+  // bribeFactory = await ethers.getContractAt(
+  //   "contracts/BribeFactory.sol:BribeFactory",
+  //   ""
+  // );
+  // voter = await ethers.getContractAt(
+  //   "contracts/VaultVoter.sol:VaultVoter",
+  //   ""
+  // );
   minter = await ethers.getContractAt(
     "contracts/Minter.sol:Minter",
     "0x8A832cd3f401f6D32689B2ea2f2E1f7009BE00AC"
   );
 
-  multicall = await ethers.getContractAt(
-    "contracts/Multicall.sol:Multicall",
-    "0x1cB91c6095F7C68E32d788316d547b278eDc49d0"
-  );
-  trifectaMulticall = await ethers.getContractAt(
-    "contracts/TrifectaMulticall.sol:TrifectaMulticall",
-    "0xF6b0EBa9Ff3caC2e3261084A7f3B7714aF4479d4"
-  );
-  controller = await ethers.getContractAt(
-    "contracts/Controller.sol:Controller",
-    "0x086c00d207f05DB520c58A2a5cC7B2D29226968D"
-  );
+  // multicall = await ethers.getContractAt(
+  //   "contracts/Multicall.sol:Multicall",
+  //   ""
+  // );
+  // trifectaMulticall = await ethers.getContractAt(
+  //   "contracts/TrifectaMulticall.sol:TrifectaMulticall",
+  //   ""
+  // );
+  // controller = await ethers.getContractAt(
+  //   "contracts/Controller.sol:Controller",
+  //   ""
+  // );
 
-  stationPluginFactory = await ethers.getContractAt(
-    "contracts/plugins/berachain/StationPluginFactory.sol:StationPluginFactory",
-    "0x8Ffd2893e0BCf4f822745Db64d61d5bd5824DA2D"
-  );
+  // stationPluginFactory = await ethers.getContractAt(
+  //   "contracts/plugins/berachain/StationPluginFactory.sol:StationPluginFactory",
+  //   ""
+  // );
 
-  stationPlugin = await ethers.getContractAt(
-    "contracts/plugins/berachain/StationPluginFactory.sol:StationPlugin",
-    "0xD9431A6800Fbd31089a7B816fdd4689f413C07cc"
-  );
+  // stationPlugin = await ethers.getContractAt(
+  //   "contracts/plugins/berachain/StationPluginFactory.sol:StationPlugin",
+  //   ""
+  // );
 
-  infraredPluginFactory = await ethers.getContractAt(
-    "contracts/plugins/berachain/InfraredPluginFactory.sol:InfraredPluginFactory",
-    "0x490Ce0b0E8c5d4B7f4FD386cA8Bf71b799ECD6BB"
-  );
+  // infraredPluginFactory = await ethers.getContractAt(
+  //   "contracts/plugins/berachain/InfraredPluginFactory.sol:InfraredPluginFactory",
+  //   ""
+  // );
 
-  infraredPlugin = await ethers.getContractAt(
-    "contracts/plugins/berachain/InfraredPluginFactory.sol:InfraredPlugin",
-    "0xa792a5f7d9B1Bfd572e6b7AbBe9344ca3eAE9345"
-  );
+  // infraredPlugin = await ethers.getContractAt(
+  //   "contracts/plugins/berachain/InfraredPluginFactory.sol:InfraredPlugin",
+  //   ""
+  // );
 
-  trifectaPluginFactory = await ethers.getContractAt(
-    "contracts/plugins/berachain/TrifectaPluginFactory.sol:TrifectaPluginFactory",
-    "0xBa35c6A886bcd4A2C9F5d99040E008f58B785279"
-  );
+  // trifectaPluginFactory = await ethers.getContractAt(
+  //   "contracts/plugins/berachain/TrifectaPluginFactory.sol:TrifectaPluginFactory",
+  //   ""
+  // );
 
-  trifectaPlugin = await ethers.getContractAt(
-    "contracts/plugins/berachain/TrifectaPluginFactory.sol:TrifectaPlugin",
-    "0x7852c68E4959f056BC2DFD952C9C892daBe75Ce8"
-  );
+  // trifectaPlugin = await ethers.getContractAt(
+  //   "contracts/plugins/berachain/TrifectaPluginFactory.sol:TrifectaPlugin",
+  //   ""
+  // );
 
   console.log("Contracts Retrieved");
 }
@@ -398,19 +398,19 @@ async function verifyController() {
 async function setUpSystem(wallet) {
   console.log("Starting System Set Up");
 
-  //   await sleep(5000);
-  //   await gaugeFactory.setVoter(voter.address);
-  //   await sleep(5000);
-  //   await bribeFactory.setVoter(voter.address);
-  //   await sleep(5000);
-  //   console.log("Factories Set Up");
+  await sleep(5000);
+  await gaugeFactory.setVoter(voter.address);
+  await sleep(5000);
+  await bribeFactory.setVoter(voter.address);
+  await sleep(5000);
+  console.log("Factories Set Up");
 
   // await VTOKEN.setVoter(voter.address);
   // await sleep(5000);
   // console.log("Token-Voting Set Up");
 
-  // await voter.initialize(minter.address);
-  // await sleep(5000);
+  await voter.initialize(minter.address);
+  await sleep(5000);
   // await minter.setVoter(voter.address);
   // await sleep(5000);
   // console.log("Minter Set Up");
@@ -476,10 +476,10 @@ async function verifyStationPluginFactory() {
 async function deployStationPlugin() {
   console.log("Starting StationPlugin Deployment");
   await stationPluginFactory.createPlugin(
-    STATION2,
-    STATION2_TOKENS,
-    STATION2_SYMBOL,
-    STATION2_NAME,
+    STATION0,
+    STATION0_TOKENS,
+    STATION0_SYMBOL,
+    STATION0_NAME,
     { gasPrice: ethers.gasPrice }
   );
   await sleep(10000);
@@ -650,11 +650,11 @@ async function main() {
   // 3. Deploy Voting System
   //===================================================================
 
-  //   console.log("Starting Voting Deployment");
-  //   await deployGaugeFactory(wallet.address);
-  //   await deployBribeFactory(wallet.address);
-  //   await deployVoter();
-  //   await printVotingAddresses();
+  console.log("Starting Voting Deployment");
+  await deployGaugeFactory(wallet.address);
+  await deployBribeFactory(wallet.address);
+  await deployVoter();
+  await printVotingAddresses();
 
   /*********** UPDATE getContracts() with new addresses *************/
 
@@ -662,11 +662,11 @@ async function main() {
   // 4. Deploy Ancillary Contracts
   //===================================================================
 
-  //   console.log("Starting Ancillary Deployment");
-  //   await deployMulticall();
-  //   await deployTrifectaMulticall();
-  //   await deployController();
-  //   await printAncillaryAddresses();
+  // console.log("Starting Ancillary Deployment");
+  // await deployMulticall();
+  // await deployTrifectaMulticall();
+  // await deployController();
+  // await printAncillaryAddresses();
 
   /*********** UPDATE getContracts() with new addresses *************/
 
@@ -674,21 +674,21 @@ async function main() {
   // 6. Verify Voting Contracts
   //===================================================================
 
-  //   console.log("Starting Voting Verification");
-  //   await verifyGaugeFactory(wallet.address);
-  //   await verifyBribeFactory(wallet.address);
-  //   await verifyVoter();
-  //   console.log("Voting Contracts Verified");
+  // console.log("Starting Voting Verification");
+  // await verifyGaugeFactory(wallet.address);
+  // await verifyBribeFactory(wallet.address);
+  // await verifyVoter();
+  // console.log("Voting Contracts Verified");
 
   //===================================================================
   // 7. Verify Ancillary Contracts
   //===================================================================
 
-  //   console.log("Starting Ancillary Verification");
-  //   await verifyMulticall();
-  //   await verifyTrifectaMulticall();
-  //   await verifyController();
-  //   console.log("Ancillary Contracts Verified");
+  // console.log("Starting Ancillary Verification");
+  // await verifyMulticall();
+  // await verifyTrifectaMulticall();
+  // await verifyController();
+  // console.log("Ancillary Contracts Verified");
 
   //===================================================================
   // 8. Set Up System
@@ -711,8 +711,8 @@ async function main() {
   //===================================================================
 
   //   console.log("Starting StationPlugin Deployment");
-  //   await deployStationPluginFactory();
-  //   await verifyStationPluginFactory();
+  // await deployStationPluginFactory();
+  // await verifyStationPluginFactory();
   //   console.log("StationPlugin Deployed and Verified");
 
   //===================================================================
@@ -720,7 +720,7 @@ async function main() {
   //===================================================================
 
   // console.log("Starting StationPlugin Deployment");
-  //   await deployStationPlugin();
+  // await deployStationPlugin();
   //   await verifyStationPlugin();
   // console.log("StationPlugin Deployed and Verified");
 
@@ -765,12 +765,12 @@ async function main() {
   //===================================================================
 
   //   await voter.connect(wallet).addGaugeReward(
-  //     "0x08C90dCD955DD6fCF34B0222d8C65DB96dc671Ff",
+  //     "",
   //     KDK // KDK
   //   ); // KDK added to Trifecta YEET-WBERA Island Gauge
   //   console.log("- KDK added as gauge reward");
   //   await voter.connect(wallet).addGaugeReward(
-  //     "0x08C90dCD955DD6fCF34B0222d8C65DB96dc671Ff",
+  //     "",
   //     XKDK // xKDK
   //   ); // xKDK added to Trifecta YEET-WBERA Island Gauge
   //   console.log("- xKDK added as gauge rewards");
@@ -780,39 +780,39 @@ async function main() {
   //===================================================================
 
   //   Add station plugins
-  //   console.log("Adding STATION0 to Voter");
-  //   await voter.addPlugin("0xD9431A6800Fbd31089a7B816fdd4689f413C07cc"); // Station Berps bHONEY
+  // console.log("Adding STATION0 to Voter");
+  // await voter.addPlugin(""); // Station Berps
   //   await sleep(10000);
   //   console.log("Adding STATION1 to Voter");
-  //   await voter.addPlugin("0x716129c60B5e9aCE74330becb2dC82DC45386679"); // Station Bex HONEY-WBERA
+  //   await voter.addPlugin(""); // Station Bex HONEY-WBERA
   //   await sleep(10000);
   //   console.log("Adding STATION2 to Voter");
-  //   await voter.addPlugin("0x7dcDBd9CaDfD8Fad1622f83d1F4d6b527881fDA6"); // Station Bex HONEY-USDC
+  //   await voter.addPlugin(""); // Station Bex HONEY-USDC
   //   await sleep(10000);
 
   //   Add infrared plugins
   //   console.log("Adding INFRARED0 to Voter");
-  //   await voter.addPlugin("0xa792a5f7d9B1Bfd572e6b7AbBe9344ca3eAE9345"); // Infrared Berps bHONEY
+  //   await voter.addPlugin(""); // Infrared Berps bHONEY
   //   await sleep(10000);
   //   console.log("Adding INFRARED1 to Voter");
-  //   await voter.addPlugin("0xc3520c7F0d101c4b4Cc2089D9896aD8C3C1c2691"); // Infrared Bex HONEY-USDC
+  //   await voter.addPlugin(""); // Infrared Bex HONEY-USDC
   //   await sleep(10000);
   //   console.log("Adding INFRARED2 to Voter");
-  //   await voter.addPlugin("0x1b5f2161fF46eEd74dC777F7BD9a78d565036349"); // Infrared Bex HONEY-WBERA
+  //   await voter.addPlugin(""); // Infrared Bex HONEY-WBERA
   //   await sleep(10000);
   //   console.log("Adding INFRARED5 to Voter");
-  //   await voter.addPlugin("0xB6a8d4fb828FA9014568FbF85A65485194356C85"); // Infrared iBGT
+  //   await voter.addPlugin(""); // Infrared iBGT
   //   await sleep(10000);
 
   //   Add trifecta plugins
   //   console.log("Adding TRIFECTA3 to Voter");
-  //   await voter.addPlugin("0x7852c68E4959f056BC2DFD952C9C892daBe75Ce8"); // Kodiak Trifecta YEET-WBERA Island
+  //   await voter.addPlugin(""); // Kodiak Trifecta YEET-WBERA Island
   //   await sleep(10000);
   //   console.log("Adding TRIFECTA8 to Voter");
-  //   await voter.addPlugin("0x6392624B35CB280048311ac66e320a3F45f4fDCa"); // Kodiak Trifecta BERA-oBERO Island
+  //   await voter.addPlugin(""); // Kodiak Trifecta BERA-oBERO Island
   //   await sleep(10000);
   //   console.log("Adding TRIFECTA9 to Voter");
-  //   await voter.addPlugin("0xcc6Cb6821DF1629297C8CC8998229c600DE4ab0d"); // Kodiak Trifecta HONEY-NECT Island
+  //   await voter.addPlugin(""); // Kodiak Trifecta HONEY-NECT Island
   //   await sleep(10000);
 
   //===================================================================
@@ -841,16 +841,16 @@ async function main() {
   //===================================================================
 
   //   let plugins = [
-  //     "0xD9431A6800Fbd31089a7B816fdd4689f413C07cc",
-  //     "0x716129c60B5e9aCE74330becb2dC82DC45386679",
-  //     "0x7dcDBd9CaDfD8Fad1622f83d1F4d6b527881fDA6",
-  //     "0xa792a5f7d9B1Bfd572e6b7AbBe9344ca3eAE9345",
-  //     "0xc3520c7F0d101c4b4Cc2089D9896aD8C3C1c2691",
-  //     "0x1b5f2161fF46eEd74dC777F7BD9a78d565036349",
-  //     "0xB6a8d4fb828FA9014568FbF85A65485194356C85",
-  //     "0x7852c68E4959f056BC2DFD952C9C892daBe75Ce8",
-  //     "0x6392624B35CB280048311ac66e320a3F45f4fDCa",
-  //     "0xcc6Cb6821DF1629297C8CC8998229c600DE4ab0d",
+  //     "",
+  //     "",
+  //     "",
+  //     "",
+  //     "",
+  //     "",
+  //     "",
+  //     "",
+  //     "",
+  //     "",
   //   ];
 
   //   for (let i = 0; i < plugins.length; i++) {
@@ -877,22 +877,22 @@ async function main() {
   // await fees.distribute();
   // console.log("Fees Rewards Distributed");
   // await voter.distributeToBribes([
-  //   "0xD9431A6800Fbd31089a7B816fdd4689f413C07cc", // Station Berps bHONEY
-  //   "0x716129c60B5e9aCE74330becb2dC82DC45386679", // Station Bex HONEY-WBERA
-  //   "0x7dcDBd9CaDfD8Fad1622f83d1F4d6b527881fDA6", // Station Bex HONEY-USDC
+  //   "", // Station Berps bHONEY
+  //   "", // Station Bex HONEY-WBERA
+  //   "", // Station Bex HONEY-USDC
   // ]);
   // console.log("Station Bribe Rewards Distributed");
   // await voter.distributeToBribes([
-  //   "0xa792a5f7d9B1Bfd572e6b7AbBe9344ca3eAE9345", // Infrared Berps bHONEY
-  //   "0xc3520c7F0d101c4b4Cc2089D9896aD8C3C1c2691", // Infrared Bex HONEY-USDC
-  //   "0x1b5f2161fF46eEd74dC777F7BD9a78d565036349", // Infrared Bex HONEY-WBERA
-  //   "0xB6a8d4fb828FA9014568FbF85A65485194356C85", // Infrared HONEY-WBTC Plugin
+  //   "", // Infrared Berps bHONEY
+  //   "", // Infrared Bex HONEY-USDC
+  //   "", // Infrared Bex HONEY-WBERA
+  //   "", // Infrared HONEY-WBTC Plugin
   // ]);
   // console.log("Infrared Bribe Rewards Distributed");
   // await voter.distributeToBribes([
-  //   "0x7852c68E4959f056BC2DFD952C9C892daBe75Ce8", // Kodiak Trifecta YEET-WBERA Island
-  //   "0x6392624B35CB280048311ac66e320a3F45f4fDCa", // Kodiak Trifecta BERA-oBERO Island
-  //   "0xcc6Cb6821DF1629297C8CC8998229c600DE4ab0d", // Kodiak Trifecta HONEY-NECT Island
+  //   "", // Kodiak Trifecta YEET-WBERA Island
+  //   "", // Kodiak Trifecta BERA-oBERO Island
+  //   "", // Kodiak Trifecta HONEY-NECT Island
   // ]);
   // console.log("Kodiak TrifectaBribe Rewards Distributed");
 }
