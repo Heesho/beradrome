@@ -49,9 +49,9 @@ function timer(t) {
 }
 
 const WBERA_ADDR = "0x7507c1dc16935B82698e4C63f2746A2fCf994dF8";
-const HONEY_ADDR = "0x0E4aaF1351de4c0264C5c7056Ef3777b41BD8e03";
-const BHONEY_ADDR = "0x1306D3c36eC7E38dd2c128fBe3097C2C2449af64";
-const BHONEY_HOLDER = "0xd5AD558b09Ebfe1b7F037db7398C456A0ba56409";
+const NECT_ADDR = "0xf5AFCF50006944d17226978e594D4D25f4f92B40";
+const SNECT_ADDR = "0x3a7f6f2F27f7794a7820a32313F4a68e36580864";
+const SNECT_HOLDER = "0x8F8532Dd9494840eb9887243242FEF5d3ecc08b1";
 
 let owner, multisig, treasury, user0, user1, user2;
 let vaultFactory;
@@ -63,10 +63,10 @@ let VTOKENFactory,
   bribeFactory;
 let minter, voter, fees, rewarder, governance, multicall, pluginFactory;
 let TOKEN, VTOKEN, OTOKEN, BASE;
-let WBERA, BHONEY;
+let WBERA, SNECT;
 let plugin0, gauge0, bribe0;
 
-describe.only("berachain: berapaw testing", function () {
+describe("berachain: berapaw testing 1", function () {
   before("Initial set up", async function () {
     console.log("Begin Initialization");
 
@@ -80,7 +80,7 @@ describe.only("berachain: berapaw testing", function () {
 
     // initialize ERC20s
     WBERA = new ethers.Contract(WBERA_ADDR, ERC20_ABI, provider);
-    BHONEY = new ethers.Contract(BHONEY_ADDR, ERC20_ABI, provider);
+    SNECT = new ethers.Contract(SNECT_ADDR, ERC20_ABI, provider);
     console.log("- ERC20s Initialized");
 
     // initialize ERC20Mocks
@@ -250,25 +250,25 @@ describe.only("berachain: berapaw testing", function () {
 
     // initialize Plugin Factory
     const pluginFactoryArtifact = await ethers.getContractFactory(
-      "StationPluginFactory"
+      "BeraPawPluginFactory"
     );
     const pluginFactoryContract = await pluginFactoryArtifact.deploy(
       voter.address
     );
     pluginFactory = await ethers.getContractAt(
-      "StationPluginFactory",
+      "BeraPawPluginFactory",
       pluginFactoryContract.address
     );
     console.log("- PluginFactory Initialized");
 
     await pluginFactory.createPlugin(
-      BHONEY_ADDR,
-      [HONEY_ADDR],
-      "BERPS bHONEY",
-      "BERPS bHONEY Vault Token"
+      SNECT_ADDR,
+      [NECT_ADDR],
+      "Beraborrow sNECT",
+      "Beraborrow sNECT Vault Token"
     );
     plugin0 = await ethers.getContractAt(
-      "contracts/plugins/berachain/StationPluginFactory.sol:StationPlugin",
+      "contracts/plugins/berachain/BeraPawPluginFactory.sol:BeraPawPlugin",
       await pluginFactory.last_plugin()
     );
 
@@ -292,48 +292,43 @@ describe.only("berachain: berapaw testing", function () {
 
   it("first test", async function () {
     console.log("******************************************************");
-    console.log(
-      "Balance of bHONEY holder",
-      await BHONEY.balanceOf(BHONEY_HOLDER)
-    );
+    console.log("Balance of sNECT holder", await SNECT.balanceOf(SNECT_HOLDER));
   });
 
-  /*
-
-  it("Impersonate bHONEY holder and send to user0", async function () {
+  it("Impersonate sNECT holder and send to user0", async function () {
     console.log("******************************************************");
     await network.provider.request({
       method: "hardhat_impersonateAccount",
-      params: [BHONEY_HOLDER],
+      params: [SNECT_HOLDER],
     });
-    const signer = ethers.provider.getSigner(BHONEY_HOLDER);
+    const signer = ethers.provider.getSigner(SNECT_HOLDER);
 
-    await BHONEY.connect(signer).transfer(
+    await SNECT.connect(signer).transfer(
       user0.address,
-      await BHONEY.connect(owner).balanceOf(BHONEY_HOLDER)
+      await SNECT.connect(owner).balanceOf(SNECT_HOLDER)
     );
 
     console.log(
-      "Holder bHONEY balance: ",
-      divDec(await BHONEY.connect(owner).balanceOf(BHONEY_HOLDER))
+      "Holder sNECT balance: ",
+      divDec(await SNECT.connect(owner).balanceOf(SNECT_HOLDER))
     );
     console.log(
-      "User0 bHONEY balance: ",
-      divDec(await BHONEY.connect(owner).balanceOf(user0.address))
+      "User0 sNECT balance: ",
+      divDec(await SNECT.connect(owner).balanceOf(user0.address))
     );
   });
 
   it("User0 deposits in all plugins", async function () {
     console.log("******************************************************");
-    await BHONEY.connect(user0).approve(
+    await SNECT.connect(user0).approve(
       plugin0.address,
-      await BHONEY.connect(owner).balanceOf(user0.address)
+      await SNECT.connect(owner).balanceOf(user0.address)
     );
     await plugin0
       .connect(user0)
       .depositFor(
         user0.address,
-        await BHONEY.connect(owner).balanceOf(user0.address)
+        await SNECT.connect(owner).balanceOf(user0.address)
       );
   });
 
@@ -652,6 +647,4 @@ describe.only("berachain: berapaw testing", function () {
     console.log("Balance Deposited: ", divDec(res.accountStakedBalance));
     console.log("Earned OTOKEN: ", divDec(res.accountEarnedOTOKEN));
   });
-
-  */
 });

@@ -29,6 +29,7 @@ const PAW = "0xB43fd1dC4f02d81f962E98203b2cc4FD9E342964";
 const IBGT = "0x46efc86f0d7455f135cc9df501673739d513e982";
 const KDK = "0xfd27998fa0eaB1A6372Db14Afd4bF7c4a58C5364";
 const XKDK = "0x414B50157a5697F14e91417C5275A7496DcF429D";
+const LBGT = "0x32Cf940DB5d7ea3e95e799A805B1471341241264";
 
 // Station Berps bHONEY
 // get from https://bartio.berps.berachain.com/vault
@@ -120,6 +121,27 @@ const TRIFECTA9_SYMBOL = "HONEY-NECT Island";
 const TRIFECTA9_NAME = "Beradrome Trifecta HONEY-NECT Island Vault Token";
 const TRIFECTA9_PLUGIN = "0x398A242f9F9452C1fF0308D4b4bf7ae6F6323868";
 
+// BeraPaw Beraborrow sNECT
+const BERAPAW0 = "0x3a7f6f2F27f7794a7820a32313F4a68e36580864";
+const BERAPAW0_TOKENS = [NECT];
+const BERAPAW0_SYMBOL = "Beraborrow sNECT";
+const BERAPAW0_NAME = "Beradrome BeraPaw Beraborrow sNECT Vault Token";
+const BERAPAW0_PLUGIN = "0x27502F04872F5b7e82e33D362edAfFcFdB7fC840";
+
+// BeraPaw Bex HONEY-WBERA
+const BERAPAW1 = "0xd28d852cbcc68DCEC922f6d5C7a8185dBaa104B7";
+const BERAPAW1_TOKENS = [HONEY, WBERA];
+const BERAPAW1_SYMBOL = "Bex HONEY-WBERA";
+const BERAPAW1_NAME = "Beradrome BeraPaw Bex HONEY-WBERA Vault Token";
+const BERAPAW1_PLUGIN = "0x445B03940c78bc571c8e70C6973436Dfd80129A2";
+
+// BeraPaw Bex PAW-HONEY
+const BERAPAW2 = "0xa51afAF359d044F8e56fE74B9575f23142cD4B76";
+const BERAPAW2_TOKENS = [PAW, HONEY];
+const BERAPAW2_SYMBOL = "Bex PAW-HONEY";
+const BERAPAW2_NAME = "Beradrome BeraPaw Bex PAW-HONEY Vault Token";
+const BERAPAW2_PLUGIN = "0xF89F4fdE1Bf970404160eD7B9F4758B0b1ae266D";
+
 /*===========================  END SETTINGS  ========================*/
 /*===================================================================*/
 
@@ -141,6 +163,9 @@ let infraredPluginFactory;
 
 let trifectaPlugin;
 let trifectaPluginFactory;
+
+let berapawPlugin;
+let berapawPluginFactory;
 
 /*===================================================================*/
 /*===========================  CONTRACT DATA  =======================*/
@@ -229,6 +254,16 @@ async function getContracts() {
   trifectaPlugin = await ethers.getContractAt(
     "contracts/plugins/berachain/TrifectaPluginFactory.sol:TrifectaPlugin",
     TRIFECTA3_PLUGIN
+  );
+
+  berapawPluginFactory = await ethers.getContractAt(
+    "contracts/plugins/berachain/BeraPawPluginFactory.sol:BeraPawPluginFactory",
+    "0xd815EA83B1F28f3524d8C62d08cE4b14837eE726"
+  );
+
+  berapawPlugin = await ethers.getContractAt(
+    "contracts/plugins/berachain/BeraPawPluginFactory.sol:BeraPawPlugin",
+    BERAPAW0_PLUGIN
   );
 
   console.log("Contracts Retrieved");
@@ -650,6 +685,70 @@ async function verifyTrifectaPlugin() {
   });
 }
 
+async function deployBeraPawPluginFactory() {
+  console.log("Starting BeraPawPluginFactory Deployment");
+  const berapawPluginFactoryArtifact = await ethers.getContractFactory(
+    "BeraPawPluginFactory"
+  );
+  const berapawPluginFactoryContract =
+    await berapawPluginFactoryArtifact.deploy(voter.address, {
+      gasPrice: ethers.gasPrice,
+    });
+  berapawPluginFactory = await berapawPluginFactoryContract.deployed();
+  console.log(
+    "BeraPawPluginFactory Deployed at:",
+    berapawPluginFactory.address
+  );
+}
+
+async function verifyBeraPawPluginFactory() {
+  console.log("Starting BeraPawPluginFactory Verification");
+  await hre.run("verify:verify", {
+    address: berapawPluginFactory.address,
+    contract:
+      "contracts/plugins/berachain/BeraPawPluginFactory.sol:BeraPawPluginFactory",
+    constructorArguments: [voter.address],
+  });
+  console.log("BeraPawPluginFactory Verified");
+}
+
+async function deployBeraPawPlugin() {
+  console.log("Starting BeraPawPlugin Deployment");
+  await berapawPluginFactory.createPlugin(
+    BERAPAW2,
+    BERAPAW2_TOKENS,
+    BERAPAW2_SYMBOL,
+    BERAPAW2_NAME,
+    { gasPrice: ethers.gasPrice }
+  );
+  await sleep(10000);
+  console.log(
+    "BeraPawPlugin Deployed at:",
+    await berapawPluginFactory.last_plugin()
+  );
+}
+
+async function verifyBeraPawPlugin() {
+  console.log("Starting BeraPawPlugin Verification");
+  await hre.run("verify:verify", {
+    address: berapawPlugin.address,
+    contract:
+      "contracts/plugins/berachain/BeraPawPluginFactory.sol:BeraPawPlugin",
+    constructorArguments: [
+      BERAPAW0,
+      voter.address,
+      BERAPAW0_TOKENS,
+      [LBGT],
+      VAULT_FACTORY,
+      "0x72e222116fC6063f4eE5cA90A6C59916AAD8352a",
+      "Beraborrow sNECT",
+      BERAPAW0_SYMBOL,
+      BERAPAW0_NAME,
+    ],
+  });
+  console.log("BeraPawPlugin Verified");
+}
+
 async function main() {
   const [wallet] = await ethers.getSigners();
   console.log("Using wallet: ", wallet.address);
@@ -771,6 +870,24 @@ async function main() {
   // console.log("TrifectaPlugin Deployed and Verified");
 
   //===================================================================
+  // 19. Deploy BeraPaw Plugin Factory
+  //===================================================================
+
+  // console.log("Starting BeraPawPluginFactory Deployment");
+  // await deployBeraPawPluginFactory();
+  // await verifyBeraPawPluginFactory();
+  // console.log("BeraPawPluginFactory Deployed and Verified");
+
+  //===================================================================
+  // 20. Deploy BeraPaw Plugin
+  //===================================================================
+
+  // console.log("Starting BeraPawPlugin Deployment");
+  // await deployBeraPawPlugin();
+  // await verifyBeraPawPlugin();
+  // console.log("BeraPawPlugin Deployed and Verified");
+
+  //===================================================================
   // 13. Add Gauge Rewards
   //===================================================================
 
@@ -825,6 +942,17 @@ async function main() {
   // await voter.addPlugin(TRIFECTA9_PLUGIN); // Kodiak Trifecta HONEY-NECT Island
   // await sleep(10000);
 
+  // Add berapaw plugins
+  // console.log("Adding BERAPAW0 to Voter");
+  // await voter.addPlugin(BERAPAW0_PLUGIN); // BeraPaw Beraborrow sNECT
+  // await sleep(10000);
+  // console.log("Adding BERAPAW1 to Voter");
+  // await voter.addPlugin(BERAPAW1_PLUGIN); // BeraPaw Bex HONEY-WBERA
+  // await sleep(10000);
+  // console.log("Adding BERAPAW2 to Voter");
+  // await voter.addPlugin(BERAPAW2_PLUGIN); // BeraPaw Bex PAW-HONEY
+  // await sleep(10000);
+
   //===================================================================
   // 13. Print Deployment
   //===================================================================
@@ -861,6 +989,9 @@ async function main() {
   //   TRIFECTA3_PLUGIN,
   //   TRIFECTA8_PLUGIN,
   //   TRIFECTA9_PLUGIN,
+  //   BERAPAW0_PLUGIN,
+  //   BERAPAW1_PLUGIN,
+  //   BERAPAW2_PLUGIN,
   // ];
 
   // for (let i = 0; i < plugins.length; i++) {

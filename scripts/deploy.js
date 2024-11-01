@@ -712,7 +712,6 @@ async function main() {
   // await voter.addPlugin("0x62c310059A7d84805c675d2458234d3D137D9a1c"); // Kodiak Trifecta oBERO-WBERA Island
   // console.log("Adding Plugin14 to Voter");
   // await voter.addPlugin("0xC81c2E2415702179F78B51CbC5f9A16B957F5333"); // BUllas BULL ISH Game Plugin 2
-  // console.log("Plugins added to Voter");
   // console.log("Adding Plugin15 to Voter");
   // await voter.addPlugin("0x9C8366e5fb3B818e7C8c04F080f36f56BFf335Ee"); // BUllas BULL ISH Game Plugin 3
   // console.log("Adding Plugin16 to Voter");
