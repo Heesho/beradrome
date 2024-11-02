@@ -142,6 +142,9 @@ const BERAPAW2_SYMBOL = "Bex PAW-HONEY";
 const BERAPAW2_NAME = "Beradrome BeraPaw Bex PAW-HONEY Vault Token";
 const BERAPAW2_PLUGIN = "0xF89F4fdE1Bf970404160eD7B9F4758B0b1ae266D";
 
+// Bullas BULL iSH
+const BULLAS_PLUGIN = "0x0226cacE81532EB8f0E3CF1078c30b3d29b93E0b";
+
 /*===========================  END SETTINGS  ========================*/
 /*===================================================================*/
 
@@ -953,6 +956,11 @@ async function main() {
   // await voter.addPlugin(BERAPAW2_PLUGIN); // BeraPaw Bex PAW-HONEY
   // await sleep(10000);
 
+  // Add bullas plugin
+  // console.log("Adding BULLAS_PLUGIN to Voter");
+  // await voter.addPlugin(BULLAS_PLUGIN); // Bullas BULL iSH
+  // await sleep(10000);
+
   //===================================================================
   // 13. Print Deployment
   //===================================================================
@@ -979,19 +987,20 @@ async function main() {
   //===================================================================
 
   // let plugins = [
-  //   STATION0_PLUGIN,
-  //   STATION1_PLUGIN,
-  //   STATION2_PLUGIN,
-  //   INFRARED0_PLUGIN,
-  //   INFRARED1_PLUGIN,
-  //   INFRARED2_PLUGIN,
-  //   INFRARED5_PLUGIN,
-  //   TRIFECTA3_PLUGIN,
-  //   TRIFECTA8_PLUGIN,
-  //   TRIFECTA9_PLUGIN,
-  //   BERAPAW0_PLUGIN,
-  //   BERAPAW1_PLUGIN,
-  //   BERAPAW2_PLUGIN,
+  // STATION0_PLUGIN,
+  // STATION1_PLUGIN,
+  // STATION2_PLUGIN,
+  // INFRARED0_PLUGIN,
+  // INFRARED1_PLUGIN,
+  // INFRARED2_PLUGIN,
+  // INFRARED5_PLUGIN,
+  // TRIFECTA3_PLUGIN,
+  // TRIFECTA8_PLUGIN,
+  // TRIFECTA9_PLUGIN,
+  // BERAPAW0_PLUGIN,
+  // BERAPAW1_PLUGIN,
+  // BERAPAW2_PLUGIN,
+  //   BULLAS_PLUGIN,
   // ];
 
   // for (let i = 0; i < plugins.length; i++) {
@@ -1036,6 +1045,14 @@ async function main() {
   //   TRIFECTA9_PLUGIN, // Kodiak Trifecta HONEY-NECT Island
   // ]);
   // console.log("Kodiak TrifectaBribe Rewards Distributed");
+  // await voter.distributeToBribes([
+  //   BERAPAW0_PLUGIN, // BeraPaw Beraborrow sNECT
+  //   BERAPAW1_PLUGIN, // BeraPaw Bex HONEY-WBERA
+  //   BERAPAW2_PLUGIN, // BeraPaw Bex PAW-HONEY
+  // ]);
+  // console.log("BeraPaw Bribe Rewards Distributed");
+  // await voter.distributeToBribes([BULLAS_PLUGIN]);
+  // console.log("Bullas Bribe Rewards Distributed");
 }
 
 main()
