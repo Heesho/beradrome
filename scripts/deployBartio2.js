@@ -143,7 +143,13 @@ const BERAPAW2_NAME = "Beradrome BeraPaw Bex PAW-HONEY Vault Token";
 const BERAPAW2_PLUGIN = "0xF89F4fdE1Bf970404160eD7B9F4758B0b1ae266D";
 
 // Bullas BULL iSH
-const BULLAS_PLUGIN = "0x0226cacE81532EB8f0E3CF1078c30b3d29b93E0b";
+const BULLAS_PLUGIN = "";
+
+// Gumball BentoBera
+const GUMBALL0_PLUGIN = "";
+
+// Gumball PastFactory
+const GUMBALL1_PLUGIN = "";
 
 /*===========================  END SETTINGS  ========================*/
 /*===================================================================*/
@@ -1053,6 +1059,16 @@ async function main() {
   // console.log("BeraPaw Bribe Rewards Distributed");
   // await voter.distributeToBribes([BULLAS_PLUGIN]);
   // console.log("Bullas Bribe Rewards Distributed");
+
+  //===================================================================
+  // 14. Remove Plugin
+  //===================================================================
+
+  // console.log("Removing Plugin from Voter"); // Remove BULL ISH plugin
+  // await voter
+  //   .connect(wallet)
+  //   .killGauge("0x1a173326c5859CF5A67f6aEB83a9954EfCdBeC3d");
+  // console.log("Plugin removed from Voter");
 }
 
 main()
