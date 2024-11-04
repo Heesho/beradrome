@@ -15,7 +15,8 @@ const PRICE_MULTIPLIER = "2000000000000000000";
 const OTOKEN = "0x7629668774f918c00Eb4b03AdF5C4e2E53d45f0b";
 const VTOKEN = "0x2B4141f98B8cD2a03F58bD722D4E8916d2106504";
 const rewarder = "0xD6c2BE22e7b766c810690B22234044407dDa1C1B";
-const voter = "0x580ABF764405aA82dC96788b356435474c5956A7";
+const voter = "0x1f9505Ae18755915DcD2a95f38c7560Cab149d9C";
+const VAULT_FACTORY = "0x2B6e40f65D82A0cB98795bC7587a71bfa49fBB2B"; // Vault Factory Address
 
 const HIVE_NAME = "Gumball Bero";
 const HIVE_SYMBOL = "gumyBERO";
@@ -39,44 +40,44 @@ async function getContracts() {
 
   hiveFactory = await ethers.getContractAt(
     "contracts/HiveToken/HiveFactory.sol:HiveFactory",
-    "0xbcf01F7870E53239208e2887eD9dE2c71B79eC17"
+    "0x0394F3ea16c1f28Bb164cE8e894A10167Fc76781"
   );
   hiveTokenFactory = await ethers.getContractAt(
     "contracts/HiveToken/HiveTokenFactory.sol:HiveTokenFactory",
-    "0x9B63760aE3C9eE4dd42bcfA31d9d2cfA1E9791b7"
+    "0x175aB340088B7248584BaD2DFaCE04095f5De594"
   );
   hiveRewarderFactory = await ethers.getContractAt(
     "contracts/HiveToken/HiveRewarderFactory.sol:HiveRewarderFactory",
-    "0x07338e6E3e82a73BA3501A940D25DDEE426213B1"
+    "0xcdCf3125381684B2E8894Fa728f888e220841aEc"
   );
   hiveDistroFactory = await ethers.getContractAt(
     "contracts/HiveToken/HiveDistroFactory.sol:HiveDistroFactory",
-    "0xDaA8Ce57Ed7B1D37F1D6B687cB56b76964c912B6"
+    "0xa4A376D0f4492020AccFBC2717FAdDB7b2c74dc8"
   );
   hiveFeeFlowFactory = await ethers.getContractAt(
     "contracts/HiveToken/HiveFeeFlowFactory.sol:HiveFeeFlowFactory",
-    "0x7C2eCAF30455b15813e0E792b60834cf181E23Fb"
+    "0xCd5206211FC9153E52BE9468Cb9396C09c5255cF"
   );
   hiveMulticall = await ethers.getContractAt(
     "contracts/HiveToken/HiveMulticall.sol:HiveMulticall",
-    "0x05C879CB6d37e97979c5bD2d07AD9b420af876e3"
+    "0xD060CB4361c7F7B70243069C67c18CfdC3cFbd4C"
   );
 
   hiveToken = await ethers.getContractAt(
     "contracts/HiveToken/HiveTokenFactory.sol:HiveToken",
-    "0x6467757C4d8502947d66691E4D680E47e113C972"
+    "0x3319085Ab92ab235F9C904F2f9Aef9592D175Dd3"
   );
   hiveRewarder = await ethers.getContractAt(
     "contracts/HiveToken/HiveRewarderFactory.sol:HiveRewarder",
-    "0xc08a9EC746bc6f56b1FFd93A7B9EA4Ab112a9885"
+    "0xcCD6ca034E26F96aF1DDbe3927100d2804DB6f85"
   );
   hiveDistro = await ethers.getContractAt(
     "contracts/HiveToken/HiveDistroFactory.sol:HiveDistro",
-    "0xe0e8C605d326EF3bA8659939D8e0ab402872D4a5"
+    "0xFd60d2f8A67b41D3F2539f4f44714bBf3AD8e6B1"
   );
   hiveFeeFlow = await ethers.getContractAt(
     "contracts/HiveToken/HiveFeeFlowFactory.sol:HiveFeeFlow",
-    "0xe7474CB185E657C1b0B5fE8B2001a1C43AE74282"
+    "0x800620775d9c7318436312D634C643A22f085309"
   );
 
   console.log("Contracts Retrieved");
@@ -123,6 +124,7 @@ async function deployHiveRewarderFactory() {
   );
   const hiveRewarderFactoryContract = await hiveRewarderFactoryArtifact.deploy(
     hiveFactory.address,
+    VAULT_FACTORY,
     {
       gasPrice: ethers.gasPrice,
     }
@@ -220,7 +222,7 @@ async function verifyHiveRewarderFactory() {
   await hre.run("verify:verify", {
     address: hiveRewarderFactory.address,
     contract: "contracts/HiveToken/HiveRewarderFactory.sol:HiveRewarderFactory",
-    constructorArguments: [hiveFactory.address],
+    constructorArguments: [hiveFactory.address, VAULT_FACTORY],
   });
   console.log("HiveRewarderFactory Verified");
 }
@@ -322,7 +324,11 @@ async function verifyHiveRewarder() {
   await hre.run("verify:verify", {
     address: hiveRewarder.address,
     contract: "contracts/HiveToken/HiveRewarderFactory.sol:HiveRewarder",
-    constructorArguments: [hiveFactory.address, hiveToken.address],
+    constructorArguments: [
+      hiveFactory.address,
+      hiveToken.address,
+      VAULT_FACTORY,
+    ],
   });
   console.log("HiveRewarder Verified");
 }
@@ -413,12 +419,12 @@ async function main() {
   // 6. Verify Hive Contracts
   //===================================================================
 
-  // console.log("Starting Hive Verification");
-  // await verifyHiveToken(wallet.address);
-  // await verifyHiveRewarder();
-  // await verifyHiveDistro();
-  // await verifyHiveFeeFlow();
-  // console.log("Hive Contracts Verified");
+  console.log("Starting Hive Verification");
+  await verifyHiveToken(wallet.address);
+  await verifyHiveRewarder();
+  await verifyHiveDistro();
+  await verifyHiveFeeFlow();
+  console.log("Hive Contracts Verified");
 }
 
 main()

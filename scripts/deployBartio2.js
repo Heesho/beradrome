@@ -143,13 +143,13 @@ const BERAPAW2_NAME = "Beradrome BeraPaw Bex PAW-HONEY Vault Token";
 const BERAPAW2_PLUGIN = "0xF89F4fdE1Bf970404160eD7B9F4758B0b1ae266D";
 
 // Bullas BULL iSH
-const BULLAS_PLUGIN = "";
+const BULLAS_PLUGIN = "0xb488543f69a9462F62b2E944C81CFd16Cf0237c0";
 
 // Gumball BentoBera
-const GUMBALL0_PLUGIN = "";
+const GUMBALL0_PLUGIN = "0x1d0B737feFcF45BC550a0B9c8a0f7f14BcCEce4d";
 
 // Gumball PastFactory
-const GUMBALL1_PLUGIN = "";
+const GUMBALL1_PLUGIN = "0x6D1B5054C87dE76C8c4c3eCBe1cd5354b0876c32";
 
 /*===========================  END SETTINGS  ========================*/
 /*===================================================================*/
@@ -962,9 +962,15 @@ async function main() {
   // await voter.addPlugin(BERAPAW2_PLUGIN); // BeraPaw Bex PAW-HONEY
   // await sleep(10000);
 
-  // Add bullas plugin
+  // Add game plugins
   // console.log("Adding BULLAS_PLUGIN to Voter");
   // await voter.addPlugin(BULLAS_PLUGIN); // Bullas BULL iSH
+  // await sleep(10000);
+  // console.log("Adding GUMBALL0_PLUGIN to Voter");
+  // await voter.addPlugin(GUMBALL0_PLUGIN); // Gumball BentoBera
+  // await sleep(10000);
+  // console.log("Adding GUMBALL1_PLUGIN to Voter");
+  // await voter.addPlugin(GUMBALL1_PLUGIN); // Gumball PastaFactory
   // await sleep(10000);
 
   //===================================================================
@@ -993,20 +999,22 @@ async function main() {
   //===================================================================
 
   // let plugins = [
-  // STATION0_PLUGIN,
-  // STATION1_PLUGIN,
-  // STATION2_PLUGIN,
-  // INFRARED0_PLUGIN,
-  // INFRARED1_PLUGIN,
-  // INFRARED2_PLUGIN,
-  // INFRARED5_PLUGIN,
-  // TRIFECTA3_PLUGIN,
-  // TRIFECTA8_PLUGIN,
-  // TRIFECTA9_PLUGIN,
-  // BERAPAW0_PLUGIN,
-  // BERAPAW1_PLUGIN,
-  // BERAPAW2_PLUGIN,
+  //   STATION0_PLUGIN,
+  //   STATION1_PLUGIN,
+  //   STATION2_PLUGIN,
+  //   INFRARED0_PLUGIN,
+  //   INFRARED1_PLUGIN,
+  //   INFRARED2_PLUGIN,
+  //   INFRARED5_PLUGIN,
+  //   TRIFECTA3_PLUGIN,
+  //   TRIFECTA8_PLUGIN,
+  //   TRIFECTA9_PLUGIN,
+  //   BERAPAW0_PLUGIN,
+  //   BERAPAW1_PLUGIN,
+  //   BERAPAW2_PLUGIN,
   //   BULLAS_PLUGIN,
+  //   GUMBALL0_PLUGIN,
+  //   GUMBALL1_PLUGIN,
   // ];
 
   // for (let i = 0; i < plugins.length; i++) {
@@ -1057,7 +1065,7 @@ async function main() {
   //   BERAPAW2_PLUGIN, // BeraPaw Bex PAW-HONEY
   // ]);
   // console.log("BeraPaw Bribe Rewards Distributed");
-  // await voter.distributeToBribes([BULLAS_PLUGIN]);
+  // await voter.distributeToBribes([BULLAS_PLUGIN, GUMBALL0_PLUGIN, GUMBALL1_PLUGIN]);
   // console.log("Bullas Bribe Rewards Distributed");
 
   //===================================================================
