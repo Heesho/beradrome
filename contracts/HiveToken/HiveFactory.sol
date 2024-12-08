@@ -38,6 +38,7 @@ contract HiveFactory is Ownable {
     address public immutable vToken;
     address public immutable vTokenRewarder;
     address public voter;
+    address public hiBeroVault;
 
     address public hiveTokenFactory;
     address public hiveRewarderFactory;
@@ -73,6 +74,7 @@ contract HiveFactory is Ownable {
     event HiveFactory__RewardAdded(address hiveRewarder, address rewardToken);
     event HiveFactory__FeeFlowSet(uint256 index, address hiveToken, address hiveFeeFlow);
     event HiveFactory__VoterSet(address voter);
+    event HiveFactory__HiBeroVaultSet(address hiBeroVault);
     event HiveFactory__ProtocolSet(address protocol);
     event HiveFactory__MintFeeSet(uint256 mintFee);
     event HiveFactory__RewardFeeSet(uint256 rewardFee);
@@ -81,12 +83,14 @@ contract HiveFactory is Ownable {
         address _oToken, 
         address _vToken, 
         address _vTokenRewarder,
-        address _voter
+        address _voter,
+        address _hiBeroVault
     ) {
         oToken = _oToken;
         vToken = _vToken;
         vTokenRewarder = _vTokenRewarder;
         voter = _voter;
+        hiBeroVault = _hiBeroVault;
         protocol = msg.sender;
     }
 
@@ -142,6 +146,12 @@ contract HiveFactory is Ownable {
         if (_voter == address(0)) revert HiveFactory__InvalidZeroAddress();
         voter = _voter;
         emit HiveFactory__VoterSet(_voter);
+    }
+
+    function setHiBeroVault(address _hiBeroVault) external onlyOwner() {
+        if (_hiBeroVault == address(0)) revert HiveFactory__InvalidZeroAddress();
+        hiBeroVault = _hiBeroVault;
+        emit HiveFactory__HiBeroVaultSet(_hiBeroVault);
     }
 
     function addReward(address hiveRewarder, address rewardToken) external onlyOwner() {

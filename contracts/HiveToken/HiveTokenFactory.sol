@@ -36,6 +36,7 @@ interface IHiveFactory {
     function vToken() external view returns (address);
     function vTokenRewarder() external view returns (address);
     function voter() external view returns (address);
+    function hiBeroVault() external view returns (address);
     function mintFee() external view returns (uint256);
 }
 
@@ -166,6 +167,15 @@ contract HiveToken is ERC20, ERC20Permit, ERC20Votes, Ownable, ReentrancyGuard {
         emit HiveToken__ClaimRewards();
     }
 
+    function claimBgt()
+        external
+    {
+        // TODO: claim BGT from hiBERO vault
+        uint256 balance = IBGT(BGT).unboostedBalanceOf(address(this));
+        IBGT(BGT).redeem(address(this), balance);
+        IWBERA(WBERA).deposit{value: balance}();
+    }
+
     function claimBribes(address[] calldata bribes) 
         external
     {
@@ -178,22 +188,10 @@ contract HiveToken is ERC20, ERC20Permit, ERC20Votes, Ownable, ReentrancyGuard {
         external
     {
         for (uint256 i = 0; i < tokens.length; i++) {
-            if (tokens[i] != BGT) {
-                IERC20(tokens[i]).safeTransfer(feeFlow, IERC20(tokens[i]).balanceOf(address(this)));
-                emit HiveToken__TransferToFeeFlow(tokens[i]);
-            } else {
-                uint256 balance = IBGT(BGT).unboostedBalanceOf(address(this));
-                IBGT(BGT).redeem(address(this), balance);
-                IWBERA(WBERA).deposit{value: balance}();
-                IERC20(WBERA).safeTransfer(feeFlow, IERC20(WBERA).balanceOf(address(this)));
-                emit HiveToken__TransferToFeeFlow(WBERA);
-            }
+            IERC20(tokens[i]).safeTransfer(feeFlow, IERC20(tokens[i]).balanceOf(address(this)));
+            emit HiveToken__TransferToFeeFlow(tokens[i]);
         }
     }
-
-    // TODO: Change BGT reward logic
-    // - claim BGT reward and convert to WBERA directly
-    // - update transferToFeeFlow so it doesnt need to convert BGT to WBERA
 
     /*----------  RESTRICTED FUNCTIONS  ---------------------------------*/
 
