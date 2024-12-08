@@ -1,6 +1,7 @@
 const { ethers } = require("hardhat");
 const { utils, BigNumber } = require("ethers");
 const hre = require("hardhat");
+const util = require("util");
 
 // Constants
 const sleep = (delay) => new Promise((resolve) => setTimeout(resolve, delay));
@@ -419,12 +420,46 @@ async function main() {
   // 6. Verify Hive Contracts
   //===================================================================
 
-  console.log("Starting Hive Verification");
-  await verifyHiveToken(wallet.address);
-  await verifyHiveRewarder();
-  await verifyHiveDistro();
-  await verifyHiveFeeFlow();
-  console.log("Hive Contracts Verified");
+  // console.log("Starting Hive Verification");
+  // await verifyHiveToken(wallet.address);
+  // await verifyHiveRewarder();
+  // await verifyHiveDistro();
+  // await verifyHiveFeeFlow();
+  // console.log("Hive Contracts Verified");
+
+  //===================================================================
+  // 7. Transactions
+  //===================================================================
+
+  // await hiveToken.setVotes(
+  //   [
+  //     "0xb488543f69a9462F62b2E944C81CFd16Cf0237c0",
+  //     "0x1d0B737feFcF45BC550a0B9c8a0f7f14BcCEce4d",
+  //     "0x6D1B5054C87dE76C8c4c3eCBe1cd5354b0876c32",
+  //   ],
+  //   [100, 100, 100]
+  // );
+
+  // console.log("Hive Index: ", await hiveFactory.hiveIndex());
+  // console.log("Hive By Index: ", await hiveFactory.getHiveByIndex(0));
+
+  // console.log("Hive length: ", await hiveMulticall.getHiveLength());
+  // console.log("Hives: ", await hiveMulticall.getHives(0, 1));
+  // console.log(
+  //   "Get Hive at index 1: ",
+  //   await hiveMulticall.getHive(
+  //     "0xEecB3702A301AEab3E58D890847999A25972B74b",
+  //     AddressZero
+  //   )
+  // );
+  // console.log("Hive By Index: ", await hiveFactory.getHiveByIndex(0));
+  const auction = await hiveMulticall.getAuction(
+    "0x3319085Ab92ab235F9C904F2f9Aef9592D175Dd3"
+  );
+  console.log(
+    "Auction: ",
+    util.inspect(auction, { depth: null, colors: true })
+  );
 }
 
 main()

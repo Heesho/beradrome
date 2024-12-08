@@ -999,22 +999,22 @@ async function main() {
   //===================================================================
 
   // let plugins = [
-  //   STATION0_PLUGIN,
-  //   STATION1_PLUGIN,
-  //   STATION2_PLUGIN,
-  //   INFRARED0_PLUGIN,
-  //   INFRARED1_PLUGIN,
-  //   INFRARED2_PLUGIN,
-  //   INFRARED5_PLUGIN,
-  //   TRIFECTA3_PLUGIN,
-  //   TRIFECTA8_PLUGIN,
-  //   TRIFECTA9_PLUGIN,
-  //   BERAPAW0_PLUGIN,
-  //   BERAPAW1_PLUGIN,
-  //   BERAPAW2_PLUGIN,
-  //   BULLAS_PLUGIN,
-  //   GUMBALL0_PLUGIN,
-  //   GUMBALL1_PLUGIN,
+  // STATION0_PLUGIN,
+  // STATION1_PLUGIN,
+  // STATION2_PLUGIN,
+  // INFRARED0_PLUGIN,
+  // INFRARED1_PLUGIN,
+  // INFRARED2_PLUGIN,
+  // INFRARED5_PLUGIN,
+  // TRIFECTA3_PLUGIN,
+  // TRIFECTA8_PLUGIN,
+  // TRIFECTA9_PLUGIN,
+  // BERAPAW0_PLUGIN,
+  // BERAPAW1_PLUGIN,
+  // BERAPAW2_PLUGIN,
+  // BULLAS_PLUGIN,
+  // GUMBALL0_PLUGIN,
+  // GUMBALL1_PLUGIN,
   // ];
 
   // for (let i = 0; i < plugins.length; i++) {
@@ -1065,7 +1065,11 @@ async function main() {
   //   BERAPAW2_PLUGIN, // BeraPaw Bex PAW-HONEY
   // ]);
   // console.log("BeraPaw Bribe Rewards Distributed");
-  // await voter.distributeToBribes([BULLAS_PLUGIN, GUMBALL0_PLUGIN, GUMBALL1_PLUGIN]);
+  // await voter.distributeToBribes([
+  //   BULLAS_PLUGIN,
+  //   GUMBALL0_PLUGIN,
+  //   GUMBALL1_PLUGIN,
+  // ]);
   // console.log("Bullas Bribe Rewards Distributed");
 
   //===================================================================

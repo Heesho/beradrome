@@ -191,6 +191,10 @@ contract HiveToken is ERC20, ERC20Permit, ERC20Votes, Ownable, ReentrancyGuard {
         }
     }
 
+    // TODO: Change BGT reward logic
+    // - claim BGT reward and convert to WBERA directly
+    // - update transferToFeeFlow so it doesnt need to convert BGT to WBERA
+
     /*----------  RESTRICTED FUNCTIONS  ---------------------------------*/
 
     function setVotes(address[] calldata _plugins, uint256[] calldata _weights) 

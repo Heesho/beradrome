@@ -160,7 +160,7 @@ contract HiveMulticall {
         bool hasVote = IHiveToken(hiveToken).getPlugins().length > 0;
         if (canVote && hasVote) {
             IHiveToken(hiveToken).vote();
-        }    
+        }
     }
 
     function mintAndDeposit(address hiveToken, uint256 amount) external {
@@ -173,7 +173,7 @@ contract HiveMulticall {
         IERC20(hiveToken).safeApprove(hiveRewarder, 0);
         IERC20(hiveToken).safeApprove(hiveRewarder, balance);
         IHiveRewarder(hiveRewarder).deposit(msg.sender, balance);
-        vote(hiveToken); 
+        vote(hiveToken);
     }
 
     function buyAuction(address hiveToken, uint256 deadline) external {
