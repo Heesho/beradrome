@@ -18,6 +18,7 @@ const VTOKEN = "0x2B4141f98B8cD2a03F58bD722D4E8916d2106504";
 const rewarder = "0xD6c2BE22e7b766c810690B22234044407dDa1C1B";
 const voter = "0x1f9505Ae18755915DcD2a95f38c7560Cab149d9C";
 const VAULT_FACTORY = "0x2B6e40f65D82A0cB98795bC7587a71bfa49fBB2B"; // Vault Factory Address
+const HI_BERO_VAULT = "0xA0E4748E68b6d73234711197e96171B896B796f4"; // HiBero Vault Address
 
 const HIVE_NAME = "Gumball Bero";
 const HIVE_SYMBOL = "gumyBERO";
@@ -41,44 +42,44 @@ async function getContracts() {
 
   hiveFactory = await ethers.getContractAt(
     "contracts/HiveToken/HiveFactory.sol:HiveFactory",
-    "0x0394F3ea16c1f28Bb164cE8e894A10167Fc76781"
+    "0x055777E1Ef915571482cabbc89719fbB494C8f06"
   );
   hiveTokenFactory = await ethers.getContractAt(
     "contracts/HiveToken/HiveTokenFactory.sol:HiveTokenFactory",
-    "0x175aB340088B7248584BaD2DFaCE04095f5De594"
+    "0x044bCcD28A8529cd600D8E96836e7e462F6C7f09"
   );
   hiveRewarderFactory = await ethers.getContractAt(
     "contracts/HiveToken/HiveRewarderFactory.sol:HiveRewarderFactory",
-    "0xcdCf3125381684B2E8894Fa728f888e220841aEc"
+    "0x630c3a461621048FAC337b96B6dF0Cfc9d49BD41"
   );
   hiveDistroFactory = await ethers.getContractAt(
     "contracts/HiveToken/HiveDistroFactory.sol:HiveDistroFactory",
-    "0xa4A376D0f4492020AccFBC2717FAdDB7b2c74dc8"
+    "0xe3D4cF021E93b3BBe6cCfF005051969847CD638F"
   );
   hiveFeeFlowFactory = await ethers.getContractAt(
     "contracts/HiveToken/HiveFeeFlowFactory.sol:HiveFeeFlowFactory",
-    "0xCd5206211FC9153E52BE9468Cb9396C09c5255cF"
+    "0xe94CFfaAfC8C4bB7D0aD159a131DcC4E8274A5BF"
   );
   hiveMulticall = await ethers.getContractAt(
     "contracts/HiveToken/HiveMulticall.sol:HiveMulticall",
-    "0xD060CB4361c7F7B70243069C67c18CfdC3cFbd4C"
+    "0xC3c80D6ADE7BbFA5C22A19A9Fd8F67534fBE8D6b"
   );
 
   hiveToken = await ethers.getContractAt(
     "contracts/HiveToken/HiveTokenFactory.sol:HiveToken",
-    "0x3319085Ab92ab235F9C904F2f9Aef9592D175Dd3"
+    "0x8D3831d3d76D5d76F9eB49e189BCCB91251838cf"
   );
   hiveRewarder = await ethers.getContractAt(
     "contracts/HiveToken/HiveRewarderFactory.sol:HiveRewarder",
-    "0xcCD6ca034E26F96aF1DDbe3927100d2804DB6f85"
+    "0xfb0A567c5a3bdBf7410538b679e643A800264eaa"
   );
   hiveDistro = await ethers.getContractAt(
     "contracts/HiveToken/HiveDistroFactory.sol:HiveDistro",
-    "0xFd60d2f8A67b41D3F2539f4f44714bBf3AD8e6B1"
+    "0x714A4114777b566e3cEDfd43f7f52Aba8CA44918"
   );
   hiveFeeFlow = await ethers.getContractAt(
     "contracts/HiveToken/HiveFeeFlowFactory.sol:HiveFeeFlow",
-    "0x800620775d9c7318436312D634C643A22f085309"
+    "0x68051fE56E0010BB01735A045eF6BC231B41ee05"
   );
 
   console.log("Contracts Retrieved");
@@ -95,6 +96,7 @@ async function deployHiveFactory() {
     VTOKEN,
     rewarder,
     voter,
+    HI_BERO_VAULT,
     { gasPrice: ethers.gasPrice }
   );
   hiveFactory = await hiveFactoryContract.deployed();
@@ -203,7 +205,7 @@ async function verifyHiveFactory() {
   await hre.run("verify:verify", {
     address: hiveFactory.address,
     contract: "contracts/HiveToken/HiveFactory.sol:HiveFactory",
-    constructorArguments: [OTOKEN, VTOKEN, rewarder, voter],
+    constructorArguments: [OTOKEN, VTOKEN, rewarder, voter, HI_BERO_VAULT],
   });
   console.log("HiveFactory Verified");
 }
@@ -453,13 +455,13 @@ async function main() {
   //   )
   // );
   // console.log("Hive By Index: ", await hiveFactory.getHiveByIndex(0));
-  const auction = await hiveMulticall.getAuction(
-    "0x3319085Ab92ab235F9C904F2f9Aef9592D175Dd3"
-  );
-  console.log(
-    "Auction: ",
-    util.inspect(auction, { depth: null, colors: true })
-  );
+  // const auction = await hiveMulticall.getAuction(
+  //   "0x8D3831d3d76D5d76F9eB49e189BCCB91251838cf"
+  // );
+  // console.log(
+  //   "Auction: ",
+  //   util.inspect(auction, { depth: null, colors: true })
+  // );
 }
 
 main()
