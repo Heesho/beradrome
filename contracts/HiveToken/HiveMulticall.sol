@@ -8,6 +8,7 @@ interface IHiveFactory {
     function getHiveByIndex(uint256 index) external view returns (address hiveToken, address hiveRewarder, address hiveDistro, address hiveFeeFlow);
     function getHiveByToken(address hiveToken) external view returns (address hiveRewarder, address hiveDistro, address hiveFeeFlow);
     function hiveIndex() external view returns (uint256);
+    function hiBeroVault() external view returns (address);
 }
 
 interface IHiveToken {
@@ -18,6 +19,8 @@ interface IHiveToken {
     function getVote() external view returns (address[] memory plugins, uint256[] memory weights);
     function getPlugins() external view returns (address[] memory plugins);
     function mint(address account, uint256 amount) external;
+    function claimRewards() external;
+    function claimBgt() external;
     function transferToFeeFlow(address[] calldata tokens) external;
     function vote() external;
 }
@@ -65,12 +68,20 @@ interface IBribe {
     function getReward(address account) external;
 }
 
+interface IBerachainRewardsVault {
+    function earned(address account) external view returns (uint256);
+}
+
 contract HiveMulticall {
     using SafeERC20 for IERC20;
 
     /*----------  CONSTANTS  --------------------------------------------*/
 
     uint256 public constant DURATION = 7 days;
+    address public constant HONEY = 0x0E4aaF1351de4c0264C5c7056Ef3777b41BD8e03;
+    address public constant BERO = 0xB5A27c33bA2ADEcee8CdBE94cEF5576E2F364A8f;
+    address public constant OBERO = 0x7629668774f918c00Eb4b03AdF5C4e2E53d45f0b;
+    address public constant WBERA = 0x7507c1dc16935B82698e4C63f2746A2fCf994dF8;
 
     /*----------  STATE VARIABLES  --------------------------------------*/
 
@@ -79,6 +90,8 @@ contract HiveMulticall {
     address public immutable vToken;
     address public immutable vTokenRewarder;
     address public immutable voter;
+
+    address[] public stakingRewardTokens = [HONEY, BERO, OBERO, WBERA];
 
     struct Hive {
         address hiveToken;
@@ -182,8 +195,10 @@ contract HiveMulticall {
         uint256 price = IHiveFeeFlow(hiveFeeFlow).getPrice();
         uint16 epochId = IHiveFeeFlow(hiveFeeFlow).getSlot0().epochId;
         address[] memory assets = getAuctionAssets(hiveToken);
-        
-        IVTOKENRewarder(vTokenRewarder).getReward(hiveToken);
+
+        IHiveToken(hiveToken).claimRewards();
+        IHiveToken(hiveToken).claimBgt();
+
         address[] memory plugins = IHiveToken(hiveToken).getPlugins();
         for (uint256 i = 0; i < plugins.length; i++) {
             IBribe(IVoter(voter).bribes(plugins[i])).getReward(hiveToken);
@@ -251,12 +266,20 @@ contract HiveMulticall {
 
         auction.rewards = new Reward[][](rewardsLength);
 
-        address[] memory stakingRewardTokens = IVTOKENRewarder(vTokenRewarder).getRewardTokens();
         Reward[] memory stakingRewards = new Reward[](stakingRewardTokens.length);
-        for (uint256 i = 0; i < stakingRewardTokens.length; i++) {
-            stakingRewards[i].rewardToken = stakingRewardTokens[i];
-            stakingRewards[i].amount = IVTOKENRewarder(vTokenRewarder).earned(hiveToken, stakingRewardTokens[i]);
-        }
+
+        stakingRewards[0].rewardToken = HONEY;
+        stakingRewards[0].amount = IVTOKENRewarder(vTokenRewarder).earned(hiveToken, HONEY);
+
+        stakingRewards[1].rewardToken = BERO;
+        stakingRewards[1].amount = IVTOKENRewarder(vTokenRewarder).earned(hiveToken, BERO);
+
+        stakingRewards[2].rewardToken = OBERO;
+        stakingRewards[2].amount = IVTOKENRewarder(vTokenRewarder).earned(hiveToken, OBERO);
+
+        stakingRewards[3].rewardToken = WBERA;
+        stakingRewards[3].amount = IBerachainRewardsVault(IHiveFactory(hiveFactory).hiBeroVault()).earned(hiveToken);
+
         auction.rewards[0] = stakingRewards;
 
         for (uint256 i = 0; i < plugins.length; i++) {
@@ -282,7 +305,6 @@ contract HiveMulticall {
     }
 
     function getAuctionAssets(address hiveToken) public view returns (address[] memory assets) {
-        address[] memory stakingRewardTokens = IVTOKENRewarder(vTokenRewarder).getRewardTokens();
         address[] memory plugins = IHiveToken(hiveToken).getPlugins();
 
         uint256 assetCount = 0;
@@ -313,6 +335,7 @@ contract HiveMulticall {
             }
         }
 
+        return assets;
     }
 
     function getFeeFlowPrice(address hiveToken) public view returns (uint256 price) {

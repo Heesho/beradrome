@@ -379,7 +379,8 @@ describe("Hive token testing", function () {
       OTOKEN.address,
       VTOKEN.address,
       rewarder.address,
-      voter.address
+      voter.address,
+      vaultFactory.address
     );
     hiveFactory = await ethers.getContractAt(
       "HiveFactory",

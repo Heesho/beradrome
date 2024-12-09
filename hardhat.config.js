@@ -61,11 +61,11 @@ module.exports = {
       accounts: [PRIVATE_KEY],
     },
     hardhat: {
-      chainId: CHAIN_ID,
-      forking: {
-        url: RPC_URL,
-        blockNumber: 6293964,
-      },
+      // chainId: CHAIN_ID,
+      // forking: {
+      //   url: RPC_URL,
+      //   blockNumber: 6293964,
+      // },
     },
   },
   etherscan: {

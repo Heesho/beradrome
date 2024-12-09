@@ -380,7 +380,8 @@ describe("Hive token testing multicall", function () {
       OTOKEN.address,
       VTOKEN.address,
       rewarder.address,
-      voter.address
+      voter.address,
+      vaultFactory.address
     );
     hiveFactory = await ethers.getContractAt(
       "HiveFactory",
