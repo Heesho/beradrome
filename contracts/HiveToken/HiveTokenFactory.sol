@@ -40,6 +40,10 @@ interface IHiveFactory {
     function mintFee() external view returns (uint256);
 }
 
+interface IBerachainRewardsVault {
+    function getReward(address account) external;
+}
+
 contract HiveToken is ERC20, ERC20Permit, ERC20Votes, Ownable, ReentrancyGuard {
     using SafeERC20 for IERC20;
 
@@ -170,7 +174,7 @@ contract HiveToken is ERC20, ERC20Permit, ERC20Votes, Ownable, ReentrancyGuard {
     function claimBgt()
         external
     {
-        // TODO: claim BGT from hiBERO vault
+        IBerachainRewardsVault(IHiveFactory(hiveFactory).hiBeroVault()).getReward(address(this));
         uint256 balance = IBGT(BGT).unboostedBalanceOf(address(this));
         IBGT(BGT).redeem(address(this), balance);
         IWBERA(WBERA).deposit{value: balance}();
