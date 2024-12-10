@@ -73,8 +73,8 @@ contract TrifectaPlugin is Plugin {
         uint256 kdkBalance = IERC20(KDK).balanceOf(address(this));
         if (kdkBalance > duration) {
             IERC20(KDK).safeApprove(gauge, 0);
-            IERC20(KDK).safeApprove(gauge, IERC20(KDK).balanceOf(address(this)));
-            IGauge(gauge).notifyRewardAmount(KDK, IERC20(KDK).balanceOf(address(this)));
+            IERC20(KDK).safeApprove(gauge, kdkBalance);
+            IGauge(gauge).notifyRewardAmount(KDK, kdkBalance);
         }
         
         uint256 xkdkBalance = IERC20(XKDK).balanceOf(address(this));

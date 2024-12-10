@@ -92,6 +92,15 @@ const INFRARED_NAME_5 = "Beradrome Infrared iBGT Vault Token";
 const INFRARED5_PLUGIN = "0xA11935019cd3f2554d257f5Ccfa82e712f78e6A5";
 
 // Trifecta Kodiak YEET-WBERA Island
+const INFRARED_TRIFECTA3_VAULT = "0x89DAFF790313d0Cc5cC9971472f0C73A19D9C167";
+const INFRARED_TRIFECTA3_TOKENS = [YEET, WBERA];
+const INFRARED_TRIFECTA3_REWARDS = [YEET];
+const INFRARED_TRIFECTA3_SYMBOL = "YEET-WBERA Island";
+const INFRARED_TRIFECTA3_NAME =
+  "Beradrome Infrared Trifecta YEET-WBERA Island Vault Token";
+const INFRARED_TRIFECTA3_PLUGIN = "0x0c38658fA3B5114bBbE3299bdEb1C7b16a0bf89F";
+
+// Trifecta Kodiak YEET-WBERA Island
 const TRIFECTA3 = "0xE5A2ab5D2fb268E5fF43A5564e44c3309609aFF9";
 const TRIFECTA3_FARM = "0xbdEE3F788a5efDdA1FcFe6bfe7DbbDa5690179e6";
 const TRIFECTA3_TOKEN0 = YEET;
@@ -175,6 +184,9 @@ let trifectaPluginFactory;
 
 let berapawPlugin;
 let berapawPluginFactory;
+
+let infraredTrifectaPlugin;
+let infraredTrifectaPluginFactory;
 
 /*===================================================================*/
 /*===========================  CONTRACT DATA  =======================*/
@@ -273,6 +285,16 @@ async function getContracts() {
   berapawPlugin = await ethers.getContractAt(
     "contracts/plugins/berachain/BeraPawPluginFactory.sol:BeraPawPlugin",
     BERAPAW0_PLUGIN
+  );
+
+  infraredTrifectaPluginFactory = await ethers.getContractAt(
+    "contracts/plugins/berachain/InfraredTrifectaPluginFactory.sol:InfraredTrifectaPluginFactory",
+    "0xDBfD560f14CD665C8E42b4ad7660d323e3bb8624"
+  );
+
+  infraredTrifectaPlugin = await ethers.getContractAt(
+    "contracts/plugins/berachain/InfraredTrifectaPluginFactory.sol:InfraredTrifectaPlugin",
+    INFRARED_TRIFECTA3_PLUGIN
   );
 
   console.log("Contracts Retrieved");
@@ -629,6 +651,72 @@ async function verifyInfraredPlugin() {
   console.log("InfraredPlugin Verified");
 }
 
+async function deployInfraredTrifectaPluginFactory() {
+  console.log("Starting InfraredTrifectaPluginFactory Deployment");
+  const infraredTrifectaPluginFactoryArtifact = await ethers.getContractFactory(
+    "InfraredTrifectaPluginFactory"
+  );
+  const infraredTrifectaPluginFactoryContract =
+    await infraredTrifectaPluginFactoryArtifact.deploy(voter.address, {
+      gasPrice: ethers.gasPrice,
+    });
+  infraredTrifectaPluginFactory =
+    await infraredTrifectaPluginFactoryContract.deployed();
+  console.log(
+    "InfraredTrifectaPluginFactory Deployed at:",
+    infraredTrifectaPluginFactory.address
+  );
+}
+
+async function verifyInfraredTrifectaPluginFactory() {
+  console.log("Starting InfraredTrifectaPluginFactory Verification");
+  await hre.run("verify:verify", {
+    address: infraredTrifectaPluginFactory.address,
+    contract:
+      "contracts/plugins/berachain/InfraredTrifectaPluginFactory.sol:InfraredTrifectaPluginFactory",
+    constructorArguments: [voter.address],
+  });
+  console.log("InfraredTrifectaPluginFactory Verified");
+}
+
+async function deployInfraredTrifectaPlugin() {
+  console.log("Starting InfraredTrifectaPlugin Deployment");
+  await infraredTrifectaPluginFactory.createPlugin(
+    INFRARED_TRIFECTA3_VAULT,
+    INFRARED_TRIFECTA3_TOKENS,
+    INFRARED_TRIFECTA3_REWARDS,
+    INFRARED_TRIFECTA3_SYMBOL,
+    INFRARED_TRIFECTA3_NAME,
+    { gasPrice: ethers.gasPrice }
+  );
+  await sleep(10000);
+  console.log(
+    "InfraredTrifectaPlugin Deployed at:",
+    await infraredTrifectaPluginFactory.last_plugin()
+  );
+}
+
+async function verifyInfraredTrifectaPlugin() {
+  console.log("Starting InfraredTrifectaPlugin Verification");
+  await hre.run("verify:verify", {
+    address: infraredTrifectaPlugin.address,
+    contract:
+      "contracts/plugins/berachain/InfraredTrifectaPluginFactory.sol:InfraredTrifectaPlugin",
+    constructorArguments: [
+      TRIFECTA3,
+      voter.address,
+      INFRARED_TRIFECTA3_TOKENS,
+      INFRARED_TRIFECTA3_REWARDS,
+      VAULT_FACTORY,
+      INFRARED_TRIFECTA3_VAULT,
+      "Infrared Trifecta",
+      INFRARED_TRIFECTA3_SYMBOL,
+      INFRARED_TRIFECTA3_NAME,
+    ],
+  });
+  console.log("InfraredTrifectaPlugin Verified");
+}
+
 async function deployTrifectaPluginFactory() {
   console.log("Starting TrifectaPluginFactory Deployment");
   const trifectaPluginFactoryArtifact = await ethers.getContractFactory(
@@ -897,6 +985,24 @@ async function main() {
   // console.log("BeraPawPlugin Deployed and Verified");
 
   //===================================================================
+  // 19. Deploy Infrared Trifecta Plugin Factory
+  //===================================================================
+
+  // console.log("Starting InfraredTrifectaPluginFactory Deployment");
+  // await deployInfraredTrifectaPluginFactory();
+  // await verifyInfraredTrifectaPluginFactory();
+  // console.log("InfraredTrifectaPluginFactory Deployed and Verified");
+
+  //===================================================================
+  // 20. Deploy Infrared Trifecta Plugin
+  //===================================================================
+
+  // console.log("Starting InfraredTrifectaPlugin Deployment");
+  // await deployInfraredTrifectaPlugin();
+  // await verifyInfraredTrifectaPlugin();
+  // console.log("InfraredTrifectaPlugin Deployed and Verified");
+
+  //===================================================================
   // 13. Add Gauge Rewards
   //===================================================================
 
@@ -910,6 +1016,11 @@ async function main() {
   //   XKDK // xKDK
   // ); // xKDK added to Trifecta YEET-WBERA Island Gauge
   // console.log("- xKDK added as gauge rewards");
+  // await voter.connect(wallet).addGaugeReward(
+  //   await voter.gauges(INFRARED_TRIFECTA3_PLUGIN),
+  //   IBGT // iBGT
+  // ); // iBGT added to Infrared Trifecta YEET-WBERA Island Gauge
+  // console.log("- iBGT added as gauge rewards");
 
   //===================================================================
   // 10. Add plugins to voter
@@ -973,6 +1084,11 @@ async function main() {
   // await voter.addPlugin(GUMBALL1_PLUGIN); // Gumball PastaFactory
   // await sleep(10000);
 
+  // Add infrared trifecta plugin
+  // console.log("Adding INFRARED_TRIFECTA3_PLUGIN to Voter");
+  // await voter.addPlugin(INFRARED_TRIFECTA3_PLUGIN); // Infrared Trifecta YEET-WBERA Island
+  // await sleep(10000);
+
   //===================================================================
   // 13. Print Deployment
   //===================================================================
@@ -1015,6 +1131,7 @@ async function main() {
   // BULLAS_PLUGIN,
   // GUMBALL0_PLUGIN,
   // GUMBALL1_PLUGIN,
+  //   INFRARED_TRIFECTA3_PLUGIN,
   // ];
 
   // for (let i = 0; i < plugins.length; i++) {
@@ -1070,7 +1187,11 @@ async function main() {
   //   GUMBALL0_PLUGIN,
   //   GUMBALL1_PLUGIN,
   // ]);
-  // console.log("Bullas Bribe Rewards Distributed");
+  // console.log("Game Bribe Rewards Distributed");
+  // await voter.distributeToBribes([
+  //   INFRARED_TRIFECTA3_PLUGIN,
+  // ]);
+  // console.log("Infrared Trifecta Bribe Rewards Distributed");
 
   //===================================================================
   // 14. Remove Plugin
