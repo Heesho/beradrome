@@ -151,6 +151,13 @@ const BERAPAW2_SYMBOL = "Bex PAW-HONEY";
 const BERAPAW2_NAME = "Beradrome BeraPaw Bex PAW-HONEY Vault Token";
 const BERAPAW2_PLUGIN = "0xF89F4fdE1Bf970404160eD7B9F4758B0b1ae266D";
 
+// BeraPaw BurrBear LBGT-WBERA
+const BERAPAW3 = "0x6AcBBedEcD914dE8295428B4Ee51626a1908bB12";
+const BERAPAW3_TOKENS = [LBGT, WBERA];
+const BERAPAW3_SYMBOL = "BurrBear LBGT-WBERA";
+const BERAPAW3_NAME = "Beradrome BeraPaw BurrBear LBGT-WBERA Vault Token";
+const BERAPAW3_PLUGIN = "0xdC611Db44DeE53e14c2806b3cDBAea11d0404537";
+
 // Bullas BULL iSH
 const BULLAS_PLUGIN = "0xb488543f69a9462F62b2E944C81CFd16Cf0237c0";
 
@@ -812,10 +819,10 @@ async function verifyBeraPawPluginFactory() {
 async function deployBeraPawPlugin() {
   console.log("Starting BeraPawPlugin Deployment");
   await berapawPluginFactory.createPlugin(
-    BERAPAW2,
-    BERAPAW2_TOKENS,
-    BERAPAW2_SYMBOL,
-    BERAPAW2_NAME,
+    BERAPAW3,
+    BERAPAW3_TOKENS,
+    BERAPAW3_SYMBOL,
+    BERAPAW3_NAME,
     { gasPrice: ethers.gasPrice }
   );
   await sleep(10000);
@@ -1072,6 +1079,9 @@ async function main() {
   // console.log("Adding BERAPAW2 to Voter");
   // await voter.addPlugin(BERAPAW2_PLUGIN); // BeraPaw Bex PAW-HONEY
   // await sleep(10000);
+  // console.log("Adding BERAPAW3 to Voter");
+  // await voter.addPlugin(BERAPAW3_PLUGIN); // BeraPaw BurrBear LBGT-WBERA
+  // await sleep(10000);
 
   // Add game plugins
   // console.log("Adding BULLAS_PLUGIN to Voter");
@@ -1128,10 +1138,11 @@ async function main() {
   // BERAPAW0_PLUGIN,
   // BERAPAW1_PLUGIN,
   // BERAPAW2_PLUGIN,
+  // BERAPAW3_PLUGIN,
   // BULLAS_PLUGIN,
   // GUMBALL0_PLUGIN,
   // GUMBALL1_PLUGIN,
-  //   INFRARED_TRIFECTA3_PLUGIN,
+  // INFRARED_TRIFECTA3_PLUGIN,
   // ];
 
   // for (let i = 0; i < plugins.length; i++) {
@@ -1180,6 +1191,7 @@ async function main() {
   //   BERAPAW0_PLUGIN, // BeraPaw Beraborrow sNECT
   //   BERAPAW1_PLUGIN, // BeraPaw Bex HONEY-WBERA
   //   BERAPAW2_PLUGIN, // BeraPaw Bex PAW-HONEY
+  //   BERAPAW3_PLUGIN, // BeraPaw BurrBear LBGT-WBERA
   // ]);
   // console.log("BeraPaw Bribe Rewards Distributed");
   // await voter.distributeToBribes([
