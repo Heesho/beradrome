@@ -42,15 +42,15 @@ contract MerkleClaim {
         require(!hasClaimedOTOKEN[to], "ALREADY_CLAIMED");
 
         // Verify merkle proof, or revert if not in tree
-         bytes32 leaf = keccak256(abi.encodePacked(to, amount));
-         bool isValidLeaf = MerkleProof.verify(proof, merkleRootOTOKEN, leaf);
-         require(isValidLeaf, "NOT_IN_MERKLE");
+        bytes32 leaf = keccak256(abi.encodePacked(to, amount));
+        bool isValidLeaf = MerkleProof.verify(proof, merkleRootOTOKEN, leaf);
+        require(isValidLeaf, "NOT_IN_MERKLE");
 
         // Set address to claimed
-         hasClaimedOTOKEN[to] = true;
+        hasClaimedOTOKEN[to] = true;
 
         // Claim tokens for address
-         OTOKEN.transfer(to, amount);
+        OTOKEN.transfer(to, amount);
 
         // Emit claim event
         emit Claim(to, amount);
@@ -65,16 +65,16 @@ contract MerkleClaim {
         require(!hasClaimedVTOKEN[to], "ALREADY_CLAIMED");
 
         // Verify merkle proof, or revert if not in tree
-         bytes32 leaf = keccak256(abi.encodePacked(to, amount));
-         bool isValidLeaf = MerkleProof.verify(proof, merkleRootVTOKEN, leaf);
-         require(isValidLeaf, "NOT_IN_MERKLE");
+        bytes32 leaf = keccak256(abi.encodePacked(to, amount));
+        bool isValidLeaf = MerkleProof.verify(proof, merkleRootVTOKEN, leaf);
+        require(isValidLeaf, "NOT_IN_MERKLE");
 
         // Set address to claimed
         hasClaimedVTOKEN[to] = true;
         
         // Claim tokens for address
-         OTOKEN.approve(address(VTOKEN), amount);
-         VTOKEN.burnFor(to, amount);
+        OTOKEN.approve(address(VTOKEN), amount);
+        VTOKEN.burnFor(to, amount);
          
         // Emit claim event
         emit Claim(to, amount);

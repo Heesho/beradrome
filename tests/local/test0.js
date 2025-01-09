@@ -630,6 +630,57 @@ describe("local: test0", function () {
     console.log("min BASE out", divDec(res.minOutput));
   });
 
+  it("BondingCurveData, user0", async function () {
+    console.log("******************************************************");
+    let res = await multicall.bondingCurveData(user0.address);
+    console.log("GLOBAL DATA");
+    console.log("Price BASE: $", divDec(res.priceBASE));
+    console.log("Price TOKEN: $", divDec(res.priceTOKEN));
+    console.log("Price OTOKEN: $", divDec(res.priceOTOKEN));
+    console.log("Max Market Sell: ", divDec(res.maxMarketSell));
+    console.log();
+    console.log("Total Value Locked: $", divDec(res.tvl));
+    console.log("Market Cap: $", divDec(res.marketCap));
+    console.log("TOKEN Supply: ", divDec(res.supplyTOKEN));
+    console.log("VTOKEN Supply: ", divDec(res.supplyVTOKEN));
+    console.log("APR: ", divDec(res.apr), "%");
+    console.log("Loan-to-Value: ", divDec(res.ltv), "%");
+    console.log("WeeklyOTOKEN: ", divDec(res.weekly));
+    console.log();
+    console.log("ACCOUNT DATA");
+    console.log("Balance BASE: ", divDec(res.accountBASE));
+    console.log("Earned BASE: ", divDec(res.accountEarnedBASE));
+    console.log("Balance TOKEN: ", divDec(res.accountTOKEN));
+    console.log("Earned TOKEN: ", divDec(res.accountEarnedTOKEN));
+    console.log("Balance OTOKEN: ", divDec(res.accountOTOKEN));
+    console.log("Earned BASE: ", divDec(res.accountEarnedBASE));
+    console.log("Balance VTOKEN: ", divDec(res.accountVTOKEN));
+    console.log("Voting Power: ", divDec(res.accountVotingPower));
+    console.log("Used Voting Power: ", divDec(res.accountUsedWeights));
+    console.log("Borrow Credit: ", divDec(res.accountBorrowCredit), "BASE");
+    console.log("Borrow Debt: ", divDec(res.accountBorrowDebt), "BASE");
+    console.log("Max Withdraw: ", divDec(res.accountMaxWithdraw), "VTOKEN");
+  });
+
+  it("SwapCardData", async function () {
+    console.log("******************************************************");
+    let res = await multicall.swapCardData();
+    console.log("Floor Reserve BASE: ", divDec(res.frBASE));
+    console.log("Market Reserve Virtual BASE: ", divDec(res.mrvBASE));
+    console.log("Market Reserve Real BASE: ", divDec(res.mrrBASE));
+    console.log("Market Reserve Real TOKEN: ", divDec(res.mrrTOKEN));
+    console.log("Market Reserve Max TOKEN: ", divDec(res.marketMaxTOKEN));
+    console.log("Market Reserve Max Sell: ", divDec(await TOKEN.getMaxSell()));
+  });
+
+  it("User0 exercises 1 OTOKEN", async function () {
+    console.log("******************************************************");
+    await OTOKEN.connect(owner).transfer(user0.address, one);
+    await OTOKEN.connect(user0).approve(TOKEN.address, one);
+    await BASE.connect(user0).approve(TOKEN.address, one);
+    await TOKEN.connect(user0).exercise(one, user0.address);
+  });
+
   it("User0 Sells all TOKEN", async function () {
     console.log("******************************************************");
     await TOKEN.connect(user0).approve(TOKEN.address, await TOKEN.getMaxSell());
@@ -640,6 +691,17 @@ describe("local: test0", function () {
       user0.address,
       AddressZero
     );
+  });
+
+  it("SwapCardData", async function () {
+    console.log("******************************************************");
+    let res = await multicall.swapCardData();
+    console.log("Floor Reserve BASE: ", divDec(res.frBASE));
+    console.log("Market Reserve Virtual BASE: ", divDec(res.mrvBASE));
+    console.log("Market Reserve Real BASE: ", divDec(res.mrrBASE));
+    console.log("Market Reserve Real TOKEN: ", divDec(res.mrrTOKEN));
+    console.log("Market Reserve Max TOKEN: ", divDec(res.marketMaxTOKEN));
+    console.log("Market Reserve Max Sell: ", divDec(await TOKEN.getMaxSell()));
   });
 
   it("BondingCurveData, user0", async function () {
@@ -3643,8 +3705,8 @@ describe("local: test0", function () {
 
   it("Voter Coverage Testing", async function () {
     console.log("******************************************************");
-    await voter.connect(owner).killGauge(gauge0.address);
-    await voter.connect(owner).reviveGauge(gauge0.address);
+    // await voter.connect(owner).killGauge(gauge0.address);
+    // await voter.connect(owner).reviveGauge(gauge0.address);
     await voter.connect(owner).length();
     await voter.connect(owner).updateFor([gauge0.address]);
     await voter.connect(owner).updateForRange(0, 2);
@@ -3661,12 +3723,12 @@ describe("local: test0", function () {
     await expect(
       voter.connect(user1).addPlugin(BASE.address)
     ).to.be.revertedWith("Voter__NotAuthorizedGovernance");
-    await expect(
-      voter.connect(owner).reviveGauge(gauge0.address)
-    ).to.be.revertedWith("Voter__GaugeIsAlive");
-    await expect(
-      voter.connect(user1).reviveGauge(gauge0.address)
-    ).to.be.revertedWith("Voter__NotAuthorizedGovernance");
+    // await expect(
+    //   voter.connect(owner).reviveGauge(gauge0.address)
+    // ).to.be.revertedWith("Voter__GaugeIsAlive");
+    // await expect(
+    //   voter.connect(user1).reviveGauge(gauge0.address)
+    // ).to.be.revertedWith("Voter__NotAuthorizedGovernance");
     await voter.connect(owner).killGauge(gauge0.address);
     await expect(
       voter.connect(owner).killGauge(gauge0.address)

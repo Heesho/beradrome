@@ -467,7 +467,7 @@ describe("Hive token testing", function () {
     console.log("- HIVE Token deployed");
 
     // Initialize HiveToken
-    let res = await hiveFactory.connect(owner).index_Hive(0);
+    let res = await hiveFactory.connect(owner).index_Hive(1);
     hiveToken = await ethers.getContractAt("HiveToken", res.hiveToken);
     console.log("- hiveToken Initialized at:", hiveToken.address);
 
@@ -530,6 +530,14 @@ describe("Hive token testing", function () {
       user0.address,
       AddressZero
     );
+  });
+
+  it("User0 exercises 1 OTOKEN", async function () {
+    console.log("******************************************************");
+    await OTOKEN.connect(owner).transfer(user0.address, one);
+    await OTOKEN.connect(user0).approve(TOKEN.address, one);
+    await BASE.connect(user0).approve(TOKEN.address, one);
+    await TOKEN.connect(user0).exercise(one, user0.address);
   });
 
   it("User0 Sells all TOKEN", async function () {
@@ -2459,11 +2467,11 @@ describe("Hive token testing", function () {
 
   const util = require("util");
 
-  it("AuctionData", async function () {
-    console.log("******************************************************");
-    let res = await hiveMulticall.getAuction(hiveToken.address);
-    console.log(
-      util.inspect(res, { showHidden: false, depth: null, colors: true })
-    );
-  });
+  // it("AuctionData", async function () {
+  //   console.log("******************************************************");
+  //   let res = await hiveMulticall.getAuction(hiveToken.address);
+  //   console.log(
+  //     util.inspect(res, { showHidden: false, depth: null, colors: true })
+  //   );
+  // });
 });

@@ -10,6 +10,7 @@ import "contracts/interfaces/IVTOKEN.sol";
 import "contracts/interfaces/IOTOKENFactory.sol";
 import "contracts/interfaces/IVTOKENFactory.sol";
 import "contracts/interfaces/ITOKENFeesFactory.sol";
+import "./FixedPointMathLib.sol";
 
 /**
  * @title TOKEN Bonding Curve
@@ -54,6 +55,7 @@ import "contracts/interfaces/ITOKENFeesFactory.sol";
  * be an 18 decimal ERC20 token.
  */
 contract TOKEN is ERC20, ReentrancyGuard {
+    using FixedPointMathLib for uint256;
     using SafeERC20 for IERC20;
 
     /*===================================================================*/
@@ -185,7 +187,7 @@ contract TOKEN is ERC20, ReentrancyGuard {
     {
         uint256 feeBASE = amountBase * SWAP_FEE / DIVISOR;
         uint256 newMrBASE = (mrvBASE + mrrBASE) + amountBase - feeBASE;
-        uint256 newMrTOKEN = (mrvBASE + mrrBASE) * mrrTOKEN / newMrBASE;
+        uint256 newMrTOKEN = (mrvBASE + mrrBASE).mulWadUp(mrrTOKEN).divWadUp(newMrBASE);
         uint256 outTOKEN = mrrTOKEN - newMrTOKEN;
 
         if (outTOKEN < minToken) revert TOKEN__ExceedsSwapSlippageTolerance();
@@ -226,7 +228,7 @@ contract TOKEN is ERC20, ReentrancyGuard {
         if (amountToken > getMaxSell()) revert TOKEN__ExceedsSwapMarketReserves();
         uint256 feeTOKEN = amountToken * SWAP_FEE / DIVISOR;
         uint256 newMrTOKEN = mrrTOKEN + amountToken - feeTOKEN;
-        uint256 newMrBASE = (mrvBASE + mrrBASE) * mrrTOKEN / newMrTOKEN;
+        uint256 newMrBASE = (mrvBASE + mrrBASE).mulWadUp(mrrTOKEN).divWadUp(newMrTOKEN);
         uint256 outBASE = (mrvBASE + mrrBASE) - newMrBASE;
 
         if (outBASE < minBase) revert TOKEN__ExceedsSwapSlippageTolerance();
@@ -351,7 +353,7 @@ contract TOKEN is ERC20, ReentrancyGuard {
     }
 
     function getMaxSell() public view returns (uint256) {
-        return (mrrTOKEN * mrrBASE / mrvBASE);
+        return (mrrTOKEN.mulWadDown(mrrBASE).divWadDown(mrvBASE)).mulWadDown(DIVISOR).divWadDown(DIVISOR - SWAP_FEE);
     }
 
     function getTotalValueLocked() public view returns (uint256) {

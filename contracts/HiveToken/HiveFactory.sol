@@ -12,7 +12,7 @@ interface IHiveRewarderFactory {
 }
 
 interface IHiveDistroFactory {
-    function createHiveDistro(address owner, address hiveToken, address hiveRewarder) external returns (address);
+    function createHiveDistro(address hiveToken, address hiveRewarder) external returns (address);
 }
 
 interface IHiveFeeFlowFactory {
@@ -65,6 +65,7 @@ contract HiveFactory is Ownable {
     error HiveFactory__InvalidZeroAddress();
     error HiveFactory__Unauthorized();
     error HiveFactory__InvalidInput();
+    error HiveFactory__InvalidHiveToken();
 
     event HiveFactory__HiveCreated(string name, string symbol, address hiveToken, address hiveRewarder, address hiveDistro, address hiveFeeFlow);
     event HiveFactory__HiveTokenFactorySet(address hiveTokenFactory);
@@ -105,12 +106,12 @@ contract HiveFactory is Ownable {
     ) external {
         address hiveToken = IHiveTokenFactory(hiveTokenFactory).createHiveToken(msg.sender, name, symbol, uri, description);
         address hiveRewarder = IHiveRewarderFactory(hiveRewarderFactory).createHiveRewarder(msg.sender, hiveToken);
-        address hiveDistro = IHiveDistroFactory(hiveDistroFactory).createHiveDistro(msg.sender, hiveToken, hiveRewarder);
+        address hiveDistro = IHiveDistroFactory(hiveDistroFactory).createHiveDistro(hiveToken, hiveRewarder);
         address hiveFeeFlow = IHiveFeeFlowFactory(hiveFeeFlowFactory).createHiveFeeFlow(hiveDistro, rewardToken, initPrice, minInitPrice);
 
+        hiveIndex++;
         index_Hive[hiveIndex] = Hive(hiveToken, hiveRewarder, hiveDistro, hiveFeeFlow, rewardToken);
         hiveToken_Index[hiveToken] = hiveIndex;
-        hiveIndex++;
 
         IHiveToken(hiveToken).setFeeFlow(hiveFeeFlow);
         IHiveRewarder(hiveRewarder).addReward(rewardToken);
@@ -161,6 +162,7 @@ contract HiveFactory is Ownable {
 
     function setHiveFeeFlow(address hiveToken, uint256 initPrice, uint256 minInitPrice) external onlyOwner() {
         uint256 index = hiveToken_Index[hiveToken];
+        if (index == 0) revert HiveFactory__InvalidHiveToken();
         address hiveDistro = index_Hive[index].hiveDistro;
         address rewardToken = index_Hive[index].rewardToken;
         address hiveFeeFlow = IHiveFeeFlowFactory(hiveFeeFlowFactory).createHiveFeeFlow(hiveDistro, rewardToken, initPrice, minInitPrice);

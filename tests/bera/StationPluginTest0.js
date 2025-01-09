@@ -51,7 +51,7 @@ function timer(t) {
 const WBERA_ADDR = "0x7507c1dc16935B82698e4C63f2746A2fCf994dF8";
 const HONEY_ADDR = "0x0E4aaF1351de4c0264C5c7056Ef3777b41BD8e03";
 const BHONEY_ADDR = "0x1306D3c36eC7E38dd2c128fBe3097C2C2449af64";
-const BHONEY_HOLDER = "0xd5AD558b09Ebfe1b7F037db7398C456A0ba56409";
+const BHONEY_HOLDER = "0x9E4C537E9bAc8799E5dc2355219f21338f4801eA";
 
 let owner, multisig, treasury, user0, user1, user2;
 let vaultFactory;

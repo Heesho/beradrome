@@ -1200,9 +1200,7 @@ async function main() {
   //   GUMBALL1_PLUGIN,
   // ]);
   // console.log("Game Bribe Rewards Distributed");
-  // await voter.distributeToBribes([
-  //   INFRARED_TRIFECTA3_PLUGIN,
-  // ]);
+  // await voter.distributeToBribes([INFRARED_TRIFECTA3_PLUGIN]);
   // console.log("Infrared Trifecta Bribe Rewards Distributed");
 
   //===================================================================

@@ -147,8 +147,8 @@ contract HiveToken is ERC20, ERC20Permit, ERC20Votes, Ownable, ReentrancyGuard {
         _mint(account, amount);
         IERC20(oToken).safeTransferFrom(msg.sender, address(this), amount);
 
-        IERC20(oToken).safeTransferFrom(msg.sender, treasury, fee * 10 / 100);
-        IERC20(oToken).safeTransferFrom(msg.sender, IHiveFactory(hiveFactory).protocol(), fee * 90 / 100);
+        IERC20(oToken).safeTransferFrom(msg.sender, treasury, fee / 2);
+        IERC20(oToken).safeTransferFrom(msg.sender, IHiveFactory(hiveFactory).protocol(), fee - (fee / 2));
         
         IERC20(oToken).safeApprove(vToken, 0);
         IERC20(oToken).safeApprove(vToken, amount);
@@ -287,9 +287,6 @@ contract HiveToken is ERC20, ERC20Permit, ERC20Votes, Ownable, ReentrancyGuard {
 
     // Function to receive Ether. msg.data must be empty
     receive() external payable {}
-
-    // Fallback function is called when msg.data is not empty
-    fallback() external payable {}
 
     /*----------  VIEW FUNCTIONS  ---------------------------------------*/
 

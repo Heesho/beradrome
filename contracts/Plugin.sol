@@ -2,7 +2,6 @@
 pragma solidity 0.8.19;
 
 import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
-import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "contracts/interfaces/IGauge.sol";
@@ -50,7 +49,7 @@ contract VaultToken is ERC20, Ownable {
  * Plugin balanceOf must be equal to Gauge balanceOf for all users at all times.
  * Plugin totalSupply must be equal to Gauge totalSupply at all times.
  */
-abstract contract Plugin is ReentrancyGuard {
+abstract contract Plugin {
     using SafeERC20 for IERC20;
 
     /*----------  CONSTANTS  --------------------------------------------*/
@@ -126,7 +125,6 @@ abstract contract Plugin is ReentrancyGuard {
     function depositFor(address account, uint256 amount) 
         public
         virtual
-        nonReentrant
         nonZeroInput(amount)
     {
         _totalSupply = _totalSupply + amount;
@@ -145,7 +143,6 @@ abstract contract Plugin is ReentrancyGuard {
     function withdrawTo(address account, uint256 amount)
         public
         virtual
-        nonReentrant
         nonZeroInput(amount)
     {
         _totalSupply = _totalSupply - amount;
@@ -160,7 +157,7 @@ abstract contract Plugin is ReentrancyGuard {
 
     }
 
-    function claimAndDistribute() public virtual nonReentrant {
+    function claimAndDistribute() public virtual {
         emit Plugin__ClaimedAnDistributed();
     }
 

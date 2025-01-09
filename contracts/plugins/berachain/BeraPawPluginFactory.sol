@@ -1,13 +1,14 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.19;
 
+import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 import 'contracts/Plugin.sol';
 
 interface ILBGT {
     function mintLbgtTo(address rewardsVault, address recipient) external returns (uint256);
 }
 
-contract BeraPawPlugin is Plugin {
+contract BeraPawPlugin is Plugin, ReentrancyGuard {
     using SafeERC20 for IERC20;
 
     /*----------  CONSTANTS  --------------------------------------------*/
@@ -16,7 +17,7 @@ contract BeraPawPlugin is Plugin {
 
     /*----------  STATE VARIABLES  --------------------------------------*/
 
-    address public berachainRewardsVault;
+    address public immutable berachainRewardsVault;
 
     /*----------  ERRORS ------------------------------------------------*/
 
@@ -49,8 +50,9 @@ contract BeraPawPlugin is Plugin {
     }
 
     function claimAndDistribute() 
-        public 
-        override 
+        public
+        override
+        nonReentrant
     {
         super.claimAndDistribute();
         ILBGT(LBGT).mintLbgtTo(berachainRewardsVault, address(this));
@@ -65,8 +67,9 @@ contract BeraPawPlugin is Plugin {
     }
 
     function depositFor(address account, uint256 amount) 
-        public 
-        override 
+        public
+        override
+        nonReentrant
     {
         super.depositFor(account, amount);
         IERC20(getToken()).safeApprove(berachainRewardsVault, 0);
@@ -75,8 +78,9 @@ contract BeraPawPlugin is Plugin {
     }
 
     function withdrawTo(address account, uint256 amount) 
-        public 
-        override 
+        public
+        override
+        nonReentrant
     {
         IBerachainRewardsVault(berachainRewardsVault).withdraw(amount); 
         super.withdrawTo(account, amount);

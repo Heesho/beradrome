@@ -119,8 +119,10 @@ contract VolPlugin is ReentrancyGuard {
         }
 
         IGauge(gauge).getReward(address(this));
-        uint256 balance = IERC20(OTOKEN).balanceOf(address(this));
-        IERC20(OTOKEN).safeTransfer(assetReceiver, balance);
+        address[] memory rewardTokens = IGauge(gauge).getRewardTokens();
+        for (uint256 i = 0; i < rewardTokens.length; i++) {
+            IERC20(rewardTokens[i]).safeTransfer(assetReceiver, IERC20(rewardTokens[i]).balanceOf(address(this)));
+        }
 
         uint256 newInitPrice = paymentAmount * PRICE_MULITPLIER / PRECISION;
 

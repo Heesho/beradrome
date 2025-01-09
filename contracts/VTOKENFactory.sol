@@ -24,7 +24,7 @@ interface IBerachainRewardsVault {
 }
 
 contract VaultToken is ERC20, Ownable {
-    constructor() ERC20("Beradrome Vault Token", "BVT") {}
+    constructor() ERC20("hiBERO", "hiBERO") {}
 
     function mint(address to, uint256 amount) external onlyOwner {
         _mint(to, amount);
@@ -53,7 +53,7 @@ contract VaultToken is ERC20, Ownable {
  * The VTOKEN balanceOf must always be equal to VTOKENRewarder balanceOf for all accounts at all times.
  * The VTOKEN totalSupply must always be equal to VTOKENRewarder totalSupply at all times.
  */
-contract VTOKEN is ERC20, ERC20Permit, ERC20Votes, ReentrancyGuard, Ownable {
+contract VTOKEN is ERC20, ERC20Votes, ReentrancyGuard, Ownable {
     using SafeERC20 for IERC20;
 
     /*===================================================================*/

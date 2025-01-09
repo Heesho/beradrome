@@ -427,6 +427,14 @@ describe("local: test1", function () {
     console.log("auto min BASE out", divDec(res.autoMinOutput));
   });
 
+  it("User0 exercises 1 OTOKEN", async function () {
+    console.log("******************************************************");
+    await OTOKEN.connect(owner).transfer(user0.address, one);
+    await OTOKEN.connect(user0).approve(TOKEN.address, one);
+    await BASE.connect(user0).approve(TOKEN.address, one);
+    await TOKEN.connect(user0).exercise(one, user0.address);
+  });
+
   it("User0 Sells all TOKEN", async function () {
     console.log("******************************************************");
     await TOKEN.connect(user0).approve(TOKEN.address, await TOKEN.getMaxSell());

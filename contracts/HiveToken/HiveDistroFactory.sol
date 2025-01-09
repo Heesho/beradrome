@@ -18,7 +18,7 @@ interface IHiveRewarder {
     function notifyRewardAmount(address rewardToken, uint256 amount) external;
 }
 
-contract HiveDistro is Ownable, ReentrancyGuard {
+contract HiveDistro is ReentrancyGuard {
     using SafeERC20 for IERC20;
 
     /*----------  CONSTANTS  --------------------------------------------*/
@@ -51,12 +51,11 @@ contract HiveDistro is Ownable, ReentrancyGuard {
     function distributeRewards(address[] calldata rewardTokens) external nonReentrant {
         for (uint256 i = 0; i < rewardTokens.length; i++) {
             uint256 balance = IERC20(rewardTokens[i]).balanceOf(address(this));
+            uint256 fee = balance * IHiveFactory(hiveFactory).rewardFee() / DIVISOR;
+            balance -= fee;
             if (balance > DURATION) {
-                uint256 fee = balance * IHiveFactory(hiveFactory).rewardFee() / DIVISOR;
-                balance -= fee;
-                
-                IERC20(rewardTokens[i]).safeTransfer(IHiveToken(hiveToken).treasury(), fee * 10 / 100);
-                IERC20(rewardTokens[i]).safeTransfer(IHiveFactory(hiveFactory).protocol(), fee * 90 / 100);
+                IERC20(rewardTokens[i]).safeTransfer(IHiveToken(hiveToken).treasury(), fee / 2);
+                IERC20(rewardTokens[i]).safeTransfer(IHiveFactory(hiveFactory).protocol(), fee - (fee / 2));
 
                 IERC20(rewardTokens[i]).safeApprove(hiveRewarder, 0);
                 IERC20(rewardTokens[i]).safeApprove(hiveRewarder, balance);
@@ -88,9 +87,8 @@ contract HiveDistroFactory {
         hiveFactory = _hiveFactory;
     }
 
-    function createHiveDistro(address owner, address hiveToken, address hiveRewarder) external onlyHiveFactory returns (address) {
+    function createHiveDistro(address hiveToken, address hiveRewarder) external onlyHiveFactory returns (address) {
         HiveDistro hiveDistro = new HiveDistro(hiveFactory, hiveToken, hiveRewarder);
-        hiveDistro.transferOwnership(owner);
         lastHiveDistro = address(hiveDistro);
         emit HiveDistroFactory__HiveDistroCreated(lastHiveDistro);
         return lastHiveDistro;

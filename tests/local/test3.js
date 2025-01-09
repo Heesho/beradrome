@@ -673,6 +673,14 @@ describe("local: test3", function () {
     console.log("min BASE out", divDec(res.minOutput));
   });
 
+  it("User0 exercises 1 OTOKEN", async function () {
+    console.log("******************************************************");
+    await OTOKEN.connect(owner).transfer(user0.address, one);
+    await OTOKEN.connect(user0).approve(TOKEN.address, one);
+    await BASE.connect(user0).approve(TOKEN.address, one);
+    await TOKEN.connect(user0).exercise(one, user0.address);
+  });
+
   it("User0 Sells all TOKEN", async function () {
     console.log("******************************************************");
     await TOKEN.connect(user0).approve(TOKEN.address, await TOKEN.getMaxSell());
@@ -3686,8 +3694,8 @@ describe("local: test3", function () {
 
   it("Voter Coverage Testing", async function () {
     console.log("******************************************************");
-    await voter.connect(owner).killGauge(gauge0.address);
-    await voter.connect(owner).reviveGauge(gauge0.address);
+    // await voter.connect(owner).killGauge(gauge0.address);
+    // await voter.connect(owner).reviveGauge(gauge0.address);
     await voter.connect(owner).length();
     await voter.connect(owner).updateFor([gauge0.address]);
     await voter.connect(owner).updateForRange(0, 2);
@@ -3704,12 +3712,12 @@ describe("local: test3", function () {
     await expect(
       voter.connect(user1).addPlugin(BASE.address)
     ).to.be.revertedWith("Voter__NotAuthorizedGovernance");
-    await expect(
-      voter.connect(owner).reviveGauge(gauge0.address)
-    ).to.be.revertedWith("Voter__GaugeIsAlive");
-    await expect(
-      voter.connect(user1).reviveGauge(gauge0.address)
-    ).to.be.revertedWith("Voter__NotAuthorizedGovernance");
+    // await expect(
+    //   voter.connect(owner).reviveGauge(gauge0.address)
+    // ).to.be.revertedWith("Voter__GaugeIsAlive");
+    // await expect(
+    //   voter.connect(user1).reviveGauge(gauge0.address)
+    // ).to.be.revertedWith("Voter__NotAuthorizedGovernance");
     await voter.connect(owner).killGauge(gauge0.address);
     await expect(
       voter.connect(owner).killGauge(gauge0.address)

@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.19;
 
+import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 import 'contracts/Plugin.sol';
 
 interface IInfraredVault {
@@ -10,7 +11,7 @@ interface IInfraredVault {
     function getReward() external;
 }
 
-contract InfraredTrifectaPlugin is Plugin {
+contract InfraredTrifectaPlugin is Plugin, ReentrancyGuard {
     using SafeERC20 for IERC20;
 
     /*----------  CONSTANTS  --------------------------------------------*/
@@ -51,8 +52,9 @@ contract InfraredTrifectaPlugin is Plugin {
     }
 
     function claimAndDistribute() 
-        public 
-        override 
+        public
+        override
+        nonReentrant
     {
         super.claimAndDistribute();
         IInfraredVault(infraredVault).getReward();
@@ -79,8 +81,9 @@ contract InfraredTrifectaPlugin is Plugin {
     }
 
     function depositFor(address account, uint256 amount) 
-        public 
-        override 
+        public
+        override
+        nonReentrant
     {
         super.depositFor(account, amount);
         IERC20(getToken()).safeApprove(infraredVault, 0);
@@ -89,8 +92,9 @@ contract InfraredTrifectaPlugin is Plugin {
     }
 
     function withdrawTo(address account, uint256 amount) 
-        public 
-        override 
+        public
+        override
+        nonReentrant
     {
         IInfraredVault(infraredVault).withdraw(amount); 
         super.withdrawTo(account, amount);

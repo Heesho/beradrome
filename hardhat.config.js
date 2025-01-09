@@ -64,7 +64,7 @@ module.exports = {
       chainId: CHAIN_ID,
       forking: {
         url: RPC_URL,
-        blockNumber: 7940911,
+        blockNumber: 9113940,
       },
     },
   },
@@ -86,7 +86,7 @@ module.exports = {
   },
   paths: {
     sources: "./contracts",
-    tests: "./tests/bera",
+    tests: "./tests/local",
     cache: "./cache",
     artifacts: "./artifacts",
   },

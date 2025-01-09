@@ -67,14 +67,12 @@ contract Voter is ReentrancyGuard, Ownable {
     error Voter__NotMinter();
     error Voter__GaugeExists();
     error Voter__GaugeIsDead();
-    error Voter__GaugeIsAlive();
     error Voter__NotGauge();
 
     /*----------  EVENTS ------------------------------------------------*/
 
     event Voter__GaugeCreated(address creator, address indexed plugin, address indexed gauge,  address bribe);
     event Voter__GaugeKilled(address indexed gauge);
-    event Voter__GaugeRevived(address indexed gauge);
     event Voter__Voted(address indexed voter, uint256 weight);
     event Voter__Abstained(address account, uint256 weight);
     event Voter__Deposit(address indexed plugin, address indexed gauge, address account, uint amount);
@@ -87,7 +85,7 @@ contract Voter is ReentrancyGuard, Ownable {
     /*----------  MODIFIERS  --------------------------------------------*/
 
     modifier onlyNewEpoch(address account) {
-        if ((block.timestamp / DURATION) * DURATION < lastVoted[account]) revert Voter__AlreadyVotedThisEpoch();
+        if ((block.timestamp / DURATION) * DURATION <= lastVoted[account]) revert Voter__AlreadyVotedThisEpoch();
         _;
     }
 
@@ -290,15 +288,6 @@ contract Voter is ReentrancyGuard, Ownable {
         emit Voter__GaugeKilled(_gauge);
     }
 
-    function reviveGauge(address _gauge) 
-        external 
-        onlyGov 
-    {
-        if (isAlive[_gauge]) revert Voter__GaugeIsAlive();
-        isAlive[_gauge] = true;
-        emit Voter__GaugeRevived(_gauge);
-    }
-
     function addBribeReward(address _bribe, address _rewardToken) 
         external 
         onlyGov 
@@ -358,7 +347,6 @@ contract Voter is ReentrancyGuard, Ownable {
         uint _pluginCnt = _pluginVote.length;
         uint256 _weight = IVTOKEN(VTOKEN).balanceOf(account);
         uint256 _totalVoteWeight = 0;
-        uint256 _totalWeight = 0;
         uint256 _usedWeight = 0;
 
         for (uint i = 0; i < _pluginCnt; i++) {
@@ -385,12 +373,11 @@ contract Voter is ReentrancyGuard, Ownable {
                 votes[account][_plugin] += _pluginWeight;
                 IBribe(bribes[_plugin])._deposit(uint256(_pluginWeight), account); 
                 _usedWeight += _pluginWeight;
-                _totalWeight += _pluginWeight;
                 emit Voter__Voted(account, _pluginWeight);
             }
         }
 
-        totalWeight += uint256(_totalWeight);
+        totalWeight += uint256(_usedWeight);
         usedWeights[account] = uint256(_usedWeight);
     }
 

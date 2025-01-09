@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.19;
 
+import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 import 'contracts/Plugin.sol';
 
 interface IBGT {
@@ -12,7 +13,7 @@ interface IWBERA {
     function deposit() external payable;
 }
 
-contract StationPlugin is Plugin {
+contract StationPlugin is Plugin, ReentrancyGuard {
     using SafeERC20 for IERC20;
 
     /*----------  CONSTANTS  --------------------------------------------*/
@@ -54,8 +55,9 @@ contract StationPlugin is Plugin {
     }
 
     function claimAndDistribute() 
-        public 
-        override 
+        public
+        override
+        nonReentrant
     {
         super.claimAndDistribute();
         IBerachainRewardsVault(berachainRewardsVault).getReward(address(this));
@@ -72,8 +74,9 @@ contract StationPlugin is Plugin {
     }
 
     function depositFor(address account, uint256 amount) 
-        public 
-        override 
+        public
+        override
+        nonReentrant
     {
         super.depositFor(account, amount);
         IERC20(getToken()).safeApprove(berachainRewardsVault, 0);
@@ -82,8 +85,9 @@ contract StationPlugin is Plugin {
     }
 
     function withdrawTo(address account, uint256 amount) 
-        public 
-        override 
+        public
+        override
+        nonReentrant
     {
         IBerachainRewardsVault(berachainRewardsVault).withdraw(amount); 
         super.withdrawTo(account, amount);
@@ -95,9 +99,6 @@ contract StationPlugin is Plugin {
 
     // Function to receive Ether. msg.data must be empty
     receive() external payable {}
-
-    // Fallback function is called when msg.data is not empty
-    fallback() external payable {}
 
 }
 

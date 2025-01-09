@@ -66,7 +66,7 @@ const YEET_ADDR = "0x1740F679325ef3686B2f574e392007A92e4BeD41";
 const KDK_ADDR = "0xfd27998fa0eaB1A6372Db14Afd4bF7c4a58C5364";
 const KODIAK3_ADDR = "0xE5A2ab5D2fb268E5fF43A5564e44c3309609aFF9"; // Kodiak Vault V1 YEET/WBERA
 const KODIAK3_FARM = "0xbdEE3F788a5efDdA1FcFe6bfe7DbbDa5690179e6";
-const KODIAK3_HOLDER = "0xE6666Cd611439A9A3500E8c0E14670Dfbb5027C5";
+const KODIAK3_HOLDER = "0x838e8dc6D87DfC6AF2Ccd64264FDAC41331eC921";
 
 let owner, multisig, treasury, user0, user1, user2;
 let vaultFactory;
@@ -88,7 +88,7 @@ let TOKEN, VTOKEN, OTOKEN, BASE;
 let WBERA, YEET, XKDK, farm;
 let KODIAK3, plugin0, gauge0, bribe0;
 
-describe("berachain: trifecta testing", function () {
+describe.only("berachain: trifecta testing", function () {
   before("Initial set up", async function () {
     console.log("Begin Initialization");
 

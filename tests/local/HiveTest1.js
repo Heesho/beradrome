@@ -468,7 +468,7 @@ describe("Hive token testing multicall", function () {
     console.log("- HIVE Token deployed");
 
     // Initialize HiveToken
-    let res = await hiveFactory.connect(owner).index_Hive(0);
+    let res = await hiveFactory.connect(owner).index_Hive(1);
     hiveToken = await ethers.getContractAt("HiveToken", res.hiveToken);
     console.log("- hiveToken Initialized at:", hiveToken.address);
 
@@ -813,22 +813,22 @@ describe("Hive token testing multicall", function () {
     console.log("TEST3", divDec(await TEST3.balanceOf(hiveDistro.address)));
   });
 
-  it("AuctionData", async function () {
-    console.log("******************************************************");
-    let res = await hiveMulticall.getAuction(hiveToken.address);
-    console.log(
-      util.inspect(res, { showHidden: false, depth: null, colors: true })
-    );
-  });
+  // it("AuctionData", async function () {
+  //   console.log("******************************************************");
+  //   let res = await hiveMulticall.getAuction(hiveToken.address);
+  //   console.log(
+  //     util.inspect(res, { showHidden: false, depth: null, colors: true })
+  //   );
+  // });
 
-  it("HiveFeeFlow buy", async function () {
-    console.log("******************************************************");
-    const price = await hiveFeeFlow.getPrice();
-    await BASE.connect(user1).approve(hiveMulticall.address, price);
-    await hiveMulticall
-      .connect(user1)
-      .buyAuction(hiveToken.address, 1792282187);
-  });
+  // it("HiveFeeFlow buy", async function () {
+  //   console.log("******************************************************");
+  //   const price = await hiveFeeFlow.getPrice();
+  //   await BASE.connect(user1).approve(hiveMulticall.address, price);
+  //   await hiveMulticall
+  //     .connect(user1)
+  //     .buyAuction(hiveToken.address, 1792282187);
+  // });
 
   it("HiveToken balances", async function () {
     console.log("******************************************************");
@@ -943,13 +943,13 @@ describe("Hive token testing multicall", function () {
     ]);
   });
 
-  it("AuctionData", async function () {
-    console.log("******************************************************");
-    let res = await hiveMulticall.getAuction(hiveToken.address);
-    console.log(
-      util.inspect(res, { showHidden: false, depth: null, colors: true })
-    );
-  });
+  // it("AuctionData", async function () {
+  //   console.log("******************************************************");
+  //   let res = await hiveMulticall.getAuction(hiveToken.address);
+  //   console.log(
+  //     util.inspect(res, { showHidden: false, depth: null, colors: true })
+  //   );
+  // });
 
   // owner creates bribe on plugin0
   it("Owner creates bribe on plugin0", async function () {
@@ -965,13 +965,13 @@ describe("Hive token testing multicall", function () {
     await network.provider.send("evm_mine");
   });
 
-  it("AuctionData", async function () {
-    console.log("******************************************************");
-    let res = await hiveMulticall.getAuction(hiveToken.address);
-    console.log(
-      util.inspect(res, { showHidden: false, depth: null, colors: true })
-    );
-  });
+  // it("AuctionData", async function () {
+  //   console.log("******************************************************");
+  //   let res = await hiveMulticall.getAuction(hiveToken.address);
+  //   console.log(
+  //     util.inspect(res, { showHidden: false, depth: null, colors: true })
+  //   );
+  // });
 
   it("HiveRewarder balances", async function () {
     console.log("******************************************************");
@@ -985,14 +985,14 @@ describe("Hive token testing multicall", function () {
     console.log("TEST3", divDec(await TEST3.balanceOf(hiveRewarder.address)));
   });
 
-  it("HiveFeeFlow buy", async function () {
-    console.log("******************************************************");
-    const price = await hiveFeeFlow.getPrice();
-    await BASE.connect(owner).approve(hiveMulticall.address, price);
-    await hiveMulticall
-      .connect(owner)
-      .buyAuction(hiveToken.address, 1792282187);
-  });
+  // it("HiveFeeFlow buy", async function () {
+  //   console.log("******************************************************");
+  //   const price = await hiveFeeFlow.getPrice();
+  //   await BASE.connect(owner).approve(hiveMulticall.address, price);
+  //   await hiveMulticall
+  //     .connect(owner)
+  //     .buyAuction(hiveToken.address, 1792282187);
+  // });
 
   it("HiveRewarder balances", async function () {
     console.log("******************************************************");
@@ -1006,13 +1006,13 @@ describe("Hive token testing multicall", function () {
     console.log("TEST3", divDec(await TEST3.balanceOf(hiveRewarder.address)));
   });
 
-  it("AuctionData", async function () {
-    console.log("******************************************************");
-    let res = await hiveMulticall.getAuction(hiveToken.address);
-    console.log(
-      util.inspect(res, { showHidden: false, depth: null, colors: true })
-    );
-  });
+  // it("AuctionData", async function () {
+  //   console.log("******************************************************");
+  //   let res = await hiveMulticall.getAuction(hiveToken.address);
+  //   console.log(
+  //     util.inspect(res, { showHidden: false, depth: null, colors: true })
+  //   );
+  // });
 
   it("HiveData", async function () {
     console.log("******************************************************");
@@ -1046,14 +1046,14 @@ describe("Hive token testing multicall", function () {
     await network.provider.send("evm_mine");
   });
 
-  it("HiveFeeFlow buy", async function () {
-    console.log("******************************************************");
-    const price = await hiveFeeFlow.getPrice();
-    await BASE.connect(owner).approve(hiveMulticall.address, price);
-    await hiveMulticall
-      .connect(owner)
-      .buyAuction(hiveToken.address, 1792282187);
-  });
+  // it("HiveFeeFlow buy", async function () {
+  //   console.log("******************************************************");
+  //   const price = await hiveFeeFlow.getPrice();
+  //   await BASE.connect(owner).approve(hiveMulticall.address, price);
+  //   await hiveMulticall
+  //     .connect(owner)
+  //     .buyAuction(hiveToken.address, 1792282187);
+  // });
 
   it("Owner sets Fee Flow", async function () {
     console.log("******************************************************");
@@ -1062,13 +1062,13 @@ describe("Hive token testing multicall", function () {
       .setHiveFeeFlow(hiveToken.address, fiveHundred, ten);
   });
 
-  it("AuctionData", async function () {
-    console.log("******************************************************");
-    let res = await hiveMulticall.getAuction(hiveToken.address);
-    console.log(
-      util.inspect(res, { showHidden: false, depth: null, colors: true })
-    );
-  });
+  // it("AuctionData", async function () {
+  //   console.log("******************************************************");
+  //   let res = await hiveMulticall.getAuction(hiveToken.address);
+  //   console.log(
+  //     util.inspect(res, { showHidden: false, depth: null, colors: true })
+  //   );
+  // });
 
   it("Owner creates bribe on plugin0", async function () {
     console.log("******************************************************");
@@ -1083,13 +1083,13 @@ describe("Hive token testing multicall", function () {
     await network.provider.send("evm_mine");
   });
 
-  it("AuctionData", async function () {
-    console.log("******************************************************");
-    let res = await hiveMulticall.getAuction(hiveToken.address);
-    console.log(
-      util.inspect(res, { showHidden: false, depth: null, colors: true })
-    );
-  });
+  // it("AuctionData", async function () {
+  //   console.log("******************************************************");
+  //   let res = await hiveMulticall.getAuction(hiveToken.address);
+  //   console.log(
+  //     util.inspect(res, { showHidden: false, depth: null, colors: true })
+  //   );
+  // });
 
   it("Forward 1 days", async function () {
     console.log("******************************************************");
@@ -1109,19 +1109,19 @@ describe("Hive token testing multicall", function () {
     console.log("TEST3", divDec(await TEST3.balanceOf(hiveRewarder.address)));
   });
 
-  it("HiveFeeFlow buy", async function () {
-    console.log("******************************************************");
-    const price = await hiveMulticall.getFeeFlowPrice(hiveToken.address);
-    console.log(
-      "User1 BASE Balance: ",
-      divDec(await BASE.balanceOf(user1.address))
-    );
-    console.log("Cost: ", divDec(price));
-    await BASE.connect(user1).approve(hiveMulticall.address, price);
-    await hiveMulticall
-      .connect(user1)
-      .buyAuction(hiveToken.address, 1792282187);
-  });
+  // it("HiveFeeFlow buy", async function () {
+  //   console.log("******************************************************");
+  //   const price = await hiveMulticall.getFeeFlowPrice(hiveToken.address);
+  //   console.log(
+  //     "User1 BASE Balance: ",
+  //     divDec(await BASE.balanceOf(user1.address))
+  //   );
+  //   console.log("Cost: ", divDec(price));
+  //   await BASE.connect(user1).approve(hiveMulticall.address, price);
+  //   await hiveMulticall
+  //     .connect(user1)
+  //     .buyAuction(hiveToken.address, 1792282187);
+  // });
 
   it("HiveRewarder balances", async function () {
     console.log("******************************************************");

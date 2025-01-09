@@ -462,6 +462,9 @@ async function main() {
   //   "Auction: ",
   //   util.inspect(auction, { depth: null, colors: true })
   // );
+
+  // await hiveToken.setDelegate("0x19858F6c29eA886853dc97D1a68ABf8d4Cb07712");
+  // console.log("Delegate set");
 }
 
 main()

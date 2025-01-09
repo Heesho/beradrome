@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.19;
 
+import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 import 'contracts/Plugin.sol';
-import "@openzeppelin/contracts/access/Ownable.sol";
 
 interface ICommunalFarm {
     struct LockedStake {
@@ -19,7 +19,7 @@ interface ICommunalFarm {
     function lockedStakesOf(address account) external view returns (LockedStake[] memory);
 }
 
-contract KodiakPlugin is Plugin {
+contract KodiakPlugin is Plugin, ReentrancyGuard {
     using SafeERC20 for IERC20;
 
     /*----------  CONSTANTS  --------------------------------------------*/
@@ -58,8 +58,9 @@ contract KodiakPlugin is Plugin {
     }
 
     function claimAndDistribute() 
-        public 
-        override 
+        public
+        override
+        nonReentrant
     {
         super.claimAndDistribute();
         ICommunalFarm(farm).getReward();
@@ -76,8 +77,9 @@ contract KodiakPlugin is Plugin {
     }
 
     function depositFor(address account, uint256 amount) 
-        public 
-        override 
+        public
+        override
+        nonReentrant
     {
         super.depositFor(account, amount);
         ICommunalFarm(farm).withdrawLockedAll();
@@ -88,15 +90,18 @@ contract KodiakPlugin is Plugin {
     }
 
     function withdrawTo(address account, uint256 amount) 
-        public 
-        override 
+        public
+        override
+        nonReentrant
     {
         ICommunalFarm(farm).withdrawLockedAll(); 
         super.withdrawTo(account, amount);
         uint256 balance = IERC20(getToken()).balanceOf(address(this));
-        IERC20(getToken()).safeApprove(farm, 0);
-        IERC20(getToken()).safeApprove(farm, balance);
-        ICommunalFarm(farm).stakeLocked(balance, 0);
+        if (balance > 0) {
+            IERC20(getToken()).safeApprove(farm, 0);
+            IERC20(getToken()).safeApprove(farm, balance);
+            ICommunalFarm(farm).stakeLocked(balance, 0);
+        }
     }
 
     /*----------  RESTRICTED FUNCTIONS  ---------------------------------*/

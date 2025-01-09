@@ -76,7 +76,7 @@ let TOKEN, VTOKEN, OTOKEN, BASE;
 let WBERA, HONEY, IBGT;
 let LP0, LP0Gauge, plugin0, gauge0, bribe0;
 
-describe.only("berachain: infrared trifecta vault testing", function () {
+describe("berachain: infrared trifecta vault testing", function () {
   before("Initial set up", async function () {
     console.log("Begin Initialization");
 
