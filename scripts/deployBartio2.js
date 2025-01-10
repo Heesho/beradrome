@@ -30,6 +30,7 @@ const IBGT = "0x46efc86f0d7455f135cc9df501673739d513e982";
 const KDK = "0xfd27998fa0eaB1A6372Db14Afd4bF7c4a58C5364";
 const XKDK = "0x414B50157a5697F14e91417C5275A7496DcF429D";
 const LBGT = "0x32Cf940DB5d7ea3e95e799A805B1471341241264";
+const YEET_NEW = "0x8c245484890a61Eb2d1F81114b1a7216dCe2752b";
 
 // Station Berps bHONEY
 // get from https://bartio.berps.berachain.com/vault
@@ -129,6 +130,7 @@ const TRIFECTA9_OTHER_REWARDS = [POLLEN];
 const TRIFECTA9_SYMBOL = "HONEY-NECT Island";
 const TRIFECTA9_NAME = "Beradrome Trifecta HONEY-NECT Island Vault Token";
 const TRIFECTA9_PLUGIN = "0x398A242f9F9452C1fF0308D4b4bf7ae6F6323868";
+const TRIFECTA10_PLUGIN = "0xB4E86Fd6D918eeb91602963Ca8eB94C168499d5C"; // the new YEET plugin
 
 // BeraPaw Beraborrow sNECT
 const BERAPAW0 = "0x3a7f6f2F27f7794a7820a32313F4a68e36580864";
@@ -1185,6 +1187,7 @@ async function main() {
   //   TRIFECTA3_PLUGIN, // Kodiak Trifecta YEET-WBERA Island
   //   TRIFECTA8_PLUGIN, // Kodiak Trifecta BERA-oBERO Island
   //   TRIFECTA9_PLUGIN, // Kodiak Trifecta HONEY-NECT Island
+  //   TRIFECTA10_PLUGIN, // Kodiak Trifecta KODI-YEET-BERA
   // ]);
   // console.log("Kodiak TrifectaBribe Rewards Distributed");
   // await voter.distributeToBribes([
@@ -1212,6 +1215,15 @@ async function main() {
   //   .connect(wallet)
   //   .killGauge("0x1a173326c5859CF5A67f6aEB83a9954EfCdBeC3d");
   // console.log("Plugin removed from Voter");
+
+  //===================================================================
+  // 13. Add Bribe Rewards
+  //===================================================================
+
+  // await voter
+  //   .connect(wallet)
+  //   .addBribeReward("0x771c14A042c845701903cD063f113172d427b441", YEET_NEW);
+  // console.log("YEET_NEW added as bribe reward");
 }
 
 main()
