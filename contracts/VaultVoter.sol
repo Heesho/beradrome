@@ -111,7 +111,7 @@ contract VaultVoter is ReentrancyGuard, Ownable {
     /*----------  MODIFIERS  --------------------------------------------*/
 
     modifier onlyNewEpoch(address account) {
-        if ((block.timestamp / DURATION) * DURATION < lastVoted[account]) revert Voter__AlreadyVotedThisEpoch();
+        if ((block.timestamp / DURATION) * DURATION <= lastVoted[account]) revert Voter__AlreadyVotedThisEpoch();
         _;
     }
 
