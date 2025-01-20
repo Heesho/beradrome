@@ -187,7 +187,7 @@ contract TOKEN is ERC20, ReentrancyGuard {
     {
         uint256 feeBASE = amountBase * SWAP_FEE / DIVISOR;
         uint256 newMrBASE = (mrvBASE + mrrBASE) + amountBase - feeBASE;
-        uint256 newMrTOKEN = (mrvBASE + mrrBASE).mulWadUp(mrrTOKEN).divWadUp(newMrBASE);
+        uint256 newMrTOKEN = (mrvBASE + mrrBASE).mulDivUp(mrrTOKEN, newMrBASE);
         uint256 outTOKEN = mrrTOKEN - newMrTOKEN;
 
         if (outTOKEN < minToken) revert TOKEN__ExceedsSwapSlippageTolerance();
@@ -228,7 +228,7 @@ contract TOKEN is ERC20, ReentrancyGuard {
         if (amountToken > getMaxSell()) revert TOKEN__ExceedsSwapMarketReserves();
         uint256 feeTOKEN = amountToken * SWAP_FEE / DIVISOR;
         uint256 newMrTOKEN = mrrTOKEN + amountToken - feeTOKEN;
-        uint256 newMrBASE = (mrvBASE + mrrBASE).mulWadUp(mrrTOKEN).divWadUp(newMrTOKEN);
+        uint256 newMrBASE = (mrvBASE + mrrBASE).mulDivUp(mrrTOKEN, newMrTOKEN);
         uint256 outBASE = (mrvBASE + mrrBASE) - newMrBASE;
 
         if (outBASE < minBase) revert TOKEN__ExceedsSwapSlippageTolerance();

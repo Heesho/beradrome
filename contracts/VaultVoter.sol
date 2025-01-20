@@ -98,7 +98,6 @@ contract VaultVoter is ReentrancyGuard, Ownable {
 
     event Voter__GaugeCreated(address creator, address indexed plugin, address indexed gauge,  address bribe);
     event Voter__GaugeKilled(address indexed gauge);
-    event Voter__GaugeRevived(address indexed gauge);
     event Voter__Voted(address indexed voter, uint256 weight);
     event Voter__Abstained(address account, uint256 weight);
     event Voter__Deposit(address indexed plugin, address indexed gauge, address account, uint amount);
@@ -316,15 +315,6 @@ contract VaultVoter is ReentrancyGuard, Ownable {
         isAlive[_gauge] = false;
         claimable[_gauge] = 0;
         emit Voter__GaugeKilled(_gauge);
-    }
-
-    function reviveGauge(address _gauge) 
-        external 
-        onlyGov 
-    {
-        if (isAlive[_gauge]) revert Voter__GaugeIsAlive();
-        isAlive[_gauge] = true;
-        emit Voter__GaugeRevived(_gauge);
     }
 
     function addBribeReward(address _bribe, address _rewardToken) 

@@ -1373,6 +1373,21 @@ describe("local: test0", function () {
     );
   });
 
+  it("Market Price", async function () {
+    console.log("******************************************************");
+    console.log("Market Price: ", divDec(await TOKEN.getMarketPrice()));
+  });
+
+  it("Floor Price", async function () {
+    console.log("******************************************************");
+    console.log("Floor Price: ", divDec(await TOKEN.getFloorPrice()));
+  });
+
+  it("oTOKEN Price", async function () {
+    console.log("******************************************************");
+    console.log("oTOKEN Price: ", divDec(await TOKEN.getOTokenPrice()));
+  });
+
   it("User1 Buys TOKEN with 1 BASE", async function () {
     console.log("******************************************************");
     await BASE.connect(user1).approve(TOKEN.address, one);
