@@ -19,7 +19,7 @@ contract OTOKEN is ERC20, ERC20Burnable {
     string internal constant NAME = "Beradrome Call Option";    // name of oBERO
     string internal constant SYMBOL = "oBERO";                  // symbol of oBERO
     
-    uint internal constant INITIAL_SUPPLY = 100000;   // initial supply of oBERO
+    uint internal constant INITIAL_SUPPLY = 2000000;    // initial supply of oBERO
 
     /*===========================  END SETTINGS  ========================*/
     /*===================================================================*/
