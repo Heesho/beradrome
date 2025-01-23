@@ -69,6 +69,7 @@ const BERAPAW_PLUGIN = "";
 const BULLAS_PLUGIN = "";
 
 // Contract Variables
+let OTOKENFactory, VTOKENFactory, feesFactory, rewarderFactory;
 let TOKEN, OTOKEN, VTOKEN, fees, rewarder, governor;
 let voter, minter, gaugeFactory, bribeFactory;
 let multicall, controller, trifectaMulticall;
@@ -86,7 +87,26 @@ let berapawPlugin;
 let berapawPluginFactory;
 
 async function getContracts() {
-  TOKEN = await ethers.getContractAt("contracts/TOKEN.sol:TOKEN", "");
+  OTOKENFactory = await ethers.getContractAt(
+    "contracts/OTOKENFactory.sol:OTOKENFactory",
+    "0x192FcE8139cB22c5188B40f23D268AAD10C98a7b"
+  );
+  VTOKENFactory = await ethers.getContractAt(
+    "contracts/VTOKENFactory.sol:VTOKENFactory",
+    "0x8ff1B424aF43f64B7d6fc7B3206BA32B293B3103"
+  );
+  feesFactory = await ethers.getContractAt(
+    "contracts/TOKENFeesFactory.sol:TOKENFeesFactory",
+    "0x7101AD7B8a942cb6b50ABc027cE38ecF77060359"
+  );
+  rewarderFactory = await ethers.getContractAt(
+    "contracts/VTOKENRewarderFactory.sol:VTOKENRewarderFactory",
+    "0x41e94B065a6c819763300f906Ea20e96409f9406"
+  );
+  TOKEN = await ethers.getContractAt(
+    "contracts/TOKEN.sol:TOKEN",
+    "0x24239df7b615781Cd920F8C219F275516B18DCf6"
+  );
   OTOKEN = await ethers.getContractAt(
     "contracts/OTOKENFactory.sol:OTOKEN",
     await TOKEN.OTOKEN()
@@ -105,72 +125,78 @@ async function getContracts() {
   );
   governor = await ethers.getContractAt(
     "contracts/TOKENGovernor.sol:TOKENGovernor",
-    ""
+    "0xe1729b77cCfB938cf3148d8914565D3664EFf489"
   );
 
   gaugeFactory = await ethers.getContractAt(
     "contracts/GaugeFactory.sol:GaugeFactory",
-    ""
+    "0xc2F932815d001555e226944D912c7c697fFe21eA"
   );
   bribeFactory = await ethers.getContractAt(
     "contracts/BribeFactory.sol:BribeFactory",
-    ""
+    "0x302Dfe9210cde5b2c7A5c0aBc842EC11D9Bf69bc"
   );
-  voter = await ethers.getContractAt("contracts/VaultVoter.sol:VaultVoter", "");
-  minter = await ethers.getContractAt("contracts/Minter.sol:Minter", "");
+  voter = await ethers.getContractAt(
+    "contracts/VaultVoter.sol:VaultVoter",
+    "0x0a2305b688dD06f6450eB97aFe34217A8f870CA9"
+  );
+  minter = await ethers.getContractAt(
+    "contracts/Minter.sol:Minter",
+    "0x79C49988dfc4069813699C8742D1168e8c211F9A"
+  );
 
   multicall = await ethers.getContractAt(
     "contracts/Multicall.sol:Multicall",
-    ""
+    "0xb1EB1985cf5a9C4bF6953992E4FC55e7243Ec555"
   );
   trifectaMulticall = await ethers.getContractAt(
     "contracts/TrifectaMulticall.sol:TrifectaMulticall",
-    ""
+    "0x169E3aFD8C8368B394634f3B55bA6372762BBec1"
   );
   controller = await ethers.getContractAt(
     "contracts/Controller.sol:Controller",
-    ""
+    "0xCAF6414CB2FB0f92C066A65e2AF3d59486648A1C"
   );
 
-  stationPluginFactory = await ethers.getContractAt(
-    "contracts/plugins/berachain/StationPluginFactory.sol:StationPluginFactory",
-    ""
-  );
+  // stationPluginFactory = await ethers.getContractAt(
+  //   "contracts/plugins/berachain/StationPluginFactory.sol:StationPluginFactory",
+  //   ""
+  // );
 
-  stationPlugin = await ethers.getContractAt(
-    "contracts/plugins/berachain/StationPluginFactory.sol:StationPlugin",
-    STATION_PLUGIN
-  );
+  // stationPlugin = await ethers.getContractAt(
+  //   "contracts/plugins/berachain/StationPluginFactory.sol:StationPlugin",
+  //   STATION_PLUGIN
+  // );
 
-  infraredPluginFactory = await ethers.getContractAt(
-    "contracts/plugins/berachain/InfraredPluginFactory.sol:InfraredPluginFactory",
-    ""
-  );
+  // infraredPluginFactory = await ethers.getContractAt(
+  //   "contracts/plugins/berachain/InfraredPluginFactory.sol:InfraredPluginFactory",
+  //   ""
+  // );
 
-  infraredPlugin = await ethers.getContractAt(
-    "contracts/plugins/berachain/InfraredPluginFactory.sol:InfraredPlugin",
-    INFRARED_PLUGIN
-  );
+  // infraredPlugin = await ethers.getContractAt(
+  //   "contracts/plugins/berachain/InfraredPluginFactory.sol:InfraredPlugin",
+  //   INFRARED_PLUGIN
+  // );
 
-  trifectaPluginFactory = await ethers.getContractAt(
-    "contracts/plugins/berachain/TrifectaPluginFactory.sol:TrifectaPluginFactory",
-    ""
-  );
+  // trifectaPluginFactory = await ethers.getContractAt(
+  //   "contracts/plugins/berachain/TrifectaPluginFactory.sol:TrifectaPluginFactory",
+  //   ""
+  // );
 
-  trifectaPlugin = await ethers.getContractAt(
-    "contracts/plugins/berachain/TrifectaPluginFactory.sol:TrifectaPlugin",
-    TRIFECTA_PLUGIN
-  );
+  // trifectaPlugin = await ethers.getContractAt(
+  //   "contracts/plugins/berachain/TrifectaPluginFactory.sol:TrifectaPlugin",
+  //   TRIFECTA_PLUGIN
+  // );
 
-  berapawPluginFactory = await ethers.getContractAt(
-    "contracts/plugins/berachain/BeraPawPluginFactory.sol:BeraPawPluginFactory",
-    ""
-  );
+  // berapawPluginFactory = await ethers.getContractAt(
+  //   "contracts/plugins/berachain/BeraPawPluginFactory.sol:BeraPawPluginFactory",
+  //   ""
+  // );
 
-  berapawPlugin = await ethers.getContractAt(
-    "contracts/plugins/berachain/BeraPawPluginFactory.sol:BeraPawPlugin",
-    BERAPAW_PLUGIN
-  );
+  // berapawPlugin = await ethers.getContractAt(
+  //   "contracts/plugins/berachain/BeraPawPluginFactory.sol:BeraPawPlugin",
+  //   BERAPAW_PLUGIN
+  // );
 
   console.log("Contracts Retrieved");
 }
@@ -299,7 +325,7 @@ async function verifyOTOKEN(wallet) {
   await hre.run("verify:verify", {
     address: OTOKEN.address,
     contract: "contracts/OTOKENFactory.sol:OTOKEN",
-    constructorArguments: [wallet],
+    constructorArguments: [wallet.address],
   });
   console.log("OTOKEN Verified");
 }
@@ -319,7 +345,7 @@ async function verifyVTOKEN() {
   console.log("VTOKEN Verified");
 }
 
-async function verifyTOKENFees() {
+async function verifyFees() {
   console.log("TOKENFees Deployed at:", fees.address);
   console.log("Starting TOKENFees Verification");
   await hre.run("verify:verify", {
@@ -392,11 +418,27 @@ async function deployVoter() {
   console.log("Voter Deployed at:", voter.address);
 }
 
+async function deployMinter() {
+  console.log("Starting Minter Deployment");
+  const minterArtifact = await ethers.getContractFactory("Minter");
+  const minterContract = await minterArtifact.deploy(
+    voter.address,
+    TOKEN.address,
+    VTOKEN.address,
+    OTOKEN.address,
+    { gasPrice: ethers.gasPrice }
+  );
+  minter = await minterContract.deployed();
+  await sleep(5000);
+  console.log("Minter Deployed at:", minter.address);
+}
+
 async function printVotingAddresses() {
   console.log("**************************************************************");
   console.log("GaugeFactory: ", gaugeFactory.address);
   console.log("BribeFactory: ", bribeFactory.address);
   console.log("Voter: ", voter.address);
+  console.log("Minter: ", minter.address);
   console.log("**************************************************************");
 }
 
@@ -855,21 +897,34 @@ async function main() {
   // 1. Deploy Token Factories
   //===================================================================
 
-  //   console.log("Starting Factory Deployment");
-  //   await deployOTOKENFactory();
-  //   await deployVTOKENFactory();
-  //   await deployFeesFactory();
-  //   await deployRewarderFactory();
-  //   await printFactoryAddresses();
+  // console.log("Starting Factory Deployment");
+  // await deployOTOKENFactory();
+  // await deployVTOKENFactory();
+  // await deployFeesFactory();
+  // await deployRewarderFactory();
+  // await printFactoryAddresses();
 
   //===================================================================
   // 2. Deploy Token
   //===================================================================
 
-  //   console.log("Starting Token Deployment");
-  //   await deployTOKEN();
-  //   await deployGovernor();
-  //   await printTokenAddresses();
+  // console.log("Starting Token Deployment");
+  // await deployTOKEN();
+  // await deployGovernor();
+  // await printTokenAddresses();
+
+  //===================================================================
+  // 3. Verify Token
+  //===================================================================
+
+  // console.log("Starting Token Verification");
+  // await verifyTOKEN();
+  // await verifyOTOKEN(wallet);
+  // await verifyVTOKEN();
+  // await verifyFees();
+  // await verifyRewarder();
+  // await verifyGovernor();
+  // console.log("Token Verified");
 
   //===================================================================
   // 3. Deploy Voting System
@@ -879,17 +934,8 @@ async function main() {
   // await deployGaugeFactory(wallet.address);
   // await deployBribeFactory(wallet.address);
   // await deployVoter();
+  // await deployMinter();
   // await printVotingAddresses();
-
-  //===================================================================
-  // 4. Deploy Ancillary Contracts
-  //===================================================================
-
-  // console.log("Starting Ancillary Deployment");
-  // await deployMulticall();
-  // await deployTrifectaMulticall();
-  // await deployController();
-  // await printAncillaryAddresses();
 
   //===================================================================
   // 6. Verify Voting Contracts
@@ -900,6 +946,16 @@ async function main() {
   // await verifyBribeFactory(wallet.address);
   // await verifyVoter();
   // console.log("Voting Contracts Verified");
+
+  //===================================================================
+  // 4. Deploy Ancillary Contracts
+  //===================================================================
+
+  // console.log("Starting Ancillary Deployment");
+  // await deployMulticall();
+  // await deployTrifectaMulticall();
+  // await deployController();
+  // await printAncillaryAddresses();
 
   //===================================================================
   // 7. Verify Ancillary Contracts
