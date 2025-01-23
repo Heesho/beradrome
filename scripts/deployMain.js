@@ -37,6 +37,7 @@ const STATION = "0x1306D3c36eC7E38dd2c128fBe3097C2C2449af64";
 const STATION_TOKENS = [HONEY];
 const STATION_SYMBOL = "Berps bHONEY";
 const STATION_NAME = "Beradrome Station Berps bHONEY";
+const STATION_VAULT = "0xC5Cb3459723B828B3974f7E58899249C2be3B33d";
 const STATION_PLUGIN = "";
 
 // Infrared Berps bHONEY
@@ -565,3 +566,584 @@ async function transferOwnership() {
   await sleep(5000);
   console.log("VTOKEN ownership transferred to governor");
 }
+
+async function verifyGauge(pluginAddress, gaugeAddress) {
+  console.log("Starting Gauge Verification");
+  await hre.run("verify:verify", {
+    address: gaugeAddress,
+    contract: "contracts/GaugeFactory.sol:Gauge",
+    constructorArguments: [pluginAddress, voter.address],
+  });
+  console.log("Gauge Verified");
+}
+
+async function verifyBribe(bribeAddress) {
+  console.log("Starting Bribe Verification");
+  await hre.run("verify:verify", {
+    address: bribeAddress,
+    contract: "contracts/BribeFactory.sol:Bribe",
+    constructorArguments: [voter.address],
+  });
+  console.log("Bribe Verified");
+}
+
+async function deployStationPluginFactory() {
+  console.log("Starting StationPluginFactory Deployment");
+  const stationPluginFactoryArtifact = await ethers.getContractFactory(
+    "StationPluginFactory"
+  );
+  const stationPluginFactoryContract =
+    await stationPluginFactoryArtifact.deploy(voter.address, {
+      gasPrice: ethers.gasPrice,
+    });
+  stationPluginFactory = await stationPluginFactoryContract.deployed();
+  console.log(
+    "StationPluginFactory Deployed at:",
+    stationPluginFactory.address
+  );
+}
+
+async function verifyStationPluginFactory() {
+  console.log("Starting StationPluginFactory Verification");
+  await hre.run("verify:verify", {
+    address: stationPluginFactory.address,
+    contract:
+      "contracts/plugins/berachain/StationPluginFactory.sol:StationPluginFactory",
+    constructorArguments: [voter.address],
+  });
+  console.log("StationPluginFactory Verified");
+}
+
+async function deployStationPlugin() {
+  console.log("Starting StationPlugin Deployment");
+  await stationPluginFactory.createPlugin(
+    STATION,
+    STATION_TOKENS,
+    STATION_SYMBOL,
+    STATION_NAME,
+    { gasPrice: ethers.gasPrice }
+  );
+  await sleep(10000);
+  console.log(
+    "StationPlugin Deployed at:",
+    await stationPluginFactory.last_plugin()
+  );
+}
+
+async function verifyStationPlugin() {
+  console.log("Starting StationPlugin Verification");
+  await hre.run("verify:verify", {
+    address: stationPlugin.address,
+    contract:
+      "contracts/plugins/berachain/StationPluginFactory.sol:StationPlugin",
+    constructorArguments: [
+      STATION,
+      voter.address,
+      STATION_TOKENS,
+      [WBERA],
+      VAULT_FACTORY,
+      STATION_VAULT,
+      "BGT Station",
+      STATION_SYMBOL,
+      STATION_NAME,
+    ],
+  });
+  console.log("StationPlugin Verified");
+}
+
+async function deployInfraredPluginFactory() {
+  console.log("Starting InfraredPluginFactory Deployment");
+  const infraredPluginFactoryArtifact = await ethers.getContractFactory(
+    "InfraredPluginFactory"
+  );
+  const infraredPluginFactoryContract =
+    await infraredPluginFactoryArtifact.deploy(voter.address, {
+      gasPrice: ethers.gasPrice,
+    });
+  infraredPluginFactory = await infraredPluginFactoryContract.deployed();
+  console.log(
+    "InfraredPluginFactory Deployed at:",
+    infraredPluginFactory.address
+  );
+}
+
+async function verifyInfraredPluginFactory() {
+  console.log("Starting InfraredPluginFactory Verification");
+  await hre.run("verify:verify", {
+    address: infraredPluginFactory.address,
+    contract:
+      "contracts/plugins/berachain/InfraredPluginFactory.sol:InfraredPluginFactory",
+    constructorArguments: [voter.address],
+  });
+  console.log("InfraredPluginFactory Verified");
+}
+
+async function deployInfraredPlugin() {
+  console.log("Starting InfraredPlugin Deployment");
+  await infraredPluginFactory.createPlugin(
+    INFRARED_VAULT,
+    INFRARED_TOKENS,
+    INFRARED_REWARDS,
+    INFRARED_SYMBOL,
+    INFRARED_NAME,
+    { gasPrice: ethers.gasPrice }
+  );
+  await sleep(10000);
+  console.log(
+    "InfraredPlugin Deployed at:",
+    await infraredPluginFactory.last_plugin()
+  );
+}
+
+async function verifyInfraredPlugin() {
+  console.log("Starting InfraredPlugin Verification");
+  await hre.run("verify:verify", {
+    address: infraredPlugin.address,
+    contract:
+      "contracts/plugins/berachain/InfraredPluginFactory.sol:InfraredPlugin",
+    constructorArguments: [
+      BHONEY,
+      voter.address,
+      INFRARED_TOKENS,
+      INFRARED_REWARDS,
+      VAULT_FACTORY,
+      INFRARED_VAULT,
+      "Infrared",
+      INFRARED_SYMBOL,
+      INFRARED_NAME,
+    ],
+  });
+  console.log("InfraredPlugin Verified");
+}
+
+async function deployTrifectaPluginFactory() {
+  console.log("Starting TrifectaPluginFactory Deployment");
+  const trifectaPluginFactoryArtifact = await ethers.getContractFactory(
+    "TrifectaPluginFactory"
+  );
+  const trifectaPluginFactoryContract =
+    await trifectaPluginFactoryArtifact.deploy(voter.address, {
+      gasPrice: ethers.gasPrice,
+    });
+  trifectaPluginFactory = await trifectaPluginFactoryContract.deployed();
+  console.log(
+    "TrifectaPluginFactory Deployed at:",
+    trifectaPluginFactory.address
+  );
+}
+
+async function verifyTrifectaPluginFactory() {
+  console.log("Starting TrifectaPluginFactory Verification");
+  await hre.run("verify:verify", {
+    address: trifectaPluginFactory.address,
+    contract:
+      "contracts/plugins/berachain/TrifectaPluginFactory.sol:TrifectaPluginFactory",
+    constructorArguments: [voter.address],
+  });
+  console.log("TrifectaPluginFactory Verified");
+}
+
+async function deployTrifectaPlugin() {
+  console.log("Starting TrifectaPlugin Deployment");
+  await trifectaPluginFactory.createPlugin(
+    TRIFECTA,
+    TRIFECTA_FARM,
+    TRIFECTA_TOKEN0,
+    TRIFECTA_TOKEN1,
+    TRIFECTA_OTHER_REWARDS,
+    TRIFECTA_SYMBOL,
+    TRIFECTA_NAME
+  );
+  await sleep(10000);
+  console.log(
+    "TrifectaPlugin Deployed at:",
+    await trifectaPluginFactory.last_plugin()
+  );
+}
+
+async function verifyTrifectaPlugin() {
+  console.log("Starting TrifectaPlugin Verification");
+  await hre.run("verify:verify", {
+    address: trifectaPlugin.address,
+    contract:
+      "contracts/plugins/berachain/TrifectaPluginFactory.sol:TrifectaPlugin",
+    constructorArguments: [
+      TRIFECTA,
+      voter.address,
+      [TRIFECTA_TOKEN0, TRIFECTA_TOKEN1],
+      TRIFECTA_OTHER_REWARDS,
+      VAULT_FACTORY,
+      TRIFECTA_FARM,
+      "Liquidity Trifecta",
+      TRIFECTA_SYMBOL,
+      TRIFECTA_NAME,
+    ],
+  });
+}
+
+async function deployBeraPawPluginFactory() {
+  console.log("Starting BeraPawPluginFactory Deployment");
+  const berapawPluginFactoryArtifact = await ethers.getContractFactory(
+    "BeraPawPluginFactory"
+  );
+  const berapawPluginFactoryContract =
+    await berapawPluginFactoryArtifact.deploy(voter.address, {
+      gasPrice: ethers.gasPrice,
+    });
+  berapawPluginFactory = await berapawPluginFactoryContract.deployed();
+  console.log(
+    "BeraPawPluginFactory Deployed at:",
+    berapawPluginFactory.address
+  );
+}
+
+async function verifyBeraPawPluginFactory() {
+  console.log("Starting BeraPawPluginFactory Verification");
+  await hre.run("verify:verify", {
+    address: berapawPluginFactory.address,
+    contract:
+      "contracts/plugins/berachain/BeraPawPluginFactory.sol:BeraPawPluginFactory",
+    constructorArguments: [voter.address],
+  });
+  console.log("BeraPawPluginFactory Verified");
+}
+
+async function deployBeraPawPlugin() {
+  console.log("Starting BeraPawPlugin Deployment");
+  await berapawPluginFactory.createPlugin(
+    BERAPAW,
+    BERAPAW_TOKENS,
+    BERAPAW_SYMBOL,
+    BERAPAW_NAME,
+    { gasPrice: ethers.gasPrice }
+  );
+  await sleep(10000);
+  console.log(
+    "BeraPawPlugin Deployed at:",
+    await berapawPluginFactory.last_plugin()
+  );
+}
+
+async function verifyBeraPawPlugin() {
+  console.log("Starting BeraPawPlugin Verification");
+  await hre.run("verify:verify", {
+    address: berapawPlugin.address,
+    contract:
+      "contracts/plugins/berachain/BeraPawPluginFactory.sol:BeraPawPlugin",
+    constructorArguments: [
+      BERAPAW,
+      voter.address,
+      BERAPAW_TOKENS,
+      [LBGT],
+      VAULT_FACTORY,
+      "0x72e222116fC6063f4eE5cA90A6C59916AAD8352a",
+      "Beraborrow sNECT",
+      BERAPAW_SYMBOL,
+      BERAPAW_NAME,
+    ],
+  });
+  console.log("BeraPawPlugin Verified");
+}
+
+async function main() {
+  const [wallet] = await ethers.getSigners();
+  console.log("Using wallet: ", wallet.address);
+
+  await getContracts();
+
+  //===================================================================
+  // 1. Deploy Token Factories
+  //===================================================================
+
+  //   console.log("Starting Factory Deployment");
+  //   await deployOTOKENFactory();
+  //   await deployVTOKENFactory();
+  //   await deployFeesFactory();
+  //   await deployRewarderFactory();
+  //   await printFactoryAddresses();
+
+  //===================================================================
+  // 2. Deploy Token
+  //===================================================================
+
+  //   console.log("Starting Token Deployment");
+  //   await deployTOKEN();
+  //   await deployGovernor();
+  //   await printTokenAddresses();
+
+  //===================================================================
+  // 3. Deploy Voting System
+  //===================================================================
+
+  // console.log("Starting Voting Deployment");
+  // await deployGaugeFactory(wallet.address);
+  // await deployBribeFactory(wallet.address);
+  // await deployVoter();
+  // await printVotingAddresses();
+
+  //===================================================================
+  // 4. Deploy Ancillary Contracts
+  //===================================================================
+
+  // console.log("Starting Ancillary Deployment");
+  // await deployMulticall();
+  // await deployTrifectaMulticall();
+  // await deployController();
+  // await printAncillaryAddresses();
+
+  //===================================================================
+  // 6. Verify Voting Contracts
+  //===================================================================
+
+  // console.log("Starting Voting Verification");
+  // await verifyGaugeFactory(wallet.address);
+  // await verifyBribeFactory(wallet.address);
+  // await verifyVoter();
+  // console.log("Voting Contracts Verified");
+
+  //===================================================================
+  // 7. Verify Ancillary Contracts
+  //===================================================================
+
+  // console.log("Starting Ancillary Verification");
+  // await verifyMulticall();
+  // await verifyTrifectaMulticall();
+  // await verifyController();
+  // console.log("Ancillary Contracts Verified");
+
+  //===================================================================
+  // 8. Set Up System
+  //===================================================================
+
+  // console.log("Starting System Set Up");
+  // await setUpSystem(wallet.address);
+  // console.log("System Set Up");
+
+  //===================================================================
+  // 9. Transfer Ownership
+  //===================================================================
+
+  // console.log("Starting Ownership Transfer");
+  // await transferOwnership();
+  // console.log("Ownership Transferred");
+
+  //===================================================================
+  // 11. Deploy Station Plugin Factory
+  //===================================================================
+
+  // console.log("Starting StationPlugin Deployment");
+  // await deployStationPluginFactory();
+  // await verifyStationPluginFactory();
+  // console.log("StationPlugin Deployed and Verified");
+
+  //===================================================================
+  // 12. Deploy Station Plugin
+  //===================================================================
+
+  // console.log("Starting StationPlugin Deployment");
+  // await deployStationPlugin();
+  // await verifyStationPlugin();
+  // console.log("StationPlugin Deployed and Verified");
+
+  //===================================================================
+  // 13. Deploy Infrared Plugin Factory
+  //===================================================================
+
+  // console.log("Starting InfraredPluginFactory Deployment");
+  // await deployInfraredPluginFactory();
+  // await verifyInfraredPluginFactory();
+  // console.log("InfraredPluginFactory Deployed and Verified");
+
+  //===================================================================
+  // 14. Deploy Infrared Plugin
+  //===================================================================
+
+  // console.log("Starting InfraredPlugin Deployment");
+  // await deployInfraredPlugin();
+  // await verifyInfraredPlugin();
+  // console.log("InfraredPlugin Deployed and Verified");
+
+  //===================================================================
+  // 17. Deploy Trifecta Plugin Factoryu
+  //===================================================================
+
+  // console.log("Starting TrifectaPluginFactory Deployment");
+  // await deployTrifectaPluginFactory();
+  // await verifyTrifectaPluginFactory();
+  // console.log("TrifectaPluginFactory Deployed and Verified");
+
+  //===================================================================
+  // 18. Deploy Trifecta Plugin
+  //===================================================================
+
+  // console.log("Starting TrifectaPlugin Deployment");
+  // await deployTrifectaPlugin();
+  // await verifyTrifectaPlugin();
+  // console.log("TrifectaPlugin Deployed and Verified");
+
+  //===================================================================
+  // 19. Deploy BeraPaw Plugin Factory
+  //===================================================================
+
+  // console.log("Starting BeraPawPluginFactory Deployment");
+  // await deployBeraPawPluginFactory();
+  // await verifyBeraPawPluginFactory();
+  // console.log("BeraPawPluginFactory Deployed and Verified");
+
+  //===================================================================
+  // 20. Deploy BeraPaw Plugin
+  //===================================================================
+
+  // console.log("Starting BeraPawPlugin Deployment");
+  // await deployBeraPawPlugin();
+  // await verifyBeraPawPlugin();
+  // console.log("BeraPawPlugin Deployed and Verified");
+
+  //===================================================================
+  // 13. Add Gauge Rewards
+  //===================================================================
+
+  // await voter.connect(wallet).addGaugeReward(
+  //   await voter.gauges(TRIFECTA9_PLUGIN),
+  //   KDK // KDK
+  // ); // KDK added to Trifecta YEET-WBERA Island Gauge
+  // console.log("- KDK added as gauge reward");
+
+  // await voter.connect(wallet).addGaugeReward(
+  //   await voter.gauges(TRIFECTA9_PLUGIN),
+  //   XKDK // xKDK
+  // ); // xKDK added to Trifecta YEET-WBERA Island Gauge
+  // console.log("- xKDK added as gauge rewards");
+
+  //===================================================================
+  // 10. Add plugins to voter
+  //===================================================================
+
+  // Add station plugins
+  // console.log("Adding STATION to Voter");
+  // await voter.addPlugin(STATION_PLUGIN); // Station Berps
+  // await sleep(10000);
+
+  // Add infrared plugins
+  // console.log("Adding INFRARED to Voter");
+  // await voter.addPlugin(INFRARED_PLUGIN); // Infrared Berps bHONEY
+  // await sleep(10000);
+
+  // Add trifecta plugins
+  // console.log("Adding TRIFECTA3 to Voter");
+  // await voter.addPlugin(TRIFECTA_PLUGIN); // Kodiak Trifecta YEET-WBERA Island
+  // await sleep(10000);
+
+  // Add berapaw plugins
+  // console.log("Adding BERAPAW0 to Voter");
+  // await voter.addPlugin(BERAPAW_PLUGIN); // BeraPaw Beraborrow sNECT
+  // await sleep(10000);
+
+  // Add game plugins
+  // console.log("Adding BULLAS_PLUGIN to Voter");
+  // await voter.addPlugin(BULLAS_PLUGIN); // Bullas BULL iSH
+  // await sleep(10000);
+
+  //===================================================================
+  // 13. Print Deployment
+  //===================================================================
+
+  // console.log("Beradrome Mainnet Deployment");
+  // console.log();
+  // console.log("voter: ", await voter.address);
+  // console.log("gaugeFactory: ", await gaugeFactory.address);
+  // console.log("bribeFactory: ", await bribeFactory.address);
+  // console.log();
+  // console.log("multicall: ", await multicall.address);
+  // console.log("trifectaMulticall: ", await trifectaMulticall.address);
+  // console.log("controller: ", await controller.address);
+  // console.log();
+  // console.log("StationPluginFactory: ", await stationPluginFactory.address);
+  // console.log("InfraredPluginFactory: ", await infraredPluginFactory.address);
+  // console.log("TrifectaPluginFactory: ", await trifectaPluginFactory.address);
+  // console.log();
+  // console.log("Reward Vault: ", await voter.rewardVault());
+  // console.log("Vault Token: ", await voter.vaultToken());
+
+  //===================================================================
+  // 13. Print Plugins
+  //===================================================================
+
+  // let plugins = [
+  //   STATION_PLUGIN,
+  //   INFRARED_PLUGIN,
+  //   TRIFECTA_PLUGIN,
+  //   BERAPAW_PLUGIN,
+  //   BULLAS_PLUGIN,
+  // ];
+
+  // for (let i = 0; i < plugins.length; i++) {
+  //   let plugin = await controller.getPlugin(plugins[i]);
+
+  //   console.log("Protocol: ", plugin.protocol);
+  //   console.log("Name: ", plugin.name);
+  //   console.log("Token: ", plugin.token);
+  //   console.log("Plugin: ", plugin.plugin);
+  //   console.log("Gauge: ", plugin.gauge);
+  //   console.log("Bribe: ", plugin.bribe);
+  //   console.log("Vault Token: ", plugin.vaultToken);
+  //   console.log("Reward Vault: ", plugin.rewardVault);
+  //   console.log();
+  // }
+
+  //===================================================================
+  // 13. Distro
+  //===================================================================
+
+  // console.log("Distributing Rewards");
+  // await voter.distro();
+  // console.log("Voter Rewards Distributed");
+  // await fees.distribute();
+  // console.log("Fees Rewards Distributed");
+  // await voter.distributeToBribes([
+  //   STATION_PLUGIN, // Station Berps bHONEY
+  // ]);
+  // console.log("Station Bribe Rewards Distributed");
+  // await voter.distributeToBribes([
+  //   INFRARED_PLUGIN, // Infrared Berps bHONEY
+  // ]);
+  // console.log("Infrared Bribe Rewards Distributed");
+  // await voter.distributeToBribes([
+  //   TRIFECTA_PLUGIN, // Kodiak Trifecta YEET-WBERA Island
+  // ]);
+  // console.log("Kodiak TrifectaBribe Rewards Distributed");
+  // await voter.distributeToBribes([
+  //   BERAPAW_PLUGIN, // BeraPaw Beraborrow sNECT
+  // ]);
+  // console.log("BeraPaw Bribe Rewards Distributed");
+  // await voter.distributeToBribes([
+  //   BULLAS_PLUGIN,
+  // ]);
+  // console.log("Game Bribe Rewards Distributed");
+
+  //===================================================================
+  // 14. Remove Plugin
+  //===================================================================
+
+  // console.log("Removing Plugin from Voter"); // Remove BULL ISH plugin
+  // await voter
+  //   .connect(wallet)
+  //   .killGauge("0x1a173326c5859CF5A67f6aEB83a9954EfCdBeC3d");
+  // console.log("Plugin removed from Voter");
+
+  //===================================================================
+  // 13. Add Bribe Rewards
+  //===================================================================
+
+  // await voter
+  //   .connect(wallet)
+  //   .addBribeReward("0x771c14A042c845701903cD063f113172d427b441", YEET_NEW);
+  // console.log("YEET_NEW added as bribe reward");
+}
+
+main()
+  .then(() => process.exit(0))
+  .catch((error) => {
+    console.error(error);
+    process.exit(1);
+  });

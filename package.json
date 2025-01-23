@@ -9,6 +9,7 @@
   },
   "scripts": {
     "deploy": "hardhat run ./scripts/deploy.js  --network mainnet",
+    "deployMain": "hardhat run ./scripts/deployMain.js  --network mainnet",
     "deployBartio": "hardhat run ./scripts/deployBartio.js  --network mainnet",
     "deployBartio1": "hardhat run ./scripts/deployBartio1.js  --network mainnet",
     "deployBartio2": "hardhat run ./scripts/deployBartio2.js  --network mainnet",
