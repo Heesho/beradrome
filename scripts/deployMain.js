@@ -48,6 +48,13 @@ const INFRARED_SYMBOL_0 = "Berps bHONEY";
 const INFRARED_NAME_0 = "Beradrome Infrared Berps bHONEY";
 const INFRARED_PLUGIN_0 = "";
 
+// BeraPaw Berps bHONEY
+const BERAPAW_TOKEN_0 = "0x3a7f6f2F27f7794a7820a32313F4a68e36580864";
+const BERAPAW_TOKENS_0 = [HONEY];
+const BERAPAW_SYMBOL_0 = "Berps bHONEY";
+const BERAPAW_NAME_0 = "Beradrome BeraPaw Berps bHONEY";
+const BERAPAW_PLUGIN_0 = "";
+
 // Trifecta Kodiak YEET-WBERA
 const TRIFECTA_TOKEN_0 = "";
 const TRIFECTA_FARM_0 = "";
@@ -57,13 +64,6 @@ const TRIFECTA_OTHER_REWARDS_0 = [YEET];
 const TRIFECTA_SYMBOL_0 = "Kodiak YEET-WBERA";
 const TRIFECTA_NAME_0 = "Beradrome Liquidity Trifecta Kodiak YEET-WBERA";
 const TRIFECTA_PLUGIN_0 = "";
-
-// BeraPaw Beraborrow sNECT
-const BERAPAW_TOKEN_0 = "0x3a7f6f2F27f7794a7820a32313F4a68e36580864";
-const BERAPAW_TOKENS_0 = [NECT];
-const BERAPAW_SYMBOL_0 = "Beraborrow sNECT";
-const BERAPAW_NAME_0 = "Beradrome BeraPaw Beraborrow sNECT";
-const BERAPAW_PLUGIN_0 = "";
 
 // Bullas BULL iSH
 const BULLAS_PLUGIN = "";
