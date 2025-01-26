@@ -1165,24 +1165,24 @@ async function main() {
   // 13. Distro
   //===================================================================
 
-  // console.log("Distributing Rewards");
-  // await voter.distro();
-  // console.log("Voter Rewards Distributed");
-  // await fees.distribute();
-  // console.log("Fees Rewards Distributed");
-  // await voter.distributeToBribes([
-  //   STATION0_PLUGIN, // Station Berps bHONEY
-  //   STATION1_PLUGIN, // Station Bex HONEY-WBERA
-  //   STATION2_PLUGIN, // Station Bex HONEY-USDC
-  // ]);
-  // console.log("Station Bribe Rewards Distributed");
-  // await voter.distributeToBribes([
-  //   INFRARED0_PLUGIN, // Infrared Berps bHONEY
-  //   INFRARED1_PLUGIN, // Infrared Bex HONEY-USDC
-  //   INFRARED2_PLUGIN, // Infrared Bex HONEY-WBERA
-  //   INFRARED5_PLUGIN, // Infrared HONEY-WBTC Plugin
-  // ]);
-  // console.log("Infrared Bribe Rewards Distributed");
+  console.log("Distributing Rewards");
+  await voter.distro();
+  console.log("Voter Rewards Distributed");
+  await fees.distribute();
+  console.log("Fees Rewards Distributed");
+  await voter.distributeToBribes([
+    STATION0_PLUGIN, // Station Berps bHONEY
+    STATION1_PLUGIN, // Station Bex HONEY-WBERA
+    STATION2_PLUGIN, // Station Bex HONEY-USDC
+  ]);
+  console.log("Station Bribe Rewards Distributed");
+  await voter.distributeToBribes([
+    INFRARED0_PLUGIN, // Infrared Berps bHONEY
+    INFRARED1_PLUGIN, // Infrared Bex HONEY-USDC
+    INFRARED2_PLUGIN, // Infrared Bex HONEY-WBERA
+    INFRARED5_PLUGIN, // Infrared HONEY-WBTC Plugin
+  ]);
+  console.log("Infrared Bribe Rewards Distributed");
   // await voter.distributeToBribes([
   //   TRIFECTA3_PLUGIN, // Kodiak Trifecta YEET-WBERA Island
   //   TRIFECTA8_PLUGIN, // Kodiak Trifecta BERA-oBERO Island
@@ -1190,21 +1190,21 @@ async function main() {
   //   TRIFECTA10_PLUGIN, // Kodiak Trifecta KODI-YEET-BERA
   // ]);
   // console.log("Kodiak TrifectaBribe Rewards Distributed");
-  // await voter.distributeToBribes([
-  //   BERAPAW0_PLUGIN, // BeraPaw Beraborrow sNECT
-  //   BERAPAW1_PLUGIN, // BeraPaw Bex HONEY-WBERA
-  //   BERAPAW2_PLUGIN, // BeraPaw Bex PAW-HONEY
-  //   BERAPAW3_PLUGIN, // BeraPaw BurrBear LBGT-WBERA
-  // ]);
-  // console.log("BeraPaw Bribe Rewards Distributed");
-  // await voter.distributeToBribes([
-  //   BULLAS_PLUGIN,
-  //   GUMBALL0_PLUGIN,
-  //   GUMBALL1_PLUGIN,
-  // ]);
-  // console.log("Game Bribe Rewards Distributed");
-  // await voter.distributeToBribes([INFRARED_TRIFECTA3_PLUGIN]);
-  // console.log("Infrared Trifecta Bribe Rewards Distributed");
+  await voter.distributeToBribes([
+    BERAPAW0_PLUGIN, // BeraPaw Beraborrow sNECT
+    BERAPAW1_PLUGIN, // BeraPaw Bex HONEY-WBERA
+    BERAPAW2_PLUGIN, // BeraPaw Bex PAW-HONEY
+    BERAPAW3_PLUGIN, // BeraPaw BurrBear LBGT-WBERA
+  ]);
+  console.log("BeraPaw Bribe Rewards Distributed");
+  await voter.distributeToBribes([
+    BULLAS_PLUGIN,
+    GUMBALL0_PLUGIN,
+    GUMBALL1_PLUGIN,
+  ]);
+  console.log("Game Bribe Rewards Distributed");
+  await voter.distributeToBribes([INFRARED_TRIFECTA3_PLUGIN]);
+  console.log("Infrared Trifecta Bribe Rewards Distributed");
 
   //===================================================================
   // 14. Remove Plugin

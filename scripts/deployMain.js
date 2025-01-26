@@ -19,7 +19,7 @@ const WBERA = "0x7507c1dc16935B82698e4C63f2746A2fCf994dF8";
 const USDC = "0xd6D83aF58a19Cd14eF3CF6fe848C9A4d21e5727c";
 const WBTC = "0x2577D24a26f8FA19c1058a8b0106E2c7303454a4";
 const WETH = "0xE28AfD8c634946833e89ee3F122C06d7C537E8A8";
-const YEET = "0x1740F679325ef3686B2f574e392007A92e4BeD41";
+const YEET = "0x8c245484890a61Eb2d1F81114b1a7216dCe2752b";
 const NECT = "0xf5AFCF50006944d17226978e594D4D25f4f92B40";
 const POLLEN = "0xa591eef221369321De76d958dC023936Fb39B26A";
 const MIM = "0x08B918dD18E087893bb9d711d9E0BBaA7a63Ef63";
@@ -33,37 +33,37 @@ const XKDK = "0x414B50157a5697F14e91417C5275A7496DcF429D";
 const LBGT = "0x32Cf940DB5d7ea3e95e799A805B1471341241264";
 
 // Station Berps bHONEY
-const STATION = "0x1306D3c36eC7E38dd2c128fBe3097C2C2449af64";
-const STATION_TOKENS = [HONEY];
-const STATION_SYMBOL = "Berps bHONEY";
-const STATION_NAME = "Beradrome Station Berps bHONEY";
-const STATION_VAULT = "0xC5Cb3459723B828B3974f7E58899249C2be3B33d";
-const STATION_PLUGIN = "";
+const STATION_TOKEN_0 = "0x1306D3c36eC7E38dd2c128fBe3097C2C2449af64";
+const STATION_TOKENS_0 = [HONEY];
+const STATION_SYMBOL_0 = "Berps bHONEY";
+const STATION_NAME_0 = "Beradrome BGT Station Berps bHONEY";
+const STATION_VAULT_0 = "0xC5Cb3459723B828B3974f7E58899249C2be3B33d";
+const STATION_PLUGIN_0 = "";
 
 // Infrared Berps bHONEY
-const INFRARED_VAULT = "0x7d91bf5851b3a8bcf8c39a69af2f0f98a4e2202a";
-const INFRARED_TOKENS = [HONEY];
-const INFRARED_REWARDS = [IBGT];
-const INFRARED_SYMBOL = "Berps bHONEY";
-const INFRARED_NAME = "Beradrome Infrared Berps bHONEY";
-const INFRARED_PLUGIN = "";
+const INFRARED_VAULT_0 = "0x7d91bf5851b3a8bcf8c39a69af2f0f98a4e2202a";
+const INFRARED_TOKENS_0 = [HONEY];
+const INFRARED_REWARDS_0 = [IBGT];
+const INFRARED_SYMBOL_0 = "Berps bHONEY";
+const INFRARED_NAME_0 = "Beradrome Infrared Berps bHONEY";
+const INFRARED_PLUGIN_0 = "";
 
 // Trifecta Kodiak YEET-WBERA
-const TRIFECTA = "0xE5A2ab5D2fb268E5fF43A5564e44c3309609aFF9";
-const TRIFECTA_FARM = "0xbdEE3F788a5efDdA1FcFe6bfe7DbbDa5690179e6";
-const TRIFECTA_TOKEN0 = YEET;
-const TRIFECTA_TOKEN1 = WBERA;
-const TRIFECTA_OTHER_REWARDS = [YEET];
-const TRIFECTA_SYMBOL = "Kodiak YEET-WBERA";
-const TRIFECTA_NAME = "Beradrome Liquidity Trifecta Kodiak YEET-WBERA";
-const TRIFECTA_PLUGIN = "";
+const TRIFECTA_TOKEN_0 = "";
+const TRIFECTA_FARM_0 = "";
+const TRIFECTA_TOKEN0_0 = YEET;
+const TRIFECTA_TOKEN1_0 = WBERA;
+const TRIFECTA_OTHER_REWARDS_0 = [YEET];
+const TRIFECTA_SYMBOL_0 = "Kodiak YEET-WBERA";
+const TRIFECTA_NAME_0 = "Beradrome Liquidity Trifecta Kodiak YEET-WBERA";
+const TRIFECTA_PLUGIN_0 = "";
 
 // BeraPaw Beraborrow sNECT
-const BERAPAW = "0x3a7f6f2F27f7794a7820a32313F4a68e36580864";
-const BERAPAW_TOKENS = [NECT];
-const BERAPAW_SYMBOL = "Beraborrow sNECT";
-const BERAPAW_NAME = "Beradrome BeraPaw Beraborrow sNECT";
-const BERAPAW_PLUGIN = "";
+const BERAPAW_TOKEN_0 = "0x3a7f6f2F27f7794a7820a32313F4a68e36580864";
+const BERAPAW_TOKENS_0 = [NECT];
+const BERAPAW_SYMBOL_0 = "Beraborrow sNECT";
+const BERAPAW_NAME_0 = "Beradrome BeraPaw Beraborrow sNECT";
+const BERAPAW_PLUGIN_0 = "";
 
 // Bullas BULL iSH
 const BULLAS_PLUGIN = "";
@@ -89,23 +89,24 @@ let berapawPluginFactory;
 async function getContracts() {
   OTOKENFactory = await ethers.getContractAt(
     "contracts/OTOKENFactory.sol:OTOKENFactory",
-    "0x192FcE8139cB22c5188B40f23D268AAD10C98a7b"
+    "0xBaE43C41A3511AdBED44f84119b06fB99218b53B"
   );
   VTOKENFactory = await ethers.getContractAt(
     "contracts/VTOKENFactory.sol:VTOKENFactory",
-    "0x8ff1B424aF43f64B7d6fc7B3206BA32B293B3103"
+    "0xC8F6aB4e5Cadcf1416760470E290f65fFc26bCa7"
   );
   feesFactory = await ethers.getContractAt(
     "contracts/TOKENFeesFactory.sol:TOKENFeesFactory",
-    "0x7101AD7B8a942cb6b50ABc027cE38ecF77060359"
+    "0x75bCDC4c0f5266ADB8a29D0B9fcE65D04B777f78"
   );
   rewarderFactory = await ethers.getContractAt(
     "contracts/VTOKENRewarderFactory.sol:VTOKENRewarderFactory",
-    "0x41e94B065a6c819763300f906Ea20e96409f9406"
+    "0x6bE2c793C0824f5ff6d3b3ae50ca23E2e377F77A"
   );
+
   TOKEN = await ethers.getContractAt(
     "contracts/TOKEN.sol:TOKEN",
-    "0x24239df7b615781Cd920F8C219F275516B18DCf6"
+    "0xAB5E604ec509D123003ebC023EBF17Abe7354c9E"
   );
   OTOKEN = await ethers.getContractAt(
     "contracts/OTOKENFactory.sol:OTOKEN",
@@ -125,37 +126,37 @@ async function getContracts() {
   );
   governor = await ethers.getContractAt(
     "contracts/TOKENGovernor.sol:TOKENGovernor",
-    "0xe1729b77cCfB938cf3148d8914565D3664EFf489"
+    "0x7aa668c1465125d84F9BdE9a3434249B662895C0"
   );
 
   gaugeFactory = await ethers.getContractAt(
     "contracts/GaugeFactory.sol:GaugeFactory",
-    "0xc2F932815d001555e226944D912c7c697fFe21eA"
+    "0x7Eb0041503124257F03b060Fc9C9f1310E850020"
   );
   bribeFactory = await ethers.getContractAt(
     "contracts/BribeFactory.sol:BribeFactory",
-    "0x302Dfe9210cde5b2c7A5c0aBc842EC11D9Bf69bc"
+    "0x1b7d726b09c3dDAf964C70B1F2521d9DF1F0779E"
   );
   voter = await ethers.getContractAt(
     "contracts/VaultVoter.sol:VaultVoter",
-    "0x0a2305b688dD06f6450eB97aFe34217A8f870CA9"
+    "0x8D3629b91Dfc11B438CE728f945F9FCfc90e2231"
   );
   minter = await ethers.getContractAt(
     "contracts/Minter.sol:Minter",
-    "0x79C49988dfc4069813699C8742D1168e8c211F9A"
+    "0x2BbD9cf40f383e6bfCd04767ecAdD6abe8951953"
   );
 
   multicall = await ethers.getContractAt(
     "contracts/Multicall.sol:Multicall",
-    "0xb1EB1985cf5a9C4bF6953992E4FC55e7243Ec555"
+    "0xe1C1369DBA4EcA2f427CEf0c4dAf2B4A508f4A03"
   );
   trifectaMulticall = await ethers.getContractAt(
     "contracts/TrifectaMulticall.sol:TrifectaMulticall",
-    "0x169E3aFD8C8368B394634f3B55bA6372762BBec1"
+    "0x790405A7Be020567ca9E8662aB54fedA04E7043c"
   );
   controller = await ethers.getContractAt(
     "contracts/Controller.sol:Controller",
-    "0xCAF6414CB2FB0f92C066A65e2AF3d59486648A1C"
+    "0xAc350ad55080C4978D0886E798a9b8B0FD822b6C"
   );
 
   // stationPluginFactory = await ethers.getContractAt(
@@ -474,6 +475,21 @@ async function verifyVoter() {
     ],
   });
   console.log("Voter Verified");
+}
+
+async function verifyMinter() {
+  console.log("Starting Minter Verification");
+  await hre.run("verify:verify", {
+    address: minter.address,
+    contract: "contracts/Minter.sol:Minter",
+    constructorArguments: [
+      voter.address,
+      TOKEN.address,
+      VTOKEN.address,
+      OTOKEN.address,
+    ],
+  });
+  console.log("Minter Verified");
 }
 
 async function deployMulticall() {
@@ -945,6 +961,7 @@ async function main() {
   // await verifyGaugeFactory(wallet.address);
   // await verifyBribeFactory(wallet.address);
   // await verifyVoter();
+  // await verifyMinter();
   // console.log("Voting Contracts Verified");
 
   //===================================================================
@@ -987,10 +1004,10 @@ async function main() {
   // 11. Deploy Station Plugin Factory
   //===================================================================
 
-  // console.log("Starting StationPlugin Deployment");
-  // await deployStationPluginFactory();
-  // await verifyStationPluginFactory();
-  // console.log("StationPlugin Deployed and Verified");
+  console.log("Starting StationPlugin Deployment");
+  await deployStationPluginFactory();
+  await verifyStationPluginFactory();
+  console.log("StationPlugin Deployed and Verified");
 
   //===================================================================
   // 12. Deploy Station Plugin
