@@ -57,7 +57,10 @@ const TRIFECTA_NAME_0 =
 const TRIFECTA_PLUGIN_0 = "0xeb7ec84759dD2CF78DcB9902494dA982E06569bB";
 
 // Bullas BULL iSH
-const BULLAS_PLUGIN = "";
+const BULLAS_PLUGIN = "0x421317ac0217D62ccD8e6d958775Dd472Cf0e2Ba";
+
+// Gumball BentoBera
+const GUMBALL_PLUGIN_0 = "0x2786201354ba8cc4Bb2908b59B7f345722bD9904";
 
 // Contract Variables
 let OTOKENFactory, VTOKENFactory, feesFactory, rewarderFactory;
@@ -1120,6 +1123,9 @@ async function main() {
   // console.log("Adding BULLAS_PLUGIN to Voter");
   // await voter.addPlugin(BULLAS_PLUGIN); // Bullas BULL iSH
   // await sleep(10000);
+  // console.log("Adding GUMBALL_PLUGIN_0 to Voter");
+  // await voter.addPlugin(GUMBALL_PLUGIN_0); // Gumball BentoBera
+  // await sleep(10000);
 
   //===================================================================
   // 13. Print Deployment
@@ -1147,27 +1153,28 @@ async function main() {
   // 13. Print Plugins
   //===================================================================
 
-  // let plugins = [
-  //   STATION_PLUGIN_0,
-  //   INFRARED_PLUGIN_0,
-  //   BERAPAW_PLUGIN_0,
-  //   TRIFECTA_PLUGIN_0,
-  //   // BULLAS_PLUGIN,
-  // ];
+  let plugins = [
+    STATION_PLUGIN_0,
+    INFRARED_PLUGIN_0,
+    BERAPAW_PLUGIN_0,
+    TRIFECTA_PLUGIN_0,
+    BULLAS_PLUGIN,
+    GUMBALL_PLUGIN_0,
+  ];
 
-  // for (let i = 0; i < plugins.length; i++) {
-  //   let plugin = await controller.getPlugin(plugins[i]);
+  for (let i = 0; i < plugins.length; i++) {
+    let plugin = await controller.getPlugin(plugins[i]);
 
-  //   console.log("Protocol: ", plugin.protocol);
-  //   console.log("Name: ", plugin.name);
-  //   console.log("Token: ", plugin.token);
-  //   console.log("Plugin: ", plugin.plugin);
-  //   console.log("Gauge: ", plugin.gauge);
-  //   console.log("Bribe: ", plugin.bribe);
-  //   console.log("Vault Token: ", plugin.vaultToken);
-  //   console.log("Reward Vault: ", plugin.rewardVault);
-  //   console.log();
-  // }
+    console.log("Protocol: ", plugin.protocol);
+    console.log("Name: ", plugin.name);
+    console.log("Token: ", plugin.token);
+    console.log("Plugin: ", plugin.plugin);
+    console.log("Gauge: ", plugin.gauge);
+    console.log("Bribe: ", plugin.bribe);
+    console.log("Vault Token: ", plugin.vaultToken);
+    console.log("Reward Vault: ", plugin.rewardVault);
+    console.log();
+  }
 
   //===================================================================
   // 13. Distro
@@ -1196,6 +1203,7 @@ async function main() {
   // console.log("BeraPaw Bribe Rewards Distributed");
   // await voter.distributeToBribes([
   //   BULLAS_PLUGIN,
+  //   GUMBALL_PLUGIN_0,
   // ]);
   // console.log("Game Bribe Rewards Distributed");
 
@@ -1213,11 +1221,11 @@ async function main() {
   // 13. Add Bribe Rewards
   //===================================================================
 
-//   await voter
-//     .connect(wallet)
-//     .addBribeReward("0x91316cde390F239CbE039Ab39CbBfED0B86e6742", YEET);
-//   console.log("YEET added as bribe reward");
-// }
+  //   await voter
+  //     .connect(wallet)
+  //     .addBribeReward("0x91316cde390F239CbE039Ab39CbBfED0B86e6742", YEET);
+  //   console.log("YEET added as bribe reward");
+}
 
 main()
   .then(() => process.exit(0))
