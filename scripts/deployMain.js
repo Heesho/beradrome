@@ -1153,28 +1153,28 @@ async function main() {
   // 13. Print Plugins
   //===================================================================
 
-  let plugins = [
-    STATION_PLUGIN_0,
-    INFRARED_PLUGIN_0,
-    BERAPAW_PLUGIN_0,
-    TRIFECTA_PLUGIN_0,
-    BULLAS_PLUGIN,
-    GUMBALL_PLUGIN_0,
-  ];
+  // let plugins = [
+  //   STATION_PLUGIN_0,
+  //   INFRARED_PLUGIN_0,
+  //   BERAPAW_PLUGIN_0,
+  //   TRIFECTA_PLUGIN_0,
+  //   BULLAS_PLUGIN,
+  //   GUMBALL_PLUGIN_0,
+  // ];
 
-  for (let i = 0; i < plugins.length; i++) {
-    let plugin = await controller.getPlugin(plugins[i]);
+  // for (let i = 0; i < plugins.length; i++) {
+  //   let plugin = await controller.getPlugin(plugins[i]);
 
-    console.log("Protocol: ", plugin.protocol);
-    console.log("Name: ", plugin.name);
-    console.log("Token: ", plugin.token);
-    console.log("Plugin: ", plugin.plugin);
-    console.log("Gauge: ", plugin.gauge);
-    console.log("Bribe: ", plugin.bribe);
-    console.log("Vault Token: ", plugin.vaultToken);
-    console.log("Reward Vault: ", plugin.rewardVault);
-    console.log();
-  }
+  //   console.log("Protocol: ", plugin.protocol);
+  //   console.log("Name: ", plugin.name);
+  //   console.log("Token: ", plugin.token);
+  //   console.log("Plugin: ", plugin.plugin);
+  //   console.log("Gauge: ", plugin.gauge);
+  //   console.log("Bribe: ", plugin.bribe);
+  //   console.log("Vault Token: ", plugin.vaultToken);
+  //   console.log("Reward Vault: ", plugin.rewardVault);
+  //   console.log();
+  // }
 
   //===================================================================
   // 13. Distro
