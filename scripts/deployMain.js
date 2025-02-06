@@ -6,12 +6,14 @@ const hre = require("hardhat");
 const sleep = (delay) => new Promise((resolve) => setTimeout(resolve, delay));
 const convert = (amount, decimals) => ethers.utils.parseUnits(amount, decimals);
 const divDec = (amount, decimals = 18) => amount / 10 ** decimals;
+const one = convert("1", 18);
 
 const MARKET_RESERVES = "5000000"; // 5,000,000 TOKEN in market reserves
 
 const BASE_ADDRESS = "0x0E4aaF1351de4c0264C5c7056Ef3777b41BD8e03"; // HONEY address
 const MULTISIG = "0x34D023ACa5A227789B45A62D377b5B18A680BE01"; // Multisig Address
 const VAULT_FACTORY = "0x2B6e40f65D82A0cB98795bC7587a71bfa49fBB2B"; // Vault Factory Address
+const BUILDER_ADDRESS = "0xDeb7d9B443a3ab779DFe9Ff2Aa855b1eA5fD318e";
 
 const BHONEY = "0x1306D3c36eC7E38dd2c128fBe3097C2C2449af64";
 const HONEY = "0x0E4aaF1351de4c0264C5c7056Ef3777b41BD8e03";
@@ -578,6 +580,13 @@ async function verifyController() {
 async function setUpSystem(wallet) {
   console.log("Starting System Set Up");
 
+  let amount = await OTOKEN.totalSupply();
+  amount = amount.div(10);
+  await OTOKEN.transfer(BUILDER_ADDRESS, amount);
+  amount = await OTOKEN.balanceOf(wallet);
+  await OTOKEN.transfer(MULTISIG, amount);
+  console.log("OTOKEN Allocated");
+
   await sleep(5000);
   await gaugeFactory.setVoter(voter.address);
   await sleep(5000);
@@ -585,13 +594,24 @@ async function setUpSystem(wallet) {
   await sleep(5000);
   console.log("Factories Set Up");
 
+  await VTOKEN.addReward(TOKEN.address);
+  await sleep(5000);
+  await VTOKEN.addReward(OTOKEN.address);
+  await sleep(5000);
+  await VTOKEN.addReward(BASE_ADDRESS);
+  await sleep(5000);
+  console.log("VTOKEN Rewards Set Up");
+
   await VTOKEN.setVoter(voter.address);
+  await sleep(5000);
+  console.log("Token-Voting Set Up");
+  await OTOKEN.setMinter(minter.address);
   await sleep(5000);
   console.log("Token-Voting Set Up");
 
   await voter.initialize(minter.address);
   await sleep(5000);
-  await minter.setVoter(voter.address);
+  await minter.initialize();
   await sleep(5000);
   console.log("Minter Set Up");
 
@@ -1186,25 +1206,22 @@ async function main() {
   // await fees.distribute();
   // console.log("Fees Rewards Distributed");
   // await voter.distributeToBribes([
-  //   STATION_PLUGIN, // Station Berps bHONEY
+  //   STATION_PLUGIN_0, // Station Berps bHONEY
   // ]);
   // console.log("Station Bribe Rewards Distributed");
   // await voter.distributeToBribes([
-  //   INFRARED_PLUGIN, // Infrared Berps bHONEY
+  //   INFRARED_PLUGIN_0, // Infrared Berps bHONEY
   // ]);
   // console.log("Infrared Bribe Rewards Distributed");
   // await voter.distributeToBribes([
-  //   TRIFECTA_PLUGIN, // Kodiak Trifecta YEET-WBERA Island
+  //   TRIFECTA_PLUGIN_0, // Kodiak Trifecta YEET-WBERA Island
   // ]);
   // console.log("Kodiak TrifectaBribe Rewards Distributed");
   // await voter.distributeToBribes([
-  //   BERAPAW_PLUGIN, // BeraPaw Beraborrow sNECT
+  //   BERAPAW_PLUGIN_0, // BeraPaw Beraborrow sNECT
   // ]);
   // console.log("BeraPaw Bribe Rewards Distributed");
-  // await voter.distributeToBribes([
-  //   BULLAS_PLUGIN,
-  //   GUMBALL_PLUGIN_0,
-  // ]);
+  // await voter.distributeToBribes([BULLAS_PLUGIN, GUMBALL_PLUGIN_0]);
   // console.log("Game Bribe Rewards Distributed");
 
   //===================================================================
@@ -1225,6 +1242,11 @@ async function main() {
   //     .connect(wallet)
   //     .addBribeReward("0x91316cde390F239CbE039Ab39CbBfED0B86e6742", YEET);
   //   console.log("YEET added as bribe reward");
+
+  // let data = await multicall.bondingCurveData(
+  //   "0x34D023ACa5A227789B45A62D377b5B18A680BE01"
+  // );
+  // console.log(data);
 }
 
 main()
