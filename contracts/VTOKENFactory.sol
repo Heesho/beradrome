@@ -15,7 +15,7 @@ import "contracts/interfaces/IVTOKENRewarder.sol";
 import "contracts/interfaces/IVTOKENRewarderFactory.sol";
 
 interface IBerachainRewardsVaultFactory {
-    function createRewardsVault(address _vaultToken) external returns (address);
+    function createRewardVault(address _vaultToken) external returns (address);
 }
 
 interface IBerachainRewardsVault {
@@ -128,7 +128,7 @@ contract VTOKEN is ERC20, ERC20Votes, ReentrancyGuard, Ownable {
         OTOKEN = IERC20(_OTOKEN);
         rewarder = IVTOKENRewarderFactory(_VTOKENRewarderFactory).createVTokenRewarder(address(this));
         vaultToken = address(new VaultToken());
-        rewardVault = IBerachainRewardsVaultFactory(_vaultFactory).createRewardsVault(address(vaultToken));
+        rewardVault = IBerachainRewardsVaultFactory(_vaultFactory).createRewardVault(address(vaultToken));
     }
 
     /**

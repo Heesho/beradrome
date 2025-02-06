@@ -29,7 +29,7 @@ contract Minter is Ownable {
     /*===========================  SETTINGS  ============================*/
 
     uint internal constant WEEKLY_EMISSION_RATE = 80000;        // 80000 oBERO per week
-    uint internal constant MAX_WEEKLY_EMISSION_RATE = 100000;   // 100000 OTOKEN per week
+    uint internal constant MAX_WEEKLY_EMISSION_RATE = 100000;   // 100000 oBERO per week
 
     uint internal constant TAIL_EMISSION_RATE = 2000;       // 2000 oBERO per week
     uint internal constant MIN_TAIL_EMISSION_RATE = 100;    // 100 oBERO per week
@@ -47,7 +47,6 @@ contract Minter is Ownable {
     uint internal constant PRECISION = 1000;    // precision for math
     uint public constant MAX_TEAM_RATE = 100;   // Max of 10% of emissions can go to the team
     uint public constant MAX_GROWTH_RATE = 300; // Max of 30% of emissions can go to growth (VTOKEN stakers)
-
     uint public constant MAX_WEEKLY_RATE = MAX_WEEKLY_EMISSION_RATE * 1e18; // Max of OTOKEN emissions per week
     uint public constant MIN_TAIL_RATE = MIN_TAIL_EMISSION_RATE * 1e18;     // Min of OTOKEN emissions per week 
 

@@ -7,7 +7,8 @@ require("solidity-coverage");
 /*===================================================================*/
 /*===========================  SETTINGS  ============================*/
 
-const CHAIN_ID = 80084; // Berachain Bartio chain id
+// const CHAIN_ID = 80084; // Berachain Bartio chain id
+const CHAIN_ID = 80094; // Berachain Bartio chain id
 
 /*===========================  END SETTINGS  ========================*/
 /*===================================================================*/
@@ -69,21 +70,19 @@ module.exports = {
     },
   },
   etherscan: {
-    apiKey: {
-      bartio_testnet: "bartio_testnet", // apiKey is not required, just set a placeholder
-    },
+    apiKey: SCAN_API_KEY,
     customChains: [
       {
-        network: "bartio_testnet",
+        network: "berachain",
         chainId: CHAIN_ID,
         urls: {
-          apiURL:
-            "https://api.routescan.io/v2/network/testnet/evm/80084/etherscan",
-          browserURL: "https://bartio.beratrail.io",
+          apiURL: "https://api.berascan.com/api",
+          browserURL: "https://bartio.berascan.com",
         },
       },
     ],
   },
+
   paths: {
     sources: "./contracts",
     tests: "./tests/local",

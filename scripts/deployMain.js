@@ -10,19 +10,19 @@ const one = convert("1", 18);
 
 const MARKET_RESERVES = "5000000"; // 5,000,000 TOKEN in market reserves
 
-const BASE_ADDRESS = "0x0E4aaF1351de4c0264C5c7056Ef3777b41BD8e03"; // HONEY address
-const MULTISIG = "0x34D023ACa5A227789B45A62D377b5B18A680BE01"; // Multisig Address
-const VAULT_FACTORY = "0x2B6e40f65D82A0cB98795bC7587a71bfa49fBB2B"; // Vault Factory Address
+const BASE_ADDRESS = "0xFCBD14DC51f0A4d49d5E53C2E0950e0bC26d0Dce"; // HONEY address
+const MULTISIG = "0xaB53AfB5C63E2552e7bD986c0a38E8a8dC58E09C"; // Multisig Address
+const VAULT_FACTORY = "0x94Ad6Ac84f6C6FbA8b8CCbD71d9f4f101def52a8"; // Vault Factory Address
 const BUILDER_ADDRESS = "0xDeb7d9B443a3ab779DFe9Ff2Aa855b1eA5fD318e";
 
-const BHONEY = "0x1306D3c36eC7E38dd2c128fBe3097C2C2449af64";
-const HONEY = "0x0E4aaF1351de4c0264C5c7056Ef3777b41BD8e03";
-const WBERA = "0x7507c1dc16935B82698e4C63f2746A2fCf994dF8";
-const YEET = "0x8c245484890a61Eb2d1F81114b1a7216dCe2752b";
-const IBGT = "0x46efc86f0d7455f135cc9df501673739d513e982";
-const LBGT = "0x32Cf940DB5d7ea3e95e799A805B1471341241264";
-const KDK = "0xfd27998fa0eaB1A6372Db14Afd4bF7c4a58C5364";
-const XKDK = "0x414B50157a5697F14e91417C5275A7496DcF429D";
+const HONEY = "";
+const WBERA = "";
+const BHONEY = "";
+const YEET = "";
+const IBGT = "";
+const LBGT = "";
+const KDK = "";
+const XKDK = "";
 
 // Station Berps bHONEY
 // get from https://bartio.berps.berachain.com/vault
@@ -30,39 +30,39 @@ const STATION_TOKEN_0 = BHONEY;
 const STATION_TOKENS_0 = [HONEY];
 const STATION_SYMBOL_0 = "Berps bHONEY";
 const STATION_NAME_0 = "Beradrome BGT Station Berps bHONEY";
-const STATION_PLUGIN_0 = "0xadcA05F72b2FbFF15fD8E584a64b018326aDF906";
+const STATION_PLUGIN_0 = "";
 
 // Infrared Berps bHONEY
-const INFRARED_VAULT_0 = "0x7d91bf5851b3a8bcf8c39a69af2f0f98a4e2202a";
+const INFRARED_VAULT_0 = "";
 const INFRARED_TOKENS_0 = [HONEY];
 const INFRARED_REWARDS_0 = [IBGT];
 const INFRARED_SYMBOL_0 = "Berps bHONEY";
 const INFRARED_NAME_0 = "Beradrome Infrared Berps bHONEY";
-const INFRARED_PLUGIN_0 = "0x550A3A204C0889B826a2AA66844b71592bECE27c";
+const INFRARED_PLUGIN_0 = "";
 
 // BeraPaw Berps bHONEY
 const BERAPAW_TOKEN_0 = BHONEY;
 const BERAPAW_TOKENS_0 = [HONEY];
 const BERAPAW_SYMBOL_0 = "Berps bHONEY";
 const BERAPAW_NAME_0 = "Beradrome BeraPaw Berps bHONEY";
-const BERAPAW_PLUGIN_0 = "0xFF5DF239dA19b60019EDaBD728Dd91F38577bF20";
+const BERAPAW_PLUGIN_0 = "";
 
 // Trifecta Kodiak YEET-WBERA
-const TRIFECTA_TOKEN_0 = "0x0001513F4a1f86da0f02e647609E9E2c630B3a14";
-const TRIFECTA_FARM_0 = "0x62981673d7fcAf097A4Fc388A08C5726cA82522a";
+const TRIFECTA_TOKEN_0 = "";
+const TRIFECTA_FARM_0 = "";
 const TRIFECTA_TOKEN0_0 = YEET;
 const TRIFECTA_TOKEN1_0 = WBERA;
 const TRIFECTA_OTHER_REWARDS_0 = [WBERA];
 const TRIFECTA_SYMBOL_0 = "Kodiak Island-WBERA-YEET-1%";
 const TRIFECTA_NAME_0 =
   "Beradrome Liquidity Trifecta Kodiak Island-WBERA-YEET-1%";
-const TRIFECTA_PLUGIN_0 = "0xeb7ec84759dD2CF78DcB9902494dA982E06569bB";
+const TRIFECTA_PLUGIN_0 = "";
 
 // Bullas BULL iSH
-const BULLAS_PLUGIN = "0x421317ac0217D62ccD8e6d958775Dd472Cf0e2Ba";
+const BULLAS_PLUGIN = "";
 
 // Gumball BentoBera
-const GUMBALL_PLUGIN_0 = "0x2786201354ba8cc4Bb2908b59B7f345722bD9904";
+const GUMBALL_PLUGIN_0 = "";
 
 // Contract Variables
 let OTOKENFactory, VTOKENFactory, feesFactory, rewarderFactory;
@@ -85,24 +85,24 @@ let berapawPluginFactory;
 async function getContracts() {
   OTOKENFactory = await ethers.getContractAt(
     "contracts/OTOKENFactory.sol:OTOKENFactory",
-    "0xBaE43C41A3511AdBED44f84119b06fB99218b53B"
+    "0xbBc46f6DBB199c85CCa67aD06C4D4949d09caFc3"
   );
   VTOKENFactory = await ethers.getContractAt(
     "contracts/VTOKENFactory.sol:VTOKENFactory",
-    "0xC8F6aB4e5Cadcf1416760470E290f65fFc26bCa7"
+    "0xbCDa85b9b140ddBF7C1467BE867E0274c91977E8"
   );
   feesFactory = await ethers.getContractAt(
     "contracts/TOKENFeesFactory.sol:TOKENFeesFactory",
-    "0x75bCDC4c0f5266ADB8a29D0B9fcE65D04B777f78"
+    "0xc831A63931AeF4017A9ecb65099F7eC1D367e414"
   );
   rewarderFactory = await ethers.getContractAt(
     "contracts/VTOKENRewarderFactory.sol:VTOKENRewarderFactory",
-    "0x6bE2c793C0824f5ff6d3b3ae50ca23E2e377F77A"
+    "0x07C2E5EA884c755E374E360BC2815aE28dAbCc38"
   );
 
   TOKEN = await ethers.getContractAt(
     "contracts/TOKEN.sol:TOKEN",
-    "0xAB5E604ec509D123003ebC023EBF17Abe7354c9E"
+    "0x7838CEc5B11298Ff6a9513Fa385621B765C74174"
   );
   OTOKEN = await ethers.getContractAt(
     "contracts/OTOKENFactory.sol:OTOKEN",
@@ -122,78 +122,77 @@ async function getContracts() {
   );
   governor = await ethers.getContractAt(
     "contracts/TOKENGovernor.sol:TOKENGovernor",
-    "0x7aa668c1465125d84F9BdE9a3434249B662895C0"
+    "0x8fE450e4B403fA857Cb126E7a603B5eba3Af398a"
   );
 
   gaugeFactory = await ethers.getContractAt(
     "contracts/GaugeFactory.sol:GaugeFactory",
-    "0x7Eb0041503124257F03b060Fc9C9f1310E850020"
+    "0x8d97b0B334EB5076F2CE66a7B7ffAc1931622022"
   );
   bribeFactory = await ethers.getContractAt(
     "contracts/BribeFactory.sol:BribeFactory",
-    "0x1b7d726b09c3dDAf964C70B1F2521d9DF1F0779E"
+    "0xEB4b7929A5E084b2817Ee0085F9A2B94e2f4F226"
   );
   voter = await ethers.getContractAt(
-    "contracts/VaultVoter.sol:VaultVoter",
-    "0x8D3629b91Dfc11B438CE728f945F9FCfc90e2231"
+    "contracts/Voter.sol:Voter",
+    "0xd7ea36ECA1cA3E73bC262A6D05DB01E60AE4AD47"
   );
   minter = await ethers.getContractAt(
     "contracts/Minter.sol:Minter",
-    "0x2BbD9cf40f383e6bfCd04767ecAdD6abe8951953"
+    "0xe2719e4C3AC97890b2AF3783A3B892c3a6FF041C"
   );
 
   multicall = await ethers.getContractAt(
     "contracts/Multicall.sol:Multicall",
-    "0xe1C1369DBA4EcA2f427CEf0c4dAf2B4A508f4A03"
+    "0x6DE64633c9a5beCDde6c5Dc27dfF308F05F56665"
   );
   trifectaMulticall = await ethers.getContractAt(
     "contracts/TrifectaMulticall.sol:TrifectaMulticall",
-    "0x790405A7Be020567ca9E8662aB54fedA04E7043c"
+    "0xA431bA493D5A63Fa77c69284535E105fB98f0472"
   );
   controller = await ethers.getContractAt(
     "contracts/Controller.sol:Controller",
-    "0xAc350ad55080C4978D0886E798a9b8B0FD822b6C"
+    "0x65e3249EccD38aD841345dA5beBBebE3a73a596C"
   );
 
-  stationPluginFactory = await ethers.getContractAt(
-    "contracts/plugins/berachain/StationPluginFactory.sol:StationPluginFactory",
-    "0x6b3Ca094D1c085fd3c59993e60a91916aD1C4a11"
-  );
+  // stationPluginFactory = await ethers.getContractAt(
+  //   "contracts/plugins/berachain/StationPluginFactory.sol:StationPluginFactory",
+  //   ""
+  // );
+  // stationPlugin = await ethers.getContractAt(
+  //   "contracts/plugins/berachain/StationPluginFactory.sol:StationPlugin",
+  //   STATION_PLUGIN_0
+  // );
 
-  stationPlugin = await ethers.getContractAt(
-    "contracts/plugins/berachain/StationPluginFactory.sol:StationPlugin",
-    STATION_PLUGIN_0
-  );
+  // infraredPluginFactory = await ethers.getContractAt(
+  //   "contracts/plugins/berachain/InfraredPluginFactory.sol:InfraredPluginFactory",
+  //   ""
+  // );
 
-  infraredPluginFactory = await ethers.getContractAt(
-    "contracts/plugins/berachain/InfraredPluginFactory.sol:InfraredPluginFactory",
-    "0xf2d60edd0634EaE0bEdE7D3BD0Dde80CF5aDeBdf"
-  );
+  // infraredPlugin = await ethers.getContractAt(
+  //   "contracts/plugins/berachain/InfraredPluginFactory.sol:InfraredPlugin",
+  //   INFRARED_PLUGIN_0
+  // );
 
-  infraredPlugin = await ethers.getContractAt(
-    "contracts/plugins/berachain/InfraredPluginFactory.sol:InfraredPlugin",
-    INFRARED_PLUGIN_0
-  );
+  // berapawPluginFactory = await ethers.getContractAt(
+  //   "contracts/plugins/berachain/BeraPawPluginFactory.sol:BeraPawPluginFactory",
+  //   ""
+  // );
 
-  berapawPluginFactory = await ethers.getContractAt(
-    "contracts/plugins/berachain/BeraPawPluginFactory.sol:BeraPawPluginFactory",
-    "0x2B7b49Df8C01E0f6E612145d57dA99dA64A4E4e3"
-  );
+  // berapawPlugin = await ethers.getContractAt(
+  //   "contracts/plugins/berachain/BeraPawPluginFactory.sol:BeraPawPlugin",
+  //   BERAPAW_PLUGIN_0
+  // );
 
-  berapawPlugin = await ethers.getContractAt(
-    "contracts/plugins/berachain/BeraPawPluginFactory.sol:BeraPawPlugin",
-    BERAPAW_PLUGIN_0
-  );
+  // trifectaPluginFactory = await ethers.getContractAt(
+  //   "contracts/plugins/berachain/TrifectaPluginFactory.sol:TrifectaPluginFactory",
+  //   ""
+  // );
 
-  trifectaPluginFactory = await ethers.getContractAt(
-    "contracts/plugins/berachain/TrifectaPluginFactory.sol:TrifectaPluginFactory",
-    "0x290DbDc28DaeDa506E895A43D485FAb0eFE5ccB0"
-  );
-
-  trifectaPlugin = await ethers.getContractAt(
-    "contracts/plugins/berachain/TrifectaPluginFactory.sol:TrifectaPlugin",
-    TRIFECTA_PLUGIN_0
-  );
+  // trifectaPlugin = await ethers.getContractAt(
+  //   "contracts/plugins/berachain/TrifectaPluginFactory.sol:TrifectaPlugin",
+  //   TRIFECTA_PLUGIN_0
+  // );
 
   console.log("Contracts Retrieved");
 }
@@ -270,7 +269,9 @@ async function deployTOKEN() {
     rewarderFactory.address,
     feesFactory.address,
     VAULT_FACTORY,
-    { gasPrice: ethers.gasPrice }
+    {
+      gasPrice: ethers.gasPrice,
+    }
   );
   TOKEN = await TOKENContract.deployed();
   await sleep(5000);
@@ -580,40 +581,41 @@ async function verifyController() {
 async function setUpSystem(wallet) {
   console.log("Starting System Set Up");
 
-  let amount = await OTOKEN.totalSupply();
-  amount = amount.div(10);
-  await OTOKEN.transfer(BUILDER_ADDRESS, amount);
-  amount = await OTOKEN.balanceOf(wallet);
-  await OTOKEN.transfer(MULTISIG, amount);
-  console.log("OTOKEN Allocated");
+  // await OTOKEN.approve(VTOKEN.address, convert("200000", 18));
+  // await VTOKEN.burnFor(BUILDER_ADDRESS, convert("200000", 18));
+  // console.log("OTOKEN burned for builder");
 
-  await sleep(5000);
-  await gaugeFactory.setVoter(voter.address);
-  await sleep(5000);
-  await bribeFactory.setVoter(voter.address);
-  await sleep(5000);
-  console.log("Factories Set Up");
+  // amount = await OTOKEN.balanceOf(wallet);
+  // await OTOKEN.transfer(MULTISIG, amount);
+  // console.log("OTOKEN Allocated");
 
-  await VTOKEN.addReward(TOKEN.address);
-  await sleep(5000);
-  await VTOKEN.addReward(OTOKEN.address);
-  await sleep(5000);
-  await VTOKEN.addReward(BASE_ADDRESS);
-  await sleep(5000);
-  console.log("VTOKEN Rewards Set Up");
+  // await sleep(5000);
+  // await gaugeFactory.setVoter(voter.address);
+  // await sleep(5000);
+  // await bribeFactory.setVoter(voter.address);
+  // await sleep(5000);
+  // console.log("Factories Set Up");
 
-  await VTOKEN.setVoter(voter.address);
-  await sleep(5000);
-  console.log("Token-Voting Set Up");
-  await OTOKEN.setMinter(minter.address);
-  await sleep(5000);
-  console.log("Token-Voting Set Up");
+  // await VTOKEN.addReward(TOKEN.address);
+  // await sleep(5000);
+  // await VTOKEN.addReward(OTOKEN.address);
+  // await sleep(5000);
+  // await VTOKEN.addReward(BASE_ADDRESS);
+  // await sleep(5000);
+  // console.log("VTOKEN Rewards Set Up");
 
-  await voter.initialize(minter.address);
-  await sleep(5000);
-  await minter.initialize();
-  await sleep(5000);
-  console.log("Minter Set Up");
+  // await VTOKEN.setVoter(voter.address);
+  // await sleep(5000);
+  // console.log("Token-Voting Set Up");
+  // await OTOKEN.setMinter(minter.address);
+  // await sleep(5000);
+  // console.log("Token-Voting Set Up");
+
+  // await voter.initialize(minter.address);
+  // await sleep(5000);
+  // await minter.initialize();
+  // await sleep(5000);
+  // console.log("Minter Set Up");
 
   console.log("System Initialized");
 }
