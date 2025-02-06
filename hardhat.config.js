@@ -62,10 +62,10 @@ module.exports = {
     },
     hardhat: {
       chainId: CHAIN_ID,
-      forking: {
-        url: RPC_URL,
-        blockNumber: 9113940,
-      },
+      // forking: {
+      //   url: RPC_URL,
+      //   blockNumber: 9113940,
+      // },
     },
   },
   etherscan: {
