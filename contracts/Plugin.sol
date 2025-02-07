@@ -14,12 +14,12 @@ interface IBerachainRewardVaultFactory {
 }
 
 interface IBerachainRewardVault {
-    function delegateStake(address account, uint256 amount) external;
-    function delegateWithdraw(address account, uint256 amount) external;
     function stake(uint256 amount) external;
+    function delegateStake(address account, uint256 amount) external;
     function withdraw(uint256 amount) external;
-    function getReward(address account, address recipient) external;
-    function setOperator(address operator) external;
+    function delegateWithdraw(address account, uint256 amount) external;
+    function getReward(address account, address recipient) external returns (uint256);
+    function setOperator(address _operator) external;
 }
 
 contract VaultToken is ERC20, Ownable {
