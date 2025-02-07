@@ -13,17 +13,17 @@ interface IWBERA {
     function deposit() external payable;
 }
 
-contract StationPlugin is Plugin, ReentrancyGuard {
+contract BerachainPlugin is Plugin, ReentrancyGuard {
     using SafeERC20 for IERC20;
 
     /*----------  CONSTANTS  --------------------------------------------*/
 
-    address public constant BGT = 0xbDa130737BDd9618301681329bF2e46A016ff9Ad;
-    address public constant WBERA = 0x7507c1dc16935B82698e4C63f2746A2fCf994dF8;
+    address public constant BGT = 0x656b95E550C07a9ffe548bd4085c72418Ceb1dba;
+    address public constant WBERA = 0x6969696969696969696969696969696969696969;
 
     /*----------  STATE VARIABLES  --------------------------------------*/
 
-    address public berachainRewardsVault;
+    address public berachainRewardVault;
 
     /*----------  ERRORS ------------------------------------------------*/
 
@@ -35,7 +35,7 @@ contract StationPlugin is Plugin, ReentrancyGuard {
         address[] memory _assetTokens, 
         address[] memory _bribeTokens,
         address _vaultFactory,
-        address _berachainRewardsVault,
+        address _berachainRewardVault,
         string memory _protocol,
         string memory _name,
         string memory _vaultName   
@@ -51,7 +51,7 @@ contract StationPlugin is Plugin, ReentrancyGuard {
             _vaultName
         )
     {
-        berachainRewardsVault = _berachainRewardsVault;
+        berachainRewardVault = _berachainRewardVault;
     }
 
     function claimAndDistribute() 
@@ -60,7 +60,7 @@ contract StationPlugin is Plugin, ReentrancyGuard {
         nonReentrant
     {
         super.claimAndDistribute();
-        IBerachainRewardsVault(berachainRewardsVault).getReward(address(this));
+        IBerachainRewardVault(berachainRewardVault).getReward(address(this), address(this));
         address bribe = getBribe();
         uint256 duration = IBribe(bribe).DURATION();
         uint256 balance = IBGT(BGT).unboostedBalanceOf(address(this));
@@ -79,9 +79,9 @@ contract StationPlugin is Plugin, ReentrancyGuard {
         nonReentrant
     {
         super.depositFor(account, amount);
-        IERC20(getToken()).safeApprove(berachainRewardsVault, 0);
-        IERC20(getToken()).safeApprove(berachainRewardsVault, amount);
-        IBerachainRewardsVault(berachainRewardsVault).stake(amount);
+        IERC20(getToken()).safeApprove(berachainRewardVault, 0);
+        IERC20(getToken()).safeApprove(berachainRewardVault, amount);
+        IBerachainRewardVault(berachainRewardVault).stake(amount);
     }
 
     function withdrawTo(address account, uint256 amount) 
@@ -89,7 +89,7 @@ contract StationPlugin is Plugin, ReentrancyGuard {
         override
         nonReentrant
     {
-        IBerachainRewardsVault(berachainRewardsVault).withdraw(amount); 
+        IBerachainRewardVault(berachainRewardVault).withdraw(amount); 
         super.withdrawTo(account, amount);
     }
 
@@ -102,17 +102,17 @@ contract StationPlugin is Plugin, ReentrancyGuard {
 
 }
 
-contract StationPluginFactory {
+contract BerachainPluginFactory {
 
-    string public constant PROTOCOL = "BGT Station";
-    address public constant REWARDS_VAULT_FACTORY = 0x2B6e40f65D82A0cB98795bC7587a71bfa49fBB2B;
-    address public constant WBERA = 0x7507c1dc16935B82698e4C63f2746A2fCf994dF8;
+    string public constant PROTOCOL = "Berachain";
+    address public constant REWARDS_VAULT_FACTORY = 0x94Ad6Ac84f6C6FbA8b8CCbD71d9f4f101def52a8;
+    address public constant WBERA = 0x6969696969696969696969696969696969696969;
 
     address public immutable VOTER;
 
     address public last_plugin;
 
-    event Plugin__PluginCreated(address plugin);
+    event BerachainPluginFactory__PluginCreated(address plugin);
 
     constructor(address _VOTER) {
         VOTER = _VOTER;
@@ -128,19 +128,19 @@ contract StationPluginFactory {
         address[] memory bribeTokens = new address[](1);
         bribeTokens[0] = WBERA;
 
-        StationPlugin lastPlugin = new StationPlugin(
+        BerachainPlugin lastPlugin = new BerachainPlugin(
             _token,
             VOTER,
             _assetTokens,
             bribeTokens,
             REWARDS_VAULT_FACTORY,
-            IBerachainRewardsVaultFactory(REWARDS_VAULT_FACTORY).getVault(_token),
+            IBerachainRewardVaultFactory(REWARDS_VAULT_FACTORY).getVault(_token),
             PROTOCOL,
             _name,
             _vaultName
         );
         last_plugin = address(lastPlugin);
-        emit Plugin__PluginCreated(last_plugin);
+        emit BerachainPluginFactory__PluginCreated(last_plugin);
         return last_plugin;
     }
 

@@ -8,17 +8,17 @@ import "contracts/interfaces/IGauge.sol";
 import "contracts/interfaces/IBribe.sol";
 import "contracts/interfaces/IVoter.sol";
 
-interface IBerachainRewardsVaultFactory {
-    function createRewardsVault(address stakingToken) external returns (address);
+interface IBerachainRewardVaultFactory {
+    function createRewardVault(address stakingToken) external returns (address);
     function getVault(address stakingToken) external view returns (address);
 }
 
-interface IBerachainRewardsVault {
+interface IBerachainRewardVault {
     function delegateStake(address account, uint256 amount) external;
     function delegateWithdraw(address account, uint256 amount) external;
     function stake(uint256 amount) external;
     function withdraw(uint256 amount) external;
-    function getReward(address account) external;
+    function getReward(address account, address recipient) external;
     function setOperator(address operator) external;
 }
 
@@ -119,7 +119,7 @@ abstract contract Plugin {
 
         OTOKEN = IVoter(_voter).OTOKEN();
         vaultToken = address(new VaultToken(_vaultName, _vaultName));
-        rewardVault = IBerachainRewardsVaultFactory(_vaultFactory).createRewardsVault(vaultToken);
+        rewardVault = IBerachainRewardVaultFactory(_vaultFactory).createRewardVault(vaultToken);
     }
 
     function depositFor(address account, uint256 amount) 
@@ -137,7 +137,7 @@ abstract contract Plugin {
         VaultToken(vaultToken).mint(address(this), amount);
         IERC20(vaultToken).safeApprove(rewardVault, 0);
         IERC20(vaultToken).safeApprove(rewardVault, amount);
-        IBerachainRewardsVault(rewardVault).delegateStake(account, amount);
+        IBerachainRewardVault(rewardVault).delegateStake(account, amount);
     }
 
     function withdrawTo(address account, uint256 amount)
@@ -152,7 +152,7 @@ abstract contract Plugin {
 
         IGauge(gauge)._withdraw(msg.sender, amount);
 
-        IBerachainRewardsVault(rewardVault).delegateWithdraw(msg.sender, amount);
+        IBerachainRewardVault(rewardVault).delegateWithdraw(msg.sender, amount);
         VaultToken(vaultToken).burn(address(this), amount);
 
     }

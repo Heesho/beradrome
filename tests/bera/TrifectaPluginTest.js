@@ -88,7 +88,7 @@ let TOKEN, VTOKEN, OTOKEN, BASE;
 let WBERA, YEET, XKDK, farm;
 let KODIAK3, plugin0, gauge0, bribe0;
 
-describe.only("berachain: trifecta testing", function () {
+describe("berachain: trifecta testing", function () {
   before("Initial set up", async function () {
     console.log("Begin Initialization");
 

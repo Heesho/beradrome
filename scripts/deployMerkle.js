@@ -1,12 +1,12 @@
 const { ethers } = require("hardhat");
 
 async function main() {
-  const oBERO = "0x7629668774f918c00Eb4b03AdF5C4e2E53d45f0b";
-  const hiBERO = "0x2B4141f98B8cD2a03F58bD722D4E8916d2106504";
+  const oBERO = "0x40A8d9efE6A2C6C9D193Cc0A4476767748E68133";
+  const hiBERO = "0x7F0976b52F6c1ddcD4d6f639537C97DE22fa2b69";
   const merkleRootOBero =
-    "0xa024b9aa996a7ae554b4bd556fd4b91043f0d19872f048b3e25447c3b6d789b6";
+    "0xfd921502d0408a50f9f9c3e4586faef80376a8f0d76639390df8af049ce3b791";
   const merkleRootHiBero =
-    "0x3addb757b02bdcea4771e6bab489e4e58a1c51b99562b976eddca017b0a3cf3a";
+    "0x5e1a74eb8a7d2e7d6978854aba438f7e916bc0df662f76abaed106e065b21112";
 
   const MerkleClaim = await ethers.getContractFactory("MerkleClaim");
   const merkleClaim = await MerkleClaim.deploy(

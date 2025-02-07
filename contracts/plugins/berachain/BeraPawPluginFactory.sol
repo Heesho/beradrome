@@ -46,7 +46,7 @@ contract BeraPawPlugin is Plugin, ReentrancyGuard {
         )
     {
         berachainRewardsVault = _berachainRewardsVault;
-        IBerachainRewardsVault(berachainRewardsVault).setOperator(LBGT);
+        IBerachainRewardVault(berachainRewardsVault).setOperator(LBGT);
     }
 
     function claimAndDistribute() 
@@ -74,7 +74,7 @@ contract BeraPawPlugin is Plugin, ReentrancyGuard {
         super.depositFor(account, amount);
         IERC20(getToken()).safeApprove(berachainRewardsVault, 0);
         IERC20(getToken()).safeApprove(berachainRewardsVault, amount);
-        IBerachainRewardsVault(berachainRewardsVault).stake(amount);
+        IBerachainRewardVault(berachainRewardsVault).stake(amount);
     }
 
     function withdrawTo(address account, uint256 amount) 
@@ -82,7 +82,7 @@ contract BeraPawPlugin is Plugin, ReentrancyGuard {
         override
         nonReentrant
     {
-        IBerachainRewardsVault(berachainRewardsVault).withdraw(amount); 
+        IBerachainRewardVault(berachainRewardsVault).withdraw(amount); 
         super.withdrawTo(account, amount);
     }
 
@@ -124,7 +124,7 @@ contract BeraPawPluginFactory {
             _assetTokens,
             bribeTokens,
             REWARDS_VAULT_FACTORY,
-            IBerachainRewardsVaultFactory(REWARDS_VAULT_FACTORY).getVault(_token),
+            IBerachainRewardVaultFactory(REWARDS_VAULT_FACTORY).getVault(_token),
             PROTOCOL,
             _name,
             _vaultName

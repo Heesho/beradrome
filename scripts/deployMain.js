@@ -15,9 +15,12 @@ const MULTISIG = "0xaB53AfB5C63E2552e7bD986c0a38E8a8dC58E09C"; // Multisig Addre
 const VAULT_FACTORY = "0x94Ad6Ac84f6C6FbA8b8CCbD71d9f4f101def52a8"; // Vault Factory Address
 const BUILDER_ADDRESS = "0xDeb7d9B443a3ab779DFe9Ff2Aa855b1eA5fD318e";
 
-const HONEY = "";
-const WBERA = "";
-const BHONEY = "";
+const HONEY = "0xFCBD14DC51f0A4d49d5E53C2E0950e0bC26d0Dce";
+const WBERA = "0x6969696969696969696969696969696969696969";
+const WETH = "";
+const WBTC = "";
+const USDCe = "";
+const BYUSD = "";
 const YEET = "";
 const IBGT = "";
 const LBGT = "";
