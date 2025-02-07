@@ -17,34 +17,70 @@ const BUILDER_ADDRESS = "0xDeb7d9B443a3ab779DFe9Ff2Aa855b1eA5fD318e";
 
 const HONEY = "0xFCBD14DC51f0A4d49d5E53C2E0950e0bC26d0Dce";
 const WBERA = "0x6969696969696969696969696969696969696969";
-const WETH = "";
-const WBTC = "";
-const USDCe = "";
-const BYUSD = "";
+const WETH = "0x2F6F07CDcf3588944Bf4C42aC74ff24bF56e7590";
+const WBTC = "0x0555E30da8f98308EdB960aa94C0Db47230d2B9c";
+const USDCe = "0x549943e04f40284185054145c6E4e9568C1D3241";
+const BYUSD = "0x688e72142674041f8f6Af4c808a4045cA1D6aC82";
 const YEET = "";
 const IBGT = "";
 const LBGT = "";
 const KDK = "";
 const XKDK = "";
 
-// Station Berps bHONEY
-// get from https://bartio.berps.berachain.com/vault
-const STATION_TOKEN_0 = BHONEY;
-const STATION_TOKENS_0 = [HONEY];
-const STATION_SYMBOL_0 = "Berps bHONEY";
-const STATION_NAME_0 = "Beradrome BGT Station Berps bHONEY";
-const STATION_PLUGIN_0 = "";
+// Berachain Plugin Factory
+const BERACHAIN_PLUGIN_FACTORY = "0x21145bbB5E1001b6A173618866D31b9f34938A79";
+
+// Berachain BeraSwap 50WBERA-50HONEY-WEIGHTED
+// get from https://hub.berachain.com/pools/0x2c4a603a2aa5596287a06886862dc29d56dbc354000200000000000000000002/details/
+const BERACHAIN_TOKEN_0 = "0x2c4a603A2aA5596287A06886862dc29d56DbC354";
+const BERACHAIN_TOKENS_0 = [WBERA, HONEY];
+const BERACHAIN_SYMBOL_0 = "BeraSwap 50WBERA-50HONEY-WEIGHTED";
+const BERACHAIN_NAME_0 = "Beradrome BeraSwap 50WBERA-50HONEY-WEIGHTED";
+const BERACHAIN_PLUGIN_0 = "0x0394C6468d98284a1D603FCCb5741c717892Be9A";
+
+// Berachain Beraswap 50WETH-50WBERA-WEIGHTED
+// get from https://hub.berachain.com/pools/0xdd70a5ef7d8cfe5c5134b5f9874b09fb5ce812b4000200000000000000000003/details/
+const BERACHAIN_TOKEN_1 = "0xDd70A5eF7d8CfE5C5134b5f9874b09Fb5Ce812b4";
+const BERACHAIN_TOKENS_1 = [WETH, WBERA];
+const BERACHAIN_SYMBOL_1 = "BeraSwap 50WETH-50WBERA-WEIGHTED";
+const BERACHAIN_NAME_1 = "Beradrome BeraSwap 50WETH-50WBERA-WEIGHTED";
+const BERACHAIN_PLUGIN_1 = "0xDBf415B97c096c228F6B46D98727B9F387524313";
+
+// Berachain BeraSwap 50WBTC-50WBERA-WEIGHTED
+// get from https://hub.berachain.com/pools/0x38fdd999fe8783037db1bbfe465759e312f2d809000200000000000000000004/details/
+const BERACHAIN_TOKEN_2 = "0x38fdD999Fe8783037dB1bBFE465759e312f2d809";
+const BERACHAIN_TOKENS_2 = [WBTC, WBERA];
+const BERACHAIN_SYMBOL_2 = "BeraSwap 50WBTC-50WBERA-WEIGHTED";
+const BERACHAIN_NAME_2 = "Beradrome BeraSwap 50WBTC-50WBERA-WEIGHTED";
+const BERACHAIN_PLUGIN_2 = "0xdC4b59Ef327525e36790d1f17fAe612FF181B55b";
+
+// Berachain BeraSwap USDCe-HONEY-STABLE
+// get from https://hub.berachain.com/pools/0xf961a8f6d8c69e7321e78d254ecafbcc3a637621000000000000000000000001/details/
+const BERACHAIN_TOKEN_3 = "0xF961a8f6d8c69E7321e78d254ecAfBcc3A637621";
+const BERACHAIN_TOKENS_3 = [USDCe, HONEY];
+const BERACHAIN_SYMBOL_3 = "BeraSwap USDCe-HONEY-STABLE";
+const BERACHAIN_NAME_3 = "Beradrome BeraSwap USDCe-HONEY-STABLE";
+const BERACHAIN_PLUGIN_3 = "0x7f5306C2444F6492F1dd0e291A690fC3b3685f01";
+
+// Berachain BeraSwap BYUSD-HONEY-STABLE
+// get from https://hub.berachain.com/pools/0xde04c469ad658163e2a5e860a03a86b52f6fa8c8000000000000000000000000/details/
+const BERACHAIN_TOKEN_4 = "0xde04c469ad658163e2a5e860a03a86b52f6fa8c8";
+const BERACHAIN_TOKENS_4 = [BYUSD, HONEY];
+const BERACHAIN_SYMBOL_4 = "BeraSwap BYUSD-HONEY-STABLE";
+const BERACHAIN_NAME_4 = "Beradrome BeraSwap BYUSD-HONEY-STABLE";
+const BERACHAIN_PLUGIN_4 = "0x2C673406551EE1CfC4A6F95efd879A552a5896F1";
 
 // Infrared Berps bHONEY
 const INFRARED_VAULT_0 = "";
 const INFRARED_TOKENS_0 = [HONEY];
 const INFRARED_REWARDS_0 = [IBGT];
+
 const INFRARED_SYMBOL_0 = "Berps bHONEY";
 const INFRARED_NAME_0 = "Beradrome Infrared Berps bHONEY";
 const INFRARED_PLUGIN_0 = "";
 
 // BeraPaw Berps bHONEY
-const BERAPAW_TOKEN_0 = BHONEY;
+const BERAPAW_TOKEN_0 = "";
 const BERAPAW_TOKENS_0 = [HONEY];
 const BERAPAW_SYMBOL_0 = "Berps bHONEY";
 const BERAPAW_NAME_0 = "Beradrome BeraPaw Berps bHONEY";
@@ -73,8 +109,8 @@ let TOKEN, OTOKEN, VTOKEN, fees, rewarder, governor;
 let voter, minter, gaugeFactory, bribeFactory;
 let multicall, controller, trifectaMulticall;
 
-let stationPlugin;
-let stationPluginFactory;
+let berachainPlugin;
+let berachainPluginFactory;
 
 let infraredPlugin;
 let infraredPluginFactory;
@@ -158,14 +194,14 @@ async function getContracts() {
     "0x65e3249EccD38aD841345dA5beBBebE3a73a596C"
   );
 
-  // stationPluginFactory = await ethers.getContractAt(
-  //   "contracts/plugins/berachain/StationPluginFactory.sol:StationPluginFactory",
-  //   ""
-  // );
-  // stationPlugin = await ethers.getContractAt(
-  //   "contracts/plugins/berachain/StationPluginFactory.sol:StationPlugin",
-  //   STATION_PLUGIN_0
-  // );
+  berachainPluginFactory = await ethers.getContractAt(
+    "contracts/plugins/berachain/BerachainPluginFactory.sol:BerachainPluginFactory",
+    "0x21145bbB5E1001b6A173618866D31b9f34938A79"
+  );
+  berachainPlugin = await ethers.getContractAt(
+    "contracts/plugins/berachain/BerachainPluginFactory.sol:BerachainPlugin",
+    BERACHAIN_PLUGIN_0
+  );
 
   // infraredPluginFactory = await ethers.getContractAt(
   //   "contracts/plugins/berachain/InfraredPluginFactory.sol:InfraredPluginFactory",
@@ -664,68 +700,68 @@ async function verifyBribe(bribeAddress) {
   console.log("Bribe Verified");
 }
 
-async function deployStationPluginFactory() {
-  console.log("Starting StationPluginFactory Deployment");
-  const stationPluginFactoryArtifact = await ethers.getContractFactory(
-    "StationPluginFactory"
+async function deployBerachainPluginFactory() {
+  console.log("Starting BerachainPluginFactory Deployment");
+  const berachainPluginFactoryArtifact = await ethers.getContractFactory(
+    "BerachainPluginFactory"
   );
-  const stationPluginFactoryContract =
-    await stationPluginFactoryArtifact.deploy(voter.address, {
+  const berachainPluginFactoryContract =
+    await berachainPluginFactoryArtifact.deploy(voter.address, {
       gasPrice: ethers.gasPrice,
     });
-  stationPluginFactory = await stationPluginFactoryContract.deployed();
+  berachainPluginFactory = await berachainPluginFactoryContract.deployed();
   console.log(
-    "StationPluginFactory Deployed at:",
-    stationPluginFactory.address
+    "BerachainPluginFactory Deployed at:",
+    berachainPluginFactory.address
   );
 }
 
-async function verifyStationPluginFactory() {
-  console.log("Starting StationPluginFactory Verification");
+async function verifyBerachainPluginFactory() {
+  console.log("Starting BerachainPluginFactory Verification");
   await hre.run("verify:verify", {
-    address: stationPluginFactory.address,
+    address: berachainPluginFactory.address,
     contract:
-      "contracts/plugins/berachain/StationPluginFactory.sol:StationPluginFactory",
+      "contracts/plugins/berachain/BerachainPluginFactory.sol:BerachainPluginFactory",
     constructorArguments: [voter.address],
   });
-  console.log("StationPluginFactory Verified");
+  console.log("BerachainPluginFactory Verified");
 }
 
-async function deployStationPlugin() {
-  console.log("Starting StationPlugin Deployment");
-  await stationPluginFactory.createPlugin(
-    STATION_TOKEN_0,
-    STATION_TOKENS_0,
-    STATION_SYMBOL_0,
-    STATION_NAME_0,
+async function deployBerachainPlugin() {
+  console.log("Starting BerachainPlugin Deployment");
+  await berachainPluginFactory.createPlugin(
+    BERACHAIN_TOKEN_4,
+    BERACHAIN_TOKENS_4,
+    BERACHAIN_SYMBOL_4,
+    BERACHAIN_NAME_4,
     { gasPrice: ethers.gasPrice }
   );
   await sleep(10000);
   console.log(
-    "StationPlugin Deployed at:",
-    await stationPluginFactory.last_plugin()
+    "BerachainPlugin Deployed at:",
+    await berachainPluginFactory.last_plugin()
   );
 }
 
-async function verifyStationPlugin() {
-  console.log("Starting StationPlugin Verification");
+async function verifyBerachainPlugin() {
+  console.log("Starting BerachainPlugin Verification");
   await hre.run("verify:verify", {
-    address: stationPlugin.address,
+    address: berachainPlugin.address,
     contract:
-      "contracts/plugins/berachain/StationPluginFactory.sol:StationPlugin",
+      "contracts/plugins/berachain/BerachainPluginFactory.sol:BerachainPlugin",
     constructorArguments: [
-      STATION_TOKEN_0,
+      BERACHAIN_TOKEN_0,
       voter.address,
-      STATION_TOKENS_0,
+      BERACHAIN_TOKENS_0,
       [WBERA],
       VAULT_FACTORY,
-      "0xc5cb3459723b828b3974f7e58899249c2be3b33d",
-      "BGT Station",
-      STATION_SYMBOL_0,
-      STATION_NAME_0,
+      "0xC2BaA8443cDA8EBE51a640905A8E6bc4e1f9872c",
+      "Berachain",
+      BERACHAIN_SYMBOL_0,
+      BERACHAIN_NAME_0,
     ],
   });
-  console.log("StationPlugin Verified");
+  console.log("BerachainPlugin Verified");
 }
 
 async function deployInfraredPluginFactory() {
@@ -1033,22 +1069,22 @@ async function main() {
   // console.log();
 
   //===================================================================
-  // 11. Deploy Station Plugin Factory
+  // 11. Deploy Berachain Plugin Factory
   //===================================================================
 
   // console.log("Starting StationPlugin Deployment");
-  // await deployStationPluginFactory();
-  // await verifyStationPluginFactory();
-  // console.log("StationPlugin Deployed and Verified");
+  // await deployBerachainPluginFactory();
+  // await verifyBerachainPluginFactory();
+  // console.log("BerachainPlugin Deployed and Verified");
 
   //===================================================================
-  // 12. Deploy Station Plugin
+  // 12. Deploy Berachain Plugin
   //===================================================================
 
-  // console.log("Starting StationPlugin Deployment");
-  // await deployStationPlugin();
-  // await verifyStationPlugin();
-  // console.log("StationPlugin Deployed and Verified");
+  // console.log("Starting BerachainPlugin Deployment");
+  await deployBerachainPlugin();
+  // await verifyBerachainPlugin();
+  // console.log("BerachainPlugin Deployed and Verified");
 
   //===================================================================
   // 13. Deploy Infrared Plugin Factory
