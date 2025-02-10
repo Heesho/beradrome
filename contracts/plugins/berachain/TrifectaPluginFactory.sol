@@ -24,8 +24,7 @@ contract TrifectaPlugin is Plugin, ReentrancyGuard {
 
     /*----------  CONSTANTS  --------------------------------------------*/
 
-    address public constant KDK = 0xfd27998fa0eaB1A6372Db14Afd4bF7c4a58C5364;
-    address public constant XKDK = 0x414B50157a5697F14e91417C5275A7496DcF429D;
+    address public constant XKDK = 0xe8D7b965BA082835EA917F2B173Ff3E035B69eeB;
 
     /*----------  STATE VARIABLES  --------------------------------------*/
 
@@ -70,13 +69,6 @@ contract TrifectaPlugin is Plugin, ReentrancyGuard {
         address bribe = getBribe();
         address gauge = getGauge();
         uint256 duration = IBribe(bribe).DURATION();
-
-        uint256 kdkBalance = IERC20(KDK).balanceOf(address(this));
-        if (kdkBalance > duration) {
-            IERC20(KDK).safeApprove(gauge, 0);
-            IERC20(KDK).safeApprove(gauge, kdkBalance);
-            IGauge(gauge).notifyRewardAmount(KDK, kdkBalance);
-        }
         
         uint256 xkdkBalance = IERC20(XKDK).balanceOf(address(this));
         if (xkdkBalance > duration) {
@@ -141,9 +133,7 @@ contract TrifectaPlugin is Plugin, ReentrancyGuard {
 contract TrifectaPluginFactory is Ownable {
 
     string public constant PROTOCOL = 'Liquidity Trifecta';
-    address public constant KDK = 0xfd27998fa0eaB1A6372Db14Afd4bF7c4a58C5364;
-    address public constant XKDK = 0x414B50157a5697F14e91417C5275A7496DcF429D;
-    address public constant REWARDS_VAULT_FACTORY = 0x2B6e40f65D82A0cB98795bC7587a71bfa49fBB2B;
+    address public constant REWARDS_VAULT_FACTORY = 0x94Ad6Ac84f6C6FbA8b8CCbD71d9f4f101def52a8;
 
     address public immutable VOTER;
 

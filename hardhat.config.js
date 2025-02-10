@@ -76,7 +76,7 @@ module.exports = {
         chainId: CHAIN_ID,
         urls: {
           apiURL: "https://api.berascan.com/api",
-          browserURL: "https://bartio.berascan.com",
+          browserURL: "https://berascan.com/",
         },
       },
     ],
