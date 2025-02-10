@@ -2,6 +2,7 @@
 pragma solidity 0.8.19;
 
 import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
+import "@openzeppelin/contracts/access/Ownable.sol";
 import 'contracts/Plugin.sol';
 
 interface ICommunalFarm {
@@ -19,18 +20,19 @@ interface ICommunalFarm {
     function lockedStakesOf(address account) external view returns (LockedStake[] memory);
 }
 
-contract TrifectaPlugin is Plugin, ReentrancyGuard {
+contract TrifectaPlugin is Plugin, ReentrancyGuard, Ownable {
     using SafeERC20 for IERC20;
 
     /*----------  CONSTANTS  --------------------------------------------*/
 
-    address public constant XKDK = 0xe8D7b965BA082835EA917F2B173Ff3E035B69eeB;
-
     /*----------  STATE VARIABLES  --------------------------------------*/
 
     address public farm;
+    address[] public farmRewards;
 
     /*----------  ERRORS ------------------------------------------------*/
+
+    error Plugin__InvalidFarmReward();
 
     /*----------  FUNCTIONS  --------------------------------------------*/
 
@@ -70,20 +72,23 @@ contract TrifectaPlugin is Plugin, ReentrancyGuard {
         address gauge = getGauge();
         uint256 duration = IBribe(bribe).DURATION();
         
-        uint256 xkdkBalance = IERC20(XKDK).balanceOf(address(this));
-        if (xkdkBalance > duration) {
-            IERC20(XKDK).safeApprove(gauge, 0);
-            IERC20(XKDK).safeApprove(gauge, xkdkBalance);
-            IGauge(gauge).notifyRewardAmount(XKDK, xkdkBalance);
+        for (uint256 i = 0; i < farmRewards.length; i++) {
+            address farmToken = farmRewards[i];
+            uint256 balance = IERC20(farmToken).balanceOf(address(this));
+            if (balance > duration) {
+                IERC20(farmToken).safeApprove(gauge, 0);
+                IERC20(farmToken).safeApprove(gauge, balance);
+                IGauge(gauge).notifyRewardAmount(farmToken, balance);
+            }
         }
 
         for (uint256 i = 0; i < getBribeTokens().length; i++) {
-            address token = getBribeTokens()[i];
-            uint256 balance = IERC20(token).balanceOf(address(this));
+            address bribeToken = getBribeTokens()[i];
+            uint256 balance = IERC20(bribeToken).balanceOf(address(this));
             if (balance > duration) {
-                IERC20(token).safeApprove(bribe, 0);
-                IERC20(token).safeApprove(bribe, balance);
-                IBribe(bribe).notifyRewardAmount(token, balance);
+                IERC20(bribeToken).safeApprove(bribe, 0);
+                IERC20(bribeToken).safeApprove(bribe, balance);
+                IBribe(bribe).notifyRewardAmount(bribeToken, balance);
             }
         }
     }
@@ -118,6 +123,12 @@ contract TrifectaPlugin is Plugin, ReentrancyGuard {
 
     /*----------  RESTRICTED FUNCTIONS  ---------------------------------*/
 
+    function addFarmRewards(address _farmReward) external onlyOwner {
+        if (_farmReward == getToken()) revert Plugin__InvalidFarmReward();
+        if (_farmReward == address(0)) revert Plugin__InvalidFarmReward();
+        farmRewards.push(_farmReward);
+    }
+
     /*----------  VIEW FUNCTIONS  ---------------------------------------*/
 
     function getLockedLiquidity() public view returns (uint256) {
@@ -139,7 +150,7 @@ contract TrifectaPluginFactory is Ownable {
 
     address public last_plugin;
 
-    event Plugin__PluginCreated(address plugin);
+    event TrifectaPluginFactory__PluginCreated(address plugin);
 
     constructor(address _VOTER) {
         VOTER = _VOTER;
@@ -151,7 +162,7 @@ contract TrifectaPluginFactory is Ownable {
         address _token0,
         address _token1,
         address[] calldata _otherRewards,
-        string memory _name, // ex 50WETH-50HONEY or 50WBTC-50HONEY or 50WBERA-50HONEY
+        string memory _name,
         string memory _vaultName
     ) external returns (address) {
 
@@ -176,7 +187,8 @@ contract TrifectaPluginFactory is Ownable {
             _vaultName
         );
         last_plugin = address(lastPlugin);
-        emit Plugin__PluginCreated(last_plugin);
+        lastPlugin.transferOwnership(msg.sender);
+        emit TrifectaPluginFactory__PluginCreated(last_plugin);
         return last_plugin;
     }
 

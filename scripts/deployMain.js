@@ -25,7 +25,7 @@ const YEET = "";
 const IBGT = "";
 const LBGT = "";
 const KDK = "";
-const XKDK = "";
+const XKDK = "0xe8D7b965BA082835EA917F2B173Ff3E035B69eeB";
 
 // Berachain Plugin Factory
 const BERACHAIN_PLUGIN_FACTORY = "0x3E5b9a5D7D73D8781c4782910523b942dB831ef8";
