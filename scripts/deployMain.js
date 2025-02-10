@@ -21,10 +21,9 @@ const WETH = "0x2F6F07CDcf3588944Bf4C42aC74ff24bF56e7590";
 const WBTC = "0x0555E30da8f98308EdB960aa94C0Db47230d2B9c";
 const USDCe = "0x549943e04f40284185054145c6E4e9568C1D3241";
 const BYUSD = "0x688e72142674041f8f6Af4c808a4045cA1D6aC82";
-const YEET = "";
+const YEET = "0x08A38Caa631DE329FF2DAD1656CE789F31AF3142";
 const IBGT = "";
 const LBGT = "";
-const KDK = "";
 const XKDK = "0xe8D7b965BA082835EA917F2B173Ff3E035B69eeB";
 
 // Berachain Plugin Factory
@@ -85,16 +84,19 @@ const BERAPAW_SYMBOL_0 = "Berps bHONEY";
 const BERAPAW_NAME_0 = "Beradrome BeraPaw Berps bHONEY";
 const BERAPAW_PLUGIN_0 = "";
 
+// Trifecta Plugin Factory
+const TRIFECTA_PLUGIN_FACTORY = "0x5CEf8C04AD128Cf25142111f868ab09D6eA25f6A";
+
 // Trifecta Kodiak YEET-WBERA
-const TRIFECTA_TOKEN_0 = "";
-const TRIFECTA_FARM_0 = "";
+const TRIFECTA_TOKEN_0 = "0xEc8BA456b4e009408d0776cdE8B91f8717D13Fa1";
+const TRIFECTA_FARM_0 = "0x1C8e199c6c42D5ccE652Cf02002694D937118177";
 const TRIFECTA_TOKEN0_0 = YEET;
 const TRIFECTA_TOKEN1_0 = WBERA;
-const TRIFECTA_OTHER_REWARDS_0 = [WBERA];
-const TRIFECTA_SYMBOL_0 = "Kodiak Island-WBERA-YEET-1%";
+const TRIFECTA_OTHER_REWARDS_0 = [YEET];
+const TRIFECTA_SYMBOL_0 = "Kodiak Island WBERA-YEET-1%";
 const TRIFECTA_NAME_0 =
-  "Beradrome Liquidity Trifecta Kodiak Island-WBERA-YEET-1%";
-const TRIFECTA_PLUGIN_0 = "";
+  "Beradrome Liquidity Trifecta Kodiak Island WBERA-YEET-1%";
+const TRIFECTA_PLUGIN_0 = "0x26aE252B4607826f03b8e701a792346864bec758";
 
 // Bullas BULL iSH
 const BULLAS_PLUGIN = "";
@@ -222,15 +224,15 @@ async function getContracts() {
   //   BERAPAW_PLUGIN_0
   // );
 
-  // trifectaPluginFactory = await ethers.getContractAt(
-  //   "contracts/plugins/berachain/TrifectaPluginFactory.sol:TrifectaPluginFactory",
-  //   ""
-  // );
+  trifectaPluginFactory = await ethers.getContractAt(
+    "contracts/plugins/berachain/TrifectaPluginFactory.sol:TrifectaPluginFactory",
+    TRIFECTA_PLUGIN_FACTORY
+  );
 
-  // trifectaPlugin = await ethers.getContractAt(
-  //   "contracts/plugins/berachain/TrifectaPluginFactory.sol:TrifectaPlugin",
-  //   TRIFECTA_PLUGIN_0
-  // );
+  trifectaPlugin = await ethers.getContractAt(
+    "contracts/plugins/berachain/TrifectaPluginFactory.sol:TrifectaPlugin",
+    TRIFECTA_PLUGIN_0
+  );
 
   console.log("Contracts Retrieved");
 }
@@ -684,7 +686,7 @@ async function verifyGauge(pluginAddress, gaugeAddress) {
   await hre.run("verify:verify", {
     address: gaugeAddress,
     contract: "contracts/GaugeFactory.sol:Gauge",
-    constructorArguments: [pluginAddress, voter.address],
+    constructorArguments: [voter.address, pluginAddress],
   });
   console.log("Gauge Verified");
 }
@@ -1081,7 +1083,7 @@ async function main() {
   //===================================================================
 
   // console.log("Starting BerachainPlugin Deployment");
-  await deployBerachainPlugin();
+  // await deployBerachainPlugin();
   // await verifyBerachainPlugin();
   // console.log("BerachainPlugin Deployed and Verified");
 
@@ -1213,14 +1215,7 @@ async function main() {
   // 13. Print Plugins
   //===================================================================
 
-  // let plugins = [
-  //   STATION_PLUGIN_0,
-  //   INFRARED_PLUGIN_0,
-  //   BERAPAW_PLUGIN_0,
-  //   TRIFECTA_PLUGIN_0,
-  //   BULLAS_PLUGIN,
-  //   GUMBALL_PLUGIN_0,
-  // ];
+  // let plugins = [BERACHAIN_PLUGIN_0];
 
   // for (let i = 0; i < plugins.length; i++) {
   //   let plugin = await controller.getPlugin(plugins[i]);
@@ -1235,6 +1230,13 @@ async function main() {
   //   console.log("Reward Vault: ", plugin.rewardVault);
   //   console.log();
   // }
+
+  // await verifyGauge(
+  //   BERACHAIN_PLUGIN_0,
+  //   "0x229FdFf961392cEBB08E93D630E7a6A5614dcC38"
+  // );
+
+  // await verifyBribe("0x5DBa62Ae28E2EfBd1f42aC372910F8Df78659Edd");
 
   //===================================================================
   // 13. Distro

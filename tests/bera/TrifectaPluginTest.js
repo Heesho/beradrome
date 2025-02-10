@@ -64,10 +64,15 @@ function timer(t) {
 
 const WBERA_ADDR = "0x6969696969696969696969696969696969696969";
 const HONEY_ADDR = "0xFCBD14DC51f0A4d49d5E53C2E0950e0bC26d0Dce";
+// const WBERA_ADDR = "0x6969696969696969696969696969696969696969";
+// const HONEY_ADDR = "0x08A38Caa631DE329FF2DAD1656CE789F31AF3142";
 
 const KODIAK3_ADDR = "0x4a254B11810B8EBb63C5468E438FC561Cb1bB1da";
 const KODIAK3_FARM = "0x40C4d0a87157c3C1Df26267AC02505D930BAeEEb";
 const KODIAK3_HOLDER = "0x3BB6E62ACC3f63de0a208320c92B83E557B61c5A";
+// const KODIAK3_ADDR = "0xEc8BA456b4e009408d0776cdE8B91f8717D13Fa1";
+// const KODIAK3_FARM = "0x1C8e199c6c42D5ccE652Cf02002694D937118177";
+// const KODIAK3_HOLDER = "0xAdb7EC53F76A1D2b1c623582947E676BA3716656";
 
 const VAULT_FACTORY_ADDR = "0x94Ad6Ac84f6C6FbA8b8CCbD71d9f4f101def52a8";
 
@@ -324,7 +329,7 @@ describe.only("berachain: trifecta testing", function () {
     console.log("- KODIAK3 Added in Voter");
 
     // add xKDK as gauge reward tokens from Voter
-    await plugin0.addFarmReward(XKDK_ADDR);
+    // await plugin0.addFarmReward(XKDK_ADDR);
     await voter.addGaugeReward(gauge0.address, XKDK_ADDR);
     console.log("- XKDK added as gauge reward");
 
