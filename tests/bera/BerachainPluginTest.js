@@ -51,7 +51,7 @@ function timer(t) {
 const WBERA_ADDR = "0x6969696969696969696969696969696969696969";
 const HONEY_ADDR = "0xFCBD14DC51f0A4d49d5E53C2E0950e0bC26d0Dce";
 const WBERA_HONEY_LP_ADDR = "0x2c4a603A2aA5596287A06886862dc29d56DbC354";
-const WBERA_HONEY_LP_HOLDER = "0xdfFfAEeaABf1140D1DDF98a7138b96CF1E63A08B";
+const WBERA_HONEY_LP_HOLDER = "0xA567501aBf12f401C9E613b6323C43cf29B0F92c";
 const VAULT_FACTORY_ADDR = "0x94Ad6Ac84f6C6FbA8b8CCbD71d9f4f101def52a8";
 
 let owner, multisig, treasury, user0, user1, user2;
@@ -530,7 +530,7 @@ describe("berachain: berachain beraswap plugin testing", function () {
 
   it("Forward time by 1 days", async function () {
     console.log("******************************************************");
-    await network.provider.send("evm_increaseTime", [24 * 3600]);
+    await network.provider.send("evm_increaseTime", [14 * 24 * 3600]);
     await network.provider.send("evm_mine");
   });
 
@@ -539,6 +539,35 @@ describe("berachain: berachain beraswap plugin testing", function () {
     await voter.connect(owner).distro();
     await fees.distribute();
     await voter.distributeToBribes([plugin0.address]);
+  });
+
+  it("GaugeCardData, plugin0, user0", async function () {
+    console.log("******************************************************");
+    let res = await multicall.gaugeCardData(plugin0.address, user0.address);
+    console.log("INFORMATION");
+    console.log("Gauge: ", res.gauge);
+    console.log("Plugin: ", res.plugin);
+    console.log("Underlying: ", res.token);
+    console.log("Tokens in Underlying: ");
+    for (let i = 0; i < res.assetTokens.length; i++) {
+      console.log(" - ", res.assetTokens[i]);
+    }
+    console.log("Underlying Decimals: ", res.tokenDecimals);
+    console.log("Is Alive: ", res.isAlive);
+    console.log();
+    console.log("GLOBAL DATA");
+    console.log("Protocol: ", res.protocol);
+    console.log("Symbol: ", res.name);
+    console.log("Price OTOKEN: $", divDec(res.priceOTOKEN));
+    console.log("Reward Per token: ", divDec(res.rewardPerToken));
+    console.log("Reward Per token: $", divDec(res.rewardPerTokenUSD));
+    console.log("Total Supply: ", divDec(res.totalSupply));
+    console.log("Voting Weight: ", divDec(res.votingWeight), "%");
+    console.log();
+    console.log("ACCOUNT DATA");
+    console.log("Balance Underlying: ", divDec(res.accountTokenBalance));
+    console.log("Balance Deposited: ", divDec(res.accountStakedBalance));
+    console.log("Earned OTOKEN: ", divDec(res.accountEarnedOTOKEN));
   });
 
   it("BribeCardData, plugin0, user1 ", async function () {

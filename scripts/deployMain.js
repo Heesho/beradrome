@@ -25,6 +25,19 @@ const YEET = "0x08A38Caa631DE329FF2DAD1656CE789F31AF3142";
 const IBGT = "";
 const LBGT = "";
 const XKDK = "0xe8D7b965BA082835EA917F2B173Ff3E035B69eeB";
+const PLUG = "0x231A6BD8eB88Cfa42776B7Ac575CeCAf82bf1E21";
+
+// Beradrom Plugin Factory
+const BERADROME_PLUGIN_FACTORY = "0xf0b0f738Fed0656D66725bb1528B42050de64DCa";
+
+// Beradrome Kodiak PLUG-WBERA-V2
+// get from
+const BERADROME_TOKEN_0 = "0xac1D44f0284634EB04FFA56C76d47e839224b46F";
+const BERADROME_TOKENS_0 = [PLUG, WBERA];
+const BERADROME_REWARDS_0 = [PLUG];
+const BERADROME_SYMBOL_0 = "Kodiak PLUG-WBERA-V2";
+const BERADROME_NAME_0 = "Beradrome Kodiak PLUG-WBERA-V2";
+const BERADROME_PLUGIN_0 = "0xAEe71E1C9506f7a1fa6c7655657d239EbC31b5AE";
 
 // Berachain Plugin Factory
 const BERACHAIN_PLUGIN_FACTORY = "0x3E5b9a5D7D73D8781c4782910523b942dB831ef8";
@@ -99,7 +112,7 @@ const TRIFECTA_NAME_0 =
 const TRIFECTA_PLUGIN_0 = "0x26aE252B4607826f03b8e701a792346864bec758";
 
 // Bullas BULL iSH
-const BULLAS_PLUGIN = "";
+const BULLAS_PLUGIN = "0xE259A689D13139F413eE693BE27181192319a629";
 
 // Gumball BentoBera
 const GUMBALL_PLUGIN_0 = "";
@@ -109,6 +122,9 @@ let OTOKENFactory, VTOKENFactory, feesFactory, rewarderFactory;
 let TOKEN, OTOKEN, VTOKEN, fees, rewarder, governor;
 let voter, minter, gaugeFactory, bribeFactory;
 let multicall, controller, trifectaMulticall;
+
+let beradromePluginFactory;
+let beradromePlugin;
 
 let berachainPlugin;
 let berachainPluginFactory;
@@ -195,10 +211,21 @@ async function getContracts() {
     "0x65e3249EccD38aD841345dA5beBBebE3a73a596C"
   );
 
+  beradromePluginFactory = await ethers.getContractAt(
+    "contracts/plugins/berachain/BeradromePluginFactory.sol:BeradromePluginFactory",
+    BERADROME_PLUGIN_FACTORY
+  );
+
+  beradromePlugin = await ethers.getContractAt(
+    "contracts/plugins/berachain/BeradromePluginFactory.sol:BeradromePlugin",
+    BERADROME_PLUGIN_0
+  );
+
   berachainPluginFactory = await ethers.getContractAt(
     "contracts/plugins/berachain/BerachainPluginFactory.sol:BerachainPluginFactory",
     BERACHAIN_PLUGIN_FACTORY
   );
+
   berachainPlugin = await ethers.getContractAt(
     "contracts/plugins/berachain/BerachainPluginFactory.sol:BerachainPlugin",
     BERACHAIN_PLUGIN_0
@@ -959,6 +986,70 @@ async function verifyBeraPawPlugin() {
   console.log("BeraPawPlugin Verified");
 }
 
+async function deployBeradromePluginFactory() {
+  console.log("Starting BeradromePluginFactory Deployment");
+  const beradromePluginFactoryArtifact = await ethers.getContractFactory(
+    "BeradromePluginFactory"
+  );
+  const beradromePluginFactoryContract =
+    await beradromePluginFactoryArtifact.deploy(voter.address, {
+      gasPrice: ethers.gasPrice,
+    });
+  beradromePluginFactory = await beradromePluginFactoryContract.deployed();
+  console.log(
+    "BeradromePluginFactory Deployed at:",
+    beradromePluginFactory.address
+  );
+}
+
+async function verifyBeradromePluginFactory() {
+  console.log("Starting BeradromePluginFactory Verification");
+  await hre.run("verify:verify", {
+    address: beradromePluginFactory.address,
+    contract:
+      "contracts/plugins/berachain/BeradromePluginFactory.sol:BeradromePluginFactory",
+    constructorArguments: [voter.address],
+  });
+  console.log("BeradromePluginFactory Verified");
+}
+
+async function deployBeradromePlugin() {
+  console.log("Starting BeradromePlugin Deployment");
+  await beradromePluginFactory.createPlugin(
+    BERADROME_TOKEN_0,
+    BERADROME_TOKENS_0,
+    BERADROME_REWARDS_0,
+    BERADROME_SYMBOL_0,
+    BERADROME_NAME_0,
+    { gasPrice: ethers.gasPrice }
+  );
+  await sleep(10000);
+  console.log(
+    "BeradromePlugin Deployed at ",
+    await beradromePluginFactory.last_plugin()
+  );
+}
+
+async function verifyBeradromePlugin() {
+  console.log("Starting BeradromePlugin Verification");
+  await hre.run("verify:verify", {
+    address: beradromePlugin.address,
+    contract:
+      "contracts/plugins/berachain/BeradromePluginFactory.sol:BeradromePlugin",
+    constructorArguments: [
+      BERADROME_TOKEN_0,
+      voter.address,
+      BERADROME_TOKENS_0,
+      BERADROME_REWARDS_0,
+      VAULT_FACTORY,
+      "Beradrome",
+      BERADROME_SYMBOL_0,
+      BERADROME_NAME_0,
+    ],
+  });
+  console.log("BeradromePlugin Verified");
+}
+
 async function main() {
   const [wallet] = await ethers.getSigners();
   console.log("Using wallet: ", wallet.address);
@@ -1142,6 +1233,24 @@ async function main() {
   // console.log("TrifectaPlugin Deployed and Verified");
 
   //===================================================================
+  // 13. Deploy Beradrome Plugin Factory
+  //===================================================================
+
+  // console.log("Starting Beradrome Plugin Factory Deployment");
+  // await deployBeradromePluginFactory();
+  // await verifyBeradromePluginFactory();
+  // console.log("Beradrome Plugin Factory Deployed and Verified");
+
+  //===================================================================
+  // 13. Deploy Beradrome Plugin
+  //===================================================================
+
+  // console.log("Starting Beradrome Plugin Deployment");
+  // await deployBeradromePlugin();
+  // await verifyBeradromePlugin();
+  // console.log("Beradrome Plugin Deployed and Verified");
+
+  //===================================================================
   // 13. Add Gauge Rewards
   //===================================================================
 
@@ -1215,7 +1324,7 @@ async function main() {
   // 13. Print Plugins
   //===================================================================
 
-  // let plugins = [BERACHAIN_PLUGIN_0];
+  // let plugins = [BERACHAIN_PLUGIN_0, TRIFECTA_PLUGIN_0, BULLAS_PLUGIN];
 
   // for (let i = 0; i < plugins.length; i++) {
   //   let plugin = await controller.getPlugin(plugins[i]);

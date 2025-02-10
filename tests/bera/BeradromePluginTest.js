@@ -44,36 +44,14 @@ const ERC20_ABI = [
   "function name() view returns (string)",
 ];
 
-// XKDK ABI
-const XKDK_ABI = [
-  "function balanceOf(address owner) view returns (uint256)",
-  "function updateTransferWhitelist(address account, bool add) external",
-  "function owner() view returns (address)",
-];
-const XKDK_ADDR = "0xe8D7b965BA082835EA917F2B173Ff3E035B69eeB";
-const XKDK_OWNER = "0x21802b7C3DF57e98df45f1547b0F1a72F2CD1aED";
-
-// XKDK ABI
-const FARM_ABI = [
-  "function earned(address account) view returns (uint256[] memory)",
-];
-
 function timer(t) {
   return new Promise((r) => setTimeout(r, t));
 }
 
 const WBERA_ADDR = "0x6969696969696969696969696969696969696969";
-const HONEY_ADDR = "0xFCBD14DC51f0A4d49d5E53C2E0950e0bC26d0Dce";
-// const WBERA_ADDR = "0x6969696969696969696969696969696969696969";
-// const HONEY_ADDR = "0x08A38Caa631DE329FF2DAD1656CE789F31AF3142";
-
-const KODIAK3_ADDR = "0x4a254B11810B8EBb63C5468E438FC561Cb1bB1da";
-const KODIAK3_FARM = "0x40C4d0a87157c3C1Df26267AC02505D930BAeEEb";
-const KODIAK3_HOLDER = "0x3BB6E62ACC3f63de0a208320c92B83E557B61c5A";
-// const KODIAK3_ADDR = "0xEc8BA456b4e009408d0776cdE8B91f8717D13Fa1";
-// const KODIAK3_FARM = "0x1C8e199c6c42D5ccE652Cf02002694D937118177";
-// const KODIAK3_HOLDER = "0xAdb7EC53F76A1D2b1c623582947E676BA3716656";
-
+const PLUG_ADDR = "0x231A6BD8eB88Cfa42776B7Ac575CeCAf82bf1E21";
+const WBERA_PLUG_LP_ADDR = "0xac1D44f0284634EB04FFA56C76d47e839224b46F";
+const WBERA_PLUG_LP_HOLDER = "0x0Fc69c0b2739d1dDd58dE4ba51F3bAD42E6e6bF4";
 const VAULT_FACTORY_ADDR = "0x94Ad6Ac84f6C6FbA8b8CCbD71d9f4f101def52a8";
 
 let owner, multisig, treasury, user0, user1, user2;
@@ -83,19 +61,12 @@ let VTOKENFactory,
   rewarderFactory,
   gaugeFactory,
   bribeFactory;
-let minter,
-  voter,
-  fees,
-  rewarder,
-  governance,
-  multicall,
-  trifectaMulticall,
-  pluginFactory;
+let minter, voter, fees, rewarder, governance, multicall, pluginFactory;
 let TOKEN, VTOKEN, OTOKEN, BASE;
-let WBERA, HONEY, XKDK, farm;
-let KODIAK3, plugin0, gauge0, bribe0;
+let WBERA, PLUG;
+let LP0, LP0Gauge, plugin0, gauge0, bribe0;
 
-describe("berachain: trifecta testing", function () {
+describe("berachain: beradrome plugin testing", function () {
   before("Initial set up", async function () {
     console.log("Begin Initialization");
 
@@ -109,10 +80,8 @@ describe("berachain: trifecta testing", function () {
 
     // initialize ERC20s
     WBERA = new ethers.Contract(WBERA_ADDR, ERC20_ABI, provider);
-    HONEY = new ethers.Contract(HONEY_ADDR, ERC20_ABI, provider);
-    KODIAK3 = new ethers.Contract(KODIAK3_ADDR, ERC20_ABI, provider);
-    XKDK = new ethers.Contract(XKDK_ADDR, XKDK_ABI, provider);
-    farm = new ethers.Contract(KODIAK3_FARM, FARM_ABI, provider);
+    PLUG = new ethers.Contract(PLUG_ADDR, ERC20_ABI, provider);
+    LP0 = new ethers.Contract(WBERA_PLUG_LP_ADDR, ERC20_ABI, provider);
     console.log("- ERC20s Initialized");
 
     // initialize ERC20Mocks
@@ -261,19 +230,6 @@ describe("berachain: trifecta testing", function () {
     );
     console.log("- Multicall Initialized");
 
-    // initialize TrifectaMulticall
-    const trifectaMulticallArtifact = await ethers.getContractFactory(
-      "TrifectaMulticall"
-    );
-    const trifectaMulticallContract = await trifectaMulticallArtifact.deploy(
-      voter.address
-    );
-    trifectaMulticall = await ethers.getContractAt(
-      "TrifectaMulticall",
-      trifectaMulticallContract.address
-    );
-    console.log("- TrifectaMulticall Initialized");
-
     // System set-up
     await gaugeFactory.setVoter(voter.address);
     await bribeFactory.setVoter(voter.address);
@@ -288,33 +244,32 @@ describe("berachain: trifecta testing", function () {
 
     // initialize Plugin Factory
     const pluginFactoryArtifact = await ethers.getContractFactory(
-      "TrifectaPluginFactory"
+      "BeradromePluginFactory"
     );
     const pluginFactoryContract = await pluginFactoryArtifact.deploy(
       voter.address
     );
     pluginFactory = await ethers.getContractAt(
-      "TrifectaPluginFactory",
+      "BeradromePluginFactory",
       pluginFactoryContract.address
     );
-    console.log("- Plugin Factory Initialized");
+    console.log("- PluginFactory Initialized");
 
-    // initialize KODIAK3
+    // initialize LP0
     await pluginFactory.createPlugin(
-      KODIAK3_ADDR,
-      KODIAK3_FARM,
-      HONEY_ADDR,
-      WBERA_ADDR,
-      [HONEY_ADDR],
-      "Kodiak Island WBERA-HONEY-0.3%",
-      "Beradrome Liquidity Trifecta Kodiak Island WBERA-HONEY-0.3%"
+      WBERA_PLUG_LP_ADDR,
+      [PLUG_ADDR, WBERA_ADDR],
+      [PLUG_ADDR],
+      "Kodiak PLUG-WBERA-V2",
+      "Beradrome Kodiak PLUG-WBERA-V2"
     );
+
     plugin0 = await ethers.getContractAt(
-      "contracts/plugins/berachain/TrifectaPluginFactory.sol:TrifectaPlugin",
+      "contracts/plugins/berachain/BeradromePluginFactory.sol:BeradromePlugin",
       await pluginFactory.last_plugin()
     );
 
-    // add KODIAK3 Plugin to Voter
+    // add LP0 Plugin to Voter
     await voter.addPlugin(plugin0.address);
     let Gauge0Address = await voter.gauges(plugin0.address);
     let Bribe0Address = await voter.bribes(plugin0.address);
@@ -326,12 +281,7 @@ describe("berachain: trifecta testing", function () {
       "contracts/BribeFactory.sol:Bribe",
       Bribe0Address
     );
-    console.log("- KODIAK3 Added in Voter");
-
-    // add xKDK as gauge reward tokens from Voter
-    // await plugin0.addFarmReward(XKDK_ADDR);
-    await voter.addGaugeReward(gauge0.address, XKDK_ADDR);
-    console.log("- XKDK added as gauge reward");
+    console.log("- LP0 Added in Voter");
 
     console.log("Initialization Complete");
     console.log();
@@ -341,98 +291,46 @@ describe("berachain: trifecta testing", function () {
     console.log("******************************************************");
     console.log(
       "Balance of LP0 holder",
-      await KODIAK3.balanceOf(KODIAK3_HOLDER)
+      await LP0.balanceOf(WBERA_PLUG_LP_HOLDER)
     );
   });
 
-  it("Impersonate KODIAK3 holder and send to user0", async function () {
+  it("Impersonate LP0 holder and send to user0", async function () {
     console.log("******************************************************");
     await network.provider.request({
       method: "hardhat_impersonateAccount",
-      params: [KODIAK3_HOLDER],
+      params: [WBERA_PLUG_LP_HOLDER],
     });
-    const signer = ethers.provider.getSigner(KODIAK3_HOLDER);
+    const signer = ethers.provider.getSigner(WBERA_PLUG_LP_HOLDER);
 
-    await KODIAK3.connect(signer).transfer(
+    await LP0.connect(signer).transfer(
       user0.address,
-      await KODIAK3.connect(owner).balanceOf(KODIAK3_HOLDER)
+      await LP0.connect(owner).balanceOf(WBERA_PLUG_LP_HOLDER)
     );
-    await KODIAK3.connect(user0).transfer(user1.address, ten);
-    await KODIAK3.connect(user0).transfer(user2.address, ten);
 
     console.log(
-      "Holder KODIAK3 balance: ",
-      divDec(await KODIAK3.connect(owner).balanceOf(KODIAK3_HOLDER))
+      "Holder LP0 balance: ",
+      divDec(await LP0.connect(owner).balanceOf(WBERA_PLUG_LP_HOLDER))
     );
+
     console.log(
-      "User0 KODIAK3 balance: ",
-      divDec(await KODIAK3.connect(owner).balanceOf(user0.address))
-    );
-    console.log(
-      "User1 KODIAK3 balance: ",
-      divDec(await KODIAK3.connect(owner).balanceOf(user1.address))
-    );
-    console.log(
-      "User2 KODIAK3 balance: ",
-      divDec(await KODIAK3.connect(owner).balanceOf(user2.address))
+      "User0 LP0 balance: ",
+      divDec(await LP0.connect(owner).balanceOf(user0.address))
     );
   });
 
-  it("User0 deposits in plugin", async function () {
+  it("User0 deposits in all plugins", async function () {
     console.log("******************************************************");
-    await KODIAK3.connect(user0).approve(plugin0.address, ten);
-    await plugin0.connect(user0).depositFor(user0.address, ten);
-  });
-
-  it("View plugin stats", async function () {
-    console.log("******************************************************");
-    console.log(
-      "LockedLiquidity",
-      divDec(await plugin0.connect(owner).getLockedLiquidity())
+    await LP0.connect(user0).approve(
+      plugin0.address,
+      await LP0.connect(owner).balanceOf(user0.address)
     );
-    console.log("LockedStakes", await plugin0.connect(owner).getLockedStakes());
-  });
-
-  it("User0 deposits in plugin", async function () {
-    console.log("******************************************************");
-    await KODIAK3.connect(user0).approve(plugin0.address, ten);
-    await plugin0.connect(user0).depositFor(user0.address, ten);
-  });
-
-  it("View plugin stats", async function () {
-    console.log("******************************************************");
-    console.log(
-      "LockedLiquidity",
-      divDec(await plugin0.connect(owner).getLockedLiquidity())
-    );
-    console.log("LockedStakes", await plugin0.connect(owner).getLockedStakes());
-  });
-
-  it("User0 deposits in plugin", async function () {
-    console.log("******************************************************");
-    await KODIAK3.connect(user0).approve(plugin0.address, ten);
-    await plugin0.connect(user0).depositFor(user0.address, ten);
-  });
-
-  it("User1 deposits in plugin", async function () {
-    console.log("******************************************************");
-    await KODIAK3.connect(user1).approve(plugin0.address, ten);
-    await plugin0.connect(user1).depositFor(user1.address, ten);
-  });
-
-  it("User2 deposits in plugin", async function () {
-    console.log("******************************************************");
-    await KODIAK3.connect(user2).approve(plugin0.address, ten);
-    await plugin0.connect(user2).depositFor(user2.address, ten);
-  });
-
-  it("View plugin stats", async function () {
-    console.log("******************************************************");
-    console.log(
-      "LockedLiquidity",
-      divDec(await plugin0.connect(owner).getLockedLiquidity())
-    );
-    console.log("LockedStakes", await plugin0.connect(owner).getLockedStakes());
+    await plugin0
+      .connect(user0)
+      .depositFor(
+        user0.address,
+        await LP0.connect(owner).balanceOf(user0.address)
+      );
   });
 
   it("Mint test tokens to each user", async function () {
@@ -635,46 +533,80 @@ describe("berachain: trifecta testing", function () {
 
   it("Forward time by 1 days", async function () {
     console.log("******************************************************");
-    await network.provider.send("evm_increaseTime", [24 * 3600]);
+    await network.provider.send("evm_increaseTime", [7 * 24 * 3600]);
     await network.provider.send("evm_mine");
   });
 
-  it("Transfer ETH to XKDK_OWNER", async function () {
+  it("Owner calls distribute", async function () {
     console.log("******************************************************");
-
-    // Transfer 1 ETH to XKDK_OWNER using the 'owner' signer
-    const tx = await owner.sendTransaction({
-      to: XKDK_OWNER,
-      value: ethers.utils.parseEther("1.0"), // Amount of ETH to send
-    });
-
-    // Wait for the transaction to be mined
-    await tx.wait();
-
-    console.log(`Transferred 1 ETH to XKDK_OWNER: ${XKDK_OWNER}`);
+    await voter.connect(owner).distro();
+    await fees.distribute();
+    await voter.distributeToBribes([plugin0.address]);
   });
 
-  it("Whitelist plugin and bribe contract to transfer xKDK", async function () {
+  it("GaugeCardData, plugin0, user0", async function () {
     console.log("******************************************************");
-
-    console.log("XKDK owner: ", await XKDK.connect(owner).owner());
-    // transfer ETH to XKDK_OWNER
-    await owner.sendTransaction({
-      to: XKDK_OWNER,
-      value: ethers.utils.parseEther("1.0"),
-    });
-    await network.provider.request({
-      method: "hardhat_impersonateAccount",
-      params: [XKDK_OWNER],
-    });
-    const signer = ethers.provider.getSigner(XKDK_OWNER);
-    await XKDK.connect(signer).updateTransferWhitelist(plugin0.address, true);
-    await XKDK.connect(signer).updateTransferWhitelist(gauge0.address, true);
+    let res = await multicall.gaugeCardData(plugin0.address, user0.address);
+    console.log("INFORMATION");
+    console.log("Gauge: ", res.gauge);
+    console.log("Plugin: ", res.plugin);
+    console.log("Underlying: ", res.token);
+    console.log("Tokens in Underlying: ");
+    for (let i = 0; i < res.assetTokens.length; i++) {
+      console.log(" - ", res.assetTokens[i]);
+    }
+    console.log("Underlying Decimals: ", res.tokenDecimals);
+    console.log("Is Alive: ", res.isAlive);
+    console.log();
+    console.log("GLOBAL DATA");
+    console.log("Protocol: ", res.protocol);
+    console.log("Symbol: ", res.name);
+    console.log("Price OTOKEN: $", divDec(res.priceOTOKEN));
+    console.log("Reward Per token: ", divDec(res.rewardPerToken));
+    console.log("Reward Per token: $", divDec(res.rewardPerTokenUSD));
+    console.log("Total Supply: ", divDec(res.totalSupply));
+    console.log("Voting Weight: ", divDec(res.votingWeight), "%");
+    console.log();
+    console.log("ACCOUNT DATA");
+    console.log("Balance Underlying: ", divDec(res.accountTokenBalance));
+    console.log("Balance Deposited: ", divDec(res.accountStakedBalance));
+    console.log("Earned OTOKEN: ", divDec(res.accountEarnedOTOKEN));
   });
 
-  it("Owner kodiak rewards contract", async function () {
+  it("BribeCardData, plugin0, user1 ", async function () {
     console.log("******************************************************");
-    console.log(await farm.connect(owner).earned(plugin0.address));
+    let res = await multicall.bribeCardData(plugin0.address, user1.address);
+    console.log("INFORMATION");
+    console.log("Gauge: ", res.bribe);
+    console.log("Plugin: ", res.plugin);
+    console.log("Reward Tokens: ");
+    for (let i = 0; i < res.rewardTokens.length; i++) {
+      console.log(" - ", res.rewardTokens[i], res.rewardTokenDecimals[i]);
+    }
+    console.log("Is Alive: ", res.isAlive);
+    console.log();
+    console.log("GLOBAL DATA");
+    console.log("Protocol: ", res.protocol);
+    console.log("Symbol: ", res.name);
+    console.log("Voting Weight: ", divDec(res.voteWeight));
+    console.log("Voting percent: ", divDec(res.votePercent), "%");
+    console.log("Reward Per Token: ");
+    for (let i = 0; i < res.rewardsPerToken.length; i++) {
+      console.log(" - ", divDec(res.rewardsPerToken[i]));
+    }
+    console.log();
+    console.log("ACCOUNT DATA");
+    console.log("Account Votes: ", divDec(res.accountVote));
+    console.log("Earned Rewards: ");
+    for (let i = 0; i < res.accountRewardsEarned.length; i++) {
+      console.log(" - ", divDec(res.accountRewardsEarned[i]));
+    }
+  });
+
+  it("Forward time by 7 days", async function () {
+    console.log("******************************************************");
+    await network.provider.send("evm_increaseTime", [7 * 24 * 3600]);
+    await network.provider.send("evm_mine");
   });
 
   it("Owner calls distribute", async function () {
@@ -714,51 +646,6 @@ describe("berachain: trifecta testing", function () {
     }
   });
 
-  it("Forward time by 2 days", async function () {
-    console.log("******************************************************");
-    await network.provider.send("evm_increaseTime", [2 * 24 * 3600]);
-    await network.provider.send("evm_mine");
-  });
-
-  it("BribeCardData, plugin0, user1 ", async function () {
-    console.log("******************************************************");
-    let res = await multicall.bribeCardData(plugin0.address, user1.address);
-    console.log("INFORMATION");
-    console.log("Gauge: ", res.bribe);
-    console.log("Plugin: ", res.plugin);
-    console.log("Reward Tokens: ");
-    for (let i = 0; i < res.rewardTokens.length; i++) {
-      console.log(" - ", res.rewardTokens[i], res.rewardTokenDecimals[i]);
-    }
-    console.log("Is Alive: ", res.isAlive);
-    console.log();
-    console.log("GLOBAL DATA");
-    console.log("Protocol: ", res.protocol);
-    console.log("Symbol: ", res.name);
-    console.log("Voting Weight: ", divDec(res.voteWeight));
-    console.log("Voting percent: ", divDec(res.votePercent), "%");
-    console.log("Reward Per Token: ");
-    for (let i = 0; i < res.rewardsPerToken.length; i++) {
-      console.log(" - ", divDec(res.rewardsPerToken[i]));
-    }
-    console.log();
-    console.log("ACCOUNT DATA");
-    console.log("Account Votes: ", divDec(res.accountVote));
-    console.log("Earned Rewards: ");
-    for (let i = 0; i < res.accountRewardsEarned.length; i++) {
-      console.log(" - ", divDec(res.accountRewardsEarned[i]));
-    }
-  });
-
-  it("TrifectaPluginGauge, plugin0, user1 ", async function () {
-    console.log("******************************************************");
-    let res = await trifectaMulticall.gaugeRewardData(
-      plugin0.address,
-      user1.address
-    );
-    console.log(res);
-  });
-
   it("User0 withdraws from all gauges", async function () {
     console.log("******************************************************");
     await plugin0
@@ -767,13 +654,6 @@ describe("berachain: trifecta testing", function () {
         user0.address,
         await plugin0.connect(owner).balanceOf(user0.address)
       );
-  });
-
-  it("User2 attempts to withdraw more than they have from gauge", async function () {
-    console.log("******************************************************");
-    await expect(plugin0.connect(user2).withdrawTo(user2.address, twenty)).to.be
-      .reverted;
-    await plugin0.connect(user2).withdrawTo(user2.address, ten);
   });
 
   it("GaugeCardData, plugin0, user0", async function () {
@@ -803,53 +683,5 @@ describe("berachain: trifecta testing", function () {
     console.log("Balance Underlying: ", divDec(res.accountTokenBalance));
     console.log("Balance Deposited: ", divDec(res.accountStakedBalance));
     console.log("Earned OTOKEN: ", divDec(res.accountEarnedOTOKEN));
-  });
-
-  it("User1 claims bribes", async function () {
-    console.log("******************************************************");
-    await voter.connect(user1).claimBribes([bribe0.address]);
-    console.log(
-      "User1 xKDK balance: ",
-      divDec(await XKDK.connect(owner).balanceOf(user1.address))
-    );
-  });
-
-  it("BribeCardData, plugin0, user1 ", async function () {
-    console.log("******************************************************");
-    let res = await multicall.bribeCardData(plugin0.address, user1.address);
-    console.log("INFORMATION");
-    console.log("Gauge: ", res.bribe);
-    console.log("Plugin: ", res.plugin);
-    console.log("Reward Tokens: ");
-    for (let i = 0; i < res.rewardTokens.length; i++) {
-      console.log(" - ", res.rewardTokens[i], res.rewardTokenDecimals[i]);
-    }
-    console.log("Is Alive: ", res.isAlive);
-    console.log();
-    console.log("GLOBAL DATA");
-    console.log("Protocol: ", res.protocol);
-    console.log("Symbol: ", res.name);
-    console.log("Voting Weight: ", divDec(res.voteWeight));
-    console.log("Voting percent: ", divDec(res.votePercent), "%");
-    console.log("Reward Per Token: ");
-    for (let i = 0; i < res.rewardsPerToken.length; i++) {
-      console.log(" - ", divDec(res.rewardsPerToken[i]));
-    }
-    console.log();
-    console.log("ACCOUNT DATA");
-    console.log("Account Votes: ", divDec(res.accountVote));
-    console.log("Earned Rewards: ");
-    for (let i = 0; i < res.accountRewardsEarned.length; i++) {
-      console.log(" - ", divDec(res.accountRewardsEarned[i]));
-    }
-  });
-
-  it("View plugin stats", async function () {
-    console.log("******************************************************");
-    console.log(
-      "LockedLiquidity",
-      divDec(await plugin0.connect(owner).getLockedLiquidity())
-    );
-    console.log("LockedStakes", await plugin0.connect(owner).getLockedStakes());
   });
 });
