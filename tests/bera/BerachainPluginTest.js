@@ -66,7 +66,7 @@ let TOKEN, VTOKEN, OTOKEN, BASE;
 let WBERA, HONEY;
 let LP0, LP0Gauge, plugin0, gauge0, bribe0;
 
-describe.only("berachain: berachain beraswap plugin testing", function () {
+describe("berachain: berachain beraswap plugin testing", function () {
   before("Initial set up", async function () {
     console.log("Begin Initialization");
 

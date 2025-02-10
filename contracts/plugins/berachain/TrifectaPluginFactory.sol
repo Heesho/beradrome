@@ -123,7 +123,7 @@ contract TrifectaPlugin is Plugin, ReentrancyGuard, Ownable {
 
     /*----------  RESTRICTED FUNCTIONS  ---------------------------------*/
 
-    function addFarmRewards(address _farmReward) external onlyOwner {
+    function addFarmReward(address _farmReward) external onlyOwner {
         if (_farmReward == getToken()) revert Plugin__InvalidFarmReward();
         if (_farmReward == address(0)) revert Plugin__InvalidFarmReward();
         farmRewards.push(_farmReward);

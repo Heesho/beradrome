@@ -48,9 +48,10 @@ const ERC20_ABI = [
 const XKDK_ABI = [
   "function balanceOf(address owner) view returns (uint256)",
   "function updateTransferWhitelist(address account, bool add) external",
+  "function owner() view returns (address)",
 ];
-const XKDK_ADDR = "0x414B50157a5697F14e91417C5275A7496DcF429D";
-const XKDK_OWNER = "0x064097EbcbFca546E5Fc6a19559EA1b90262E9D1";
+const XKDK_ADDR = "0xe8D7b965BA082835EA917F2B173Ff3E035B69eeB";
+const XKDK_OWNER = "0x21802b7C3DF57e98df45f1547b0F1a72F2CD1aED";
 
 // XKDK ABI
 const FARM_ABI = [
@@ -61,15 +62,16 @@ function timer(t) {
   return new Promise((r) => setTimeout(r, t));
 }
 
-const WBERA_ADDR = "0x7507c1dc16935B82698e4C63f2746A2fCf994dF8";
-const YEET_ADDR = "0x1740F679325ef3686B2f574e392007A92e4BeD41";
-const KDK_ADDR = "0xfd27998fa0eaB1A6372Db14Afd4bF7c4a58C5364";
-const KODIAK3_ADDR = "0xE5A2ab5D2fb268E5fF43A5564e44c3309609aFF9"; // Kodiak Vault V1 YEET/WBERA
-const KODIAK3_FARM = "0xbdEE3F788a5efDdA1FcFe6bfe7DbbDa5690179e6";
-const KODIAK3_HOLDER = "0x838e8dc6D87DfC6AF2Ccd64264FDAC41331eC921";
+const WBERA_ADDR = "0x6969696969696969696969696969696969696969";
+const HONEY_ADDR = "0xFCBD14DC51f0A4d49d5E53C2E0950e0bC26d0Dce";
+
+const KODIAK3_ADDR = "0x4a254B11810B8EBb63C5468E438FC561Cb1bB1da";
+const KODIAK3_FARM = "0x40C4d0a87157c3C1Df26267AC02505D930BAeEEb";
+const KODIAK3_HOLDER = "0x3BB6E62ACC3f63de0a208320c92B83E557B61c5A";
+
+const VAULT_FACTORY_ADDR = "0x94Ad6Ac84f6C6FbA8b8CCbD71d9f4f101def52a8";
 
 let owner, multisig, treasury, user0, user1, user2;
-let vaultFactory;
 let VTOKENFactory,
   OTOKENFactory,
   feesFactory,
@@ -85,10 +87,10 @@ let minter,
   trifectaMulticall,
   pluginFactory;
 let TOKEN, VTOKEN, OTOKEN, BASE;
-let WBERA, YEET, XKDK, farm;
+let WBERA, HONEY, XKDK, farm;
 let KODIAK3, plugin0, gauge0, bribe0;
 
-describe("berachain: trifecta testing", function () {
+describe.only("berachain: trifecta testing", function () {
   before("Initial set up", async function () {
     console.log("Begin Initialization");
 
@@ -102,7 +104,7 @@ describe("berachain: trifecta testing", function () {
 
     // initialize ERC20s
     WBERA = new ethers.Contract(WBERA_ADDR, ERC20_ABI, provider);
-    YEET = new ethers.Contract(YEET_ADDR, ERC20_ABI, provider);
+    HONEY = new ethers.Contract(HONEY_ADDR, ERC20_ABI, provider);
     KODIAK3 = new ethers.Contract(KODIAK3_ADDR, ERC20_ABI, provider);
     XKDK = new ethers.Contract(XKDK_ADDR, XKDK_ABI, provider);
     farm = new ethers.Contract(KODIAK3_FARM, FARM_ABI, provider);
@@ -112,13 +114,6 @@ describe("berachain: trifecta testing", function () {
     const ERC20MockArtifact = await ethers.getContractFactory("ERC20Mock");
     BASE = await ERC20MockArtifact.deploy("BASE", "BASE");
     console.log("- ERC20Mocks Initialized");
-
-    // initialize VaultFactory
-    const VaultFactoryArtifact = await ethers.getContractFactory(
-      "BerachainRewardsVaultFactory"
-    );
-    vaultFactory = await VaultFactoryArtifact.deploy();
-    console.log("- VaultFactory Initialized");
 
     // initialize OTOKENFactory
     const OTOKENFactoryArtifact = await ethers.getContractFactory(
@@ -157,7 +152,7 @@ describe("berachain: trifecta testing", function () {
       VTOKENFactory.address,
       rewarderFactory.address,
       feesFactory.address,
-      vaultFactory.address
+      VAULT_FACTORY_ADDR
     );
     console.log("- TOKEN Initialized");
 
@@ -303,11 +298,11 @@ describe("berachain: trifecta testing", function () {
     await pluginFactory.createPlugin(
       KODIAK3_ADDR,
       KODIAK3_FARM,
-      YEET_ADDR,
+      HONEY_ADDR,
       WBERA_ADDR,
-      [YEET_ADDR],
-      "YEET-WBERA Island",
-      "KODIAK3 Vault Token"
+      [HONEY_ADDR],
+      "Kodiak Island WBERA-HONEY-0.3%",
+      "Beradrome Liquidity Trifecta Kodiak Island WBERA-HONEY-0.3%"
     );
     plugin0 = await ethers.getContractAt(
       "contracts/plugins/berachain/TrifectaPluginFactory.sol:TrifectaPlugin",
@@ -328,10 +323,10 @@ describe("berachain: trifecta testing", function () {
     );
     console.log("- KODIAK3 Added in Voter");
 
-    // add KDK and xKDK as gauge reward tokens from Voter
-    await voter.addGaugeReward(gauge0.address, KDK_ADDR);
+    // add xKDK as gauge reward tokens from Voter
+    await plugin0.addFarmReward(XKDK_ADDR);
     await voter.addGaugeReward(gauge0.address, XKDK_ADDR);
-    console.log("- KDK and XKDK added as gauge rewards");
+    console.log("- XKDK added as gauge reward");
 
     console.log("Initialization Complete");
     console.log();
@@ -656,6 +651,8 @@ describe("berachain: trifecta testing", function () {
 
   it("Whitelist plugin and bribe contract to transfer xKDK", async function () {
     console.log("******************************************************");
+
+    console.log("XKDK owner: ", await XKDK.connect(owner).owner());
     // transfer ETH to XKDK_OWNER
     await owner.sendTransaction({
       to: XKDK_OWNER,
@@ -757,8 +754,6 @@ describe("berachain: trifecta testing", function () {
     console.log(res);
   });
 
-  /*
-
   it("User0 withdraws from all gauges", async function () {
     console.log("******************************************************");
     await plugin0
@@ -852,6 +847,4 @@ describe("berachain: trifecta testing", function () {
     );
     console.log("LockedStakes", await plugin0.connect(owner).getLockedStakes());
   });
-
-  */
 });
