@@ -23,7 +23,7 @@ const USDCe = "0x549943e04f40284185054145c6E4e9568C1D3241";
 const BYUSD = "0x688e72142674041f8f6Af4c808a4045cA1D6aC82";
 const YEET = "0x08A38Caa631DE329FF2DAD1656CE789F31AF3142";
 const IBGT = "0xac03CABA51e17c86c921E1f6CBFBdC91F8BB2E6b";
-const LBGT = "";
+const OHM = "0x18878Df23e2a36f81e820e4b47b4A40576D3159C";
 const XKDK = "0xe8D7b965BA082835EA917F2B173Ff3E035B69eeB";
 const PLUG = "0x231A6BD8eB88Cfa42776B7Ac575CeCAf82bf1E21";
 const BRLY = "0x5C43a5fEf2b056934478373A53d1cb08030fd382";
@@ -170,6 +170,19 @@ const TRIFECTA_NAME_0 =
   "Beradrome Liquidity Trifecta Kodiak Island WBERA-YEET-1%";
 const TRIFECTA_PLUGIN_0 = "0x26aE252B4607826f03b8e701a792346864bec758";
 
+// Infrared Trifecta Plugin Factory
+const INFRARED_TRIFECTA_PLUGIN_FACTORY =
+  "0xE31E90ceE704A24ad84caBa1CA31B827fA05FE3d";
+
+// Infrared Trifecta Kodiak Island OHM-HONEY-0.3%
+const INFRARED_TRIFECTA_VAULT_0 = "0xC5695BCF5D02a6539093300F09d04dc20e6b49FB";
+const INFRARED_TRIFECTA_TOKENS_0 = [OHM, HONEY];
+const INFRARED_TRIFECTA_REWARDS_0 = [OHM];
+const INFRARED_TRIFECTA_SYMBOL_0 = "Kodiak Island OHM-HONEY-0.3%";
+const INFRARED_TRIFECTA_NAME_0 =
+  "Beradrome Infrared Trifecta Kodiak Island OHM-HONEY-0.3%";
+const INFRARED_TRIFECTA_PLUGIN_0 = "0xB61813048f34315310eA6D3AcFEe2a465202c3F5";
+
 // Bullas BULL iSH
 const BULLAS_PLUGIN = "0xE259A689D13139F413eE693BE27181192319a629";
 
@@ -182,8 +195,8 @@ let TOKEN, OTOKEN, VTOKEN, fees, rewarder, governor;
 let voter, minter, gaugeFactory, bribeFactory;
 let multicall, controller, trifectaMulticall;
 
-let beradromePluginFactory;
 let beradromePlugin;
+let beradromePluginFactory;
 
 let berachainPlugin;
 let berachainPluginFactory;
@@ -196,6 +209,9 @@ let trifectaPluginFactory;
 
 let berapawPlugin;
 let berapawPluginFactory;
+
+let infraredTrifectaPlugin;
+let infraredTrifectaPluginFactory;
 
 async function getContracts() {
   OTOKENFactory = await ethers.getContractAt(
@@ -318,6 +334,16 @@ async function getContracts() {
   trifectaPlugin = await ethers.getContractAt(
     "contracts/plugins/berachain/TrifectaPluginFactory.sol:TrifectaPlugin",
     TRIFECTA_PLUGIN_0
+  );
+
+  infraredTrifectaPluginFactory = await ethers.getContractAt(
+    "contracts/plugins/berachain/InfraredTrifectaPluginFactory.sol:InfraredTrifectaPluginFactory",
+    INFRARED_TRIFECTA_PLUGIN_FACTORY
+  );
+
+  infraredTrifectaPlugin = await ethers.getContractAt(
+    "contracts/plugins/berachain/InfraredTrifectaPluginFactory.sol:InfraredTrifectaPlugin",
+    INFRARED_TRIFECTA_PLUGIN_0
   );
 
   console.log("Contracts Retrieved");
@@ -1109,6 +1135,72 @@ async function verifyBeradromePlugin() {
   console.log("BeradromePlugin Verified");
 }
 
+async function deployInfraredTrifectaPluginFactory() {
+  console.log("Starting InfraredTrifectaPluginFactory Deployment");
+  const infraredTrifectaPluginFactoryArtifact = await ethers.getContractFactory(
+    "InfraredTrifectaPluginFactory"
+  );
+  const infraredTrifectaPluginFactoryContract =
+    await infraredTrifectaPluginFactoryArtifact.deploy(voter.address, {
+      gasPrice: ethers.gasPrice,
+    });
+  infraredTrifectaPluginFactory =
+    await infraredTrifectaPluginFactoryContract.deployed();
+  console.log(
+    "InfraredTrifectaPluginFactory Deployed at:",
+    infraredTrifectaPluginFactory.address
+  );
+}
+
+async function verifyInfraredTrifectaPluginFactory() {
+  console.log("Starting InfraredTrifectaPluginFactory Verification");
+  await hre.run("verify:verify", {
+    address: infraredTrifectaPluginFactory.address,
+    contract:
+      "contracts/plugins/berachain/InfraredTrifectaPluginFactory.sol:InfraredTrifectaPluginFactory",
+    constructorArguments: [voter.address],
+  });
+  console.log("InfraredTrifectaPluginFactory Verified");
+}
+
+async function deployInfraredTrifectaPlugin() {
+  console.log("Starting InfraredTrifectaPlugin Deployment");
+  await infraredTrifectaPluginFactory.createPlugin(
+    INFRARED_TRIFECTA_VAULT_0,
+    INFRARED_TRIFECTA_TOKENS_0,
+    INFRARED_TRIFECTA_REWARDS_0,
+    INFRARED_TRIFECTA_SYMBOL_0,
+    INFRARED_TRIFECTA_NAME_0,
+    { gasPrice: ethers.gasPrice }
+  );
+  await sleep(10000);
+  console.log(
+    "InfraredTrifectaPlugin Deployed at:",
+    await infraredTrifectaPluginFactory.last_plugin()
+  );
+}
+
+async function verifyInfraredTrifectaPlugin() {
+  console.log("Starting InfraredTrifectaPlugin Verification");
+  await hre.run("verify:verify", {
+    address: infraredTrifectaPlugin.address,
+    contract:
+      "contracts/plugins/berachain/InfraredTrifectaPluginFactory.sol:InfraredTrifectaPlugin",
+    constructorArguments: [
+      "0x98bdeede9a45c28d229285d9d6e9139e9f505391",
+      voter.address,
+      INFRARED_TRIFECTA_TOKENS_0,
+      INFRARED_TRIFECTA_REWARDS_0,
+      VAULT_FACTORY,
+      INFRARED_TRIFECTA_VAULT_0,
+      "Infrared Trifecta",
+      INFRARED_TRIFECTA_SYMBOL_0,
+      INFRARED_TRIFECTA_NAME_0,
+    ],
+  });
+  console.log("InfraredTrifectaPlugin Verified");
+}
+
 async function main() {
   const [wallet] = await ethers.getSigners();
   console.log("Using wallet: ", wallet.address);
@@ -1310,6 +1402,24 @@ async function main() {
   // console.log("Beradrome Plugin Deployed and Verified");
 
   //===================================================================
+  // 14. Deploy Infrared Trifecta Plugin Factory
+  //===================================================================
+
+  // console.log("Starting Infrared Trifecta Plugin Factory Deployment");
+  // await deployInfraredTrifectaPluginFactory();
+  // await verifyInfraredTrifectaPluginFactory();
+  // console.log("Infrared Trifecta Plugin Factory Deployed and Verified");
+
+  //===================================================================
+  // 15. Deploy Infrared Trifecta Plugin
+  //===================================================================
+
+  // console.log("Starting Infrared Trifecta Plugin Deployment");
+  // await deployInfraredTrifectaPlugin();
+  // await verifyInfraredTrifectaPlugin();
+  // console.log("Infrared Trifecta Plugin Deployed and Verified");
+
+  //===================================================================
   // 13. Add Gauge Rewards
   //===================================================================
 
@@ -1426,38 +1536,38 @@ async function main() {
   // 13. Distro
   //===================================================================
 
-  console.log("Distributing Rewards");
+  // console.log("Distributing Rewards");
 
-  await voter.distro();
-  console.log("Gauge Rewards Distributed");
+  // await voter.distro();
+  // console.log("Gauge Rewards Distributed");
 
-  await fees.distribute();
-  console.log("Fees Rewards Distributed");
+  // await fees.distribute();
+  // console.log("Fees Rewards Distributed");
 
-  await voter.distributeToBribes([
-    BERACHAIN_PLUGIN_0,
-    BERACHAIN_PLUGIN_1,
-    BERACHAIN_PLUGIN_2,
-    BERACHAIN_PLUGIN_3,
-    BERACHAIN_PLUGIN_4,
-  ]);
-  console.log("Berachain Bribe Rewards Distributed");
+  // await voter.distributeToBribes([
+  //   BERACHAIN_PLUGIN_0,
+  //   BERACHAIN_PLUGIN_1,
+  //   BERACHAIN_PLUGIN_2,
+  //   BERACHAIN_PLUGIN_3,
+  //   BERACHAIN_PLUGIN_4,
+  // ]);
+  // console.log("Berachain Bribe Rewards Distributed");
 
-  await voter.distributeToBribes([
-    INFRARED_PLUGIN_0,
-    INFRARED_PLUGIN_1,
-    INFRARED_PLUGIN_2,
-    INFRARED_PLUGIN_3,
-    INFRARED_PLUGIN_4,
-    INFRARED_PLUGIN_5,
-  ]);
-  console.log("Infrared Bribe Rewards Distributed");
+  // await voter.distributeToBribes([
+  //   INFRARED_PLUGIN_0,
+  //   INFRARED_PLUGIN_1,
+  //   INFRARED_PLUGIN_2,
+  //   INFRARED_PLUGIN_3,
+  //   INFRARED_PLUGIN_4,
+  //   INFRARED_PLUGIN_5,
+  // ]);
+  // console.log("Infrared Bribe Rewards Distributed");
 
-  await voter.distributeToBribes([TRIFECTA_PLUGIN_0]);
-  console.log("Liquidity Trifecta Bribe Rewards Distributed");
+  // await voter.distributeToBribes([TRIFECTA_PLUGIN_0]);
+  // console.log("Liquidity Trifecta Bribe Rewards Distributed");
 
-  await voter.distributeToBribes([BULLAS_PLUGIN]);
-  console.log("Game Bribe Rewards Distributed");
+  // await voter.distributeToBribes([BULLAS_PLUGIN]);
+  // console.log("Game Bribe Rewards Distributed");
 
   //===================================================================
   // 14. Remove Plugin
