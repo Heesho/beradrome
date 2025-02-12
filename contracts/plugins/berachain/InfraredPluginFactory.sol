@@ -9,6 +9,7 @@ interface IInfraredVault {
     function stake(uint256 amount) external;
     function withdraw(uint256 amount) external;
     function getReward() external;
+    function getAllRewardTokens() external view returns (address[] memory);
 }
 
 contract InfraredPlugin is Plugin, ReentrancyGuard {
@@ -58,7 +59,7 @@ contract InfraredPlugin is Plugin, ReentrancyGuard {
         IInfraredVault(infraredVault).getReward();
         address bribe = getBribe();
         uint256 duration = IBribe(bribe).DURATION();
-        address[] memory rewardTokens = IBribe(bribe).getRewardTokens();
+        address[] memory rewardTokens = IInfraredVault(infraredVault).getAllRewardTokens();
         for (uint256 i = 0; i < rewardTokens.length; i++) {
             uint256 balance = IERC20(rewardTokens[i]).balanceOf(address(this));
             if (balance > duration) {
@@ -98,13 +99,13 @@ contract InfraredPlugin is Plugin, ReentrancyGuard {
 contract InfraredPluginFactory {
 
     string public constant PROTOCOL = 'Infrared';
-    address public constant REWARDS_VAULT_FACTORY = 0x2B6e40f65D82A0cB98795bC7587a71bfa49fBB2B;
+    address public constant REWARDS_VAULT_FACTORY = 0x94Ad6Ac84f6C6FbA8b8CCbD71d9f4f101def52a8;
 
     address public immutable VOTER;
 
     address public last_plugin;
 
-    event Plugin__PluginCreated(address plugin);
+    event InfraredPluginFactory__PluginCreated(address plugin);
 
     constructor(address _VOTER) {
         VOTER = _VOTER;
@@ -130,7 +131,7 @@ contract InfraredPluginFactory {
             _vaultName
         );
         last_plugin = address(lastPlugin);
-        emit Plugin__PluginCreated(last_plugin);
+        emit InfraredPluginFactory__PluginCreated(last_plugin);
         return last_plugin;
     }
 

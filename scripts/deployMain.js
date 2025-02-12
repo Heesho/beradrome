@@ -22,10 +22,11 @@ const WBTC = "0x0555E30da8f98308EdB960aa94C0Db47230d2B9c";
 const USDCe = "0x549943e04f40284185054145c6E4e9568C1D3241";
 const BYUSD = "0x688e72142674041f8f6Af4c808a4045cA1D6aC82";
 const YEET = "0x08A38Caa631DE329FF2DAD1656CE789F31AF3142";
-const IBGT = "";
+const IBGT = "0xac03CABA51e17c86c921E1f6CBFBdC91F8BB2E6b";
 const LBGT = "";
 const XKDK = "0xe8D7b965BA082835EA917F2B173Ff3E035B69eeB";
 const PLUG = "0x231A6BD8eB88Cfa42776B7Ac575CeCAf82bf1E21";
+const BRLY = "0x5C43a5fEf2b056934478373A53d1cb08030fd382";
 
 // Beradrom Plugin Factory
 const BERADROME_PLUGIN_FACTORY = "0xf0b0f738Fed0656D66725bb1528B42050de64DCa";
@@ -38,6 +39,15 @@ const BERADROME_REWARDS_0 = [PLUG];
 const BERADROME_SYMBOL_0 = "Kodiak PLUG-WBERA-V2";
 const BERADROME_NAME_0 = "Beradrome Kodiak PLUG-WBERA-V2";
 const BERADROME_PLUGIN_0 = "0xAEe71E1C9506f7a1fa6c7655657d239EbC31b5AE";
+
+// Beradrome Kodiak BRLY-WBERA-V2
+// get from
+const BERADROME_TOKEN_1 = "0xedd7deb874de23b168a5803a4f3a21bae9720b84";
+const BERADROME_TOKENS_1 = [BRLY, WBERA];
+const BERADROME_REWARDS_1 = [BRLY];
+const BERADROME_SYMBOL_1 = "Kodiak BRLY-WBERA-V2";
+const BERADROME_NAME_1 = "Beradrome Kodiak BRLY-WBERA-V2";
+const BERADROME_PLUGIN_1 = "0x54128f98a3E2F22828B23Ba32F182A3f89a69BA2";
 
 // Berachain Plugin Factory
 const BERACHAIN_PLUGIN_FACTORY = "0x3E5b9a5D7D73D8781c4782910523b942dB831ef8";
@@ -1016,11 +1026,11 @@ async function verifyBeradromePluginFactory() {
 async function deployBeradromePlugin() {
   console.log("Starting BeradromePlugin Deployment");
   await beradromePluginFactory.createPlugin(
-    BERADROME_TOKEN_0,
-    BERADROME_TOKENS_0,
-    BERADROME_REWARDS_0,
-    BERADROME_SYMBOL_0,
-    BERADROME_NAME_0,
+    BERADROME_TOKEN_1,
+    BERADROME_TOKENS_1,
+    BERADROME_REWARDS_1,
+    BERADROME_SYMBOL_1,
+    BERADROME_NAME_1,
     { gasPrice: ethers.gasPrice }
   );
   await sleep(10000);
@@ -1324,21 +1334,26 @@ async function main() {
   // 13. Print Plugins
   //===================================================================
 
-  // let plugins = [BERACHAIN_PLUGIN_0, TRIFECTA_PLUGIN_0, BULLAS_PLUGIN];
+  let plugins = [
+    BERACHAIN_PLUGIN_0,
+    TRIFECTA_PLUGIN_0,
+    BULLAS_PLUGIN,
+    BERADROME_PLUGIN_0,
+  ];
 
-  // for (let i = 0; i < plugins.length; i++) {
-  //   let plugin = await controller.getPlugin(plugins[i]);
+  for (let i = 0; i < plugins.length; i++) {
+    let plugin = await controller.getPlugin(plugins[i]);
 
-  //   console.log("Protocol: ", plugin.protocol);
-  //   console.log("Name: ", plugin.name);
-  //   console.log("Token: ", plugin.token);
-  //   console.log("Plugin: ", plugin.plugin);
-  //   console.log("Gauge: ", plugin.gauge);
-  //   console.log("Bribe: ", plugin.bribe);
-  //   console.log("Vault Token: ", plugin.vaultToken);
-  //   console.log("Reward Vault: ", plugin.rewardVault);
-  //   console.log();
-  // }
+    console.log("Protocol: ", plugin.protocol);
+    console.log("Name: ", plugin.name);
+    console.log("Token: ", plugin.token);
+    console.log("Plugin: ", plugin.plugin);
+    console.log("Gauge: ", plugin.gauge);
+    console.log("Bribe: ", plugin.bribe);
+    console.log("Vault Token: ", plugin.vaultToken);
+    console.log("Reward Vault: ", plugin.rewardVault);
+    console.log();
+  }
 
   // await verifyGauge(
   //   BERACHAIN_PLUGIN_0,
