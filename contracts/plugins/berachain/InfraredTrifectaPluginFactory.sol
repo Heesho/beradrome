@@ -9,6 +9,7 @@ interface IInfraredVault {
     function stake(uint256 amount) external;
     function withdraw(uint256 amount) external;
     function getReward() external;
+    function getAllRewardTokens() external view returns (address[] memory);
 }
 
 contract InfraredTrifectaPlugin is Plugin, ReentrancyGuard {
@@ -16,7 +17,7 @@ contract InfraredTrifectaPlugin is Plugin, ReentrancyGuard {
 
     /*----------  CONSTANTS  --------------------------------------------*/
 
-    address public constant IBGT = 0x46eFC86F0D7455F135CC9df501673739d513E982;
+    address public constant IBGT = 0xac03CABA51e17c86c921E1f6CBFBdC91F8BB2E6b;
 
     /*----------  STATE VARIABLES  --------------------------------------*/
 
@@ -69,13 +70,15 @@ contract InfraredTrifectaPlugin is Plugin, ReentrancyGuard {
             IGauge(gauge).notifyRewardAmount(IBGT, ibgtBalance);
         }
 
-        address[] memory rewardTokens = IBribe(bribe).getRewardTokens();
+        address[] memory rewardTokens = IInfraredVault(infraredVault).getAllRewardTokens();
         for (uint256 i = 0; i < rewardTokens.length; i++) {
-            uint256 balance = IERC20(rewardTokens[i]).balanceOf(address(this));
-            if (balance > duration) {
-                IERC20(rewardTokens[i]).safeApprove(bribe, 0);
-                IERC20(rewardTokens[i]).safeApprove(bribe, balance);
-                IBribe(bribe).notifyRewardAmount(rewardTokens[i], balance);
+            if (rewardTokens[i] != IBGT) {
+                uint256 balance = IERC20(rewardTokens[i]).balanceOf(address(this));
+                if (balance > duration) {
+                    IERC20(rewardTokens[i]).safeApprove(bribe, 0);
+                    IERC20(rewardTokens[i]).safeApprove(bribe, balance);
+                    IBribe(bribe).notifyRewardAmount(rewardTokens[i], balance);
+                }
             }
         }
     }
@@ -109,13 +112,13 @@ contract InfraredTrifectaPlugin is Plugin, ReentrancyGuard {
 contract InfraredTrifectaPluginFactory {
 
     string public constant PROTOCOL = 'Infrared Trifecta';
-    address public constant REWARDS_VAULT_FACTORY = 0x2B6e40f65D82A0cB98795bC7587a71bfa49fBB2B;
+    address public constant REWARDS_VAULT_FACTORY = 0x94Ad6Ac84f6C6FbA8b8CCbD71d9f4f101def52a8;
 
     address public immutable VOTER;
 
     address public last_plugin;
 
-    event Plugin__PluginCreated(address plugin);
+    event InfraredTrifectaPluginFactory__PluginCreated(address plugin);
 
     constructor(address _VOTER) {
         VOTER = _VOTER;
@@ -141,7 +144,7 @@ contract InfraredTrifectaPluginFactory {
             _vaultName
         );
         last_plugin = address(lastPlugin);
-        emit Plugin__PluginCreated(last_plugin);
+        emit InfraredTrifectaPluginFactory__PluginCreated(last_plugin);
         return last_plugin;
     }
 

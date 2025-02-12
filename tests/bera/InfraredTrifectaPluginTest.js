@@ -48,16 +48,16 @@ function timer(t) {
   return new Promise((r) => setTimeout(r, t));
 }
 
-const WBERA_ADDR = "0x7507c1dc16935B82698e4C63f2746A2fCf994dF8";
-const HONEY_ADDR = "0x0E4aaF1351de4c0264C5c7056Ef3777b41BD8e03";
-const WBERA_HONEY_LP_ADDR = "0xd28d852cbcc68DCEC922f6d5C7a8185dBaa104B7";
-const WBERA_HONEY_LP_HOLDER = "0x30b3c7fb29207b95F3C3717F1B518a039a04ccb0";
-const VAULT_ADDR = "0x5c5f9a838747fb83678ece15d85005fd4f558237";
-const IBGT_ADDR = "0x46efc86f0d7455f135cc9df501673739d513e982";
-const YEET_ADDR = "0x1740F679325ef3686B2f574e392007A92e4BeD41";
+const VAULT_FACTORY = "0x94Ad6Ac84f6C6FbA8b8CCbD71d9f4f101def52a8"; // Vault Factory Address
+
+const WBERA_ADDR = "0x6969696969696969696969696969696969696969";
+const HONEY_ADDR = "0xFCBD14DC51f0A4d49d5E53C2E0950e0bC26d0Dce";
+const WBERA_HONEY_LP_ADDR = "0x2c4a603A2aA5596287A06886862dc29d56DbC354";
+const WBERA_HONEY_LP_HOLDER = "0x2B9dB8033E82557398794dD1B8d31025FBfd6ED9";
+const VAULT_ADDR = "0xA95Ff8097B0E405d1F4139F460fa4c89863784c0";
+const IBGT_ADDR = "0xac03CABA51e17c86c921E1f6CBFBdC91F8BB2E6b";
 
 let owner, multisig, treasury, user0, user1, user2;
-let vaultFactory;
 let VTOKENFactory,
   OTOKENFactory,
   feesFactory,
@@ -76,7 +76,7 @@ let TOKEN, VTOKEN, OTOKEN, BASE;
 let WBERA, HONEY, IBGT;
 let LP0, LP0Gauge, plugin0, gauge0, bribe0;
 
-describe("berachain: infrared trifecta vault testing", function () {
+describe.only("berachain: infrared trifecta vault testing", function () {
   before("Initial set up", async function () {
     console.log("Begin Initialization");
 
@@ -99,13 +99,6 @@ describe("berachain: infrared trifecta vault testing", function () {
     const ERC20MockArtifact = await ethers.getContractFactory("ERC20Mock");
     BASE = await ERC20MockArtifact.deploy("BASE", "BASE");
     console.log("- ERC20Mocks Initialized");
-
-    // initialize VaultFactory
-    const VaultFactoryArtifact = await ethers.getContractFactory(
-      "BerachainRewardsVaultFactory"
-    );
-    vaultFactory = await VaultFactoryArtifact.deploy();
-    console.log("- VaultFactory Initialized");
 
     // initialize OTOKENFactory
     const OTOKENFactoryArtifact = await ethers.getContractFactory(
@@ -144,7 +137,7 @@ describe("berachain: infrared trifecta vault testing", function () {
       VTOKENFactory.address,
       rewarderFactory.address,
       feesFactory.address,
-      vaultFactory.address
+      VAULT_FACTORY
     );
     console.log("- TOKEN Initialized");
 
@@ -290,7 +283,7 @@ describe("berachain: infrared trifecta vault testing", function () {
     await pluginFactory.createPlugin(
       VAULT_ADDR,
       [HONEY_ADDR, WBERA_ADDR],
-      [YEET_ADDR],
+      [WBERA_ADDR],
       "BEX HONEY-WBERA",
       "Infrared Trifecta BEX HONEY-WBERA Vault Token"
     );
@@ -566,7 +559,7 @@ describe("berachain: infrared trifecta vault testing", function () {
 
   it("Forward time by 1 days", async function () {
     console.log("******************************************************");
-    await network.provider.send("evm_increaseTime", [24 * 3600]);
+    await network.provider.send("evm_increaseTime", [7 * 24 * 3600]);
     await network.provider.send("evm_mine");
   });
 
@@ -575,6 +568,35 @@ describe("berachain: infrared trifecta vault testing", function () {
     await voter.connect(owner).distro();
     await fees.distribute();
     await voter.distributeToBribes([plugin0.address]);
+  });
+
+  it("GaugeCardData, plugin0, user0", async function () {
+    console.log("******************************************************");
+    let res = await multicall.gaugeCardData(plugin0.address, user0.address);
+    console.log("INFORMATION");
+    console.log("Gauge: ", res.gauge);
+    console.log("Plugin: ", res.plugin);
+    console.log("Underlying: ", res.token);
+    console.log("Tokens in Underlying: ");
+    for (let i = 0; i < res.assetTokens.length; i++) {
+      console.log(" - ", res.assetTokens[i]);
+    }
+    console.log("Underlying Decimals: ", res.tokenDecimals);
+    console.log("Is Alive: ", res.isAlive);
+    console.log();
+    console.log("GLOBAL DATA");
+    console.log("Protocol: ", res.protocol);
+    console.log("Symbol: ", res.name);
+    console.log("Price OTOKEN: $", divDec(res.priceOTOKEN));
+    console.log("Reward Per token: ", divDec(res.rewardPerToken));
+    console.log("Reward Per token: $", divDec(res.rewardPerTokenUSD));
+    console.log("Total Supply: ", divDec(res.totalSupply));
+    console.log("Voting Weight: ", divDec(res.votingWeight), "%");
+    console.log();
+    console.log("ACCOUNT DATA");
+    console.log("Balance Underlying: ", divDec(res.accountTokenBalance));
+    console.log("Balance Deposited: ", divDec(res.accountStakedBalance));
+    console.log("Earned OTOKEN: ", divDec(res.accountEarnedOTOKEN));
   });
 
   it("BribeCardData, plugin0, user1 ", async function () {
