@@ -1384,10 +1384,21 @@ async function main() {
   //===================================================================
 
   // let plugins = [
+  //   BERADROME_PLUGIN_0,
+  //   BERADROME_PLUGIN_1,
   //   BERACHAIN_PLUGIN_0,
+  //   BERACHAIN_PLUGIN_1,
+  //   BERACHAIN_PLUGIN_2,
+  //   BERACHAIN_PLUGIN_3,
+  //   BERACHAIN_PLUGIN_4,
+  //   INFRARED_PLUGIN_0,
+  //   INFRARED_PLUGIN_1,
+  //   INFRARED_PLUGIN_2,
+  //   INFRARED_PLUGIN_3,
+  //   INFRARED_PLUGIN_4,
+  //   INFRARED_PLUGIN_5,
   //   TRIFECTA_PLUGIN_0,
   //   BULLAS_PLUGIN,
-  //   BERADROME_PLUGIN_0,
   // ];
 
   // for (let i = 0; i < plugins.length; i++) {
@@ -1415,29 +1426,38 @@ async function main() {
   // 13. Distro
   //===================================================================
 
-  // console.log("Distributing Rewards");
-  // await voter.distro();
-  // console.log("Voter Rewards Distributed");
-  // await fees.distribute();
-  // console.log("Fees Rewards Distributed");
-  // await voter.distributeToBribes([
-  //   STATION_PLUGIN_0, // Station Berps bHONEY
-  // ]);
-  // console.log("Station Bribe Rewards Distributed");
-  // await voter.distributeToBribes([
-  //   INFRARED_PLUGIN_0, // Infrared Berps bHONEY
-  // ]);
-  // console.log("Infrared Bribe Rewards Distributed");
-  // await voter.distributeToBribes([
-  //   TRIFECTA_PLUGIN_0, // Kodiak Trifecta YEET-WBERA Island
-  // ]);
-  // console.log("Kodiak TrifectaBribe Rewards Distributed");
-  // await voter.distributeToBribes([
-  //   BERAPAW_PLUGIN_0, // BeraPaw Beraborrow sNECT
-  // ]);
-  // console.log("BeraPaw Bribe Rewards Distributed");
-  // await voter.distributeToBribes([BULLAS_PLUGIN, GUMBALL_PLUGIN_0]);
-  // console.log("Game Bribe Rewards Distributed");
+  console.log("Distributing Rewards");
+
+  await voter.distro();
+  console.log("Gauge Rewards Distributed");
+
+  await fees.distribute();
+  console.log("Fees Rewards Distributed");
+
+  await voter.distributeToBribes([
+    BERACHAIN_PLUGIN_0,
+    BERACHAIN_PLUGIN_1,
+    BERACHAIN_PLUGIN_2,
+    BERACHAIN_PLUGIN_3,
+    BERACHAIN_PLUGIN_4,
+  ]);
+  console.log("Berachain Bribe Rewards Distributed");
+
+  await voter.distributeToBribes([
+    INFRARED_PLUGIN_0,
+    INFRARED_PLUGIN_1,
+    INFRARED_PLUGIN_2,
+    INFRARED_PLUGIN_3,
+    INFRARED_PLUGIN_4,
+    INFRARED_PLUGIN_5,
+  ]);
+  console.log("Infrared Bribe Rewards Distributed");
+
+  await voter.distributeToBribes([TRIFECTA_PLUGIN_0]);
+  console.log("Liquidity Trifecta Bribe Rewards Distributed");
+
+  await voter.distributeToBribes([BULLAS_PLUGIN]);
+  console.log("Game Bribe Rewards Distributed");
 
   //===================================================================
   // 14. Remove Plugin
