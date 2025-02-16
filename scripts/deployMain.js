@@ -102,7 +102,7 @@ const INFRARED_TOKENS_0 = [WBERA, HONEY];
 const INFRARED_REWARDS_0 = [IBGT];
 const INFRARED_SYMBOL_0 = "BeraSwap 50WBERA-50HONEY-WEIGHTED";
 const INFRARED_NAME_0 = "Beradrome Infrared BeraSwap 50WBERA-50HONEY-WEIGHTED";
-const INFRARED_PLUGIN_0 = "";
+const INFRARED_PLUGIN_0 = "0xF7f7cFc9FEB0f40a158D607F7Aa04B9D18aC8CA6";
 
 // Infrared BeraSwap 50WETH-50WBERA-WEIGHTED
 // get from https://hub.berachain.com/pools/0xdd70a5ef7d8cfe5c5134b5f9874b09fb5ce812b4000200000000000000000003/details/
@@ -111,7 +111,7 @@ const INFRARED_TOKENS_1 = [WETH, WBERA];
 const INFRARED_REWARDS_1 = [IBGT];
 const INFRARED_SYMBOL_1 = "BeraSwap 50WETH-50WBERA-WEIGHTED";
 const INFRARED_NAME_1 = "Beradrome Infrared BeraSwap 50WETH-50WBERA-WEIGHTED";
-const INFRARED_PLUGIN_1 = "";
+const INFRARED_PLUGIN_1 = "0xdB79d6a9D43c69BEd341ee93d796f4aDDEF174cc";
 
 // Infrared BeraSwap 50WBTC-50WBERA-WEIGHTED
 // get from https://hub.berachain.com/pools/0x38fdd999fe8783037db1bbfe465759e312f2d809000200000000000000000004/details/
@@ -120,7 +120,7 @@ const INFRARED_TOKENS_2 = [WBTC, WBERA];
 const INFRARED_REWARDS_2 = [IBGT];
 const INFRARED_SYMBOL_2 = "BeraSwap 50WBTC-50WBERA-WEIGHTED";
 const INFRARED_NAME_2 = "Beradrome Infrared BeraSwap 50WBTC-50WBERA-WEIGHTED";
-const INFRARED_PLUGIN_2 = "";
+const INFRARED_PLUGIN_2 = "0x8bBFCfF7FeA31aA4d330663111b85924dBad11B8";
 
 // Infrared BeraSwap USDCe-HONEY-STABLE
 // get from https://hub.berachain.com/pools/0xf961a8f6d8c69e7321e78d254ecafbcc3a637621000000000000000000000001/details/
@@ -129,7 +129,7 @@ const INFRARED_TOKENS_3 = [USDCe, HONEY];
 const INFRARED_REWARDS_3 = [IBGT];
 const INFRARED_SYMBOL_3 = "BeraSwap USDCe-HONEY-STABLE";
 const INFRARED_NAME_3 = "Beradrome Infrared BeraSwap USDCe-HONEY-STABLE";
-const INFRARED_PLUGIN_3 = "";
+const INFRARED_PLUGIN_3 = "0x98DBeA9494f4630773D3Ef834c0734D28C39E440";
 
 // Infrared BeraSwap BYUSD-HONEY-STABLE
 // get from https://hub.berachain.com/pools/0xde04c469ad658163e2a5e860a03a86b52f6fa8c8000000000000000000000000/details/
@@ -138,7 +138,7 @@ const INFRARED_TOKENS_4 = [BYUSD, HONEY];
 const INFRARED_REWARDS_4 = [IBGT];
 const INFRARED_SYMBOL_4 = "BeraSwap BYUSD-HONEY-STABLE";
 const INFRARED_NAME_4 = "Beradrome Infrared BeraSwap BYUSD-HONEY-STABLE";
-const INFRARED_PLUGIN_4 = "";
+const INFRARED_PLUGIN_4 = "0xdbF1a45Cf806346a26B54c447fb4840b68828cDd";
 
 // Infrared iBGT
 // get from
@@ -147,7 +147,7 @@ const INFRARED_TOKENS_5 = [IBGT];
 const INFRARED_REWARDS_5 = [HONEY];
 const INFRARED_SYMBOL_5 = "iBGT";
 const INFRARED_NAME_5 = "Beradrome Infrared iBGT";
-const INFRARED_PLUGIN_5 = "";
+const INFRARED_PLUGIN_5 = "0x0AB1f3949cebB19FDebC5934d1822EA9ca24aE6F";
 
 // BeraPaw Berps bHONEY
 const BERAPAW_TOKEN_0 = "";
@@ -1537,41 +1537,41 @@ async function main() {
   // 13. Distro
   //===================================================================
 
-  console.log("Distributing Rewards");
+  // console.log("Distributing Rewards");
 
-  await voter.distro();
-  console.log("Gauge Rewards Distributed");
+  // await voter.distro();
+  // console.log("Gauge Rewards Distributed");
 
-  await fees.distribute();
-  console.log("Fees Rewards Distributed");
+  // await fees.distribute();
+  // console.log("Fees Rewards Distributed");
 
-  await voter.distributeToBribes([
-    BERACHAIN_PLUGIN_0,
-    BERACHAIN_PLUGIN_1,
-    BERACHAIN_PLUGIN_2,
-    BERACHAIN_PLUGIN_3,
-    BERACHAIN_PLUGIN_4,
-  ]);
-  console.log("Berachain Bribe Rewards Distributed");
+  // await voter.distributeToBribes([
+  //   BERACHAIN_PLUGIN_0,
+  //   BERACHAIN_PLUGIN_1,
+  //   BERACHAIN_PLUGIN_2,
+  //   BERACHAIN_PLUGIN_3,
+  //   BERACHAIN_PLUGIN_4,
+  // ]);
+  // console.log("Berachain Bribe Rewards Distributed");
 
-  await voter.distributeToBribes([
-    INFRARED_PLUGIN_0,
-    INFRARED_PLUGIN_1,
-    INFRARED_PLUGIN_2,
-    INFRARED_PLUGIN_3,
-    INFRARED_PLUGIN_4,
-    INFRARED_PLUGIN_5,
-  ]);
-  console.log("Infrared Bribe Rewards Distributed");
+  // await voter.distributeToBribes([
+  //   INFRARED_PLUGIN_0,
+  //   INFRARED_PLUGIN_1,
+  //   INFRARED_PLUGIN_2,
+  //   INFRARED_PLUGIN_3,
+  //   INFRARED_PLUGIN_4,
+  //   INFRARED_PLUGIN_5,
+  // ]);
+  // console.log("Infrared Bribe Rewards Distributed");
 
-  await voter.distributeToBribes([TRIFECTA_PLUGIN_0]);
-  console.log("Liquidity Trifecta Bribe Rewards Distributed");
+  // await voter.distributeToBribes([TRIFECTA_PLUGIN_0]);
+  // console.log("Liquidity Trifecta Bribe Rewards Distributed");
 
-  await voter.distributeToBribes([INFRARED_TRIFECTA_PLUGIN_0]);
-  console.log("Infrared Trifecta Bribe Rewards Distributed");
+  // await voter.distributeToBribes([INFRARED_TRIFECTA_PLUGIN_0]);
+  // console.log("Infrared Trifecta Bribe Rewards Distributed");
 
-  await voter.distributeToBribes([BULLAS_PLUGIN]);
-  console.log("Game Bribe Rewards Distributed");
+  // await voter.distributeToBribes([BULLAS_PLUGIN]);
+  // console.log("Game Bribe Rewards Distributed");
 
   //===================================================================
   // 14. Remove Plugin
