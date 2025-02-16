@@ -97,57 +97,57 @@ const INFRARED_PLUGIN_FACTORY = "0x1901f6371aECC135FEdCaDdCF15647C13EAc6DF0";
 
 // Infrared BeraSwap 50WBERA-50HONEY-WEIGHTED
 // get from https://hub.berachain.com/pools/0x2c4a603a2aa5596287a06886862dc29d56dbc354000200000000000000000002/details/
-const INFRARED_VAULT_0 = "0xA95Ff8097B0E405d1F4139F460fa4c89863784c0";
+const INFRARED_VAULT_0 = "0xe2d8941dfb85435419D90397b09D18024ebeef2C";
 const INFRARED_TOKENS_0 = [WBERA, HONEY];
 const INFRARED_REWARDS_0 = [IBGT];
 const INFRARED_SYMBOL_0 = "BeraSwap 50WBERA-50HONEY-WEIGHTED";
 const INFRARED_NAME_0 = "Beradrome Infrared BeraSwap 50WBERA-50HONEY-WEIGHTED";
-const INFRARED_PLUGIN_0 = "0x91eaC4564d63F45E743cE4b7a0620e00C69339A6";
+const INFRARED_PLUGIN_0 = "";
 
 // Infrared BeraSwap 50WETH-50WBERA-WEIGHTED
 // get from https://hub.berachain.com/pools/0xdd70a5ef7d8cfe5c5134b5f9874b09fb5ce812b4000200000000000000000003/details/
-const INFRARED_VAULT_1 = "0x79fb77363bb12464ca735B0186B4bd7131089A96";
+const INFRARED_VAULT_1 = "0x0dF14916796854d899576CBde69a35bAFb923c22";
 const INFRARED_TOKENS_1 = [WETH, WBERA];
 const INFRARED_REWARDS_1 = [IBGT];
 const INFRARED_SYMBOL_1 = "BeraSwap 50WETH-50WBERA-WEIGHTED";
 const INFRARED_NAME_1 = "Beradrome Infrared BeraSwap 50WETH-50WBERA-WEIGHTED";
-const INFRARED_PLUGIN_1 = "0x808509912855a4dC744b4dee33eF9510cE2D7aAa";
+const INFRARED_PLUGIN_1 = "";
 
 // Infrared BeraSwap 50WBTC-50WBERA-WEIGHTED
 // get from https://hub.berachain.com/pools/0x38fdd999fe8783037db1bbfe465759e312f2d809000200000000000000000004/details/
-const INFRARED_VAULT_2 = "0x5614314Eef828c747602a629B1d974a3f28fF6E2";
+const INFRARED_VAULT_2 = "0x78beda3a06443f51718d746aDe95b5fAc094633E";
 const INFRARED_TOKENS_2 = [WBTC, WBERA];
 const INFRARED_REWARDS_2 = [IBGT];
 const INFRARED_SYMBOL_2 = "BeraSwap 50WBTC-50WBERA-WEIGHTED";
 const INFRARED_NAME_2 = "Beradrome Infrared BeraSwap 50WBTC-50WBERA-WEIGHTED";
-const INFRARED_PLUGIN_2 = "0x5EDD5BFD844cA4b94Ca2Df41841A09B52f7b479C";
+const INFRARED_PLUGIN_2 = "";
 
 // Infrared BeraSwap USDCe-HONEY-STABLE
 // get from https://hub.berachain.com/pools/0xf961a8f6d8c69e7321e78d254ecafbcc3a637621000000000000000000000001/details/
-const INFRARED_VAULT_3 = "0x59945C5bE54FF1d8dEb0E8bC7F132F950DA910a2";
+const INFRARED_VAULT_3 = "0x1419515d3703d8F2cc72Fa6A341685E4f8e7e8e1";
 const INFRARED_TOKENS_3 = [USDCe, HONEY];
 const INFRARED_REWARDS_3 = [IBGT];
 const INFRARED_SYMBOL_3 = "BeraSwap USDCe-HONEY-STABLE";
 const INFRARED_NAME_3 = "Beradrome Infrared BeraSwap USDCe-HONEY-STABLE";
-const INFRARED_PLUGIN_3 = "0xa046Ee67D777206Ac6580375c50AB1d709D85A18";
+const INFRARED_PLUGIN_3 = "";
 
 // Infrared BeraSwap BYUSD-HONEY-STABLE
 // get from https://hub.berachain.com/pools/0xde04c469ad658163e2a5e860a03a86b52f6fa8c8000000000000000000000000/details/
-const INFRARED_VAULT_4 = "0xd8c53e0E7CF3eCFE642a03A30EC30681eF4159a9";
+const INFRARED_VAULT_4 = "0xbbB228B0D7D83F86e23a5eF3B1007D0100581613";
 const INFRARED_TOKENS_4 = [BYUSD, HONEY];
 const INFRARED_REWARDS_4 = [IBGT];
 const INFRARED_SYMBOL_4 = "BeraSwap BYUSD-HONEY-STABLE";
 const INFRARED_NAME_4 = "Beradrome Infrared BeraSwap BYUSD-HONEY-STABLE";
-const INFRARED_PLUGIN_4 = "0x72b6a59B8810A111B3090C5a40bAA3319e4574DF";
+const INFRARED_PLUGIN_4 = "";
 
 // Infrared iBGT
 // get from
-const INFRARED_VAULT_5 = "0x4EF0c533D065118907f68e6017467Eb05DBb2c8C";
+const INFRARED_VAULT_5 = "0x75F3Be06b02E235f6d0E7EF2D462b29739168301";
 const INFRARED_TOKENS_5 = [IBGT];
 const INFRARED_REWARDS_5 = [HONEY];
 const INFRARED_SYMBOL_5 = "iBGT";
 const INFRARED_NAME_5 = "Beradrome Infrared iBGT";
-const INFRARED_PLUGIN_5 = "0x4cCAEAE12dB0a015D71D247226455e2b8A0f2c6f";
+const INFRARED_PLUGIN_5 = "";
 
 // BeraPaw Berps bHONEY
 const BERAPAW_TOKEN_0 = "";
@@ -1508,6 +1508,7 @@ async function main() {
   //   INFRARED_PLUGIN_4,
   //   INFRARED_PLUGIN_5,
   //   TRIFECTA_PLUGIN_0,
+  //   INFRARED_TRIFECTA_PLUGIN_0,
   //   BULLAS_PLUGIN,
   // ];
 
@@ -1536,38 +1537,41 @@ async function main() {
   // 13. Distro
   //===================================================================
 
-  // console.log("Distributing Rewards");
+  console.log("Distributing Rewards");
 
-  // await voter.distro();
-  // console.log("Gauge Rewards Distributed");
+  await voter.distro();
+  console.log("Gauge Rewards Distributed");
 
-  // await fees.distribute();
-  // console.log("Fees Rewards Distributed");
+  await fees.distribute();
+  console.log("Fees Rewards Distributed");
 
-  // await voter.distributeToBribes([
-  //   BERACHAIN_PLUGIN_0,
-  //   BERACHAIN_PLUGIN_1,
-  //   BERACHAIN_PLUGIN_2,
-  //   BERACHAIN_PLUGIN_3,
-  //   BERACHAIN_PLUGIN_4,
-  // ]);
-  // console.log("Berachain Bribe Rewards Distributed");
+  await voter.distributeToBribes([
+    BERACHAIN_PLUGIN_0,
+    BERACHAIN_PLUGIN_1,
+    BERACHAIN_PLUGIN_2,
+    BERACHAIN_PLUGIN_3,
+    BERACHAIN_PLUGIN_4,
+  ]);
+  console.log("Berachain Bribe Rewards Distributed");
 
-  // await voter.distributeToBribes([
-  //   INFRARED_PLUGIN_0,
-  //   INFRARED_PLUGIN_1,
-  //   INFRARED_PLUGIN_2,
-  //   INFRARED_PLUGIN_3,
-  //   INFRARED_PLUGIN_4,
-  //   INFRARED_PLUGIN_5,
-  // ]);
-  // console.log("Infrared Bribe Rewards Distributed");
+  await voter.distributeToBribes([
+    INFRARED_PLUGIN_0,
+    INFRARED_PLUGIN_1,
+    INFRARED_PLUGIN_2,
+    INFRARED_PLUGIN_3,
+    INFRARED_PLUGIN_4,
+    INFRARED_PLUGIN_5,
+  ]);
+  console.log("Infrared Bribe Rewards Distributed");
 
-  // await voter.distributeToBribes([TRIFECTA_PLUGIN_0]);
-  // console.log("Liquidity Trifecta Bribe Rewards Distributed");
+  await voter.distributeToBribes([TRIFECTA_PLUGIN_0]);
+  console.log("Liquidity Trifecta Bribe Rewards Distributed");
 
-  // await voter.distributeToBribes([BULLAS_PLUGIN]);
-  // console.log("Game Bribe Rewards Distributed");
+  await voter.distributeToBribes([INFRARED_TRIFECTA_PLUGIN_0]);
+  console.log("Infrared Trifecta Bribe Rewards Distributed");
+
+  await voter.distributeToBribes([BULLAS_PLUGIN]);
+  console.log("Game Bribe Rewards Distributed");
 
   //===================================================================
   // 14. Remove Plugin

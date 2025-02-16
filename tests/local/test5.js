@@ -394,4 +394,61 @@ describe("local: test5", function () {
     const pluginCard = await controller.getPluginInfo(0);
     console.log(pluginCard);
   });
+
+  it("User0 deposits in Plugin0 for user1", async function () {
+    console.log("******************************************************");
+    await xTEST0.connect(user0).approve(plugin0.address, ten);
+    await plugin0.connect(user0).depositFor(user0.address, ten);
+  });
+
+  it("GaugeCardData, plugin0, user0", async function () {
+    console.log("******************************************************");
+    let res = await multicall.gaugeCardData(plugin0.address, user0.address);
+    console.log("INFORMATION");
+    console.log("Gauge: ", res.gauge);
+    console.log("Plugin: ", res.plugin);
+    console.log("Underlying: ", res.token);
+    console.log("Tokens in Underlying: ");
+    for (let i = 0; i < res.assetTokens.length; i++) {
+      console.log(" - ", res.assetTokens[i]);
+    }
+    console.log("Underlying Decimals: ", res.tokenDecimals);
+    console.log("Is Alive: ", res.isAlive);
+    console.log();
+    console.log("GLOBAL DATA");
+    console.log("Protocol: ", res.protocol);
+    console.log("Symbol: ", res.name);
+    console.log("Price OTOKEN: $", divDec(res.priceOTOKEN));
+    console.log("Reward Per token: ", divDec(res.rewardPerToken));
+    console.log("Reward Per token: $", divDec(res.rewardPerTokenUSD));
+    console.log("Total Supply: ", divDec(res.totalSupply));
+    console.log("Voting Weight: ", divDec(res.votingWeight), "%");
+    console.log();
+    console.log("ACCOUNT DATA");
+    console.log("Balance Underlying: ", divDec(res.accountTokenBalance));
+    console.log("Balance Deposited: ", divDec(res.accountStakedBalance));
+    console.log("Earned OTOKEN: ", divDec(res.accountEarnedOTOKEN));
+  });
+
+  it("Owner kills Plugin0", async function () {
+    console.log("******************************************************");
+    await voter.killGauge(gauge0.address);
+  });
+
+  it("GaugeCardData, plugin0, user0", async function () {
+    console.log("******************************************************");
+    let res = await multicall.gaugeCardData(plugin0.address, user0.address);
+    console.log(res);
+  });
+
+  it("User1 withdraws from Plugin0 to user0", async function () {
+    console.log("******************************************************");
+    await plugin0.connect(user0).withdrawTo(user0.address, ten);
+  });
+
+  it("GaugeCardData, plugin0, user0", async function () {
+    console.log("******************************************************");
+    let res = await multicall.gaugeCardData(plugin0.address, user0.address);
+    console.log(res);
+  });
 });

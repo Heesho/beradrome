@@ -206,7 +206,7 @@ contract VTOKEN is ERC20, ERC20Votes, ReentrancyGuard, Ownable {
         VaultToken(vaultToken).mint(address(this), amount);
         IERC20(vaultToken).safeApprove(rewardVault, 0);
         IERC20(vaultToken).safeApprove(rewardVault, amount);
-        IBerachainRewardsVault(rewardVault).delegateStake(account,amount);
+        IBerachainRewardsVault(rewardVault).delegateStake(account, amount);
     }
 
     /*----------  FUNCTION OVERRIDES  -----------------------------------*/
