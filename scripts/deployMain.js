@@ -30,6 +30,7 @@ const BRLY = "0x5C43a5fEf2b056934478373A53d1cb08030fd382";
 const rUSD = "0x09D4214C03D01F49544C0448DBE3A27f768F2b34";
 const rUSDOT = "0x4A8B5283E053A8B118EaDc4981e8Ec8659995652";
 const PRG = "0xbf2E152f460090aCE91A456e3deE5ACf703f27aD";
+const BERAMO = "0x1F7210257FA157227D09449229a9266b0D581337";
 
 // Beradrom Plugin Factory
 const BERADROME_PLUGIN_FACTORY = "0xf0b0f738Fed0656D66725bb1528B42050de64DCa";
@@ -60,6 +61,15 @@ const BERADROME_REWARDS_2 = [PRG];
 const BERADROME_SYMBOL_2 = "AB-KODIAK-rUSD-rUSDOT-500";
 const BERADROME_NAME_2 = "Beradrome AB-KODIAK-rUSD-rUSDOT-500";
 const BERADROME_PLUGIN_2 = "0x15b09BA2a72035d84d19B10951F0bF116114DC7C";
+
+// Beradrome AB-KODIAK-WBERA-BERAMO-10000
+// get from
+const BERADROME_TOKEN_3 = "0xf9845a03F7e6b06645A03a28b943C8A4B5fE7BCC";
+const BERADROME_TOKENS_3 = [WBERA, BERAMO];
+const BERADROME_REWARDS_3 = [BERAMO];
+const BERADROME_SYMBOL_3 = "AB-KODIAK-WBERA-BERAMO-10000";
+const BERADROME_NAME_3 = "Beradrome AB-KODIAK-WBERA-BERAMO-10000";
+const BERADROME_PLUGIN_3 = "0x9162DeF1900e74Ca75D72fE8a01D5cDb7eA0CdF1";
 
 // Berachain Plugin Factory
 const BERACHAIN_PLUGIN_FACTORY = "0x3E5b9a5D7D73D8781c4782910523b942dB831ef8";
@@ -206,6 +216,7 @@ let OTOKENFactory, VTOKENFactory, feesFactory, rewarderFactory;
 let TOKEN, OTOKEN, VTOKEN, fees, rewarder, governor;
 let voter, minter, gaugeFactory, bribeFactory;
 let multicall, controller, trifectaMulticall;
+let helper;
 
 let beradromePlugin;
 let beradromePluginFactory;
@@ -296,6 +307,10 @@ async function getContracts() {
   controller = await ethers.getContractAt(
     "contracts/Controller.sol:Controller",
     "0x65e3249EccD38aD841345dA5beBBebE3a73a596C"
+  );
+  helper = await ethers.getContractAt(
+    "contracts/BeradromeHelper.sol:BeradromeHelper",
+    "0x05e970Cf64b44456e019bAaA63361864D55d900E"
   );
 
   beradromePluginFactory = await ethers.getContractAt(
@@ -1113,11 +1128,11 @@ async function verifyBeradromePluginFactory() {
 async function deployBeradromePlugin() {
   console.log("Starting BeradromePlugin Deployment");
   await beradromePluginFactory.createPlugin(
-    BERADROME_TOKEN_2,
-    BERADROME_TOKENS_2,
-    BERADROME_REWARDS_2,
-    BERADROME_SYMBOL_2,
-    BERADROME_NAME_2,
+    BERADROME_TOKEN_3,
+    BERADROME_TOKENS_3,
+    BERADROME_REWARDS_3,
+    BERADROME_SYMBOL_3,
+    BERADROME_NAME_3,
     { gasPrice: ethers.gasPrice }
   );
   await sleep(10000);
@@ -1211,6 +1226,25 @@ async function verifyInfraredTrifectaPlugin() {
     ],
   });
   console.log("InfraredTrifectaPlugin Verified");
+}
+
+async function deployBeradromeHelper() {
+  console.log("Starting BeradromeHelper Deployment");
+  const helperArtifact = await ethers.getContractFactory("BeradromeHelper");
+  const helperContract = await helperArtifact.deploy({
+    gasPrice: ethers.gasPrice,
+  });
+  helper = await helperContract.deployed();
+  console.log("BeradromeHelper Deployed at:", helper.address);
+}
+
+async function verifyBeradromeHelper() {
+  console.log("Starting BeradromeHelper Verification");
+  await hre.run("verify:verify", {
+    address: helper.address,
+    contract: "contracts/BeradromeHelper.sol:BeradromeHelper",
+  });
+  console.log("BeradromeHelper Verified");
 }
 
 async function main() {
@@ -1448,38 +1482,6 @@ async function main() {
   // console.log("- xKDK added as gauge rewards");
 
   //===================================================================
-  // 10. Add plugins to voter
-  //===================================================================
-
-  // // Add station plugins
-  // console.log("Adding STATION_PLUGIN_0 to Voter");
-  // await voter.addPlugin(STATION_PLUGIN_0); // Station Berps
-  // await sleep(10000);
-
-  // // Add infrared plugins
-  // console.log("Adding INFRARED_PLUGIN_0 to Voter");
-  // await voter.addPlugin(INFRARED_PLUGIN_0); // Infrared Berps bHONEY
-  // await sleep(10000);
-
-  // // Add berapaw plugins
-  // console.log("Adding BERAPAW_PLUGIN_0 to Voter");
-  // await voter.addPlugin(BERAPAW_PLUGIN_0); // BeraPaw Beraborrow sNECT
-  // await sleep(10000);
-
-  // Add trifecta plugins
-  // console.log("Adding TRIFECTA_PLUGIN_0 to Voter");
-  // await voter.addPlugin(TRIFECTA_PLUGIN_0); // Kodiak Trifecta YEET-WBERA Island
-  // await sleep(10000);
-
-  // Add game plugins
-  // console.log("Adding BULLAS_PLUGIN to Voter");
-  // await voter.addPlugin(BULLAS_PLUGIN); // Bullas BULL iSH
-  // await sleep(10000);
-  // console.log("Adding GUMBALL_PLUGIN_0 to Voter");
-  // await voter.addPlugin(GUMBALL_PLUGIN_0); // Gumball BentoBera
-  // await sleep(10000);
-
-  //===================================================================
   // 13. Print Deployment
   //===================================================================
 
@@ -1608,6 +1610,44 @@ async function main() {
   //   "0x34D023ACa5A227789B45A62D377b5B18A680BE01"
   // );
   // console.log(data);
+
+  //===================================================================
+  // 14. Deploy Beradrome Helper
+  //===================================================================
+
+  // await deployBeradromeHelper();
+  // await verifyBeradromeHelper();
+
+  // let plugins = [
+  //   BERADROME_PLUGIN_0,
+  //   BERADROME_PLUGIN_1,
+  //   BERADROME_PLUGIN_2,
+  //   BERACHAIN_PLUGIN_0,
+  //   BERACHAIN_PLUGIN_1,
+  //   BERACHAIN_PLUGIN_2,
+  //   BERACHAIN_PLUGIN_3,
+  //   BERACHAIN_PLUGIN_4,
+  //   INFRARED_PLUGIN_0,
+  //   INFRARED_PLUGIN_1,
+  //   INFRARED_PLUGIN_2,
+  //   INFRARED_PLUGIN_3,
+  //   INFRARED_PLUGIN_4,
+  //   INFRARED_PLUGIN_5,
+  //   TRIFECTA_PLUGIN_0,
+  //   INFRARED_TRIFECTA_PLUGIN_0,
+  //   BERADROME_PLUGIN_3,
+  // ];
+
+  // for (let i = 0; i < plugins.length; i++) {
+  //   let res = await controller.connect(wallet).getPlugin(plugins[i]);
+  //   console.log("Plugin: ", plugins[i]);
+  //   console.log("Underlying Token: ", res.token);
+  //   console.log("Vault Token: ", res.vaultToken);
+  //   await helper.connect(wallet).setToken(res.vaultToken, res.token);
+  //   await sleep(5000);
+  //   console.log("Token Set");
+  //   console.log();
+  // }
 }
 
 main()
