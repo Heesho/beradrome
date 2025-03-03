@@ -103,7 +103,7 @@ contract BeraPawPluginFactory {
 
     address public last_plugin;
 
-    event Plugin__PluginCreated(address plugin);
+    event BeraPawPluginFactory__PluginCreated(address plugin);
 
     constructor(address _VOTER) {
         VOTER = _VOTER;
@@ -131,7 +131,7 @@ contract BeraPawPluginFactory {
             _vaultName
         );
         last_plugin = address(lastPlugin);
-        emit Plugin__PluginCreated(last_plugin);
+        emit BeraPawPluginFactory__PluginCreated(last_plugin);
         return last_plugin;
     }
 

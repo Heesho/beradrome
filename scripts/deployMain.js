@@ -31,6 +31,8 @@ const rUSD = "0x09D4214C03D01F49544C0448DBE3A27f768F2b34";
 const rUSDOT = "0x4A8B5283E053A8B118EaDc4981e8Ec8659995652";
 const PRG = "0xbf2E152f460090aCE91A456e3deE5ACf703f27aD";
 const BERAMO = "0x1F7210257FA157227D09449229a9266b0D581337";
+const LBGT = "0xBaadCC2962417C01Af99fb2B7C75706B9bd6Babe";
+const RAMEN = "0xb8B1Af593Dc37B33a2c87C8Db1c9051FC32858B7";
 
 // Beradrom Plugin Factory
 const BERADROME_PLUGIN_FACTORY = "0xf0b0f738Fed0656D66725bb1528B42050de64DCa";
@@ -114,6 +116,44 @@ const BERACHAIN_SYMBOL_4 = "BeraSwap BYUSD-HONEY-STABLE";
 const BERACHAIN_NAME_4 = "Beradrome BeraSwap BYUSD-HONEY-STABLE";
 const BERACHAIN_PLUGIN_4 = "0x968eC53B7bBC6284333719Cd23A653fD9cD4eD86";
 
+// BeraPaw Plugin Factory
+const BERAPAW_PLUGIN_FACTORY = "0x5Fd179B11359681e1bd39B8cb0bA623834613a64";
+
+// BeraPaw BeraSwap 50WBERA-50HONEY-WEIGHTED
+const BERAPAW_TOKEN_0 = "0x2c4a603A2aA5596287A06886862dc29d56DbC354";
+const BERAPAW_TOKENS_0 = [WBERA, HONEY];
+const BERAPAW_SYMBOL_0 = "BeraSwap 50WBERA-50HONEY-WEIGHTED";
+const BERAPAW_NAME_0 = "Beradrome BeraPaw BeraSwap 50WBERA-50HONEY-WEIGHTED";
+const BERAPAW_PLUGIN_0 = "0xEEb20cf591B2246a042Ff9eB8d734c38532BE46c";
+
+// BeraPaw BeraSwap 50WETH-50WBERA-WEIGHTED
+const BERAPAW_TOKEN_1 = "0xDd70A5eF7d8CfE5C5134b5f9874b09Fb5Ce812b4";
+const BERAPAW_TOKENS_1 = [WETH, WBERA];
+const BERAPAW_SYMBOL_1 = "BeraSwap 50WETH-50WBERA-WEIGHTED";
+const BERAPAW_NAME_1 = "Beradrome BeraPaw BeraSwap 50WETH-50WBERA-WEIGHTED";
+const BERAPAW_PLUGIN_1 = "0x29017de16D6F1F257E731A67E8C780616e655681";
+
+// BeraPaw BeraSwap 50WBTC-50WBERA-WEIGHTED
+const BERAPAW_TOKEN_2 = "0x38fdD999Fe8783037dB1bBFE465759e312f2d809";
+const BERAPAW_TOKENS_2 = [WBTC, WBERA];
+const BERAPAW_SYMBOL_2 = "BeraSwap 50WBTC-50WBERA-WEIGHTED";
+const BERAPAW_NAME_2 = "Beradrome BeraPaw BeraSwap 50WBTC-50WBERA-WEIGHTED";
+const BERAPAW_PLUGIN_2 = "0x28d6aD720C7e2002Fa8a4025CBeA220991605079";
+
+// BeraPaw BeraSwap USDCe-HONEY-STABLE
+const BERAPAW_TOKEN_3 = "0xF961a8f6d8c69E7321e78d254ecAfBcc3A637621";
+const BERAPAW_TOKENS_3 = [USDCe, HONEY];
+const BERAPAW_SYMBOL_3 = "BeraSwap USDCe-HONEY-STABLE";
+const BERAPAW_NAME_3 = "Beradrome BeraPaw BeraSwap USDCe-HONEY-STABLE";
+const BERAPAW_PLUGIN_3 = "0xbf65AB8E96c9a56e81E252554e41E6752118067D";
+
+// BeraPaw BeraSwap BYUSD-HONEY-STABLE
+const BERAPAW_TOKEN_4 = "0xde04c469ad658163e2a5e860a03a86b52f6fa8c8";
+const BERAPAW_TOKENS_4 = [BYUSD, HONEY];
+const BERAPAW_SYMBOL_4 = "BeraSwap BYUSD-HONEY-STABLE";
+const BERAPAW_NAME_4 = "Beradrome BeraPaw BeraSwap BYUSD-HONEY-STABLE";
+const BERAPAW_PLUGIN_4 = "0x8Dc5C77ffF4Dd77AA50D6F5f8C1DBdfdacA05e12";
+
 // Infrared Plugin Factory
 const INFRARED_PLUGIN_FACTORY = "0x1901f6371aECC135FEdCaDdCF15647C13EAc6DF0";
 
@@ -171,13 +211,6 @@ const INFRARED_SYMBOL_5 = "iBGT";
 const INFRARED_NAME_5 = "Beradrome Infrared iBGT";
 const INFRARED_PLUGIN_5 = "0x0AB1f3949cebB19FDebC5934d1822EA9ca24aE6F";
 
-// BeraPaw Berps bHONEY
-const BERAPAW_TOKEN_0 = "";
-const BERAPAW_TOKENS_0 = [HONEY];
-const BERAPAW_SYMBOL_0 = "Berps bHONEY";
-const BERAPAW_NAME_0 = "Beradrome BeraPaw Berps bHONEY";
-const BERAPAW_PLUGIN_0 = "";
-
 // Trifecta Plugin Factory
 const TRIFECTA_PLUGIN_FACTORY = "0x5CEf8C04AD128Cf25142111f868ab09D6eA25f6A";
 
@@ -191,6 +224,17 @@ const TRIFECTA_SYMBOL_0 = "Kodiak Island WBERA-YEET-1%";
 const TRIFECTA_NAME_0 =
   "Beradrome Liquidity Trifecta Kodiak Island WBERA-YEET-1%";
 const TRIFECTA_PLUGIN_0 = "0x26aE252B4607826f03b8e701a792346864bec758";
+
+// Trifecta Kodiak WBERA-RAMEN
+const TRIFECTA_TOKEN_1 = "0x93A913351CaE2D8C82C4b85f699726947eB76d32";
+const TRIFECTA_FARM_1 = "0x6F22221dC5845A25597BC96629D92F2b4979D943";
+const TRIFECTA_TOKEN0_1 = WBERA;
+const TRIFECTA_TOKEN1_1 = RAMEN;
+const TRIFECTA_OTHER_REWARDS_1 = [RAMEN];
+const TRIFECTA_SYMBOL_1 = "Kodiak Island WBERA-RAMEN-1%";
+const TRIFECTA_NAME_1 =
+  "Beradrome Liquidity Trifecta Kodiak Island WBERA-RAMEN-1%";
+const TRIFECTA_PLUGIN_1 = "0x75b3C55fc3C0a2f874eEeC2C056fA336FB78fECa";
 
 // Infrared Trifecta Plugin Factory
 const INFRARED_TRIFECTA_PLUGIN_FACTORY =
@@ -343,15 +387,15 @@ async function getContracts() {
     INFRARED_PLUGIN_0
   );
 
-  // berapawPluginFactory = await ethers.getContractAt(
-  //   "contracts/plugins/berachain/BeraPawPluginFactory.sol:BeraPawPluginFactory",
-  //   ""
-  // );
+  berapawPluginFactory = await ethers.getContractAt(
+    "contracts/plugins/berachain/BeraPawPluginFactory.sol:BeraPawPluginFactory",
+    BERAPAW_PLUGIN_FACTORY
+  );
 
-  // berapawPlugin = await ethers.getContractAt(
-  //   "contracts/plugins/berachain/BeraPawPluginFactory.sol:BeraPawPlugin",
-  //   BERAPAW_PLUGIN_0
-  // );
+  berapawPlugin = await ethers.getContractAt(
+    "contracts/plugins/berachain/BeraPawPluginFactory.sol:BeraPawPlugin",
+    BERAPAW_PLUGIN_0
+  );
 
   trifectaPluginFactory = await ethers.getContractAt(
     "contracts/plugins/berachain/TrifectaPluginFactory.sol:TrifectaPluginFactory",
@@ -999,13 +1043,13 @@ async function verifyTrifectaPluginFactory() {
 async function deployTrifectaPlugin() {
   console.log("Starting TrifectaPlugin Deployment");
   await trifectaPluginFactory.createPlugin(
-    TRIFECTA_TOKEN_0,
-    TRIFECTA_FARM_0,
-    TRIFECTA_TOKEN0_0,
-    TRIFECTA_TOKEN1_0,
-    TRIFECTA_OTHER_REWARDS_0,
-    TRIFECTA_SYMBOL_0,
-    TRIFECTA_NAME_0
+    TRIFECTA_TOKEN_1,
+    TRIFECTA_FARM_1,
+    TRIFECTA_TOKEN0_1,
+    TRIFECTA_TOKEN1_1,
+    TRIFECTA_OTHER_REWARDS_1,
+    TRIFECTA_SYMBOL_1,
+    TRIFECTA_NAME_1
   );
   await sleep(10000);
   console.log(
@@ -1064,10 +1108,10 @@ async function verifyBeraPawPluginFactory() {
 async function deployBeraPawPlugin() {
   console.log("Starting BeraPawPlugin Deployment");
   await berapawPluginFactory.createPlugin(
-    BERAPAW_TOKEN_0,
-    BERAPAW_TOKENS_0,
-    BERAPAW_SYMBOL_0,
-    BERAPAW_NAME_0,
+    BERAPAW_TOKEN_4,
+    BERAPAW_TOKENS_4,
+    BERAPAW_SYMBOL_4,
+    BERAPAW_NAME_4,
     { gasPrice: ethers.gasPrice }
   );
   await sleep(10000);
@@ -1089,8 +1133,8 @@ async function verifyBeraPawPlugin() {
       BERAPAW_TOKENS_0,
       [LBGT],
       VAULT_FACTORY,
-      "0xc5cb3459723b828b3974f7e58899249c2be3b33d",
-      BERAPAW_SYMBOL_0,
+      "0xC2BaA8443cDA8EBE51a640905A8E6bc4e1f9872c",
+      "BeraPaw",
       BERAPAW_SYMBOL_0,
       BERAPAW_NAME_0,
     ],
@@ -1507,38 +1551,38 @@ async function main() {
   // 13. Print Plugins
   //===================================================================
 
-  let plugins = [
-    BERADROME_PLUGIN_0,
-    BERADROME_PLUGIN_1,
-    BERACHAIN_PLUGIN_0,
-    BERACHAIN_PLUGIN_1,
-    BERACHAIN_PLUGIN_2,
-    BERACHAIN_PLUGIN_3,
-    BERACHAIN_PLUGIN_4,
-    INFRARED_PLUGIN_0,
-    INFRARED_PLUGIN_1,
-    INFRARED_PLUGIN_2,
-    INFRARED_PLUGIN_3,
-    INFRARED_PLUGIN_4,
-    INFRARED_PLUGIN_5,
-    TRIFECTA_PLUGIN_0,
-    INFRARED_TRIFECTA_PLUGIN_0,
-    BULLAS_PLUGIN,
-  ];
+  // let plugins = [
+  //   BERADROME_PLUGIN_0,
+  //   BERADROME_PLUGIN_1,
+  //   BERACHAIN_PLUGIN_0,
+  //   BERACHAIN_PLUGIN_1,
+  //   BERACHAIN_PLUGIN_2,
+  //   BERACHAIN_PLUGIN_3,
+  //   BERACHAIN_PLUGIN_4,
+  //   INFRARED_PLUGIN_0,
+  //   INFRARED_PLUGIN_1,
+  //   INFRARED_PLUGIN_2,
+  //   INFRARED_PLUGIN_3,
+  //   INFRARED_PLUGIN_4,
+  //   INFRARED_PLUGIN_5,
+  //   TRIFECTA_PLUGIN_0,
+  //   INFRARED_TRIFECTA_PLUGIN_0,
+  //   BULLAS_PLUGIN,
+  // ];
 
-  for (let i = 0; i < plugins.length; i++) {
-    let plugin = await controller.getPlugin(plugins[i]);
+  // for (let i = 0; i < plugins.length; i++) {
+  //   let plugin = await controller.getPlugin(plugins[i]);
 
-    console.log("Protocol: ", plugin.protocol);
-    console.log("Name: ", plugin.name);
-    console.log("Token: ", plugin.token);
-    console.log("Plugin: ", plugin.plugin);
-    console.log("Gauge: ", plugin.gauge);
-    console.log("Bribe: ", plugin.bribe);
-    console.log("Vault Token: ", plugin.vaultToken);
-    console.log("Reward Vault: ", plugin.rewardVault);
-    console.log();
-  }
+  //   console.log("Protocol: ", plugin.protocol);
+  //   console.log("Name: ", plugin.name);
+  //   console.log("Token: ", plugin.token);
+  //   console.log("Plugin: ", plugin.plugin);
+  //   console.log("Gauge: ", plugin.gauge);
+  //   console.log("Bribe: ", plugin.bribe);
+  //   console.log("Vault Token: ", plugin.vaultToken);
+  //   console.log("Reward Vault: ", plugin.rewardVault);
+  //   console.log();
+  // }
 
   // await verifyGauge(
   //   BERACHAIN_PLUGIN_0,
@@ -1551,41 +1595,41 @@ async function main() {
   // 13. Distro
   //===================================================================
 
-  console.log("Distributing Rewards");
+  // console.log("Distributing Rewards");
 
-  await voter.distro();
-  console.log("Gauge Rewards Distributed");
+  // await voter.distro();
+  // console.log("Gauge Rewards Distributed");
 
-  await fees.distribute();
-  console.log("Fees Rewards Distributed");
+  // await fees.distribute();
+  // console.log("Fees Rewards Distributed");
 
-  await voter.distributeToBribes([
-    BERACHAIN_PLUGIN_0,
-    BERACHAIN_PLUGIN_1,
-    BERACHAIN_PLUGIN_2,
-    BERACHAIN_PLUGIN_3,
-    BERACHAIN_PLUGIN_4,
-  ]);
-  console.log("Berachain Bribe Rewards Distributed");
+  // await voter.distributeToBribes([
+  //   BERACHAIN_PLUGIN_0,
+  //   BERACHAIN_PLUGIN_1,
+  //   BERACHAIN_PLUGIN_2,
+  //   BERACHAIN_PLUGIN_3,
+  //   BERACHAIN_PLUGIN_4,
+  // ]);
+  // console.log("Berachain Bribe Rewards Distributed");
 
-  await voter.distributeToBribes([
-    INFRARED_PLUGIN_0,
-    INFRARED_PLUGIN_1,
-    INFRARED_PLUGIN_2,
-    INFRARED_PLUGIN_3,
-    INFRARED_PLUGIN_4,
-    INFRARED_PLUGIN_5,
-  ]);
-  console.log("Infrared Bribe Rewards Distributed");
+  // await voter.distributeToBribes([
+  //   INFRARED_PLUGIN_0,
+  //   INFRARED_PLUGIN_1,
+  //   INFRARED_PLUGIN_2,
+  //   INFRARED_PLUGIN_3,
+  //   INFRARED_PLUGIN_4,
+  //   INFRARED_PLUGIN_5,
+  // ]);
+  // console.log("Infrared Bribe Rewards Distributed");
 
-  await voter.distributeToBribes([TRIFECTA_PLUGIN_0]);
-  console.log("Liquidity Trifecta Bribe Rewards Distributed");
+  // await voter.distributeToBribes([TRIFECTA_PLUGIN_0]);
+  // console.log("Liquidity Trifecta Bribe Rewards Distributed");
 
-  await voter.distributeToBribes([INFRARED_TRIFECTA_PLUGIN_0]);
-  console.log("Infrared Trifecta Bribe Rewards Distributed");
+  // await voter.distributeToBribes([INFRARED_TRIFECTA_PLUGIN_0]);
+  // console.log("Infrared Trifecta Bribe Rewards Distributed");
 
-  await voter.distributeToBribes([BULLAS_PLUGIN]);
-  console.log("Game Bribe Rewards Distributed");
+  // await voter.distributeToBribes([BULLAS_PLUGIN]);
+  // console.log("Game Bribe Rewards Distributed");
 
   //===================================================================
   // 14. Remove Plugin
