@@ -4,8 +4,8 @@ pragma solidity 0.8.19;
 import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 import 'contracts/Plugin.sol';
 
-interface ILBGT {
-    function mintLbgtTo(address rewardsVault, address recipient) external returns (uint256);
+interface IBeraPawForge {
+    function mint(address user, address rewardVault, address recipient) external returns (uint256);
 }
 
 contract BeraPawPlugin is Plugin, ReentrancyGuard {
@@ -13,7 +13,8 @@ contract BeraPawPlugin is Plugin, ReentrancyGuard {
 
     /*----------  CONSTANTS  --------------------------------------------*/
 
-    address public constant LBGT = 0x32Cf940DB5d7ea3e95e799A805B1471341241264;
+    address public constant LBGT = 0xBaadCC2962417C01Af99fb2B7C75706B9bd6Babe;
+    address public constant FORGE = 0xFeedb9750d6ac77D2E52e0C9EB8fB79F9de5Cafe;
 
     /*----------  STATE VARIABLES  --------------------------------------*/
 
@@ -46,7 +47,7 @@ contract BeraPawPlugin is Plugin, ReentrancyGuard {
         )
     {
         berachainRewardsVault = _berachainRewardsVault;
-        IBerachainRewardVault(berachainRewardsVault).setOperator(LBGT);
+        IBerachainRewardVault(berachainRewardsVault).setOperator(FORGE);
     }
 
     function claimAndDistribute() 
@@ -55,7 +56,7 @@ contract BeraPawPlugin is Plugin, ReentrancyGuard {
         nonReentrant
     {
         super.claimAndDistribute();
-        ILBGT(LBGT).mintLbgtTo(berachainRewardsVault, address(this));
+        IBeraPawForge(FORGE).mint(address(this), berachainRewardsVault, address(this));
         address bribe = getBribe();
         uint256 duration = IBribe(bribe).DURATION();
         uint256 balance = IERC20(LBGT).balanceOf(address(this));
@@ -95,8 +96,8 @@ contract BeraPawPlugin is Plugin, ReentrancyGuard {
 contract BeraPawPluginFactory {
 
     string public constant PROTOCOL = "BeraPaw";
-    address public constant REWARDS_VAULT_FACTORY = 0x2B6e40f65D82A0cB98795bC7587a71bfa49fBB2B;
-    address public constant LBGT = 0x32Cf940DB5d7ea3e95e799A805B1471341241264;
+    address public constant REWARDS_VAULT_FACTORY = 0x94Ad6Ac84f6C6FbA8b8CCbD71d9f4f101def52a8;
+    address public constant LBGT = 0xBaadCC2962417C01Af99fb2B7C75706B9bd6Babe;
 
     address public immutable VOTER;
 

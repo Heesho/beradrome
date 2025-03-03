@@ -48,10 +48,11 @@ function timer(t) {
   return new Promise((r) => setTimeout(r, t));
 }
 
-const WBERA_ADDR = "0x7507c1dc16935B82698e4C63f2746A2fCf994dF8";
-const NECT_ADDR = "0xf5AFCF50006944d17226978e594D4D25f4f92B40";
-const SNECT_ADDR = "0x3a7f6f2F27f7794a7820a32313F4a68e36580864";
-const SNECT_HOLDER = "0x8F8532Dd9494840eb9887243242FEF5d3ecc08b1";
+const WBERA_ADDR = "0x6969696969696969696969696969696969696969";
+const HONEY_ADDR = "0xFCBD14DC51f0A4d49d5E53C2E0950e0bC26d0Dce";
+const WBERA_HONEY_LP_ADDR = "0x2c4a603A2aA5596287A06886862dc29d56DbC354";
+const WBERA_HONEY_LP_HOLDER = "0xa792Db54e823A54e6AAa9B30CEa0359B1e764Ea0";
+const LBGT_ADDR = "0xBaadCC2962417C01Af99fb2B7C75706B9bd6Babe";
 
 let owner, multisig, treasury, user0, user1, user2;
 let vaultFactory;
@@ -63,10 +64,10 @@ let VTOKENFactory,
   bribeFactory;
 let minter, voter, fees, rewarder, governance, multicall, pluginFactory;
 let TOKEN, VTOKEN, OTOKEN, BASE;
-let WBERA, SNECT;
+let WBERA, HONEY, LBGT, LP0;
 let plugin0, gauge0, bribe0;
 
-describe("berachain: berapaw testing 1", function () {
+describe.only("berachain: berapaw testing", function () {
   before("Initial set up", async function () {
     console.log("Begin Initialization");
 
@@ -80,7 +81,9 @@ describe("berachain: berapaw testing 1", function () {
 
     // initialize ERC20s
     WBERA = new ethers.Contract(WBERA_ADDR, ERC20_ABI, provider);
-    SNECT = new ethers.Contract(SNECT_ADDR, ERC20_ABI, provider);
+    HONEY = new ethers.Contract(HONEY_ADDR, ERC20_ABI, provider);
+    LP0 = new ethers.Contract(WBERA_HONEY_LP_ADDR, ERC20_ABI, provider);
+    LBGT = new ethers.Contract(LBGT_ADDR, ERC20_ABI, provider);
     console.log("- ERC20s Initialized");
 
     // initialize ERC20Mocks
@@ -262,10 +265,10 @@ describe("berachain: berapaw testing 1", function () {
     console.log("- PluginFactory Initialized");
 
     await pluginFactory.createPlugin(
-      SNECT_ADDR,
-      [NECT_ADDR],
-      "Beraborrow sNECT",
-      "Beraborrow sNECT Vault Token"
+      LP0.address,
+      [HONEY_ADDR, WBERA_ADDR],
+      "BeraSwap HONEY-WBERA",
+      "BeraPaw BeraSwap HONEY-WBERA Vault Token"
     );
     plugin0 = await ethers.getContractAt(
       "contracts/plugins/berachain/BeraPawPluginFactory.sol:BeraPawPlugin",
@@ -292,43 +295,46 @@ describe("berachain: berapaw testing 1", function () {
 
   it("first test", async function () {
     console.log("******************************************************");
-    console.log("Balance of sNECT holder", await SNECT.balanceOf(SNECT_HOLDER));
+    console.log(
+      "Balance of LP0 holder",
+      await LP0.balanceOf(WBERA_HONEY_LP_HOLDER)
+    );
   });
 
-  it("Impersonate sNECT holder and send to user0", async function () {
+  it("Impersonate LP0 holder and send to user0", async function () {
     console.log("******************************************************");
     await network.provider.request({
       method: "hardhat_impersonateAccount",
-      params: [SNECT_HOLDER],
+      params: [WBERA_HONEY_LP_HOLDER],
     });
-    const signer = ethers.provider.getSigner(SNECT_HOLDER);
+    const signer = ethers.provider.getSigner(WBERA_HONEY_LP_HOLDER);
 
-    await SNECT.connect(signer).transfer(
+    await LP0.connect(signer).transfer(
       user0.address,
-      await SNECT.connect(owner).balanceOf(SNECT_HOLDER)
+      await LP0.connect(owner).balanceOf(WBERA_HONEY_LP_HOLDER)
     );
 
     console.log(
-      "Holder sNECT balance: ",
-      divDec(await SNECT.connect(owner).balanceOf(SNECT_HOLDER))
+      "Holder LP0 balance: ",
+      divDec(await LP0.connect(owner).balanceOf(WBERA_HONEY_LP_HOLDER))
     );
     console.log(
-      "User0 sNECT balance: ",
-      divDec(await SNECT.connect(owner).balanceOf(user0.address))
+      "User0 LP0 balance: ",
+      divDec(await LP0.connect(owner).balanceOf(user0.address))
     );
   });
 
   it("User0 deposits in all plugins", async function () {
     console.log("******************************************************");
-    await SNECT.connect(user0).approve(
+    await LP0.connect(user0).approve(
       plugin0.address,
-      await SNECT.connect(owner).balanceOf(user0.address)
+      await LP0.connect(owner).balanceOf(user0.address)
     );
     await plugin0
       .connect(user0)
       .depositFor(
         user0.address,
-        await SNECT.connect(owner).balanceOf(user0.address)
+        await LP0.connect(owner).balanceOf(user0.address)
       );
   });
 
@@ -532,7 +538,7 @@ describe("berachain: berapaw testing 1", function () {
 
   it("Forward time by 1 days", async function () {
     console.log("******************************************************");
-    await network.provider.send("evm_increaseTime", [24 * 3600]);
+    await network.provider.send("evm_increaseTime", [7 * 24 * 3600]);
     await network.provider.send("evm_mine");
   });
 
@@ -541,6 +547,35 @@ describe("berachain: berapaw testing 1", function () {
     await voter.connect(owner).distro();
     await fees.distribute();
     await voter.distributeToBribes([plugin0.address]);
+  });
+
+  it("GaugeCardData, plugin0, user0", async function () {
+    console.log("******************************************************");
+    let res = await multicall.gaugeCardData(plugin0.address, user0.address);
+    console.log("INFORMATION");
+    console.log("Gauge: ", res.gauge);
+    console.log("Plugin: ", res.plugin);
+    console.log("Underlying: ", res.token);
+    console.log("Tokens in Underlying: ");
+    for (let i = 0; i < res.assetTokens.length; i++) {
+      console.log(" - ", res.assetTokens[i]);
+    }
+    console.log("Underlying Decimals: ", res.tokenDecimals);
+    console.log("Is Alive: ", res.isAlive);
+    console.log();
+    console.log("GLOBAL DATA");
+    console.log("Protocol: ", res.protocol);
+    console.log("Symbol: ", res.name);
+    console.log("Price OTOKEN: $", divDec(res.priceOTOKEN));
+    console.log("Reward Per token: ", divDec(res.rewardPerToken));
+    console.log("Reward Per token: $", divDec(res.rewardPerTokenUSD));
+    console.log("Total Supply: ", divDec(res.totalSupply));
+    console.log("Voting Weight: ", divDec(res.votingWeight), "%");
+    console.log();
+    console.log("ACCOUNT DATA");
+    console.log("Balance Underlying: ", divDec(res.accountTokenBalance));
+    console.log("Balance Deposited: ", divDec(res.accountStakedBalance));
+    console.log("Earned OTOKEN: ", divDec(res.accountEarnedOTOKEN));
   });
 
   it("BribeCardData, plugin0, user1 ", async function () {

@@ -1507,38 +1507,38 @@ async function main() {
   // 13. Print Plugins
   //===================================================================
 
-  // let plugins = [
-  //   BERADROME_PLUGIN_0,
-  //   BERADROME_PLUGIN_1,
-  //   BERACHAIN_PLUGIN_0,
-  //   BERACHAIN_PLUGIN_1,
-  //   BERACHAIN_PLUGIN_2,
-  //   BERACHAIN_PLUGIN_3,
-  //   BERACHAIN_PLUGIN_4,
-  //   INFRARED_PLUGIN_0,
-  //   INFRARED_PLUGIN_1,
-  //   INFRARED_PLUGIN_2,
-  //   INFRARED_PLUGIN_3,
-  //   INFRARED_PLUGIN_4,
-  //   INFRARED_PLUGIN_5,
-  //   TRIFECTA_PLUGIN_0,
-  //   INFRARED_TRIFECTA_PLUGIN_0,
-  //   BULLAS_PLUGIN,
-  // ];
+  let plugins = [
+    BERADROME_PLUGIN_0,
+    BERADROME_PLUGIN_1,
+    BERACHAIN_PLUGIN_0,
+    BERACHAIN_PLUGIN_1,
+    BERACHAIN_PLUGIN_2,
+    BERACHAIN_PLUGIN_3,
+    BERACHAIN_PLUGIN_4,
+    INFRARED_PLUGIN_0,
+    INFRARED_PLUGIN_1,
+    INFRARED_PLUGIN_2,
+    INFRARED_PLUGIN_3,
+    INFRARED_PLUGIN_4,
+    INFRARED_PLUGIN_5,
+    TRIFECTA_PLUGIN_0,
+    INFRARED_TRIFECTA_PLUGIN_0,
+    BULLAS_PLUGIN,
+  ];
 
-  // for (let i = 0; i < plugins.length; i++) {
-  //   let plugin = await controller.getPlugin(plugins[i]);
+  for (let i = 0; i < plugins.length; i++) {
+    let plugin = await controller.getPlugin(plugins[i]);
 
-  //   console.log("Protocol: ", plugin.protocol);
-  //   console.log("Name: ", plugin.name);
-  //   console.log("Token: ", plugin.token);
-  //   console.log("Plugin: ", plugin.plugin);
-  //   console.log("Gauge: ", plugin.gauge);
-  //   console.log("Bribe: ", plugin.bribe);
-  //   console.log("Vault Token: ", plugin.vaultToken);
-  //   console.log("Reward Vault: ", plugin.rewardVault);
-  //   console.log();
-  // }
+    console.log("Protocol: ", plugin.protocol);
+    console.log("Name: ", plugin.name);
+    console.log("Token: ", plugin.token);
+    console.log("Plugin: ", plugin.plugin);
+    console.log("Gauge: ", plugin.gauge);
+    console.log("Bribe: ", plugin.bribe);
+    console.log("Vault Token: ", plugin.vaultToken);
+    console.log("Reward Vault: ", plugin.rewardVault);
+    console.log();
+  }
 
   // await verifyGauge(
   //   BERACHAIN_PLUGIN_0,
@@ -1551,41 +1551,41 @@ async function main() {
   // 13. Distro
   //===================================================================
 
-  // console.log("Distributing Rewards");
+  console.log("Distributing Rewards");
 
-  // await voter.distro();
-  // console.log("Gauge Rewards Distributed");
+  await voter.distro();
+  console.log("Gauge Rewards Distributed");
 
-  // await fees.distribute();
-  // console.log("Fees Rewards Distributed");
+  await fees.distribute();
+  console.log("Fees Rewards Distributed");
 
-  // await voter.distributeToBribes([
-  //   BERACHAIN_PLUGIN_0,
-  //   BERACHAIN_PLUGIN_1,
-  //   BERACHAIN_PLUGIN_2,
-  //   BERACHAIN_PLUGIN_3,
-  //   BERACHAIN_PLUGIN_4,
-  // ]);
-  // console.log("Berachain Bribe Rewards Distributed");
+  await voter.distributeToBribes([
+    BERACHAIN_PLUGIN_0,
+    BERACHAIN_PLUGIN_1,
+    BERACHAIN_PLUGIN_2,
+    BERACHAIN_PLUGIN_3,
+    BERACHAIN_PLUGIN_4,
+  ]);
+  console.log("Berachain Bribe Rewards Distributed");
 
-  // await voter.distributeToBribes([
-  //   INFRARED_PLUGIN_0,
-  //   INFRARED_PLUGIN_1,
-  //   INFRARED_PLUGIN_2,
-  //   INFRARED_PLUGIN_3,
-  //   INFRARED_PLUGIN_4,
-  //   INFRARED_PLUGIN_5,
-  // ]);
-  // console.log("Infrared Bribe Rewards Distributed");
+  await voter.distributeToBribes([
+    INFRARED_PLUGIN_0,
+    INFRARED_PLUGIN_1,
+    INFRARED_PLUGIN_2,
+    INFRARED_PLUGIN_3,
+    INFRARED_PLUGIN_4,
+    INFRARED_PLUGIN_5,
+  ]);
+  console.log("Infrared Bribe Rewards Distributed");
 
-  // await voter.distributeToBribes([TRIFECTA_PLUGIN_0]);
-  // console.log("Liquidity Trifecta Bribe Rewards Distributed");
+  await voter.distributeToBribes([TRIFECTA_PLUGIN_0]);
+  console.log("Liquidity Trifecta Bribe Rewards Distributed");
 
-  // await voter.distributeToBribes([INFRARED_TRIFECTA_PLUGIN_0]);
-  // console.log("Infrared Trifecta Bribe Rewards Distributed");
+  await voter.distributeToBribes([INFRARED_TRIFECTA_PLUGIN_0]);
+  console.log("Infrared Trifecta Bribe Rewards Distributed");
 
-  // await voter.distributeToBribes([BULLAS_PLUGIN]);
-  // console.log("Game Bribe Rewards Distributed");
+  await voter.distributeToBribes([BULLAS_PLUGIN]);
+  console.log("Game Bribe Rewards Distributed");
 
   //===================================================================
   // 14. Remove Plugin
