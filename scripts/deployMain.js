@@ -33,6 +33,7 @@ const PRG = "0xbf2E152f460090aCE91A456e3deE5ACf703f27aD";
 const BERAMO = "0x1F7210257FA157227D09449229a9266b0D581337";
 const LBGT = "0xBaadCC2962417C01Af99fb2B7C75706B9bd6Babe";
 const RAMEN = "0xb8B1Af593Dc37B33a2c87C8Db1c9051FC32858B7";
+const BITCOIN = "0x6B26f778bfae56CFb4Bf9b62c678d9D40e725227";
 
 // Beradrom Plugin Factory
 const BERADROME_PLUGIN_FACTORY = "0xf0b0f738Fed0656D66725bb1528B42050de64DCa";
@@ -235,6 +236,17 @@ const TRIFECTA_SYMBOL_1 = "Kodiak Island WBERA-RAMEN-1%";
 const TRIFECTA_NAME_1 =
   "Beradrome Liquidity Trifecta Kodiak Island WBERA-RAMEN-1%";
 const TRIFECTA_PLUGIN_1 = "0x75b3C55fc3C0a2f874eEeC2C056fA336FB78fECa";
+
+// Trifecta Kodiak BERA-BITCOIN
+const TRIFECTA_TOKEN_2 = "0x2CaFe99dB26Cf86Ae8587F5934830d25aD5C3Cb3";
+const TRIFECTA_FARM_2 = "0xB4a1519956ceE0798EAac3De08F1531F58a0C950";
+const TRIFECTA_TOKEN0_2 = WBERA;
+const TRIFECTA_TOKEN1_2 = BITCOIN;
+const TRIFECTA_OTHER_REWARDS_2 = [BITCOIN];
+const TRIFECTA_SYMBOL_2 = "Kodiak Island WBERA-BITCOIN-1%";
+const TRIFECTA_NAME_2 =
+  "Beradrome Liquidity Trifecta Kodiak Island WBERA-BITCOIN-1%";
+const TRIFECTA_PLUGIN_2 = "0xfB58F9fab6aa614001304d6296F46069BDcac355";
 
 // Infrared Trifecta Plugin Factory
 const INFRARED_TRIFECTA_PLUGIN_FACTORY =
@@ -1043,13 +1055,13 @@ async function verifyTrifectaPluginFactory() {
 async function deployTrifectaPlugin() {
   console.log("Starting TrifectaPlugin Deployment");
   await trifectaPluginFactory.createPlugin(
-    TRIFECTA_TOKEN_1,
-    TRIFECTA_FARM_1,
-    TRIFECTA_TOKEN0_1,
-    TRIFECTA_TOKEN1_1,
-    TRIFECTA_OTHER_REWARDS_1,
-    TRIFECTA_SYMBOL_1,
-    TRIFECTA_NAME_1
+    TRIFECTA_TOKEN_2,
+    TRIFECTA_FARM_2,
+    TRIFECTA_TOKEN0_2,
+    TRIFECTA_TOKEN1_2,
+    TRIFECTA_OTHER_REWARDS_2,
+    TRIFECTA_SYMBOL_2,
+    TRIFECTA_NAME_2
   );
   await sleep(10000);
   console.log(
@@ -1628,7 +1640,16 @@ async function main() {
   // ]);
   // console.log("Infrared Bribe Rewards Distributed");
 
-  // await voter.distributeToBribes([TRIFECTA_PLUGIN_0]);
+  // await voter.distributeToBribes([
+  //   BERAPAW_PLUGIN_0,
+  //   BERAPAW_PLUGIN_1,
+  //   BERAPAW_PLUGIN_2,
+  //   BERAPAW_PLUGIN_3,
+  //   BERAPAW_PLUGIN_4,
+  // ]);
+  // console.log("BeraPaw Bribe Rewards Distributed");
+
+  // await voter.distributeToBribes([TRIFECTA_PLUGIN_0, TRIFECTA_PLUGIN_1]);
   // console.log("Liquidity Trifecta Bribe Rewards Distributed");
 
   // await voter.distributeToBribes([INFRARED_TRIFECTA_PLUGIN_0]);
@@ -1685,6 +1706,7 @@ async function main() {
   //   INFRARED_PLUGIN_5,
   //   TRIFECTA_PLUGIN_0,
   //   TRIFECTA_PLUGIN_1,
+  // TRIFECTA_PLUGIN_2,
   //   INFRARED_TRIFECTA_PLUGIN_0,
   //   BERADROME_PLUGIN_3,
   //   BERAPAW_PLUGIN_0,
