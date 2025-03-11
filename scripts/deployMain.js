@@ -34,6 +34,8 @@ const BERAMO = "0x1F7210257FA157227D09449229a9266b0D581337";
 const LBGT = "0xBaadCC2962417C01Af99fb2B7C75706B9bd6Babe";
 const RAMEN = "0xb8B1Af593Dc37B33a2c87C8Db1c9051FC32858B7";
 const BITCOIN = "0x6B26f778bfae56CFb4Bf9b62c678d9D40e725227";
+const NECT = "0x1ce0a25d13ce4d52071ae7e02cf1f6606f4c79d3";
+const WGBERA = "0xd77552d3849ab4d8c3b189a9582d0ba4c1f4f912";
 
 // Beradrom Plugin Factory
 const BERADROME_PLUGIN_FACTORY = "0xf0b0f738Fed0656D66725bb1528B42050de64DCa";
@@ -212,6 +214,30 @@ const INFRARED_SYMBOL_5 = "iBGT";
 const INFRARED_NAME_5 = "Beradrome Infrared iBGT";
 const INFRARED_PLUGIN_5 = "0x0AB1f3949cebB19FDebC5934d1822EA9ca24aE6F";
 
+// BurrBear Plugin Factory
+const BURRBEAR_PLUGIN_FACTORY = "0x37bDB41e497C5b93C9D0652B52cF9979B1c8751e";
+
+// BurrBear NECT/USDC/HONEY
+const BURRBEAR_PID_0 = "0";
+const BURRBEAR_TOKENS_0 = [NECT, USDCe, HONEY];
+const BURRBEAR_SYMBOL_0 = "NECT/USDC/HONEY";
+const BURRBEAR_NAME_0 = "Beradrome BurrBear NECT/USDC/HONEY";
+const BURRBEAR_PLUGIN_0 = "0xDC296fA14deeD5762c7bcb38afac7c958839C019";
+
+// BurrBear WBERA-wgBERA
+const BURRBEAR_PID_1 = "1";
+const BURRBEAR_TOKENS_1 = [WBERA, WGBERA];
+const BURRBEAR_SYMBOL_1 = "WBERA-wgBERA";
+const BURRBEAR_NAME_1 = "Beradrome BurrBear WBERA-wgBERA";
+const BURRBEAR_PLUGIN_1 = "0x991214424e93331434b4BD2DAB2E6A2a6408E30D";
+
+// BurrBear NECT-wgBERA
+const BURRBEAR_PID_2 = "2";
+const BURRBEAR_TOKENS_2 = [NECT, WGBERA];
+const BURRBEAR_SYMBOL_2 = "50NECT-50wgBERA";
+const BURRBEAR_NAME_2 = "Beradrome BurrBear 50NECT-50wgBERA";
+const BURRBEAR_PLUGIN_2 = "0x2946c4aA82c14bA9355fF2D93645586690c1B579";
+
 // Trifecta Plugin Factory
 const TRIFECTA_PLUGIN_FACTORY = "0x5CEf8C04AD128Cf25142111f868ab09D6eA25f6A";
 
@@ -283,11 +309,14 @@ let berachainPluginFactory;
 let infraredPlugin;
 let infraredPluginFactory;
 
-let trifectaPlugin;
-let trifectaPluginFactory;
-
 let berapawPlugin;
 let berapawPluginFactory;
+
+let burrBearPlugin;
+let burrBearPluginFactory;
+
+let trifectaPlugin;
+let trifectaPluginFactory;
 
 let infraredTrifectaPlugin;
 let infraredTrifectaPluginFactory;
@@ -407,6 +436,16 @@ async function getContracts() {
   berapawPlugin = await ethers.getContractAt(
     "contracts/plugins/berachain/BeraPawPluginFactory.sol:BeraPawPlugin",
     BERAPAW_PLUGIN_0
+  );
+
+  burrBearPluginFactory = await ethers.getContractAt(
+    "contracts/plugins/berachain/BurrBearPluginFactory.sol:BurrBearPluginFactory",
+    BURRBEAR_PLUGIN_FACTORY
+  );
+
+  burrBearPlugin = await ethers.getContractAt(
+    "contracts/plugins/berachain/BurrBearPluginFactory.sol:BurrBearPlugin",
+    BURRBEAR_PLUGIN_0
   );
 
   trifectaPluginFactory = await ethers.getContractAt(
@@ -1284,6 +1323,70 @@ async function verifyInfraredTrifectaPlugin() {
   console.log("InfraredTrifectaPlugin Verified");
 }
 
+async function deployBurrBearPluginFactory() {
+  console.log("Starting BurrBearPluginFactory Deployment");
+  const burrBearPluginFactoryArtifact = await ethers.getContractFactory(
+    "BurrBearPluginFactory"
+  );
+  const burrBearPluginFactoryContract =
+    await burrBearPluginFactoryArtifact.deploy(voter.address, {
+      gasPrice: ethers.gasPrice,
+    });
+  burrBearPluginFactory = await burrBearPluginFactoryContract.deployed();
+  console.log(
+    "BurrBearPluginFactory Deployed at:",
+    burrBearPluginFactory.address
+  );
+}
+
+async function verifyBurrBearPluginFactory() {
+  console.log("Starting BurrBearPluginFactory Verification");
+  await hre.run("verify:verify", {
+    address: burrBearPluginFactory.address,
+    contract:
+      "contracts/plugins/berachain/BurrBearPluginFactory.sol:BurrBearPluginFactory",
+    constructorArguments: [voter.address],
+  });
+  console.log("BurrBearPluginFactory Verified");
+}
+
+async function deployBurrBearPlugin() {
+  console.log("Starting BurrBearPlugin Deployment");
+  await burrBearPluginFactory.createPlugin(
+    BURRBEAR_PID_2,
+    BURRBEAR_TOKENS_2,
+    BURRBEAR_SYMBOL_2,
+    BURRBEAR_NAME_2,
+    { gasPrice: ethers.gasPrice }
+  );
+  await sleep(10000);
+  console.log(
+    "BurrBearPlugin Deployed at:",
+    await burrBearPluginFactory.last_plugin()
+  );
+}
+
+async function verifyBurrBearPlugin() {
+  console.log("Starting BurrBearPlugin Verification");
+  await hre.run("verify:verify", {
+    address: burrBearPlugin.address,
+    contract:
+      "contracts/plugins/berachain/BurrBearPluginFactory.sol:BurrBearPlugin",
+    constructorArguments: [
+      "0xD10E65A5F8cA6f835F2B1832e37cF150fb955f23",
+      voter.address,
+      BURRBEAR_TOKENS_0,
+      [WBERA],
+      VAULT_FACTORY,
+      BURRBEAR_PID_0,
+      "BurrBear",
+      BURRBEAR_SYMBOL_0,
+      BURRBEAR_NAME_0,
+    ],
+  });
+  console.log("BurrBearPlugin Verified");
+}
+
 async function deployBeradromeHelper() {
   console.log("Starting BeradromeHelper Deployment");
   const helperArtifact = await ethers.getContractFactory("BeradromeHelper");
@@ -1466,6 +1569,24 @@ async function main() {
   // await deployBeraPawPlugin();
   // await verifyBeraPawPlugin();
   // console.log("BeraPawPlugin Deployed and Verified");
+
+  //===================================================================
+  // 21. Deploy BurrBear Plugin Factory
+  //===================================================================
+
+  // console.log("Starting BurrBearPluginFactory Deployment");
+  // await deployBurrBearPluginFactory();
+  // await verifyBurrBearPluginFactory();
+  // console.log("BurrBearPluginFactory Deployed and Verified");
+
+  //===================================================================
+  // 22. Deploy BurrBear Plugin
+  //===================================================================
+
+  // console.log("Starting BurrBearPlugin Deployment");
+  // await deployBurrBearPlugin();
+  // await verifyBurrBearPlugin();
+  // console.log("BurrBearPlugin Deployed and Verified");
 
   //===================================================================
   // 17. Deploy Trifecta Plugin Factory
