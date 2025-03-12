@@ -19,7 +19,7 @@ const WBERA = "0x6969696969696969696969696969696969696969";
 
 // Plugins
 const BULLAS_PLUGIN = "0xe2719e4C3AC97890b2AF3783A3B892c3a6FF041C";
-const BENTO_PLUGIN = "";
+const BENTO_PLUGIN = "0xEfbcFD2666ea6f7Ebd87bF1166722d4f37dE5EF1";
 const HENLO_PLUGIN = "";
 const PASTA_PLUGIN = "";
 
@@ -625,7 +625,8 @@ async function main() {
   //===================================================================
 
   //   await voter.connect(wallet).addPlugin(BULLAS_PLUGIN);
-  //   console.log("Plugin added");
+  // await voter.connect(wallet).addPlugin(BENTO_PLUGIN);
+  // console.log("Plugin added");
 
   //===================================================================
   // Add Gauge Rewards
@@ -644,7 +645,7 @@ async function main() {
   // console.log("- xKDK added as gauge rewards");
 
   //===================================================================
-  // 13. Print Deployment
+  // Print Deployment
   //===================================================================
 
   // console.log("Beradrome Mainnet Deployment");
@@ -664,21 +665,21 @@ async function main() {
   // Print Plugins
   //===================================================================
 
-  //   let plugins = [BULLAS_PLUGIN];
+  let plugins = [BULLAS_PLUGIN, BENTO_PLUGIN];
 
-  //   for (let i = 0; i < plugins.length; i++) {
-  //     let plugin = await controller.getPlugin(plugins[i]);
+  for (let i = 0; i < plugins.length; i++) {
+    let plugin = await controller.getPlugin(plugins[i]);
 
-  //     console.log("Protocol: ", plugin.protocol);
-  //     console.log("Name: ", plugin.name);
-  //     console.log("Token: ", plugin.token);
-  //     console.log("Plugin: ", plugin.plugin);
-  //     console.log("Gauge: ", plugin.gauge);
-  //     console.log("Bribe: ", plugin.bribe);
-  //     console.log("Vault Token: ", plugin.vaultToken);
-  //     console.log("Reward Vault: ", plugin.rewardVault);
-  //     console.log();
-  //   }
+    console.log("Protocol: ", plugin.protocol);
+    console.log("Name: ", plugin.name);
+    console.log("Token: ", plugin.token);
+    console.log("Plugin: ", plugin.plugin);
+    console.log("Gauge: ", plugin.gauge);
+    console.log("Bribe: ", plugin.bribe);
+    console.log("Vault Token: ", plugin.vaultToken);
+    console.log("Reward Vault: ", plugin.rewardVault);
+    console.log();
+  }
 
   //   await verifyGauge(
   //     BULLAS_PLUGIN,
@@ -699,42 +700,11 @@ async function main() {
   // await fees.distribute();
   // console.log("Fees Rewards Distributed");
 
-  // await voter.distributeToBribes([
-  //   BERACHAIN_PLUGIN_0,
-  //   BERACHAIN_PLUGIN_1,
-  //   BERACHAIN_PLUGIN_2,
-  //   BERACHAIN_PLUGIN_3,
-  //   BERACHAIN_PLUGIN_4,
-  // ]);
-  // console.log("Berachain Bribe Rewards Distributed");
-
-  // await voter.distributeToBribes([
-  //   INFRARED_PLUGIN_0,
-  //   INFRARED_PLUGIN_1,
-  //   INFRARED_PLUGIN_2,
-  //   INFRARED_PLUGIN_3,
-  //   INFRARED_PLUGIN_4,
-  //   INFRARED_PLUGIN_5,
-  // ]);
-  // console.log("Infrared Bribe Rewards Distributed");
-
-  // await voter.distributeToBribes([
-  //   BERAPAW_PLUGIN_0,
-  //   BERAPAW_PLUGIN_1,
-  //   BERAPAW_PLUGIN_2,
-  //   BERAPAW_PLUGIN_3,
-  //   BERAPAW_PLUGIN_4,
-  // ]);
-  // console.log("BeraPaw Bribe Rewards Distributed");
-
-  // await voter.distributeToBribes([TRIFECTA_PLUGIN_0, TRIFECTA_PLUGIN_1]);
-  // console.log("Liquidity Trifecta Bribe Rewards Distributed");
-
-  // await voter.distributeToBribes([INFRARED_TRIFECTA_PLUGIN_0]);
-  // console.log("Infrared Trifecta Bribe Rewards Distributed");
-
   // await voter.distributeToBribes([BULLAS_PLUGIN]);
   // console.log("Game Bribe Rewards Distributed");
+
+  // await voter.distributeToBribes([BENTO_PLUGIN]);
+  // console.log("Bento Bribe Rewards Distributed");
 
   //===================================================================
   // Remove Plugin
