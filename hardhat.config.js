@@ -7,8 +7,8 @@ require("solidity-coverage");
 /*===================================================================*/
 /*===========================  SETTINGS  ============================*/
 
-const CHAIN_ID = 80069; // Berachain Bepolia chain id
-// const CHAIN_ID = 80094; // Berachain Mainnet chain id
+// const CHAIN_ID = 80069; // Berachain Bepolia chain id
+const CHAIN_ID = 80094; // Berachain Mainnet chain id
 
 /*===========================  END SETTINGS  ========================*/
 /*===================================================================*/
@@ -71,14 +71,14 @@ module.exports = {
   etherscan: {
     apiKey: SCAN_API_KEY,
     customChains: [
-      // {
-      //   network: "berachain",
-      //   chainId: CHAIN_ID,
-      //   urls: {
-      //     apiURL: "https://api.berascan.com/api",
-      //     browserURL: "https://berascan.com/",
-      //   },
-      // },
+      {
+        network: "berachain",
+        chainId: 80094,
+        urls: {
+          apiURL: "https://api.berascan.com/api",
+          browserURL: "https://berascan.com/",
+        },
+      },
       {
         network: "berachain_bepolia",
         chainId: 80069,

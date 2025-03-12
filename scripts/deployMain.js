@@ -36,6 +36,7 @@ const RAMEN = "0xb8B1Af593Dc37B33a2c87C8Db1c9051FC32858B7";
 const BITCOIN = "0x6B26f778bfae56CFb4Bf9b62c678d9D40e725227";
 const NECT = "0x1ce0a25d13ce4d52071ae7e02cf1f6606f4c79d3";
 const WGBERA = "0xd77552d3849ab4d8c3b189a9582d0ba4c1f4f912";
+const LOCKS = "0xb7E448E5677D212B8C8Da7D6312E8Afc49800466";
 
 // Beradrom Plugin Factory
 const BERADROME_PLUGIN_FACTORY = "0xf0b0f738Fed0656D66725bb1528B42050de64DCa";
@@ -75,6 +76,14 @@ const BERADROME_REWARDS_3 = [BERAMO];
 const BERADROME_SYMBOL_3 = "AB-KODIAK-WBERA-BERAMO-10000";
 const BERADROME_NAME_3 = "Beradrome AB-KODIAK-WBERA-BERAMO-10000";
 const BERADROME_PLUGIN_3 = "0x9162DeF1900e74Ca75D72fE8a01D5cDb7eA0CdF1";
+
+// Beradrome LOCKS
+const BERADROME_TOKEN_4 = LOCKS;
+const BERADROME_TOKENS_4 = [LOCKS];
+const BERADROME_REWARDS_4 = [PRG];
+const BERADROME_SYMBOL_4 = "LOCKS";
+const BERADROME_NAME_4 = "Beradrome LOCKS";
+const BERADROME_PLUGIN_4 = "0x395bBE4Bc7DB06cc188FAC373adc4729391c6406";
 
 // Berachain Plugin Factory
 const BERACHAIN_PLUGIN_FACTORY = "0x3E5b9a5D7D73D8781c4782910523b942dB831ef8";
@@ -1223,11 +1232,11 @@ async function verifyBeradromePluginFactory() {
 async function deployBeradromePlugin() {
   console.log("Starting BeradromePlugin Deployment");
   await beradromePluginFactory.createPlugin(
-    BERADROME_TOKEN_3,
-    BERADROME_TOKENS_3,
-    BERADROME_REWARDS_3,
-    BERADROME_SYMBOL_3,
-    BERADROME_NAME_3,
+    BERADROME_TOKEN_4,
+    BERADROME_TOKENS_4,
+    BERADROME_REWARDS_4,
+    BERADROME_SYMBOL_4,
+    BERADROME_NAME_4,
     { gasPrice: ethers.gasPrice }
   );
   await sleep(10000);
@@ -1814,6 +1823,8 @@ async function main() {
   //   BERADROME_PLUGIN_0,
   //   BERADROME_PLUGIN_1,
   //   BERADROME_PLUGIN_2,
+  //   BERADROME_PLUGIN_3,
+  //   BERADROME_PLUGIN_4,
   //   BERACHAIN_PLUGIN_0,
   //   BERACHAIN_PLUGIN_1,
   //   BERACHAIN_PLUGIN_2,
@@ -1827,14 +1838,16 @@ async function main() {
   //   INFRARED_PLUGIN_5,
   //   TRIFECTA_PLUGIN_0,
   //   TRIFECTA_PLUGIN_1,
-  // TRIFECTA_PLUGIN_2,
+  //   TRIFECTA_PLUGIN_2,
   //   INFRARED_TRIFECTA_PLUGIN_0,
-  //   BERADROME_PLUGIN_3,
   //   BERAPAW_PLUGIN_0,
   //   BERAPAW_PLUGIN_1,
   //   BERAPAW_PLUGIN_2,
   //   BERAPAW_PLUGIN_3,
   //   BERAPAW_PLUGIN_4,
+  //   BURRBEAR_PLUGIN_0,
+  //   BURRBEAR_PLUGIN_1,
+  //   BURRBEAR_PLUGIN_2,
   // ];
 
   // for (let i = 0; i < plugins.length; i++) {
