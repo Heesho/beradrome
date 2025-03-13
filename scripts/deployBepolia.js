@@ -665,21 +665,21 @@ async function main() {
   // Print Plugins
   //===================================================================
 
-  let plugins = [BULLAS_PLUGIN, BENTO_PLUGIN];
+  // let plugins = [BULLAS_PLUGIN, BENTO_PLUGIN];
 
-  for (let i = 0; i < plugins.length; i++) {
-    let plugin = await controller.getPlugin(plugins[i]);
+  // for (let i = 0; i < plugins.length; i++) {
+  //   let plugin = await controller.getPlugin(plugins[i]);
 
-    console.log("Protocol: ", plugin.protocol);
-    console.log("Name: ", plugin.name);
-    console.log("Token: ", plugin.token);
-    console.log("Plugin: ", plugin.plugin);
-    console.log("Gauge: ", plugin.gauge);
-    console.log("Bribe: ", plugin.bribe);
-    console.log("Vault Token: ", plugin.vaultToken);
-    console.log("Reward Vault: ", plugin.rewardVault);
-    console.log();
-  }
+  //   console.log("Protocol: ", plugin.protocol);
+  //   console.log("Name: ", plugin.name);
+  //   console.log("Token: ", plugin.token);
+  //   console.log("Plugin: ", plugin.plugin);
+  //   console.log("Gauge: ", plugin.gauge);
+  //   console.log("Bribe: ", plugin.bribe);
+  //   console.log("Vault Token: ", plugin.vaultToken);
+  //   console.log("Reward Vault: ", plugin.rewardVault);
+  //   console.log();
+  // }
 
   //   await verifyGauge(
   //     BULLAS_PLUGIN,
@@ -687,6 +687,12 @@ async function main() {
   //   );
 
   //   await verifyBribe("0xFefD99De11d5104F7faDF78320a690B87A0B00Df");
+
+  //===================================================================
+  // Vote on Plugins
+  //===================================================================
+
+  // await voter.connect(wallet).vote([BULLAS_PLUGIN, BENTO_PLUGIN], [1, 1]);
 
   //===================================================================
   // Distro

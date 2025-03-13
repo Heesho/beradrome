@@ -37,6 +37,7 @@ const BITCOIN = "0x6B26f778bfae56CFb4Bf9b62c678d9D40e725227";
 const NECT = "0x1ce0a25d13ce4d52071ae7e02cf1f6606f4c79d3";
 const WGBERA = "0xd77552d3849ab4d8c3b189a9582d0ba4c1f4f912";
 const LOCKS = "0xb7E448E5677D212B8C8Da7D6312E8Afc49800466";
+const brWETH = "0xDDCa6328c88e30aBB02436A9Cc1A4e229Cad44aC";
 
 // Beradrom Plugin Factory
 const BERADROME_PLUGIN_FACTORY = "0xf0b0f738Fed0656D66725bb1528B42050de64DCa";
@@ -222,6 +223,14 @@ const INFRARED_REWARDS_5 = [HONEY];
 const INFRARED_SYMBOL_5 = "iBGT";
 const INFRARED_NAME_5 = "Beradrome Infrared iBGT";
 const INFRARED_PLUGIN_5 = "0x0AB1f3949cebB19FDebC5934d1822EA9ca24aE6F";
+
+// Infrared Kodiak brWETH-HONEY-V2
+const INFRARED_VAULT_6 = "0x6124F8aB58Ea91C782F3eb7A971F0f8c8D3D7948";
+const INFRARED_TOKENS_6 = [brWETH, HONEY];
+const INFRARED_REWARDS_6 = [IBGT];
+const INFRARED_SYMBOL_6 = "brWETH-HONEY-V2";
+const INFRARED_NAME_6 = "Beradrome Infrared Kodiak brWETH-HONEY-V2";
+const INFRARED_PLUGIN_6 = "0x8C3B6d5dF8fEB0D5E7c995FDBD9fB08ca29F38Af";
 
 // BurrBear Plugin Factory
 const BURRBEAR_PLUGIN_FACTORY = "0x37bDB41e497C5b93C9D0652B52cF9979B1c8751e";
@@ -1038,11 +1047,11 @@ async function verifyInfraredPluginFactory() {
 async function deployInfraredPlugin() {
   console.log("Starting InfraredPlugin Deployment");
   await infraredPluginFactory.createPlugin(
-    INFRARED_VAULT_5,
-    INFRARED_TOKENS_5,
-    INFRARED_REWARDS_5,
-    INFRARED_SYMBOL_5,
-    INFRARED_NAME_5,
+    INFRARED_VAULT_6,
+    INFRARED_TOKENS_6,
+    INFRARED_REWARDS_6,
+    INFRARED_SYMBOL_6,
+    INFRARED_NAME_6,
     { gasPrice: ethers.gasPrice }
   );
   await sleep(10000);
@@ -1779,7 +1788,18 @@ async function main() {
   // ]);
   // console.log("BeraPaw Bribe Rewards Distributed");
 
-  // await voter.distributeToBribes([TRIFECTA_PLUGIN_0, TRIFECTA_PLUGIN_1]);
+  // await voter.distributeToBribes([
+  //   BURRBEAR_PLUGIN_0,
+  //   BURRBEAR_PLUGIN_1,
+  //   BURRBEAR_PLUGIN_2,
+  // ]);
+  // console.log("BurrBear Bribe Rewards Distributed");
+
+  // await voter.distributeToBribes([
+  //   TRIFECTA_PLUGIN_0,
+  //   TRIFECTA_PLUGIN_1,
+  //   TRIFECTA_PLUGIN_2, // Kodiak has not whitelisted yet
+  // ]);
   // console.log("Liquidity Trifecta Bribe Rewards Distributed");
 
   // await voter.distributeToBribes([INFRARED_TRIFECTA_PLUGIN_0]);
@@ -1836,6 +1856,7 @@ async function main() {
   //   INFRARED_PLUGIN_3,
   //   INFRARED_PLUGIN_4,
   //   INFRARED_PLUGIN_5,
+  // INFRARED_PLUGIN_6,
   //   TRIFECTA_PLUGIN_0,
   //   TRIFECTA_PLUGIN_1,
   //   TRIFECTA_PLUGIN_2,
