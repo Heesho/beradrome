@@ -401,7 +401,7 @@ async function getContracts() {
 
   multicall = await ethers.getContractAt(
     "contracts/Multicall.sol:Multicall",
-    "0x6DE64633c9a5beCDde6c5Dc27dfF308F05F56665"
+    "0xDAd4AC347c08e05365f10Fd9B4CCD137bA18a39D"
   );
   trifectaMulticall = await ethers.getContractAt(
     "contracts/TrifectaMulticall.sol:TrifectaMulticall",
@@ -1856,7 +1856,7 @@ async function main() {
   //   INFRARED_PLUGIN_3,
   //   INFRARED_PLUGIN_4,
   //   INFRARED_PLUGIN_5,
-  // INFRARED_PLUGIN_6,
+  //   INFRARED_PLUGIN_6,
   //   TRIFECTA_PLUGIN_0,
   //   TRIFECTA_PLUGIN_1,
   //   TRIFECTA_PLUGIN_2,

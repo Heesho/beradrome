@@ -10,8 +10,10 @@ import "contracts/interfaces/IGauge.sol";
 import "contracts/interfaces/IBribe.sol";
 import "contracts/interfaces/IVoter.sol";
 import "contracts/interfaces/IPlugin.sol";
+import "./FixedPointMathLib.sol";
 
 contract Multicall {
+    using FixedPointMathLib for uint256;
 
     /*----------  CONSTANTS  --------------------------------------------*/
 
@@ -107,7 +109,8 @@ contract Multicall {
         address[] rewardTokens;          
         uint8[] rewardTokenDecimals;    
         uint256[] rewardsPerToken;      
-        uint256[] accountRewardsEarned; 
+        uint256[] accountRewardsEarned;
+        uint256[] rewardsLeft; 
 
         uint256 voteWeight;             
         uint256 votePercent;            
@@ -247,6 +250,12 @@ contract Multicall {
         }
         bribeCard.accountRewardsEarned = _accountRewardsEarned;
 
+        uint[] memory _rewardsLeft = new uint[](bribeCard.rewardTokens.length);
+        for (uint i = 0; i < bribeCard.rewardTokens.length; i++) {
+            _rewardsLeft[i] = IBribe(bribeCard.bribe).left(bribeCard.rewardTokens[i]);
+        }
+        bribeCard.rewardsLeft = _rewardsLeft;
+
         bribeCard.voteWeight = IVoter(voter).weights(plugin);
         bribeCard.votePercent = (IVoter(voter).totalWeight() == 0 ? 0 : 100 * IVoter(voter).weights(plugin) * 1e18 / IVoter(voter).totalWeight());
 
@@ -316,7 +325,7 @@ contract Multicall {
     function quoteSellOut(uint256 input, uint256 slippageTolerance) external view returns (uint256 output, uint256 slippage, uint256 minOutput, uint256 autoMinOutput) {
         uint256 oldMrBASE = ITOKEN(TOKEN).mrvBASE() + ITOKEN(TOKEN).mrrBASE();
         output = DIVISOR * ((oldMrBASE * ITOKEN(TOKEN).mrrTOKEN() / (oldMrBASE - input)) - ITOKEN(TOKEN).mrrTOKEN()) / (DIVISOR - FEE);
-        if (output * (DIVISOR - FEE / DIVISOR) + ITOKEN(TOKEN).mrrTOKEN() > ITOKEN(TOKEN).mrvBASE()) {
+        if (output.mulDivDown(DIVISOR - FEE, DIVISOR) + ITOKEN(TOKEN).mrrTOKEN() > ITOKEN(TOKEN).mrvBASE()) {
             return (0, 0, 0, 0);
         }
         slippage = 100 * (1e18 - (input * 1e18 / (output * ITOKEN(TOKEN).getMarketPrice() / 1e18)));

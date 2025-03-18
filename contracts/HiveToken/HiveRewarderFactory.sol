@@ -7,8 +7,8 @@ import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/utils/math/Math.sol";
 
-interface IBerachainRewardsVaultFactory {
-    function createRewardsVault(address _vaultToken) external returns (address);
+interface IBerachainRewardVaultFactory {
+    function createRewardVault(address _vaultToken) external returns (address);
 }
 
 interface IRewardVault {
@@ -108,7 +108,7 @@ contract HiveRewarder is ReentrancyGuard, Ownable {
         hiveFactory = _hiveFactory;
         hiveToken = _hiveToken;
         vaultToken = address(new VaultToken());
-        rewardVault = IBerachainRewardsVaultFactory(_vaultFactory).createRewardsVault(vaultToken);
+        rewardVault = IBerachainRewardVaultFactory(_vaultFactory).createRewardVault(vaultToken);
     }
 
     /**
