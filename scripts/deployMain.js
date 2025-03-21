@@ -1696,7 +1696,7 @@ async function main() {
   //===================================================================
 
   // console.log("Starting Beradrome Plugin Deployment");
-  await deployBeradromePlugin();
+  // await deployBeradromePlugin();
   // await verifyBeradromePlugin();
   // console.log("Beradrome Plugin Deployed and Verified");
 
@@ -1903,6 +1903,11 @@ async function main() {
   //   BERADROME_PLUGIN_2,
   //   BERADROME_PLUGIN_3,
   //   BERADROME_PLUGIN_4,
+  //   BERADROME_PLUGIN_5,
+  //   BERADROME_PLUGIN_6,
+  //   BERADROME_PLUGIN_7,
+  //   BERADROME_PLUGIN_8,
+  //   BERADROME_PLUGIN_9,
   //   BERACHAIN_PLUGIN_0,
   //   BERACHAIN_PLUGIN_1,
   //   BERACHAIN_PLUGIN_2,
@@ -1918,6 +1923,7 @@ async function main() {
   //   TRIFECTA_PLUGIN_0,
   //   TRIFECTA_PLUGIN_1,
   //   TRIFECTA_PLUGIN_2,
+  //   TRIFECTA_PLUGIN_3,
   //   INFRARED_TRIFECTA_PLUGIN_0,
   //   BERAPAW_PLUGIN_0,
   //   BERAPAW_PLUGIN_1,
