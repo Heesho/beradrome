@@ -20,6 +20,7 @@ const WBERA = "0x6969696969696969696969696969696969696969";
 // Plugins
 const BULLAS_PLUGIN = "0xe2719e4C3AC97890b2AF3783A3B892c3a6FF041C";
 const BENTO_PLUGIN = "0xEfbcFD2666ea6f7Ebd87bF1166722d4f37dE5EF1";
+const BENTO_PLUGIN_V2 = "0xEc76C06258D32890F492c6575708D12d0AF3B9c9";
 const HENLO_PLUGIN = "";
 const PASTA_PLUGIN = "";
 
@@ -624,8 +625,9 @@ async function main() {
   // Add Plugin
   //===================================================================
 
-  //   await voter.connect(wallet).addPlugin(BULLAS_PLUGIN);
+  // await voter.connect(wallet).addPlugin(BULLAS_PLUGIN);
   // await voter.connect(wallet).addPlugin(BENTO_PLUGIN);
+  // await voter.connect(wallet).addPlugin(BENTO_PLUGIN_V2);
   // console.log("Plugin added");
 
   //===================================================================
@@ -665,7 +667,7 @@ async function main() {
   // Print Plugins
   //===================================================================
 
-  // let plugins = [BULLAS_PLUGIN, BENTO_PLUGIN];
+  // let plugins = [BULLAS_PLUGIN, BENTO_PLUGIN, BENTO_PLUGIN_V2];
 
   // for (let i = 0; i < plugins.length; i++) {
   //   let plugin = await controller.getPlugin(plugins[i]);
@@ -692,7 +694,10 @@ async function main() {
   // Vote on Plugins
   //===================================================================
 
-  // await voter.connect(wallet).vote([BULLAS_PLUGIN, BENTO_PLUGIN], [1, 1]);
+  // await voter.connect(wallet).vote([BULLAS_PLUGIN, BENTO_PLUGIN_V2], [1, 1]);
+  // await voter
+  //   .connect(wallet)
+  //   .claimBribes(["0xf00ef45a47c1bb814d9a86ed781cff86b27d0024"]);
 
   //===================================================================
   // Distro
