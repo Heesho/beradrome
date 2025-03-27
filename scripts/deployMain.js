@@ -1749,7 +1749,7 @@ async function main() {
   //===================================================================
 
   // console.log("Starting InfraredPlugin Deployment");
-  await deployInfraredPlugin();
+  // await deployInfraredPlugin();
   // await verifyInfraredPlugin();
   // console.log("InfraredPlugin Deployed and Verified");
 
@@ -1960,7 +1960,7 @@ async function main() {
   //   INFRARED_PLUGIN_2,
   //   INFRARED_PLUGIN_3,
   //   INFRARED_PLUGIN_4,
-  //   INFRARED_PLUGIN_5,
+  //   // INFRARED_PLUGIN_5,
   // ]);
   // console.log("Infrared Bribe Rewards Distributed");
 
@@ -2035,6 +2035,7 @@ async function main() {
   //   BERADROME_PLUGIN_7,
   //   BERADROME_PLUGIN_8,
   //   BERADROME_PLUGIN_9,
+  //   BERADROME_PLUGIN_10,
   //   BERACHAIN_PLUGIN_0,
   //   BERACHAIN_PLUGIN_1,
   //   BERACHAIN_PLUGIN_2,
@@ -2047,6 +2048,18 @@ async function main() {
   //   INFRARED_PLUGIN_4,
   //   INFRARED_PLUGIN_5,
   //   INFRARED_PLUGIN_6,
+  //   INFRARED_PLUGIN_7,
+  //   INFRARED_PLUGIN_8,
+  //   INFRARED_PLUGIN_9,
+  //   INFRARED_PLUGIN_10,
+  //   INFRARED_PLUGIN_11,
+  //   INFRARED_PLUGIN_12,
+  //   INFRARED_PLUGIN_13,
+  //   INFRARED_PLUGIN_14,
+  //   INFRARED_PLUGIN_15,
+  //   INFRARED_PLUGIN_16,
+  //   INFRARED_PLUGIN_17,
+  //   INFRARED_PLUGIN_18,
   //   TRIFECTA_PLUGIN_0,
   //   TRIFECTA_PLUGIN_1,
   //   TRIFECTA_PLUGIN_2,

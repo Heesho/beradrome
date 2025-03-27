@@ -7,6 +7,7 @@ const sleep = (delay) => new Promise((resolve) => setTimeout(resolve, delay));
 const convert = (amount, decimals) => ethers.utils.parseUnits(amount, decimals);
 const divDec = (amount, decimals = 18) => amount / 10 ** decimals;
 const one = convert("1", 18);
+const oneHundredThousand = convert("100000", 18);
 
 const MARKET_RESERVES = "5000000"; // 5,000,000 TOKEN in market reserves
 
@@ -667,26 +668,26 @@ async function main() {
   // Print Plugins
   //===================================================================
 
-  let plugins = [
-    BULLAS_PLUGIN,
-    BENTO_PLUGIN,
-    BENTO_PLUGIN_V2,
-    BULLAS_PLUGIN_V2,
-  ];
+  // let plugins = [
+  //   BULLAS_PLUGIN,
+  //   BENTO_PLUGIN,
+  //   BENTO_PLUGIN_V2,
+  //   BULLAS_PLUGIN_V2,
+  // ];
 
-  for (let i = 0; i < plugins.length; i++) {
-    let plugin = await controller.getPlugin(plugins[i]);
+  // for (let i = 0; i < plugins.length; i++) {
+  //   let plugin = await controller.getPlugin(plugins[i]);
 
-    console.log("Protocol: ", plugin.protocol);
-    console.log("Name: ", plugin.name);
-    console.log("Token: ", plugin.token);
-    console.log("Plugin: ", plugin.plugin);
-    console.log("Gauge: ", plugin.gauge);
-    console.log("Bribe: ", plugin.bribe);
-    console.log("Vault Token: ", plugin.vaultToken);
-    console.log("Reward Vault: ", plugin.rewardVault);
-    console.log();
-  }
+  //   console.log("Protocol: ", plugin.protocol);
+  //   console.log("Name: ", plugin.name);
+  //   console.log("Token: ", plugin.token);
+  //   console.log("Plugin: ", plugin.plugin);
+  //   console.log("Gauge: ", plugin.gauge);
+  //   console.log("Bribe: ", plugin.bribe);
+  //   console.log("Vault Token: ", plugin.vaultToken);
+  //   console.log("Reward Vault: ", plugin.rewardVault);
+  //   console.log();
+  // }
 
   //   await verifyGauge(
   //     BULLAS_PLUGIN,
@@ -699,7 +700,7 @@ async function main() {
   // Vote on Plugins
   //===================================================================
 
-  // await voter.connect(wallet).vote([BULLAS_PLUGIN, BENTO_PLUGIN_V2], [1, 1]);
+  // await voter.connect(wallet).vote([BULLAS_PLUGIN_V2, BENTO_PLUGIN_V2], [1, 1]);
   // await voter
   //   .connect(wallet)
   //   .claimBribes(["0xf00ef45a47c1bb814d9a86ed781cff86b27d0024"]);
@@ -716,10 +717,10 @@ async function main() {
   // await fees.distribute();
   // console.log("Fees Rewards Distributed");
 
-  // await voter.distributeToBribes([BULLAS_PLUGIN]);
+  // await voter.distributeToBribes([BULLAS_PLUGIN, BULLAS_PLUGIN_V2]);
   // console.log("Game Bribe Rewards Distributed");
 
-  // await voter.distributeToBribes([BENTO_PLUGIN]);
+  // await voter.distributeToBribes([BENTO_PLUGIN, BENTO_PLUGIN_V2]);
   // console.log("Bento Bribe Rewards Distributed");
 
   //===================================================================
@@ -744,6 +745,11 @@ async function main() {
   // let data = await multicall.bondingCurveData(
   //   "0x34D023ACa5A227789B45A62D377b5B18A680BE01"
   // );
+  // console.log(data);
+
+  // let data = await multicall
+  //   .connect(wallet)
+  //   .gaugeCardData(BULLAS_PLUGIN_V2, wallet.address);
   // console.log(data);
 }
 
