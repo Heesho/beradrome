@@ -698,12 +698,12 @@ async function main() {
   //   console.log();
   // }
 
-  //   await verifyGauge(
-  //     BULLAS_PLUGIN,
-  //     "0x0C8900D2d1bd706d8FF7dA4dAC3Dfd036586BfC9"
-  //   );
+  // await verifyGauge(
+  //   "0xc24435938b08a34e3913abbf3c3cfe51802383a9",
+  //   "0x4E60297f2A5109E03d4C0Ed0C66E61Fc0fC1875D"
+  // );
 
-  //   await verifyBribe("0xFefD99De11d5104F7faDF78320a690B87A0B00Df");
+  // await verifyBribe("0xf909fc1dB5C67e3B2c6a6413848cf1e2923A50A7");
 
   //===================================================================
   // Vote on Plugins
