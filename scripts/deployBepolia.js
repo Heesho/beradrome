@@ -547,13 +547,13 @@ async function main() {
   // Verify Token
   //===================================================================
 
-  //   console.log("Starting Token Verification");
-  //   await verifyTOKEN();
-  //   await verifyOTOKEN(wallet);
-  //   await verifyVTOKEN();
-  //   await verifyFees();
-  //   await verifyRewarder();
-  //   console.log("Token Verified");
+  // console.log("Starting Token Verification");
+  // await verifyTOKEN();
+  // await verifyOTOKEN(wallet);
+  // await verifyVTOKEN();
+  // await verifyFees();
+  // await verifyRewarder();
+  // console.log("Token Verified");
 
   //===================================================================
   // Deploy Voting System
@@ -570,12 +570,12 @@ async function main() {
   // Verify Voting Contracts
   //===================================================================
 
-  //   console.log("Starting Voting Verification");
-  //   await verifyGaugeFactory(wallet.address);
-  //   await verifyBribeFactory(wallet.address);
-  //   await verifyVoter();
-  //   await verifyMinter();
-  //   console.log("Voting Contracts Verified");
+  // console.log("Starting Voting Verification");
+  // await verifyGaugeFactory(wallet.address);
+  // await verifyBribeFactory(wallet.address);
+  // await verifyVoter();
+  // await verifyMinter();
+  // console.log("Voting Contracts Verified");
 
   //===================================================================
   // Deploy Ancillary Contracts
@@ -590,10 +590,10 @@ async function main() {
   // Verify Ancillary Contracts
   //===================================================================
 
-  //   console.log("Starting Ancillary Verification");
-  //   await verifyMulticall();
-  //   await verifyController();
-  //   console.log("Ancillary Contracts Verified");
+  // console.log("Starting Ancillary Verification");
+  // await verifyMulticall();
+  // await verifyController();
+  // console.log("Ancillary Contracts Verified");
 
   //===================================================================
   // Set Up System
