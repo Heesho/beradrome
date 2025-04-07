@@ -1982,7 +1982,7 @@ async function main() {
 
   // await verifyBribe("0x5DBa62Ae28E2EfBd1f42aC372910F8Df78659Edd");
 
-  // await verifyVaultToken("0x083a86797db5B6F738CE9E0599F6bE17d3059275");
+  // await verifyVaultToken("0xdDD3Ea5De9c70973E224D938B8f392EC4CC0171C");
 
   //===================================================================
   // 13. Distro

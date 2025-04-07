@@ -26,6 +26,7 @@ const BENTO_PLUGIN_V2 = "0xEc76C06258D32890F492c6575708D12d0AF3B9c9";
 const BTT_PLUGIN = "0xeaB1A53350041eC038718e9b855d15FF471Ce172";
 const BTT_PLUGIN_V2 = "0xd1F6920fF0bAaf628a0640B75F6506BCE3F66Ae2";
 const CUB_PLUGIN = "0xC24435938b08a34e3913Abbf3C3cfE51802383a9";
+const CUB_PLUGIN_V2 = "0x36357C56644F760781647F1AC6CaEE3734A162d1";
 
 // Contract Variables
 let OTOKENFactory, VTOKENFactory, feesFactory, rewarderFactory;
@@ -635,6 +636,7 @@ async function main() {
   // await voter.connect(wallet).addPlugin(BTT_PLUGIN);
   // await voter.connect(wallet).addPlugin(BTT_PLUGIN_V2);
   // await voter.connect(wallet).addPlugin(CUB_PLUGIN);
+  // await voter.connect(wallet).addPlugin(CUB_PLUGIN_V2);
   // console.log("Plugin added");
 
   //===================================================================
@@ -682,6 +684,7 @@ async function main() {
   //   BTT_PLUGIN,
   //   BTT_PLUGIN_V2,
   //   CUB_PLUGIN,
+  //   CUB_PLUGIN_V2,
   // ];
 
   // for (let i = 0; i < plugins.length; i++) {
@@ -712,7 +715,7 @@ async function main() {
   // await voter
   //   .connect(wallet)
   //   .vote(
-  //     [BULLAS_PLUGIN_V2, BENTO_PLUGIN_V2, BTT_PLUGIN_V2, CUB_PLUGIN],
+  //     [BULLAS_PLUGIN_V2, BENTO_PLUGIN_V2, BTT_PLUGIN_V2, CUB_PLUGIN_V2],
   //     [1, 1, 1, 1]
   //   );
   // await voter
