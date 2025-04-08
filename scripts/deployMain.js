@@ -538,6 +538,14 @@ const INFRARED_TRIFECTA_NAME_0 =
   "Beradrome Infrared Trifecta Kodiak Island OHM-HONEY-0.3%";
 const INFRARED_TRIFECTA_PLUGIN_0 = "0x125bd220ac62DBE312D4752FFB57551E9b3c1848";
 
+const INFRARED_TRIFECTA_VAULT_1 = "0xacB6fa1BE2B235474Ac5B0c175b2A16189D4D103";
+const INFRARED_TRIFECTA_TOKENS_1 = [WBERA, POLLEN];
+const INFRARED_TRIFECTA_REWARDS_1 = [POLLEN, NECT];
+const INFRARED_TRIFECTA_SYMBOL_1 = "Kodiak Island WBERA-POLLEN-1%";
+const INFRARED_TRIFECTA_NAME_1 =
+  "Beradrome Infrared Trifecta Kodiak Island WBERA-POLLEN-1%";
+const INFRARED_TRIFECTA_PLUGIN_1 = "0xd4e1b8979b52Aba704881336a0359DFB61caAf44";
+
 // Bullas BULL iSH
 const BULLAS_PLUGIN = "0xE259A689D13139F413eE693BE27181192319a629";
 
@@ -1548,11 +1556,11 @@ async function verifyInfraredTrifectaPluginFactory() {
 async function deployInfraredTrifectaPlugin() {
   console.log("Starting InfraredTrifectaPlugin Deployment");
   await infraredTrifectaPluginFactory.createPlugin(
-    INFRARED_TRIFECTA_VAULT_0,
-    INFRARED_TRIFECTA_TOKENS_0,
-    INFRARED_TRIFECTA_REWARDS_0,
-    INFRARED_TRIFECTA_SYMBOL_0,
-    INFRARED_TRIFECTA_NAME_0,
+    INFRARED_TRIFECTA_VAULT_1,
+    INFRARED_TRIFECTA_TOKENS_1,
+    INFRARED_TRIFECTA_REWARDS_1,
+    INFRARED_TRIFECTA_SYMBOL_1,
+    INFRARED_TRIFECTA_NAME_1,
     { gasPrice: ethers.gasPrice }
   );
   await sleep(10000);
@@ -2101,6 +2109,7 @@ async function main() {
   //   BERADROME_PLUGIN_14,
   //   BERADROME_PLUGIN_15,
   //   BERADROME_PLUGIN_16,
+  //   BERADROME_PLUGIN_17,
   //   BERACHAIN_PLUGIN_0,
   //   BERACHAIN_PLUGIN_1,
   //   BERACHAIN_PLUGIN_2,
@@ -2130,6 +2139,7 @@ async function main() {
   //   TRIFECTA_PLUGIN_2,
   //   TRIFECTA_PLUGIN_3,
   //   INFRARED_TRIFECTA_PLUGIN_0,
+  //   INFRARED_TRIFECTA_PLUGIN_1,
   //   BERAPAW_PLUGIN_0,
   //   BERAPAW_PLUGIN_1,
   //   BERAPAW_PLUGIN_2,
