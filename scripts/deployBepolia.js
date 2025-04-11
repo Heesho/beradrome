@@ -734,14 +734,17 @@ async function main() {
   // await fees.distribute();
   // console.log("Fees Rewards Distributed");
 
-  // await voter.distributeToBribes([BULLAS_PLUGIN, BULLAS_PLUGIN_V2]);
+  // await voter.distributeToBribes([BULLAS_PLUGIN_V2]);
   // console.log("Game Bribe Rewards Distributed");
 
-  // await voter.distributeToBribes([BENTO_PLUGIN, BENTO_PLUGIN_V2]);
+  // await voter.distributeToBribes([BENTO_PLUGIN_V2]);
   // console.log("Bento Bribe Rewards Distributed");
 
-  // await voter.distributeToBribes([BTT_PLUGIN]);
+  // await voter.distributeToBribes([BTT_PLUGIN_V2]);
   // console.log("BTT Bribe Rewards Distributed");
+
+  // await voter.distributeToBribes([CUB_PLUGIN_V2]);
+  // console.log("CUB Bribe Rewards Distributed");
 
   //===================================================================
   // Remove Plugin

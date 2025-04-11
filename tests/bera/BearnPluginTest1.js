@@ -9,7 +9,6 @@ const helpers = require("@nomicfoundation/hardhat-network-helpers");
 require("dotenv").config();
 
 const AddressZero = "0x0000000000000000000000000000000000000000";
-const pointZeroOne = convert("0.01", 18);
 const one = convert("1", 18);
 const one6 = convert("1", 6);
 const two = convert("2", 18);
@@ -45,34 +44,16 @@ const ERC20_ABI = [
   "function name() view returns (string)",
 ];
 
-// XKDK ABI
-const XKDK_ABI = [
-  "function balanceOf(address owner) view returns (uint256)",
-  "function updateTransferWhitelist(address account, bool add) external",
-  "function owner() view returns (address)",
-];
-const XKDK_ADDR = "0xe8D7b965BA082835EA917F2B173Ff3E035B69eeB";
-const XKDK_OWNER = "0x21802b7C3DF57e98df45f1547b0F1a72F2CD1aED";
-
-// XKDK ABI
-const FARM_ABI = [
-  "function earned(address account) view returns (uint256[] memory)",
-];
-
 function timer(t) {
   return new Promise((r) => setTimeout(r, t));
 }
 
-const WBERA_ADDR = "0x6969696969696969696969696969696969696969";
-const YEET_ADDR = "0x08A38Caa631DE329FF2DAD1656CE789F31AF3142";
-const BREAD_ADDR = "0x0003eEDFdd020bf60D10cf684ABAc7C4534B7eAd";
-const OHM_ADDR = "0x18878Df23e2a36f81e820e4b47b4A40576D3159C";
+const VAULT_FACTORY = "0x94Ad6Ac84f6C6FbA8b8CCbD71d9f4f101def52a8"; // Vault Factory Address
 
-const KODIAK_ADDR = "0xd9a747880393f7c33cEf1aea36909b36d421F7E5";
-const KODIAK_FARM = "0xc080B212cAAA1eBBCcDe1434D6EFe6359eDa2084";
-const KODIAK_HOLDER = "0x0601dd1852E178258e4eB64Ac843619956995381";
-
-const VAULT_FACTORY_ADDR = "0x94Ad6Ac84f6C6FbA8b8CCbD71d9f4f101def52a8";
+const HONEY_ADDR = "0xFCBD14DC51f0A4d49d5E53C2E0950e0bC26d0Dce";
+const YBGT_ADDR = "0x7e768f47dfDD5DAe874Aac233f1Bc5817137E453";
+const STYBGT_ADDR = "0x6f8cEAF347dA79287e49A5C9F0a03b20BDFCB7D3";
+const STYBGT_HOLDER = "0xDAD8E3C8238fd2f63150961874170e60155A1c57";
 
 let owner, multisig, treasury, user0, user1, user2;
 let VTOKENFactory,
@@ -81,19 +62,12 @@ let VTOKENFactory,
   rewarderFactory,
   gaugeFactory,
   bribeFactory;
-let minter,
-  voter,
-  fees,
-  rewarder,
-  governance,
-  multicall,
-  trifectaMulticall,
-  pluginFactory;
+let minter, voter, fees, rewarder, governance, multicall, pluginFactory;
 let TOKEN, VTOKEN, OTOKEN, BASE;
-let WBERA, YEET, BREAD, OHM, XKDK, farm;
-let KODIAK, plugin0, gauge0, bribe0;
+let HONEY, STYBGT;
+let plugin0, gauge0, bribe0;
 
-describe("berachain: trifecta testing", function () {
+describe.only("berachain: bearn plugin testing", function () {
   before("Initial set up", async function () {
     console.log("Begin Initialization");
 
@@ -106,13 +80,8 @@ describe("berachain: trifecta testing", function () {
       await ethers.getSigners();
 
     // initialize ERC20s
-    WBERA = new ethers.Contract(WBERA_ADDR, ERC20_ABI, provider);
-    YEET = new ethers.Contract(YEET_ADDR, ERC20_ABI, provider);
-    BREAD = new ethers.Contract(BREAD_ADDR, ERC20_ABI, provider);
-    OHM = new ethers.Contract(OHM_ADDR, ERC20_ABI, provider);
-    XKDK = new ethers.Contract(XKDK_ADDR, XKDK_ABI, provider);
-    farm = new ethers.Contract(KODIAK_FARM, FARM_ABI, provider);
-    KODIAK = new ethers.Contract(KODIAK_ADDR, ERC20_ABI, provider);
+    HONEY = new ethers.Contract(HONEY_ADDR, ERC20_ABI, provider);
+    STYBGT = new ethers.Contract(STYBGT_ADDR, ERC20_ABI, provider);
     console.log("- ERC20s Initialized");
 
     // initialize ERC20Mocks
@@ -157,7 +126,7 @@ describe("berachain: trifecta testing", function () {
       VTOKENFactory.address,
       rewarderFactory.address,
       feesFactory.address,
-      VAULT_FACTORY_ADDR
+      VAULT_FACTORY
     );
     console.log("- TOKEN Initialized");
 
@@ -261,19 +230,6 @@ describe("berachain: trifecta testing", function () {
     );
     console.log("- Multicall Initialized");
 
-    // initialize TrifectaMulticall
-    const trifectaMulticallArtifact = await ethers.getContractFactory(
-      "TrifectaMulticall"
-    );
-    const trifectaMulticallContract = await trifectaMulticallArtifact.deploy(
-      voter.address
-    );
-    trifectaMulticall = await ethers.getContractAt(
-      "TrifectaMulticall",
-      trifectaMulticallContract.address
-    );
-    console.log("- TrifectaMulticall Initialized");
-
     // System set-up
     await gaugeFactory.setVoter(voter.address);
     await bribeFactory.setVoter(voter.address);
@@ -288,33 +244,31 @@ describe("berachain: trifecta testing", function () {
 
     // initialize Plugin Factory
     const pluginFactoryArtifact = await ethers.getContractFactory(
-      "TrifectaPluginFactory"
+      "BearnPluginFactory"
     );
     const pluginFactoryContract = await pluginFactoryArtifact.deploy(
       voter.address
     );
     pluginFactory = await ethers.getContractAt(
-      "TrifectaPluginFactory",
+      "BearnPluginFactory",
       pluginFactoryContract.address
     );
     console.log("- Plugin Factory Initialized");
 
-    // initialize KODIAK3
+    // initialize STYBGT
     await pluginFactory.createPlugin(
-      KODIAK_ADDR,
-      KODIAK_FARM,
-      BREAD_ADDR,
-      OHM_ADDR,
-      [WBERA_ADDR, OHM_ADDR, YEET_ADDR],
-      "Kodiak Island BREAD-OHM-0.3%",
-      "Beradrome Liquidity Trifecta Kodiak Island BREAD-OHM-0.3%"
+      STYBGT.address,
+      [YBGT_ADDR],
+      [HONEY_ADDR],
+      "styBGT",
+      "styBGT"
     );
     plugin0 = await ethers.getContractAt(
-      "contracts/plugins/berachain/TrifectaPluginFactory.sol:TrifectaPlugin",
+      "contracts/plugins/berachain/BearnPluginFactory.sol:BearnPlugin",
       await pluginFactory.last_plugin()
     );
 
-    // add KODIAK3 Plugin to Voter
+    // add STYBGT Plugin to Voter
     await voter.addPlugin(plugin0.address);
     let Gauge0Address = await voter.gauges(plugin0.address);
     let Bribe0Address = await voter.bribes(plugin0.address);
@@ -326,12 +280,7 @@ describe("berachain: trifecta testing", function () {
       "contracts/BribeFactory.sol:Bribe",
       Bribe0Address
     );
-    console.log("- KODIAK3 Added in Voter");
-
-    // add xKDK as gauge reward tokens from Voter
-    // await plugin0.addFarmReward(XKDK_ADDR);
-    await voter.addGaugeReward(gauge0.address, XKDK_ADDR);
-    console.log("- XKDK added as gauge reward");
+    console.log("- STYBGT Added in Voter");
 
     console.log("Initialization Complete");
     console.log();
@@ -339,97 +288,47 @@ describe("berachain: trifecta testing", function () {
 
   it("first test", async function () {
     console.log("******************************************************");
-    console.log("Balance of LP0 holder", await KODIAK.balanceOf(KODIAK_HOLDER));
+    console.log(
+      "Balance of STYBGT holder",
+      await STYBGT.balanceOf(STYBGT_HOLDER)
+    );
   });
 
-  it("Impersonate KODIAK holder and send to user0", async function () {
+  it("Impersonate LP holder and send to user0", async function () {
     console.log("******************************************************");
     await network.provider.request({
       method: "hardhat_impersonateAccount",
-      params: [KODIAK_HOLDER],
+      params: [STYBGT_HOLDER],
     });
-    const signer = ethers.provider.getSigner(KODIAK_HOLDER);
+    const signer = ethers.provider.getSigner(STYBGT_HOLDER);
 
-    await KODIAK.connect(signer).transfer(
+    await STYBGT.connect(signer).transfer(
       user0.address,
-      await KODIAK.connect(owner).balanceOf(KODIAK_HOLDER)
+      await STYBGT.connect(owner).balanceOf(STYBGT_HOLDER)
     );
-    await KODIAK.connect(user0).transfer(user1.address, pointZeroOne);
-    await KODIAK.connect(user0).transfer(user2.address, pointZeroOne);
 
     console.log(
-      "Holder KODIAK balance: ",
-      divDec(await KODIAK.connect(owner).balanceOf(KODIAK_HOLDER))
+      "Holder STYBGT balance: ",
+      divDec(await STYBGT.connect(owner).balanceOf(STYBGT_HOLDER))
     );
     console.log(
-      "User0 KODIAK balance: ",
-      divDec(await KODIAK.connect(owner).balanceOf(user0.address))
-    );
-    console.log(
-      "User1 KODIAK balance: ",
-      divDec(await KODIAK.connect(owner).balanceOf(user1.address))
-    );
-    console.log(
-      "User2 KODIAK balance: ",
-      divDec(await KODIAK.connect(owner).balanceOf(user2.address))
+      "User0 STYBGT balance: ",
+      divDec(await STYBGT.connect(owner).balanceOf(user0.address))
     );
   });
 
-  it("User0 deposits in plugin", async function () {
+  it("User0 deposits in all plugins", async function () {
     console.log("******************************************************");
-    await KODIAK.connect(user0).approve(plugin0.address, pointZeroOne);
-    await plugin0.connect(user0).depositFor(user0.address, pointZeroOne);
-  });
-
-  it("View plugin stats", async function () {
-    console.log("******************************************************");
-    console.log(
-      "LockedLiquidity",
-      divDec(await plugin0.connect(owner).getLockedLiquidity())
+    await STYBGT.connect(user0).approve(
+      plugin0.address,
+      await STYBGT.connect(owner).balanceOf(user0.address)
     );
-    console.log("LockedStakes", await plugin0.connect(owner).getLockedStakes());
-  });
-
-  it("User0 deposits in plugin", async function () {
-    console.log("******************************************************");
-    await KODIAK.connect(user0).approve(plugin0.address, pointZeroOne);
-    await plugin0.connect(user0).depositFor(user0.address, pointZeroOne);
-  });
-
-  it("View plugin stats", async function () {
-    console.log("******************************************************");
-    console.log(
-      "LockedLiquidity",
-      divDec(await plugin0.connect(owner).getLockedLiquidity())
-    );
-    console.log("LockedStakes", await plugin0.connect(owner).getLockedStakes());
-  });
-
-  it("User0 deposits in plugin", async function () {
-    console.log("******************************************************");
-    await KODIAK.connect(user0).approve(plugin0.address, pointZeroOne);
-    await plugin0.connect(user0).depositFor(user0.address, pointZeroOne);
-  });
-
-  it("User1 deposits in plugin", async function () {
-    console.log("******************************************************");
-    await KODIAK.connect(user1).approve(plugin0.address, pointZeroOne);
-    await plugin0.connect(user1).depositFor(user1.address, pointZeroOne);
-  });
-
-  it("User2 deposits in plugin", async function () {
-    console.log("******************************************************");
-    await KODIAK.connect(user2).approve(plugin0.address, pointZeroOne);
-    await plugin0.connect(user2).depositFor(user2.address, pointZeroOne);
-  });
-
-  it("View plugin stats", async function () {
-    console.log("******************************************************");
-    console.log(
-      "LockedLiquidity",
-      divDec(await plugin0.connect(owner).getLockedLiquidity())
-    );
-    console.log("LockedStakes", await plugin0.connect(owner).getLockedStakes());
+    await plugin0
+      .connect(user0)
+      .depositFor(
+        user0.address,
+        await STYBGT.connect(owner).balanceOf(user0.address)
+      );
   });
 
   it("Mint test tokens to each user", async function () {
@@ -632,46 +531,8 @@ describe("berachain: trifecta testing", function () {
 
   it("Forward time by 1 days", async function () {
     console.log("******************************************************");
-    await network.provider.send("evm_increaseTime", [24 * 3600]);
+    await network.provider.send("evm_increaseTime", [7 * 24 * 3600]);
     await network.provider.send("evm_mine");
-  });
-
-  it("Transfer ETH to XKDK_OWNER", async function () {
-    console.log("******************************************************");
-
-    // Transfer 1 ETH to XKDK_OWNER using the 'owner' signer
-    const tx = await owner.sendTransaction({
-      to: XKDK_OWNER,
-      value: ethers.utils.parseEther("1.0"), // Amount of ETH to send
-    });
-
-    // Wait for the transaction to be mined
-    await tx.wait();
-
-    console.log(`Transferred 1 ETH to XKDK_OWNER: ${XKDK_OWNER}`);
-  });
-
-  it("Whitelist plugin and bribe contract to transfer xKDK", async function () {
-    console.log("******************************************************");
-
-    console.log("XKDK owner: ", await XKDK.connect(owner).owner());
-    // transfer ETH to XKDK_OWNER
-    await owner.sendTransaction({
-      to: XKDK_OWNER,
-      value: ethers.utils.parseEther("1.0"),
-    });
-    await network.provider.request({
-      method: "hardhat_impersonateAccount",
-      params: [XKDK_OWNER],
-    });
-    const signer = ethers.provider.getSigner(XKDK_OWNER);
-    await XKDK.connect(signer).updateTransferWhitelist(plugin0.address, true);
-    await XKDK.connect(signer).updateTransferWhitelist(gauge0.address, true);
-  });
-
-  it("Owner kodiak rewards contract", async function () {
-    console.log("******************************************************");
-    console.log(await farm.connect(owner).earned(plugin0.address));
   });
 
   it("Owner calls distribute", async function () {
@@ -681,6 +542,35 @@ describe("berachain: trifecta testing", function () {
     await voter.distributeToBribes([plugin0.address]);
   });
 
+  it("GaugeCardData, plugin0, user1", async function () {
+    console.log("******************************************************");
+    let res = await multicall.gaugeCardData(plugin0.address, user1.address);
+    console.log("INFORMATION");
+    console.log("Gauge: ", res.gauge);
+    console.log("Plugin: ", res.plugin);
+    console.log("Underlying: ", res.token);
+    console.log("Tokens in Underlying: ");
+    for (let i = 0; i < res.assetTokens.length; i++) {
+      console.log(" - ", res.assetTokens[i]);
+    }
+    console.log("Underlying Decimals: ", res.tokenDecimals);
+    console.log("Is Alive: ", res.isAlive);
+    console.log();
+    console.log("GLOBAL DATA");
+    console.log("Protocol: ", res.protocol);
+    console.log("Symbol: ", res.name);
+    console.log("Price OTOKEN: $", divDec(res.priceOTOKEN));
+    console.log("Reward Per token: ", divDec(res.rewardPerToken));
+    console.log("Reward Per token: $", divDec(res.rewardPerTokenUSD));
+    console.log("Total Supply: ", divDec(res.totalSupply));
+    console.log("Voting Weight: ", divDec(res.votingWeight), "%");
+    console.log();
+    console.log("ACCOUNT DATA");
+    console.log("Balance Underlying: ", divDec(res.accountTokenBalance));
+    console.log("Balance Deposited: ", divDec(res.accountStakedBalance));
+    console.log("Earned OTOKEN: ", divDec(res.accountEarnedOTOKEN));
+  });
+
   it("BribeCardData, plugin0, user1 ", async function () {
     console.log("******************************************************");
     let res = await multicall.bribeCardData(plugin0.address, user1.address);
@@ -711,9 +601,9 @@ describe("berachain: trifecta testing", function () {
     }
   });
 
-  it("Forward time by 2 days", async function () {
+  it("Forward time by 7 days", async function () {
     console.log("******************************************************");
-    await network.provider.send("evm_increaseTime", [2 * 24 * 3600]);
+    await network.provider.send("evm_increaseTime", [7 * 24 * 3600]);
     await network.provider.send("evm_mine");
   });
 
@@ -745,15 +635,6 @@ describe("berachain: trifecta testing", function () {
     for (let i = 0; i < res.accountRewardsEarned.length; i++) {
       console.log(" - ", divDec(res.accountRewardsEarned[i]));
     }
-  });
-
-  it("TrifectaPluginGauge, plugin0, user1 ", async function () {
-    console.log("******************************************************");
-    let res = await trifectaMulticall.gaugeRewardData(
-      plugin0.address,
-      user1.address
-    );
-    console.log(res);
   });
 
   it("User0 withdraws from all gauges", async function () {
@@ -764,13 +645,6 @@ describe("berachain: trifecta testing", function () {
         user0.address,
         await plugin0.connect(owner).balanceOf(user0.address)
       );
-  });
-
-  it("User2 attempts to withdraw more than they have from gauge", async function () {
-    console.log("******************************************************");
-    await expect(plugin0.connect(user2).withdrawTo(user2.address, twenty)).to.be
-      .reverted;
-    await plugin0.connect(user2).withdrawTo(user2.address, pointZeroOne);
   });
 
   it("GaugeCardData, plugin0, user0", async function () {
@@ -800,53 +674,5 @@ describe("berachain: trifecta testing", function () {
     console.log("Balance Underlying: ", divDec(res.accountTokenBalance));
     console.log("Balance Deposited: ", divDec(res.accountStakedBalance));
     console.log("Earned OTOKEN: ", divDec(res.accountEarnedOTOKEN));
-  });
-
-  it("User1 claims bribes", async function () {
-    console.log("******************************************************");
-    await voter.connect(user1).claimBribes([bribe0.address]);
-    console.log(
-      "User1 xKDK balance: ",
-      divDec(await XKDK.connect(owner).balanceOf(user1.address))
-    );
-  });
-
-  it("BribeCardData, plugin0, user1 ", async function () {
-    console.log("******************************************************");
-    let res = await multicall.bribeCardData(plugin0.address, user1.address);
-    console.log("INFORMATION");
-    console.log("Gauge: ", res.bribe);
-    console.log("Plugin: ", res.plugin);
-    console.log("Reward Tokens: ");
-    for (let i = 0; i < res.rewardTokens.length; i++) {
-      console.log(" - ", res.rewardTokens[i], res.rewardTokenDecimals[i]);
-    }
-    console.log("Is Alive: ", res.isAlive);
-    console.log();
-    console.log("GLOBAL DATA");
-    console.log("Protocol: ", res.protocol);
-    console.log("Symbol: ", res.name);
-    console.log("Voting Weight: ", divDec(res.voteWeight));
-    console.log("Voting percent: ", divDec(res.votePercent), "%");
-    console.log("Reward Per Token: ");
-    for (let i = 0; i < res.rewardsPerToken.length; i++) {
-      console.log(" - ", divDec(res.rewardsPerToken[i]));
-    }
-    console.log();
-    console.log("ACCOUNT DATA");
-    console.log("Account Votes: ", divDec(res.accountVote));
-    console.log("Earned Rewards: ");
-    for (let i = 0; i < res.accountRewardsEarned.length; i++) {
-      console.log(" - ", divDec(res.accountRewardsEarned[i]));
-    }
-  });
-
-  it("View plugin stats", async function () {
-    console.log("******************************************************");
-    console.log(
-      "LockedLiquidity",
-      divDec(await plugin0.connect(owner).getLockedLiquidity())
-    );
-    console.log("LockedStakes", await plugin0.connect(owner).getLockedStakes());
   });
 });
