@@ -214,6 +214,14 @@ const BERADROME_SYMBOL_17 = "Kodiak WBERA-LOCKS-V2";
 const BERADROME_NAME_17 = "Beradrome Kodiak WBERA-LOCKS-V2";
 const BERADROME_PLUGIN_17 = "0x74A38Bfeedd95f65cbBF72eEDf01EAC77778bcF9";
 
+// Beradrome AB-KODIAK-BERAMO-WBERA-10000
+const BERADROME_TOKEN_18 = "0xE5F657557f2d0Bc2C45d2086Dc05C054E1Fe4985";
+const BERADROME_TOKENS_18 = [BERAMO, WBERA];
+const BERADROME_REWARDS_18 = [BERAMO];
+const BERADROME_SYMBOL_18 = "AB-KODIAK-BERAMO-WBERA-10000";
+const BERADROME_NAME_18 = "Beradrome AB-KODIAK-BERAMO-WBERA-10000";
+const BERADROME_PLUGIN_18 = "0xb9794df80797469Db76ffB87C5Aac2Ed5dc912a4";
+
 // Berachain Plugin Factory
 const BERACHAIN_PLUGIN_FACTORY = "0x3E5b9a5D7D73D8781c4782910523b942dB831ef8";
 
@@ -1520,11 +1528,11 @@ async function verifyBeradromePluginFactory() {
 async function deployBeradromePlugin() {
   console.log("Starting BeradromePlugin Deployment");
   await beradromePluginFactory.createPlugin(
-    BERADROME_TOKEN_17,
-    BERADROME_TOKENS_17,
-    BERADROME_REWARDS_17,
-    BERADROME_SYMBOL_17,
-    BERADROME_NAME_17,
+    BERADROME_TOKEN_18,
+    BERADROME_TOKENS_18,
+    BERADROME_REWARDS_18,
+    BERADROME_SYMBOL_18,
+    BERADROME_NAME_18,
     { gasPrice: ethers.gasPrice }
   );
   await sleep(10000);
