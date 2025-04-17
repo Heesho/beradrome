@@ -17,11 +17,13 @@ contract ArberaInfraredPlugin is Plugin, ReentrancyGuard {
 
     /*----------  CONSTANTS  --------------------------------------------*/
 
-    address public constant ARBERA = 0xac03CABA51e17c86c921E1f6CBFBdC91F8BB2E6b; // TBD
+    address public constant ARBERA_MULTISIG = 0xc2524FCe63c2983f76ecf50af657ECd493ca1c3D;
 
     /*----------  STATE VARIABLES  --------------------------------------*/
 
-    address public infraredVault;
+    address public immutable infraredVault;
+    address public immutable arberaStakingPool;
+    bool public distributeToVoters = true;
 
     /*----------  ERRORS ------------------------------------------------*/
 
@@ -34,6 +36,7 @@ contract ArberaInfraredPlugin is Plugin, ReentrancyGuard {
         address[] memory _bribeTokens,
         address _vaultFactory,
         address _infraredVault,
+        address _arberaStakingPool,
         string memory _protocol,
         string memory _name,
         string memory _vaultName
@@ -50,6 +53,12 @@ contract ArberaInfraredPlugin is Plugin, ReentrancyGuard {
         )
     {
         infraredVault = _infraredVault;
+        arberaStakingPool = _arberaStakingPool;
+    }
+
+    modifier onlyStakingPool() {
+        require(msg.sender == arberaStakingPool, "Only staking pool can call this function");
+        _;
     }
 
     function claimAndDistribute() 
@@ -62,25 +71,16 @@ contract ArberaInfraredPlugin is Plugin, ReentrancyGuard {
         address bribe = getBribe();
         address gauge = getGauge();
         uint256 duration = IBribe(bribe).DURATION();
+        address rewardsTarget = distributeToVoters ? bribe : gauge;
 
-        // Distribute ARBERA from protocol buybacks to LPs
-        uint256 arberaBalance = IERC20(ARBERA).balanceOf(address(this));
-        if (arberaBalance > duration) {
-            IERC20(ARBERA).safeApprove(gauge, 0);
-            IERC20(ARBERA).safeApprove(gauge, arberaBalance);
-            IGauge(gauge).notifyRewardAmount(ARBERA, arberaBalance);
-        }
-
-        // Distribute all Infrared vault rewards to LPs
         address[] memory rewardTokens = IInfraredVault(infraredVault).getAllRewardTokens();
         for (uint256 i = 0; i < rewardTokens.length; i++) {
-            if (rewardTokens[i] != ARBERA) {
-                uint256 balance = IERC20(rewardTokens[i]).balanceOf(address(this));
-                if (balance > duration) {
-                    IERC20(rewardTokens[i]).safeApprove(bribe, 0);
-                    IERC20(rewardTokens[i]).safeApprove(bribe, balance);
-                    IGauge(bribe).notifyRewardAmount(rewardTokens[i], balance);
-                }
+            uint256 balance = IERC20(rewardTokens[i]).balanceOf(address(this));
+            if (balance > duration) {
+                // Distribute all Infrared vault rewards to voters or LPs based on switch
+                IERC20(rewardTokens[i]).safeApprove(rewardsTarget, 0);
+                IERC20(rewardTokens[i]).safeApprove(rewardsTarget, balance);
+                IGauge(rewardsTarget).notifyRewardAmount(rewardTokens[i], balance);
             }
         }
     }
@@ -89,6 +89,7 @@ contract ArberaInfraredPlugin is Plugin, ReentrancyGuard {
         public
         override
         nonReentrant
+        onlyStakingPool
     {
         super.depositFor(account, amount);
         IERC20(getToken()).safeApprove(infraredVault, 0);
@@ -100,9 +101,15 @@ contract ArberaInfraredPlugin is Plugin, ReentrancyGuard {
         public
         override
         nonReentrant
+        onlyStakingPool
     {
         IInfraredVault(infraredVault).withdraw(amount); 
         super.withdrawTo(account, amount);
+    }
+
+    function setDistributeToVoters(bool _distributeToVoters) external {
+        require(msg.sender == ARBERA_MULTISIG, "Only Arbera multisig can set distributeToVoters");
+        distributeToVoters = _distributeToVoters;
     }
 
     /*----------  RESTRICTED FUNCTIONS  ---------------------------------*/
@@ -113,27 +120,30 @@ contract ArberaInfraredPlugin is Plugin, ReentrancyGuard {
 
 contract ArberaInfraredPluginFactory {
 
-    string public constant PROTOCOL = 'Arbera Infrared Trifecta';
+    string public constant PROTOCOL = 'Arbera Infrared';
     address public constant REWARDS_VAULT_FACTORY = 0x94Ad6Ac84f6C6FbA8b8CCbD71d9f4f101def52a8;
 
     address public immutable VOTER;
 
+    mapping(address => bool) public deployers;
     address public last_plugin;
 
     event ArberaInfraredPluginFactory__PluginCreated(address plugin);
 
     constructor(address _VOTER) {
         VOTER = _VOTER;
+        deployers[VOTER] = true;
     }
 
     function createPlugin(
         address _infraredVault,
+        address _arberaStakingPool,
         address[] memory _assetTokens,
         address[] memory _bribeTokens,
         string memory _name, // ex 50WETH-50HONEY or 50WBTC-50HONEY or 50WBERA-50HONEY
         string memory _vaultName
     ) external returns (address) {
-
+        require(deployers[msg.sender], "Only deployer can create plugin");
         ArberaInfraredPlugin lastPlugin = new ArberaInfraredPlugin(
             IInfraredVault(_infraredVault).stakingToken(),
             VOTER,
@@ -141,6 +151,7 @@ contract ArberaInfraredPluginFactory {
             _bribeTokens,
             REWARDS_VAULT_FACTORY,
             _infraredVault,
+            _arberaStakingPool,
             PROTOCOL,
             _name,
             _vaultName
@@ -150,4 +161,8 @@ contract ArberaInfraredPluginFactory {
         return last_plugin;
     }
 
+    function setDeployer(address _deployer, bool _status) external {
+        require(msg.sender == VOTER, "Only Voter can set deployer");
+        deployers[_deployer] = _status;
+    }
 }
