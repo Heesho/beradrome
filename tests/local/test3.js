@@ -20,6 +20,7 @@ const oneThousand = convert("1000", 18);
 const twoThousand = convert("2000", 18);
 const threeThousand = convert("3000", 18);
 const twentyThousand = convert("20000", 18);
+const twentyMillion = convert("20000000", 18);
 
 let owner, multisig, treasury, user0, user1, user2;
 let vaultFactory;
@@ -4414,7 +4415,7 @@ describe("local: test3", function () {
 
   it("Minter Coverage Testing", async function () {
     console.log("******************************************************");
-    await expect(minter.setWeeklyRate(twentyThousand)).to.be.revertedWith(
+    await expect(minter.setWeeklyRate(twentyMillion)).to.be.revertedWith(
       "Minter__WeeklyRateTooHigh"
     );
     await expect(minter.setTailRate(0)).to.be.revertedWith(

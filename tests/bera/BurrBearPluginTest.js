@@ -48,13 +48,15 @@ function timer(t) {
   return new Promise((r) => setTimeout(r, t));
 }
 
-const WBERA_ADDR = "0x7507c1dc16935B82698e4C63f2746A2fCf994dF8";
-const HONEY_ADDR = "0x0E4aaF1351de4c0264C5c7056Ef3777b41BD8e03";
-const BHONEY_ADDR = "0x1306D3c36eC7E38dd2c128fBe3097C2C2449af64";
-const BHONEY_HOLDER = "0xDD080cC45e0C5e594D8ae08d0772E6A04fcB0773";
+const WBERA_ADDR = "0x6969696969696969696969696969696969696969";
+const HONEY_ADDR = "0xFCBD14DC51f0A4d49d5E53C2E0950e0bC26d0Dce";
+const NECT_ADDR = "0x1ce0a25d13ce4d52071ae7e02cf1f6606f4c79d3";
+const USDC_ADDR = "0x549943e04f40284185054145c6E4e9568C1D3241";
+const LP_ADDR = "0xD10E65A5F8cA6f835F2B1832e37cF150fb955f23";
+const LP_HOLDER = "0x42A8B78d252120fE8EBa20645D0003A640fA6bD0";
+const VAULT_FACTORY_ADDR = "0x94Ad6Ac84f6C6FbA8b8CCbD71d9f4f101def52a8";
 
 let owner, multisig, treasury, user0, user1, user2;
-let vaultFactory;
 let VTOKENFactory,
   OTOKENFactory,
   feesFactory,
@@ -63,10 +65,10 @@ let VTOKENFactory,
   bribeFactory;
 let minter, voter, fees, rewarder, governance, multicall, pluginFactory;
 let TOKEN, VTOKEN, OTOKEN, BASE;
-let WBERA, BHONEY;
-let plugin0, gauge0, bribe0;
+let WBERA, HONEY, NECT, USDC;
+let LP0, LP0Gauge, plugin0, gauge0, bribe0;
 
-describe("berachain: berapaw testing 0", function () {
+describe("berachain: burrbear plugin testing", function () {
   before("Initial set up", async function () {
     console.log("Begin Initialization");
 
@@ -80,20 +82,16 @@ describe("berachain: berapaw testing 0", function () {
 
     // initialize ERC20s
     WBERA = new ethers.Contract(WBERA_ADDR, ERC20_ABI, provider);
-    BHONEY = new ethers.Contract(BHONEY_ADDR, ERC20_ABI, provider);
+    HONEY = new ethers.Contract(HONEY_ADDR, ERC20_ABI, provider);
+    NECT = new ethers.Contract(NECT_ADDR, ERC20_ABI, provider);
+    USDC = new ethers.Contract(USDC_ADDR, ERC20_ABI, provider);
+    LP0 = new ethers.Contract(LP_ADDR, ERC20_ABI, provider);
     console.log("- ERC20s Initialized");
 
     // initialize ERC20Mocks
     const ERC20MockArtifact = await ethers.getContractFactory("ERC20Mock");
     BASE = await ERC20MockArtifact.deploy("BASE", "BASE");
     console.log("- ERC20Mocks Initialized");
-
-    // initialize VaultFactory
-    const VaultFactoryArtifact = await ethers.getContractFactory(
-      "BerachainRewardsVaultFactory"
-    );
-    vaultFactory = await VaultFactoryArtifact.deploy();
-    console.log("- VaultFactory Initialized");
 
     // initialize OTOKENFactory
     const OTOKENFactoryArtifact = await ethers.getContractFactory(
@@ -132,7 +130,7 @@ describe("berachain: berapaw testing 0", function () {
       VTOKENFactory.address,
       rewarderFactory.address,
       feesFactory.address,
-      vaultFactory.address
+      VAULT_FACTORY_ADDR
     );
     console.log("- TOKEN Initialized");
 
@@ -250,29 +248,30 @@ describe("berachain: berapaw testing 0", function () {
 
     // initialize Plugin Factory
     const pluginFactoryArtifact = await ethers.getContractFactory(
-      "BeraPawPluginFactory"
+      "BurrBearPluginFactory"
     );
     const pluginFactoryContract = await pluginFactoryArtifact.deploy(
       voter.address
     );
     pluginFactory = await ethers.getContractAt(
-      "BeraPawPluginFactory",
+      "BurrBearPluginFactory",
       pluginFactoryContract.address
     );
     console.log("- PluginFactory Initialized");
 
+    // initialize LP0
     await pluginFactory.createPlugin(
-      BHONEY_ADDR,
-      [HONEY_ADDR],
-      "BERPS bHONEY",
-      "BERPS bHONEY Vault Token"
+      0,
+      [HONEY_ADDR, NECT_ADDR, USDC_ADDR],
+      "NECT/USDC/HONEY",
+      "NECT/USDC/HONEY"
     );
     plugin0 = await ethers.getContractAt(
-      "contracts/plugins/berachain/BeraPawPluginFactory.sol:BeraPawPlugin",
+      "contracts/plugins/berachain/BurrBearPluginFactory.sol:BurrBearPlugin",
       await pluginFactory.last_plugin()
     );
 
-    // add Plugin to Voter
+    // add LP0 Plugin to Voter
     await voter.addPlugin(plugin0.address);
     let Gauge0Address = await voter.gauges(plugin0.address);
     let Bribe0Address = await voter.bribes(plugin0.address);
@@ -284,7 +283,7 @@ describe("berachain: berapaw testing 0", function () {
       "contracts/BribeFactory.sol:Bribe",
       Bribe0Address
     );
-    console.log("- Plugin Added in Voter");
+    console.log("- LP0 Added in Voter");
 
     console.log("Initialization Complete");
     console.log();
@@ -292,46 +291,43 @@ describe("berachain: berapaw testing 0", function () {
 
   it("first test", async function () {
     console.log("******************************************************");
-    console.log(
-      "Balance of bHONEY holder",
-      await BHONEY.balanceOf(BHONEY_HOLDER)
-    );
+    console.log("Balance of LP0 holder", await LP0.balanceOf(LP_HOLDER));
   });
 
-  it("Impersonate bHONEY holder and send to user0", async function () {
+  it("Impersonate SCALE holder and send to user0", async function () {
     console.log("******************************************************");
     await network.provider.request({
       method: "hardhat_impersonateAccount",
-      params: [BHONEY_HOLDER],
+      params: [LP_HOLDER],
     });
-    const signer = ethers.provider.getSigner(BHONEY_HOLDER);
+    const signer = ethers.provider.getSigner(LP_HOLDER);
 
-    await BHONEY.connect(signer).transfer(
+    await LP0.connect(signer).transfer(
       user0.address,
-      await BHONEY.connect(owner).balanceOf(BHONEY_HOLDER)
+      await LP0.connect(owner).balanceOf(LP_HOLDER)
     );
 
     console.log(
-      "Holder bHONEY balance: ",
-      divDec(await BHONEY.connect(owner).balanceOf(BHONEY_HOLDER))
+      "Holder LP0 balance: ",
+      divDec(await LP0.connect(owner).balanceOf(LP_HOLDER))
     );
     console.log(
-      "User0 bHONEY balance: ",
-      divDec(await BHONEY.connect(owner).balanceOf(user0.address))
+      "User0 LP0 balance: ",
+      divDec(await LP0.connect(owner).balanceOf(user0.address))
     );
   });
 
   it("User0 deposits in all plugins", async function () {
     console.log("******************************************************");
-    await BHONEY.connect(user0).approve(
+    await LP0.connect(user0).approve(
       plugin0.address,
-      await BHONEY.connect(owner).balanceOf(user0.address)
+      await LP0.connect(owner).balanceOf(user0.address)
     );
     await plugin0
       .connect(user0)
       .depositFor(
         user0.address,
-        await BHONEY.connect(owner).balanceOf(user0.address)
+        await LP0.connect(owner).balanceOf(user0.address)
       );
   });
 
@@ -535,7 +531,7 @@ describe("berachain: berapaw testing 0", function () {
 
   it("Forward time by 1 days", async function () {
     console.log("******************************************************");
-    await network.provider.send("evm_increaseTime", [24 * 3600]);
+    await network.provider.send("evm_increaseTime", [14 * 24 * 3600]);
     await network.provider.send("evm_mine");
   });
 
@@ -544,6 +540,35 @@ describe("berachain: berapaw testing 0", function () {
     await voter.connect(owner).distro();
     await fees.distribute();
     await voter.distributeToBribes([plugin0.address]);
+  });
+
+  it("GaugeCardData, plugin0, user0", async function () {
+    console.log("******************************************************");
+    let res = await multicall.gaugeCardData(plugin0.address, user0.address);
+    console.log("INFORMATION");
+    console.log("Gauge: ", res.gauge);
+    console.log("Plugin: ", res.plugin);
+    console.log("Underlying: ", res.token);
+    console.log("Tokens in Underlying: ");
+    for (let i = 0; i < res.assetTokens.length; i++) {
+      console.log(" - ", res.assetTokens[i]);
+    }
+    console.log("Underlying Decimals: ", res.tokenDecimals);
+    console.log("Is Alive: ", res.isAlive);
+    console.log();
+    console.log("GLOBAL DATA");
+    console.log("Protocol: ", res.protocol);
+    console.log("Symbol: ", res.name);
+    console.log("Price OTOKEN: $", divDec(res.priceOTOKEN));
+    console.log("Reward Per token: ", divDec(res.rewardPerToken));
+    console.log("Reward Per token: $", divDec(res.rewardPerTokenUSD));
+    console.log("Total Supply: ", divDec(res.totalSupply));
+    console.log("Voting Weight: ", divDec(res.votingWeight), "%");
+    console.log();
+    console.log("ACCOUNT DATA");
+    console.log("Balance Underlying: ", divDec(res.accountTokenBalance));
+    console.log("Balance Deposited: ", divDec(res.accountStakedBalance));
+    console.log("Earned OTOKEN: ", divDec(res.accountEarnedOTOKEN));
   });
 
   it("BribeCardData, plugin0, user1 ", async function () {
@@ -649,5 +674,38 @@ describe("berachain: berapaw testing 0", function () {
     console.log("Balance Underlying: ", divDec(res.accountTokenBalance));
     console.log("Balance Deposited: ", divDec(res.accountStakedBalance));
     console.log("Earned OTOKEN: ", divDec(res.accountEarnedOTOKEN));
+  });
+
+  it("Test recoverERC20", async function () {
+    console.log("******************************************************");
+
+    await BASE.mint(plugin0.address, 1000);
+    console.log(
+      "BASE balance of plugin0: ",
+      divDec(await BASE.balanceOf(plugin0.address))
+    );
+    await expect(
+      plugin0
+        .connect(user0)
+        .recoverERC20(
+          user0.address,
+          BASE.address,
+          await BASE.balanceOf(plugin0.address)
+        )
+    ).to.be.reverted;
+    await expect(
+      plugin0.connect(owner).recoverERC20(owner.address, LP0.address, one)
+    ).to.be.revertedWith("BurrBearPlugin__InvalidToken");
+    await plugin0
+      .connect(owner)
+      .recoverERC20(
+        owner.address,
+        BASE.address,
+        await BASE.balanceOf(plugin0.address)
+      );
+    console.log(
+      "BASE balance of plugin0: ",
+      divDec(await BASE.balanceOf(plugin0.address))
+    );
   });
 });

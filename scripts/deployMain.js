@@ -26,10 +26,41 @@ const IBGT = "0xac03CABA51e17c86c921E1f6CBFBdC91F8BB2E6b";
 const OHM = "0x18878Df23e2a36f81e820e4b47b4A40576D3159C";
 const XKDK = "0xe8D7b965BA082835EA917F2B173Ff3E035B69eeB";
 const PLUG = "0x231A6BD8eB88Cfa42776B7Ac575CeCAf82bf1E21";
-const BRLY = "0x5C43a5fEf2b056934478373A53d1cb08030fd382";
+const BRLY = "0xaB7e0f3D69DE8061aa46D7C9964DbC11878468eB";
 const rUSD = "0x09D4214C03D01F49544C0448DBE3A27f768F2b34";
 const rUSDOT = "0x4A8B5283E053A8B118EaDc4981e8Ec8659995652";
 const PRG = "0xbf2E152f460090aCE91A456e3deE5ACf703f27aD";
+const BERAMO = "0x1F7210257FA157227D09449229a9266b0D581337";
+const LBGT = "0xBaadCC2962417C01Af99fb2B7C75706B9bd6Babe";
+const RAMEN = "0xb8B1Af593Dc37B33a2c87C8Db1c9051FC32858B7";
+const BITCOIN = "0x6B26f778bfae56CFb4Bf9b62c678d9D40e725227";
+const NECT = "0x1ce0a25d13ce4d52071ae7e02cf1f6606f4c79d3";
+const WGBERA = "0xd77552d3849ab4d8c3b189a9582d0ba4c1f4f912";
+const LOCKS = "0xb7E448E5677D212B8C8Da7D6312E8Afc49800466";
+const BREAD = "0x0003eEDFdd020bf60D10cf684ABAc7C4534B7eAd";
+const HENLO = "0xb2F776e9c1C926C4b2e54182Fac058dA9Af0B6A5";
+const HENLOCKED100M = "0x7Bdf98DdeEd209cFa26bD2352b470Ac8b5485EC5";
+const HENLOCKED330M = "0x37DD8850919EBdCA911C383211a70839A94b0539";
+const HENLOCKED420M = "0xF07Fa3ECE9741D408d643748Ff85710BEdEF25bA";
+const HENLOCKED690M = "0x8AB854dC0672d7A13A85399A56CB628FB22102d6";
+const HENLOCKED1B = "0xF0edfc3e122DB34773293E0E5b2C3A58492E7338";
+const brWETH = "0xDDCa6328c88e30aBB02436A9Cc1A4e229Cad44aC";
+const brWBTC = "0x335128d629a1247495087613e2ee7c2f1b3eb4c4";
+const briBGT = "0x02b4c0B62d71d975Fb36684668175AFAe19952D5";
+const brHENLO = "0xf7Ae4586563880323A077eb3A5dBefC79725f934";
+const briBERA = "0x3062cA8A7c8252779555bDd96EF91307CE057EbC";
+const brBREAD = "0xe4E1da04450Df39C2C484D7274F880BFa6b734C7";
+const br3BC = "0x35D6A3AdaD19c81db864C807160C73A2B3Cb3E35";
+const brNAV = "0x1199FD867D6F664A3E6FdA7b5299F25D194b6AA8";
+const brRAMEN = "0xA6d5d42E65Cd77AE2Fa03D62E1C3c61346976448";
+const brwgBERA = "0xe54BA5e87A2d9ee028E9c9448DD57aE72BDc7064";
+const brberaETH = "0xd70DbC661237851cB115e2cd89Fe1150B66AE9C4";
+const brYEET = "0x76d70D7Be520842bfEF0C6C8F23f60BD1a4640E5";
+const stLBGT = "0xFace73a169e2CA2934036C8Af9f464b5De9eF0ca";
+const PPAW = "0x03c86e21623f25Eca0eA544890c7603B9a33E1AC";
+const POLLEN = "0xC99e948E9D183848a6c4F5E6C1d225F02f171d79";
+const brUSDbr = "0xA77b7B69749eAdB00114AFb21c771453503A88FA";
+const brBERATARDIO = "0xF877EEb2f1f7ff84179242Ab16f532Cfc53fFBb5";
 
 // Beradrom Plugin Factory
 const BERADROME_PLUGIN_FACTORY = "0xf0b0f738Fed0656D66725bb1528B42050de64DCa";
@@ -60,6 +91,136 @@ const BERADROME_REWARDS_2 = [PRG];
 const BERADROME_SYMBOL_2 = "AB-KODIAK-rUSD-rUSDOT-500";
 const BERADROME_NAME_2 = "Beradrome AB-KODIAK-rUSD-rUSDOT-500";
 const BERADROME_PLUGIN_2 = "0x15b09BA2a72035d84d19B10951F0bF116114DC7C";
+
+// Beradrome AB-KODIAK-WBERA-BERAMO-10000
+// get from
+const BERADROME_TOKEN_3 = "0xf9845a03F7e6b06645A03a28b943C8A4B5fE7BCC";
+const BERADROME_TOKENS_3 = [WBERA, BERAMO];
+const BERADROME_REWARDS_3 = [BERAMO];
+const BERADROME_SYMBOL_3 = "AB-KODIAK-WBERA-BERAMO-10000";
+const BERADROME_NAME_3 = "Beradrome AB-KODIAK-WBERA-BERAMO-10000";
+const BERADROME_PLUGIN_3 = "0x9162DeF1900e74Ca75D72fE8a01D5cDb7eA0CdF1";
+
+// Beradrome LOCKS
+const BERADROME_TOKEN_4 = LOCKS;
+const BERADROME_TOKENS_4 = [LOCKS];
+const BERADROME_REWARDS_4 = [PRG];
+const BERADROME_SYMBOL_4 = "LOCKS";
+const BERADROME_NAME_4 = "Beradrome LOCKS";
+const BERADROME_PLUGIN_4 = "0x395bBE4Bc7DB06cc188FAC373adc4729391c6406";
+
+// Beradrome HENLOCKED100M
+const BERADROME_TOKEN_5 = HENLOCKED100M;
+const BERADROME_TOKENS_5 = [HENLOCKED100M];
+const BERADROME_REWARDS_5 = [HENLO];
+const BERADROME_SYMBOL_5 = "HENLOCKED100M";
+const BERADROME_NAME_5 = "Beradrome HENLOCKED100M";
+const BERADROME_PLUGIN_5 = "0x4d070f167eCCcb50BAa779614674151BEC9ae345";
+
+// Beradrome HENLOCKED330M
+const BERADROME_TOKEN_6 = HENLOCKED330M;
+const BERADROME_TOKENS_6 = [HENLOCKED330M];
+const BERADROME_REWARDS_6 = [HENLO];
+const BERADROME_SYMBOL_6 = "HENLOCKED330M";
+const BERADROME_NAME_6 = "Beradrome HENLOCKED330M";
+const BERADROME_PLUGIN_6 = "0xd7737fb01743A280928e919c8D2c13B9DbAAA389";
+
+// Beradrome HENLOCKED420M
+const BERADROME_TOKEN_7 = HENLOCKED420M;
+const BERADROME_TOKENS_7 = [HENLOCKED420M];
+const BERADROME_REWARDS_7 = [HENLO];
+const BERADROME_SYMBOL_7 = "HENLOCKED420M";
+const BERADROME_NAME_7 = "Beradrome HENLOCKED420M";
+const BERADROME_PLUGIN_7 = "0x6e35e5aead525B229A2B160aB0F2479AF291223c";
+
+// Beradrome HENLOCKED690M
+const BERADROME_TOKEN_8 = HENLOCKED690M;
+const BERADROME_TOKENS_8 = [HENLOCKED690M];
+const BERADROME_REWARDS_8 = [HENLO];
+const BERADROME_SYMBOL_8 = "HENLOCKED690M";
+const BERADROME_NAME_8 = "Beradrome HENLOCKED690M";
+const BERADROME_PLUGIN_8 = "0xCEc368c48De9C6Ccbcdd21fA3c84E63bc9Fa9D1b";
+
+// Beradrome HENLOCKED1B
+const BERADROME_TOKEN_9 = HENLOCKED1B;
+const BERADROME_TOKENS_9 = [HENLOCKED1B];
+const BERADROME_REWARDS_9 = [HENLO];
+const BERADROME_SYMBOL_9 = "HENLOCKED1B";
+const BERADROME_NAME_9 = "Beradrome HENLOCKED1B";
+const BERADROME_PLUGIN_9 = "0x74B4b6AefE2771114A993Db831DaaA6Bba438A9B";
+
+// Beradrome Kodiak BRLY-WBERA-V2
+// get from
+const BERADROME_TOKEN_10 = "0x9BE2467a28DFa5f685275784A7Cb8FD55ba9e350";
+const BERADROME_TOKENS_10 = [BRLY, WBERA];
+const BERADROME_REWARDS_10 = [BRLY];
+const BERADROME_SYMBOL_10 = "Kodiak BRLY-WBERA-V2";
+const BERADROME_NAME_10 = "Beradrome Kodiak BRLY-WBERA-V2";
+const BERADROME_PLUGIN_10 = "0x8a311685b396e5959ba24293A04893F27ae80132";
+
+// Beradrome stLBGT
+const BERADROME_TOKEN_11 = stLBGT;
+const BERADROME_TOKENS_11 = [stLBGT];
+const BERADROME_REWARDS_11 = [LBGT, PPAW];
+const BERADROME_SYMBOL_11 = "stLBGT";
+const BERADROME_NAME_11 = "Beradrome stLBGT";
+const BERADROME_PLUGIN_11 = "0xf0e04dEf2C751f17b3592ef10068F9F7E04f42e3";
+
+// Beradrome HENLOCKED100M
+const BERADROME_TOKEN_12 = HENLOCKED100M;
+const BERADROME_TOKENS_12 = [HENLOCKED100M];
+const BERADROME_REWARDS_12 = [HENLO];
+const BERADROME_SYMBOL_12 = "HENLOCKED100M";
+const BERADROME_NAME_12 = "Beradrome HENLOCKED100M";
+const BERADROME_PLUGIN_12 = "0x926Aa5F8Eb3193F853711806D3f7dF3dEba99aAf";
+
+// Beradrome HENLOCKED330M
+const BERADROME_TOKEN_13 = HENLOCKED330M;
+const BERADROME_TOKENS_13 = [HENLOCKED330M];
+const BERADROME_REWARDS_13 = [HENLO];
+const BERADROME_SYMBOL_13 = "HENLOCKED330M";
+const BERADROME_NAME_13 = "Beradrome HENLOCKED330M";
+const BERADROME_PLUGIN_13 = "0xB6dF86D016Bb026f7DfD55a6A0361eaB35ee2E7f";
+
+// Beradrome HENLOCKED420M
+const BERADROME_TOKEN_14 = HENLOCKED420M;
+const BERADROME_TOKENS_14 = [HENLOCKED420M];
+const BERADROME_REWARDS_14 = [HENLO];
+const BERADROME_SYMBOL_14 = "HENLOCKED420M";
+const BERADROME_NAME_14 = "Beradrome HENLOCKED420M";
+const BERADROME_PLUGIN_14 = "0xe909901b40225959972554B0CeBe460b4213d194";
+
+// Beradrome HENLOCKED690M
+const BERADROME_TOKEN_15 = HENLOCKED690M;
+const BERADROME_TOKENS_15 = [HENLOCKED690M];
+const BERADROME_REWARDS_15 = [HENLO];
+const BERADROME_SYMBOL_15 = "HENLOCKED690M";
+const BERADROME_NAME_15 = "Beradrome HENLOCKED690M";
+const BERADROME_PLUGIN_15 = "0xde67e60209A42D62BB1EBa4878eFC4b3B367c172";
+
+// Beradrome HENLOCKED1B
+const BERADROME_TOKEN_16 = HENLOCKED1B;
+const BERADROME_TOKENS_16 = [HENLOCKED1B];
+const BERADROME_REWARDS_16 = [HENLO];
+const BERADROME_SYMBOL_16 = "HENLOCKED1B";
+const BERADROME_NAME_16 = "Beradrome HENLOCKED1B";
+const BERADROME_PLUGIN_16 = "0x534B96f6f0B134A9fBb0eAa1881546dfb327B632";
+
+// Beradrome Kodiak WBERA-LOCKS-V2
+const BERADROME_TOKEN_17 = "0x01cbf8bf3da700a1196fdce3f4b5b441f1a013e5";
+const BERADROME_TOKENS_17 = [WBERA, LOCKS];
+const BERADROME_REWARDS_17 = [PRG];
+const BERADROME_SYMBOL_17 = "Kodiak WBERA-LOCKS-V2";
+const BERADROME_NAME_17 = "Beradrome Kodiak WBERA-LOCKS-V2";
+const BERADROME_PLUGIN_17 = "0x74A38Bfeedd95f65cbBF72eEDf01EAC77778bcF9";
+
+// Beradrome AB-KODIAK-BERAMO-WBERA-10000
+const BERADROME_TOKEN_18 = "0xE5F657557f2d0Bc2C45d2086Dc05C054E1Fe4985";
+const BERADROME_TOKENS_18 = [BERAMO, WBERA];
+const BERADROME_REWARDS_18 = [BERAMO];
+const BERADROME_SYMBOL_18 = "AB-KODIAK-BERAMO-WBERA-10000";
+const BERADROME_NAME_18 = "Beradrome AB-KODIAK-BERAMO-WBERA-10000";
+const BERADROME_PLUGIN_18 = "0xb9794df80797469Db76ffB87C5Aac2Ed5dc912a4";
 
 // Berachain Plugin Factory
 const BERACHAIN_PLUGIN_FACTORY = "0x3E5b9a5D7D73D8781c4782910523b942dB831ef8";
@@ -103,6 +264,44 @@ const BERACHAIN_TOKENS_4 = [BYUSD, HONEY];
 const BERACHAIN_SYMBOL_4 = "BeraSwap BYUSD-HONEY-STABLE";
 const BERACHAIN_NAME_4 = "Beradrome BeraSwap BYUSD-HONEY-STABLE";
 const BERACHAIN_PLUGIN_4 = "0x968eC53B7bBC6284333719Cd23A653fD9cD4eD86";
+
+// BeraPaw Plugin Factory
+const BERAPAW_PLUGIN_FACTORY = "0x5Fd179B11359681e1bd39B8cb0bA623834613a64";
+
+// BeraPaw BeraSwap 50WBERA-50HONEY-WEIGHTED
+const BERAPAW_TOKEN_0 = "0x2c4a603A2aA5596287A06886862dc29d56DbC354";
+const BERAPAW_TOKENS_0 = [WBERA, HONEY];
+const BERAPAW_SYMBOL_0 = "BeraSwap 50WBERA-50HONEY-WEIGHTED";
+const BERAPAW_NAME_0 = "Beradrome BeraPaw BeraSwap 50WBERA-50HONEY-WEIGHTED";
+const BERAPAW_PLUGIN_0 = "0xEEb20cf591B2246a042Ff9eB8d734c38532BE46c";
+
+// BeraPaw BeraSwap 50WETH-50WBERA-WEIGHTED
+const BERAPAW_TOKEN_1 = "0xDd70A5eF7d8CfE5C5134b5f9874b09Fb5Ce812b4";
+const BERAPAW_TOKENS_1 = [WETH, WBERA];
+const BERAPAW_SYMBOL_1 = "BeraSwap 50WETH-50WBERA-WEIGHTED";
+const BERAPAW_NAME_1 = "Beradrome BeraPaw BeraSwap 50WETH-50WBERA-WEIGHTED";
+const BERAPAW_PLUGIN_1 = "0x29017de16D6F1F257E731A67E8C780616e655681";
+
+// BeraPaw BeraSwap 50WBTC-50WBERA-WEIGHTED
+const BERAPAW_TOKEN_2 = "0x38fdD999Fe8783037dB1bBFE465759e312f2d809";
+const BERAPAW_TOKENS_2 = [WBTC, WBERA];
+const BERAPAW_SYMBOL_2 = "BeraSwap 50WBTC-50WBERA-WEIGHTED";
+const BERAPAW_NAME_2 = "Beradrome BeraPaw BeraSwap 50WBTC-50WBERA-WEIGHTED";
+const BERAPAW_PLUGIN_2 = "0x28d6aD720C7e2002Fa8a4025CBeA220991605079";
+
+// BeraPaw BeraSwap USDCe-HONEY-STABLE
+const BERAPAW_TOKEN_3 = "0xF961a8f6d8c69E7321e78d254ecAfBcc3A637621";
+const BERAPAW_TOKENS_3 = [USDCe, HONEY];
+const BERAPAW_SYMBOL_3 = "BeraSwap USDCe-HONEY-STABLE";
+const BERAPAW_NAME_3 = "Beradrome BeraPaw BeraSwap USDCe-HONEY-STABLE";
+const BERAPAW_PLUGIN_3 = "0xbf65AB8E96c9a56e81E252554e41E6752118067D";
+
+// BeraPaw BeraSwap BYUSD-HONEY-STABLE
+const BERAPAW_TOKEN_4 = "0xde04c469ad658163e2a5e860a03a86b52f6fa8c8";
+const BERAPAW_TOKENS_4 = [BYUSD, HONEY];
+const BERAPAW_SYMBOL_4 = "BeraSwap BYUSD-HONEY-STABLE";
+const BERAPAW_NAME_4 = "Beradrome BeraPaw BeraSwap BYUSD-HONEY-STABLE";
+const BERAPAW_PLUGIN_4 = "0x8Dc5C77ffF4Dd77AA50D6F5f8C1DBdfdacA05e12";
 
 // Infrared Plugin Factory
 const INFRARED_PLUGIN_FACTORY = "0x1901f6371aECC135FEdCaDdCF15647C13EAc6DF0";
@@ -161,12 +360,133 @@ const INFRARED_SYMBOL_5 = "iBGT";
 const INFRARED_NAME_5 = "Beradrome Infrared iBGT";
 const INFRARED_PLUGIN_5 = "0x0AB1f3949cebB19FDebC5934d1822EA9ca24aE6F";
 
-// BeraPaw Berps bHONEY
-const BERAPAW_TOKEN_0 = "";
-const BERAPAW_TOKENS_0 = [HONEY];
-const BERAPAW_SYMBOL_0 = "Berps bHONEY";
-const BERAPAW_NAME_0 = "Beradrome BeraPaw Berps bHONEY";
-const BERAPAW_PLUGIN_0 = "";
+// Infrared Kodiak brWETH-HONEY-V2
+const INFRARED_VAULT_6 = "0x6124F8aB58Ea91C782F3eb7A971F0f8c8D3D7948";
+const INFRARED_TOKENS_6 = [brWETH, HONEY];
+const INFRARED_REWARDS_6 = [IBGT];
+const INFRARED_SYMBOL_6 = "brWETH-HONEY-V2";
+const INFRARED_NAME_6 = "Beradrome Infrared Kodiak brWETH-HONEY-V2";
+const INFRARED_PLUGIN_6 = "0x8C3B6d5dF8fEB0D5E7c995FDBD9fB08ca29F38Af";
+
+// Infrared Arbera brWBTC-WBERA-V2
+const INFRARED_VAULT_7 = "0x55f94832E29DbFF2e02e99A333DE98E193cA4A1E";
+const INFRARED_TOKENS_7 = [brWBTC, WBERA];
+const INFRARED_REWARDS_7 = [IBGT];
+const INFRARED_SYMBOL_7 = "Arbera brWBTC-WBERA-V2";
+const INFRARED_NAME_7 = "Beradrome Infrared Arbera brWBTC-WBERA-V2";
+const INFRARED_PLUGIN_7 = "0xeDDC88234A4e3E940c360cF84797BF0A02300cc5";
+
+// Infrared Arbera brWETH-WBERA-V2
+const INFRARED_VAULT_8 = "0x5A8351e45433Cc5cdCA495F65b25B02260a0662f";
+const INFRARED_TOKENS_8 = [brWETH, WBERA];
+const INFRARED_REWARDS_8 = [IBGT];
+const INFRARED_SYMBOL_8 = "Arbera brWETH-WBERA-V2";
+const INFRARED_NAME_8 = "Beradrome Infrared Arbera brWETH-WBERA-V2";
+const INFRARED_PLUGIN_8 = "0xd0Ed2367e61CdE493830aDdE4db4A45753a5b1dC";
+
+// Infrared Arbera briBGT-HONEY-V2
+const INFRARED_VAULT_9 = "0x279479815cD4b4D713a25a2062068a9f97d3fEE1";
+const INFRARED_TOKENS_9 = [briBGT, HONEY];
+const INFRARED_REWARDS_9 = [IBGT];
+const INFRARED_SYMBOL_9 = "Arbera briBGT-HONEY-V2";
+const INFRARED_NAME_9 = "Beradrome Infrared Arbera briBGT-HONEY-V2";
+const INFRARED_PLUGIN_9 = "0xDF1F4b4DF8615A0F677DEFE74Bc172174536ef52";
+
+// Infrared Arbera brHENLO-HONEY-V2
+const INFRARED_VAULT_10 = "0x39C48316F6C1F3D10d24F3eF5Ec09fF981227326";
+const INFRARED_TOKENS_10 = [brHENLO, HONEY];
+const INFRARED_REWARDS_10 = [IBGT];
+const INFRARED_SYMBOL_10 = "Arbera brHENLO-HONEY-V2";
+const INFRARED_NAME_10 = "Beradrome Infrared Arbera brHENLO-HONEY-V2";
+const INFRARED_PLUGIN_10 = "0xa16f765C06A94bB68FcDE4334e0aF46a96107547";
+
+// Infrared Arbera briBERA-HONEY-V2
+const INFRARED_VAULT_11 = "0x2D3e186048e11dAb2a7FD05CaC369aD2e374309c";
+const INFRARED_TOKENS_11 = [briBERA, HONEY];
+const INFRARED_REWARDS_11 = [IBGT];
+const INFRARED_SYMBOL_11 = "Arbera briBERA-HONEY-V2";
+const INFRARED_NAME_11 = "Beradrome Infrared Arbera briBERA-HONEY-V2";
+const INFRARED_PLUGIN_11 = "0x29FA6c7b23fE69162e7A5D3288190bB67d1A3Cb8";
+
+// Infrared Arbera brBREAD-HONEY-V2
+const INFRARED_VAULT_12 = "0x295272AD66A1D4014740C51E23ea3c0B65C57ffB";
+const INFRARED_TOKENS_12 = [brBREAD, HONEY];
+const INFRARED_REWARDS_12 = [IBGT];
+const INFRARED_SYMBOL_12 = "Arbera brBREAD-HONEY-V2";
+const INFRARED_NAME_12 = "Beradrome Infrared Arbera brBREAD-HONEY-V2";
+const INFRARED_PLUGIN_12 = "0xbDDBEAbFCcA0a62b49aDDDb180D0CC4dea36f6fC";
+
+// Infrared Arbera br3BC-HONEY-V2
+const INFRARED_VAULT_13 = "0x9324E92dB831b4c4f6d5b4Aaba959288288E82f9";
+const INFRARED_TOKENS_13 = [br3BC, HONEY];
+const INFRARED_REWARDS_13 = [IBGT];
+const INFRARED_SYMBOL_13 = "Arbera br3BC-HONEY-V2";
+const INFRARED_NAME_13 = "Beradrome Infrared Arbera br3BC-HONEY-V2";
+const INFRARED_PLUGIN_13 = "0xbB5ccd574AFe680a52f70dB8e6986E3Acc6E8185";
+
+// Infrared Arbera brNAV-WBERA-V2
+const INFRARED_VAULT_14 = "0x3803f8E21e8D6912Dd88eB1B2a9b7080aAA835Bd";
+const INFRARED_TOKENS_14 = [brNAV, WBERA];
+const INFRARED_REWARDS_14 = [IBGT];
+const INFRARED_SYMBOL_14 = "Arbera brNAV-WBERA-V2";
+const INFRARED_NAME_14 = "Beradrome Infrared Arbera brNAV-WBERA-V2";
+const INFRARED_PLUGIN_14 = "0xc44Af1e4c4339EC7d100eDA0aF28D9815057b68b";
+
+// Infrared Arbera brRAMEN-HONEY-V2
+const INFRARED_VAULT_15 = "0xD94e20067f2b7E61De1554A02C728FF70010B717";
+const INFRARED_TOKENS_15 = [brRAMEN, HONEY];
+const INFRARED_REWARDS_15 = [IBGT];
+const INFRARED_SYMBOL_15 = "Arbera brRAMEN-HONEY-V2";
+const INFRARED_NAME_15 = "Beradrome Infrared Arbera brRAMEN-HONEY-V2";
+const INFRARED_PLUGIN_15 = "0xefd9d044576962C57feb950B7f14890C24f6B18c";
+
+// Infrared Arbera brwgBERA-WBERA-V2
+const INFRARED_VAULT_16 = "0x49fcF736dD1194533eC0E5d6f8e7167d477Ed7fe";
+const INFRARED_TOKENS_16 = [brwgBERA, WBERA];
+const INFRARED_REWARDS_16 = [IBGT];
+const INFRARED_SYMBOL_16 = "Arbera brwgBERA-WBERA-V2";
+const INFRARED_NAME_16 = "Beradrome Infrared Arbera brwgBERA-WBERA-V2";
+const INFRARED_PLUGIN_16 = "0xD17Ea394815d98B6760b177A05239e64296f33DB";
+
+// Infrared Arbera brberaETH-WBERA-V2
+const INFRARED_VAULT_17 = "0x6dB7c4C03E2244B2751527FbA06F58b0B5E7B417";
+const INFRARED_TOKENS_17 = [brberaETH, WBERA];
+const INFRARED_REWARDS_17 = [IBGT];
+const INFRARED_SYMBOL_17 = "Arbera brberaETH-WBERA-V2";
+const INFRARED_NAME_17 = "Beradrome Infrared Arbera brberaETH-WBERA-V2";
+const INFRARED_PLUGIN_17 = "0x42e4c96C88e8FB9d57fEf775AdADECd7Ba434c2A";
+
+// Infrared Arbera brYEET-HONEY-V2
+const INFRARED_VAULT_18 = "0xD1109c3269B46Aa406398361D727225421EE0F28";
+const INFRARED_TOKENS_18 = [brYEET, HONEY];
+const INFRARED_REWARDS_18 = [IBGT];
+const INFRARED_SYMBOL_18 = "Arbera brYEET-HONEY-V2";
+const INFRARED_NAME_18 = "Beradrome Infrared Arbera brYEET-HONEY-V2";
+const INFRARED_PLUGIN_18 = "0x2D9AEDee285D6e3eDD082162ca83ab28E4382891";
+
+// BurrBear Plugin Factory
+const BURRBEAR_PLUGIN_FACTORY = "0x37bDB41e497C5b93C9D0652B52cF9979B1c8751e";
+
+// BurrBear NECT/USDC/HONEY
+const BURRBEAR_PID_0 = "0";
+const BURRBEAR_TOKENS_0 = [NECT, USDCe, HONEY];
+const BURRBEAR_SYMBOL_0 = "NECT/USDC/HONEY";
+const BURRBEAR_NAME_0 = "Beradrome BurrBear NECT/USDC/HONEY";
+const BURRBEAR_PLUGIN_0 = "0xDC296fA14deeD5762c7bcb38afac7c958839C019";
+
+// BurrBear WBERA-wgBERA
+const BURRBEAR_PID_1 = "1";
+const BURRBEAR_TOKENS_1 = [WBERA, WGBERA];
+const BURRBEAR_SYMBOL_1 = "WBERA-wgBERA";
+const BURRBEAR_NAME_1 = "Beradrome BurrBear WBERA-wgBERA";
+const BURRBEAR_PLUGIN_1 = "0x991214424e93331434b4BD2DAB2E6A2a6408E30D";
+
+// BurrBear NECT-wgBERA
+const BURRBEAR_PID_2 = "2";
+const BURRBEAR_TOKENS_2 = [NECT, WGBERA];
+const BURRBEAR_SYMBOL_2 = "50NECT-50wgBERA";
+const BURRBEAR_NAME_2 = "Beradrome BurrBear 50NECT-50wgBERA";
+const BURRBEAR_PLUGIN_2 = "0x2946c4aA82c14bA9355fF2D93645586690c1B579";
 
 // Trifecta Plugin Factory
 const TRIFECTA_PLUGIN_FACTORY = "0x5CEf8C04AD128Cf25142111f868ab09D6eA25f6A";
@@ -182,6 +502,39 @@ const TRIFECTA_NAME_0 =
   "Beradrome Liquidity Trifecta Kodiak Island WBERA-YEET-1%";
 const TRIFECTA_PLUGIN_0 = "0x26aE252B4607826f03b8e701a792346864bec758";
 
+// Trifecta Kodiak WBERA-RAMEN
+const TRIFECTA_TOKEN_1 = "0x93A913351CaE2D8C82C4b85f699726947eB76d32";
+const TRIFECTA_FARM_1 = "0x6F22221dC5845A25597BC96629D92F2b4979D943";
+const TRIFECTA_TOKEN0_1 = WBERA;
+const TRIFECTA_TOKEN1_1 = RAMEN;
+const TRIFECTA_OTHER_REWARDS_1 = [RAMEN];
+const TRIFECTA_SYMBOL_1 = "Kodiak Island WBERA-RAMEN-1%";
+const TRIFECTA_NAME_1 =
+  "Beradrome Liquidity Trifecta Kodiak Island WBERA-RAMEN-1%";
+const TRIFECTA_PLUGIN_1 = "0x75b3C55fc3C0a2f874eEeC2C056fA336FB78fECa";
+
+// Trifecta Kodiak BERA-BITCOIN
+const TRIFECTA_TOKEN_2 = "0x2CaFe99dB26Cf86Ae8587F5934830d25aD5C3Cb3";
+const TRIFECTA_FARM_2 = "0xB4a1519956ceE0798EAac3De08F1531F58a0C950";
+const TRIFECTA_TOKEN0_2 = WBERA;
+const TRIFECTA_TOKEN1_2 = BITCOIN;
+const TRIFECTA_OTHER_REWARDS_2 = [BITCOIN];
+const TRIFECTA_SYMBOL_2 = "Kodiak Island WBERA-BITCOIN-1%";
+const TRIFECTA_NAME_2 =
+  "Beradrome Liquidity Trifecta Kodiak Island WBERA-BITCOIN-1%";
+const TRIFECTA_PLUGIN_2 = "0xfB58F9fab6aa614001304d6296F46069BDcac355";
+
+// Trifecta Kodiak Island BREAD-OHM
+const TRIFECTA_TOKEN_3 = "0xd9a747880393f7c33cEf1aea36909b36d421F7E5";
+const TRIFECTA_FARM_3 = "0xc080B212cAAA1eBBCcDe1434D6EFe6359eDa2084";
+const TRIFECTA_TOKEN0_3 = BREAD;
+const TRIFECTA_TOKEN1_3 = OHM;
+const TRIFECTA_OTHER_REWARDS_3 = [WBERA, YEET, OHM];
+const TRIFECTA_SYMBOL_3 = "Kodiak Island BREAD-OHM-0.3%";
+const TRIFECTA_NAME_3 =
+  "Beradrome Liquidity Trifecta Kodiak Island BREAD-OHM-0.3%";
+const TRIFECTA_PLUGIN_3 = "0x59c347Ff753eED87f610Fc4163d8A83b8a6e438F";
+
 // Infrared Trifecta Plugin Factory
 const INFRARED_TRIFECTA_PLUGIN_FACTORY =
   "0xE31E90ceE704A24ad84caBa1CA31B827fA05FE3d";
@@ -195,6 +548,41 @@ const INFRARED_TRIFECTA_NAME_0 =
   "Beradrome Infrared Trifecta Kodiak Island OHM-HONEY-0.3%";
 const INFRARED_TRIFECTA_PLUGIN_0 = "0x125bd220ac62DBE312D4752FFB57551E9b3c1848";
 
+const INFRARED_TRIFECTA_VAULT_1 = "0xacB6fa1BE2B235474Ac5B0c175b2A16189D4D103";
+const INFRARED_TRIFECTA_TOKENS_1 = [WBERA, POLLEN];
+const INFRARED_TRIFECTA_REWARDS_1 = [POLLEN, NECT];
+const INFRARED_TRIFECTA_SYMBOL_1 = "Kodiak Island WBERA-POLLEN-1%";
+const INFRARED_TRIFECTA_NAME_1 =
+  "Beradrome Infrared Trifecta Kodiak Island WBERA-POLLEN-1%";
+const INFRARED_TRIFECTA_PLUGIN_1 = "0xd4e1b8979b52Aba704881336a0359DFB61caAf44";
+
+// Infrared Trifecta Arbera brBERATARDIO-HONEY-V2
+const INFRARED_TRIFECTA_VAULT_2 = "0x8b2dED0509749Db9D42A7812D79a317E2a278629";
+const INFRARED_TRIFECTA_TOKENS_2 = [brBERATARDIO, HONEY];
+const INFRARED_TRIFECTA_REWARDS_2 = [brBERATARDIO];
+const INFRARED_TRIFECTA_SYMBOL_2 = "Arbera brBERATARDIO-HONEY-V2";
+const INFRARED_TRIFECTA_NAME_2 =
+  "Beradrome Infrared Trifecta Arbera brBERATARDIO-HONEY-V2";
+const INFRARED_TRIFECTA_PLUGIN_2 = "0xcf976b8b0e7d4e8da20957bF4a847bbE449CD7B6";
+
+// Infrared Trifecta Arbera brWETH-WBERA-V2
+const INFRARED_TRIFECTA_VAULT_3 = "0x830eD09fe11C26C4df9217837445A0f78aB93D5E";
+const INFRARED_TRIFECTA_TOKENS_3 = [brWETH, WBERA];
+const INFRARED_TRIFECTA_REWARDS_3 = [brWETH];
+const INFRARED_TRIFECTA_SYMBOL_3 = "Arbera brWETH-WBERA-V2";
+const INFRARED_TRIFECTA_NAME_3 =
+  "Beradrome Infrared Trifecta Arbera brWETH-WBERA-V2";
+const INFRARED_TRIFECTA_PLUGIN_3 = "0xcf04280c46C0F42EE576dF83fA2f1892d24fAE4b";
+
+// Infrared Trifecta Arbera brUSDbr-HONEY-V2
+const INFRARED_TRIFECTA_VAULT_4 = "0x0247F04EC90Cf201082A16f622137884098A61c8";
+const INFRARED_TRIFECTA_TOKENS_4 = [brUSDbr, HONEY];
+const INFRARED_TRIFECTA_REWARDS_4 = [brUSDbr];
+const INFRARED_TRIFECTA_SYMBOL_4 = "Arbera brUSDbr-HONEY-V2";
+const INFRARED_TRIFECTA_NAME_4 =
+  "Beradrome Infrared Trifecta Arbera brUSDbr-HONEY-V2";
+const INFRARED_TRIFECTA_PLUGIN_4 = "0xFA8C7D92Ac693556AEA533578E31488166f89577";
+
 // Bullas BULL iSH
 const BULLAS_PLUGIN = "0xE259A689D13139F413eE693BE27181192319a629";
 
@@ -206,6 +594,7 @@ let OTOKENFactory, VTOKENFactory, feesFactory, rewarderFactory;
 let TOKEN, OTOKEN, VTOKEN, fees, rewarder, governor;
 let voter, minter, gaugeFactory, bribeFactory;
 let multicall, controller, trifectaMulticall;
+let helper;
 
 let beradromePlugin;
 let beradromePluginFactory;
@@ -216,11 +605,14 @@ let berachainPluginFactory;
 let infraredPlugin;
 let infraredPluginFactory;
 
-let trifectaPlugin;
-let trifectaPluginFactory;
-
 let berapawPlugin;
 let berapawPluginFactory;
+
+let burrBearPlugin;
+let burrBearPluginFactory;
+
+let trifectaPlugin;
+let trifectaPluginFactory;
 
 let infraredTrifectaPlugin;
 let infraredTrifectaPluginFactory;
@@ -287,7 +679,7 @@ async function getContracts() {
 
   multicall = await ethers.getContractAt(
     "contracts/Multicall.sol:Multicall",
-    "0x6DE64633c9a5beCDde6c5Dc27dfF308F05F56665"
+    "0xDAd4AC347c08e05365f10Fd9B4CCD137bA18a39D"
   );
   trifectaMulticall = await ethers.getContractAt(
     "contracts/TrifectaMulticall.sol:TrifectaMulticall",
@@ -296,6 +688,10 @@ async function getContracts() {
   controller = await ethers.getContractAt(
     "contracts/Controller.sol:Controller",
     "0x65e3249EccD38aD841345dA5beBBebE3a73a596C"
+  );
+  helper = await ethers.getContractAt(
+    "contracts/BeradromeHelper.sol:BeradromeHelper",
+    "0x05e970Cf64b44456e019bAaA63361864D55d900E"
   );
 
   beradromePluginFactory = await ethers.getContractAt(
@@ -328,15 +724,25 @@ async function getContracts() {
     INFRARED_PLUGIN_0
   );
 
-  // berapawPluginFactory = await ethers.getContractAt(
-  //   "contracts/plugins/berachain/BeraPawPluginFactory.sol:BeraPawPluginFactory",
-  //   ""
-  // );
+  berapawPluginFactory = await ethers.getContractAt(
+    "contracts/plugins/berachain/BeraPawPluginFactory.sol:BeraPawPluginFactory",
+    BERAPAW_PLUGIN_FACTORY
+  );
 
-  // berapawPlugin = await ethers.getContractAt(
-  //   "contracts/plugins/berachain/BeraPawPluginFactory.sol:BeraPawPlugin",
-  //   BERAPAW_PLUGIN_0
-  // );
+  berapawPlugin = await ethers.getContractAt(
+    "contracts/plugins/berachain/BeraPawPluginFactory.sol:BeraPawPlugin",
+    BERAPAW_PLUGIN_0
+  );
+
+  burrBearPluginFactory = await ethers.getContractAt(
+    "contracts/plugins/berachain/BurrBearPluginFactory.sol:BurrBearPluginFactory",
+    BURRBEAR_PLUGIN_FACTORY
+  );
+
+  burrBearPlugin = await ethers.getContractAt(
+    "contracts/plugins/berachain/BurrBearPluginFactory.sol:BurrBearPlugin",
+    BURRBEAR_PLUGIN_0
+  );
 
   trifectaPluginFactory = await ethers.getContractAt(
     "contracts/plugins/berachain/TrifectaPluginFactory.sol:TrifectaPluginFactory",
@@ -825,6 +1231,15 @@ async function verifyBribe(bribeAddress) {
   console.log("Bribe Verified");
 }
 
+async function verifyVaultToken(vaultTokenAddress) {
+  console.log("Starting VaultToken Verification");
+  await hre.run("verify:verify", {
+    address: vaultTokenAddress,
+    contract: "contracts/VTOKENFactory.sol:VaultToken",
+  });
+  console.log("VaultToken Verified");
+}
+
 async function deployBerachainPluginFactory() {
   console.log("Starting BerachainPluginFactory Deployment");
   const berachainPluginFactoryArtifact = await ethers.getContractFactory(
@@ -919,11 +1334,11 @@ async function verifyInfraredPluginFactory() {
 async function deployInfraredPlugin() {
   console.log("Starting InfraredPlugin Deployment");
   await infraredPluginFactory.createPlugin(
-    INFRARED_VAULT_5,
-    INFRARED_TOKENS_5,
-    INFRARED_REWARDS_5,
-    INFRARED_SYMBOL_5,
-    INFRARED_NAME_5,
+    INFRARED_VAULT_18,
+    INFRARED_TOKENS_18,
+    INFRARED_REWARDS_18,
+    INFRARED_SYMBOL_18,
+    INFRARED_NAME_18,
     { gasPrice: ethers.gasPrice }
   );
   await sleep(10000);
@@ -984,13 +1399,13 @@ async function verifyTrifectaPluginFactory() {
 async function deployTrifectaPlugin() {
   console.log("Starting TrifectaPlugin Deployment");
   await trifectaPluginFactory.createPlugin(
-    TRIFECTA_TOKEN_0,
-    TRIFECTA_FARM_0,
-    TRIFECTA_TOKEN0_0,
-    TRIFECTA_TOKEN1_0,
-    TRIFECTA_OTHER_REWARDS_0,
-    TRIFECTA_SYMBOL_0,
-    TRIFECTA_NAME_0
+    TRIFECTA_TOKEN_3,
+    TRIFECTA_FARM_3,
+    TRIFECTA_TOKEN0_3,
+    TRIFECTA_TOKEN1_3,
+    TRIFECTA_OTHER_REWARDS_3,
+    TRIFECTA_SYMBOL_3,
+    TRIFECTA_NAME_3
   );
   await sleep(10000);
   console.log(
@@ -1049,10 +1464,10 @@ async function verifyBeraPawPluginFactory() {
 async function deployBeraPawPlugin() {
   console.log("Starting BeraPawPlugin Deployment");
   await berapawPluginFactory.createPlugin(
-    BERAPAW_TOKEN_0,
-    BERAPAW_TOKENS_0,
-    BERAPAW_SYMBOL_0,
-    BERAPAW_NAME_0,
+    BERAPAW_TOKEN_4,
+    BERAPAW_TOKENS_4,
+    BERAPAW_SYMBOL_4,
+    BERAPAW_NAME_4,
     { gasPrice: ethers.gasPrice }
   );
   await sleep(10000);
@@ -1074,8 +1489,8 @@ async function verifyBeraPawPlugin() {
       BERAPAW_TOKENS_0,
       [LBGT],
       VAULT_FACTORY,
-      "0xc5cb3459723b828b3974f7e58899249c2be3b33d",
-      BERAPAW_SYMBOL_0,
+      "0xC2BaA8443cDA8EBE51a640905A8E6bc4e1f9872c",
+      "BeraPaw",
       BERAPAW_SYMBOL_0,
       BERAPAW_NAME_0,
     ],
@@ -1113,11 +1528,11 @@ async function verifyBeradromePluginFactory() {
 async function deployBeradromePlugin() {
   console.log("Starting BeradromePlugin Deployment");
   await beradromePluginFactory.createPlugin(
-    BERADROME_TOKEN_2,
-    BERADROME_TOKENS_2,
-    BERADROME_REWARDS_2,
-    BERADROME_SYMBOL_2,
-    BERADROME_NAME_2,
+    BERADROME_TOKEN_18,
+    BERADROME_TOKENS_18,
+    BERADROME_REWARDS_18,
+    BERADROME_SYMBOL_18,
+    BERADROME_NAME_18,
     { gasPrice: ethers.gasPrice }
   );
   await sleep(10000);
@@ -1178,11 +1593,11 @@ async function verifyInfraredTrifectaPluginFactory() {
 async function deployInfraredTrifectaPlugin() {
   console.log("Starting InfraredTrifectaPlugin Deployment");
   await infraredTrifectaPluginFactory.createPlugin(
-    INFRARED_TRIFECTA_VAULT_0,
-    INFRARED_TRIFECTA_TOKENS_0,
-    INFRARED_TRIFECTA_REWARDS_0,
-    INFRARED_TRIFECTA_SYMBOL_0,
-    INFRARED_TRIFECTA_NAME_0,
+    INFRARED_TRIFECTA_VAULT_4,
+    INFRARED_TRIFECTA_TOKENS_4,
+    INFRARED_TRIFECTA_REWARDS_4,
+    INFRARED_TRIFECTA_SYMBOL_4,
+    INFRARED_TRIFECTA_NAME_4,
     { gasPrice: ethers.gasPrice }
   );
   await sleep(10000);
@@ -1211,6 +1626,89 @@ async function verifyInfraredTrifectaPlugin() {
     ],
   });
   console.log("InfraredTrifectaPlugin Verified");
+}
+
+async function deployBurrBearPluginFactory() {
+  console.log("Starting BurrBearPluginFactory Deployment");
+  const burrBearPluginFactoryArtifact = await ethers.getContractFactory(
+    "BurrBearPluginFactory"
+  );
+  const burrBearPluginFactoryContract =
+    await burrBearPluginFactoryArtifact.deploy(voter.address, {
+      gasPrice: ethers.gasPrice,
+    });
+  burrBearPluginFactory = await burrBearPluginFactoryContract.deployed();
+  console.log(
+    "BurrBearPluginFactory Deployed at:",
+    burrBearPluginFactory.address
+  );
+}
+
+async function verifyBurrBearPluginFactory() {
+  console.log("Starting BurrBearPluginFactory Verification");
+  await hre.run("verify:verify", {
+    address: burrBearPluginFactory.address,
+    contract:
+      "contracts/plugins/berachain/BurrBearPluginFactory.sol:BurrBearPluginFactory",
+    constructorArguments: [voter.address],
+  });
+  console.log("BurrBearPluginFactory Verified");
+}
+
+async function deployBurrBearPlugin() {
+  console.log("Starting BurrBearPlugin Deployment");
+  await burrBearPluginFactory.createPlugin(
+    BURRBEAR_PID_2,
+    BURRBEAR_TOKENS_2,
+    BURRBEAR_SYMBOL_2,
+    BURRBEAR_NAME_2,
+    { gasPrice: ethers.gasPrice }
+  );
+  await sleep(10000);
+  console.log(
+    "BurrBearPlugin Deployed at:",
+    await burrBearPluginFactory.last_plugin()
+  );
+}
+
+async function verifyBurrBearPlugin() {
+  console.log("Starting BurrBearPlugin Verification");
+  await hre.run("verify:verify", {
+    address: burrBearPlugin.address,
+    contract:
+      "contracts/plugins/berachain/BurrBearPluginFactory.sol:BurrBearPlugin",
+    constructorArguments: [
+      "0xD10E65A5F8cA6f835F2B1832e37cF150fb955f23",
+      voter.address,
+      BURRBEAR_TOKENS_0,
+      [WBERA],
+      VAULT_FACTORY,
+      BURRBEAR_PID_0,
+      "BurrBear",
+      BURRBEAR_SYMBOL_0,
+      BURRBEAR_NAME_0,
+    ],
+  });
+  console.log("BurrBearPlugin Verified");
+}
+
+async function deployBeradromeHelper() {
+  console.log("Starting BeradromeHelper Deployment");
+  const helperArtifact = await ethers.getContractFactory("BeradromeHelper");
+  const helperContract = await helperArtifact.deploy({
+    gasPrice: ethers.gasPrice,
+  });
+  helper = await helperContract.deployed();
+  console.log("BeradromeHelper Deployed at:", helper.address);
+}
+
+async function verifyBeradromeHelper() {
+  console.log("Starting BeradromeHelper Verification");
+  await hre.run("verify:verify", {
+    address: helper.address,
+    contract: "contracts/BeradromeHelper.sol:BeradromeHelper",
+  });
+  console.log("BeradromeHelper Verified");
 }
 
 async function main() {
@@ -1378,6 +1876,24 @@ async function main() {
   // console.log("BeraPawPlugin Deployed and Verified");
 
   //===================================================================
+  // 21. Deploy BurrBear Plugin Factory
+  //===================================================================
+
+  // console.log("Starting BurrBearPluginFactory Deployment");
+  // await deployBurrBearPluginFactory();
+  // await verifyBurrBearPluginFactory();
+  // console.log("BurrBearPluginFactory Deployed and Verified");
+
+  //===================================================================
+  // 22. Deploy BurrBear Plugin
+  //===================================================================
+
+  // console.log("Starting BurrBearPlugin Deployment");
+  // await deployBurrBearPlugin();
+  // await verifyBurrBearPlugin();
+  // console.log("BurrBearPlugin Deployed and Verified");
+
+  //===================================================================
   // 17. Deploy Trifecta Plugin Factory
   //===================================================================
 
@@ -1448,38 +1964,6 @@ async function main() {
   // console.log("- xKDK added as gauge rewards");
 
   //===================================================================
-  // 10. Add plugins to voter
-  //===================================================================
-
-  // // Add station plugins
-  // console.log("Adding STATION_PLUGIN_0 to Voter");
-  // await voter.addPlugin(STATION_PLUGIN_0); // Station Berps
-  // await sleep(10000);
-
-  // // Add infrared plugins
-  // console.log("Adding INFRARED_PLUGIN_0 to Voter");
-  // await voter.addPlugin(INFRARED_PLUGIN_0); // Infrared Berps bHONEY
-  // await sleep(10000);
-
-  // // Add berapaw plugins
-  // console.log("Adding BERAPAW_PLUGIN_0 to Voter");
-  // await voter.addPlugin(BERAPAW_PLUGIN_0); // BeraPaw Beraborrow sNECT
-  // await sleep(10000);
-
-  // Add trifecta plugins
-  // console.log("Adding TRIFECTA_PLUGIN_0 to Voter");
-  // await voter.addPlugin(TRIFECTA_PLUGIN_0); // Kodiak Trifecta YEET-WBERA Island
-  // await sleep(10000);
-
-  // Add game plugins
-  // console.log("Adding BULLAS_PLUGIN to Voter");
-  // await voter.addPlugin(BULLAS_PLUGIN); // Bullas BULL iSH
-  // await sleep(10000);
-  // console.log("Adding GUMBALL_PLUGIN_0 to Voter");
-  // await voter.addPlugin(GUMBALL_PLUGIN_0); // Gumball BentoBera
-  // await sleep(10000);
-
-  //===================================================================
   // 13. Print Deployment
   //===================================================================
 
@@ -1506,22 +1990,28 @@ async function main() {
   //===================================================================
 
   // let plugins = [
-  //   BERADROME_PLUGIN_0,
-  //   BERADROME_PLUGIN_1,
-  //   BERACHAIN_PLUGIN_0,
-  //   BERACHAIN_PLUGIN_1,
-  //   BERACHAIN_PLUGIN_2,
-  //   BERACHAIN_PLUGIN_3,
-  //   BERACHAIN_PLUGIN_4,
-  //   INFRARED_PLUGIN_0,
-  //   INFRARED_PLUGIN_1,
-  //   INFRARED_PLUGIN_2,
-  //   INFRARED_PLUGIN_3,
-  //   INFRARED_PLUGIN_4,
-  //   INFRARED_PLUGIN_5,
-  //   TRIFECTA_PLUGIN_0,
-  //   INFRARED_TRIFECTA_PLUGIN_0,
-  //   BULLAS_PLUGIN,
+  // BERADROME_PLUGIN_0,
+  // BERADROME_PLUGIN_1,
+  // BERACHAIN_PLUGIN_0,
+  // BERACHAIN_PLUGIN_1,
+  // BERACHAIN_PLUGIN_2,
+  // BERACHAIN_PLUGIN_3,
+  // BERACHAIN_PLUGIN_4,
+  // INFRARED_PLUGIN_0,
+  // INFRARED_PLUGIN_1,
+  // INFRARED_PLUGIN_2,
+  // INFRARED_PLUGIN_3,
+  // INFRARED_PLUGIN_4,
+  // INFRARED_PLUGIN_5,
+  // TRIFECTA_PLUGIN_0,
+  // TRIFECTA_PLUGIN_1,
+  // INFRARED_TRIFECTA_PLUGIN_0,
+  // BULLAS_PLUGIN,
+  // BERAPAW_PLUGIN_0,
+  // BERAPAW_PLUGIN_1,
+  // BERAPAW_PLUGIN_2,
+  // BERAPAW_PLUGIN_3,
+  // BERAPAW_PLUGIN_4,
   // ];
 
   // for (let i = 0; i < plugins.length; i++) {
@@ -1544,6 +2034,8 @@ async function main() {
   // );
 
   // await verifyBribe("0x5DBa62Ae28E2EfBd1f42aC372910F8Df78659Edd");
+
+  // await verifyVaultToken("0xdDD3Ea5De9c70973E224D938B8f392EC4CC0171C");
 
   //===================================================================
   // 13. Distro
@@ -1572,11 +2064,31 @@ async function main() {
   //   INFRARED_PLUGIN_2,
   //   INFRARED_PLUGIN_3,
   //   INFRARED_PLUGIN_4,
-  //   INFRARED_PLUGIN_5,
+  //   // INFRARED_PLUGIN_5,
   // ]);
   // console.log("Infrared Bribe Rewards Distributed");
 
-  // await voter.distributeToBribes([TRIFECTA_PLUGIN_0]);
+  // await voter.distributeToBribes([
+  //   BERAPAW_PLUGIN_0,
+  //   BERAPAW_PLUGIN_1,
+  //   BERAPAW_PLUGIN_2,
+  //   BERAPAW_PLUGIN_3,
+  //   BERAPAW_PLUGIN_4,
+  // ]);
+  // console.log("BeraPaw Bribe Rewards Distributed");
+
+  // await voter.distributeToBribes([
+  //   BURRBEAR_PLUGIN_0,
+  //   BURRBEAR_PLUGIN_1,
+  //   BURRBEAR_PLUGIN_2,
+  // ]);
+  // console.log("BurrBear Bribe Rewards Distributed");
+
+  // await voter.distributeToBribes([
+  //   TRIFECTA_PLUGIN_0,
+  //   TRIFECTA_PLUGIN_1,
+  //   TRIFECTA_PLUGIN_2,
+  // ]);
   // console.log("Liquidity Trifecta Bribe Rewards Distributed");
 
   // await voter.distributeToBribes([INFRARED_TRIFECTA_PLUGIN_0]);
@@ -1608,6 +2120,83 @@ async function main() {
   //   "0x34D023ACa5A227789B45A62D377b5B18A680BE01"
   // );
   // console.log(data);
+
+  //===================================================================
+  // 14. Deploy Beradrome Helper
+  //===================================================================
+
+  // await deployBeradromeHelper();
+  // await verifyBeradromeHelper();
+
+  // let plugins = [
+  //   BERADROME_PLUGIN_0,
+  //   BERADROME_PLUGIN_1,
+  //   BERADROME_PLUGIN_2,
+  //   BERADROME_PLUGIN_3,
+  //   BERADROME_PLUGIN_4,
+  //   BERADROME_PLUGIN_5,
+  //   BERADROME_PLUGIN_6,
+  //   BERADROME_PLUGIN_7,
+  //   BERADROME_PLUGIN_8,
+  //   BERADROME_PLUGIN_9,
+  //   BERADROME_PLUGIN_10,
+  //   BERADROME_PLUGIN_11,
+  //   BERADROME_PLUGIN_12,
+  //   BERADROME_PLUGIN_13,
+  //   BERADROME_PLUGIN_14,
+  //   BERADROME_PLUGIN_15,
+  //   BERADROME_PLUGIN_16,
+  //   BERADROME_PLUGIN_17,
+  //   BERACHAIN_PLUGIN_0,
+  //   BERACHAIN_PLUGIN_1,
+  //   BERACHAIN_PLUGIN_2,
+  //   BERACHAIN_PLUGIN_3,
+  //   BERACHAIN_PLUGIN_4,
+  //   INFRARED_PLUGIN_0,
+  //   INFRARED_PLUGIN_1,
+  //   INFRARED_PLUGIN_2,
+  //   INFRARED_PLUGIN_3,
+  //   INFRARED_PLUGIN_4,
+  //   INFRARED_PLUGIN_5,
+  //   INFRARED_PLUGIN_6,
+  //   INFRARED_PLUGIN_7,
+  //   INFRARED_PLUGIN_8,
+  //   INFRARED_PLUGIN_9,
+  //   INFRARED_PLUGIN_10,
+  //   INFRARED_PLUGIN_11,
+  //   INFRARED_PLUGIN_12,
+  //   INFRARED_PLUGIN_13,
+  //   INFRARED_PLUGIN_14,
+  //   INFRARED_PLUGIN_15,
+  //   INFRARED_PLUGIN_16,
+  //   INFRARED_PLUGIN_17,
+  //   INFRARED_PLUGIN_18,
+  //   TRIFECTA_PLUGIN_0,
+  //   TRIFECTA_PLUGIN_1,
+  //   TRIFECTA_PLUGIN_2,
+  //   TRIFECTA_PLUGIN_3,
+  //   INFRARED_TRIFECTA_PLUGIN_0,
+  //   INFRARED_TRIFECTA_PLUGIN_1,
+  //   BERAPAW_PLUGIN_0,
+  //   BERAPAW_PLUGIN_1,
+  //   BERAPAW_PLUGIN_2,
+  //   BERAPAW_PLUGIN_3,
+  //   BERAPAW_PLUGIN_4,
+  //   BURRBEAR_PLUGIN_0,
+  //   BURRBEAR_PLUGIN_1,
+  //   BURRBEAR_PLUGIN_2,
+  // ];
+
+  // for (let i = 0; i < plugins.length; i++) {
+  //   let res = await controller.connect(wallet).getPlugin(plugins[i]);
+  //   console.log("Plugin: ", plugins[i]);
+  //   console.log("Underlying Token: ", res.token);
+  //   console.log("Vault Token: ", res.vaultToken);
+  //   await helper.connect(wallet).setToken(res.vaultToken, res.token);
+  //   await sleep(5000);
+  //   console.log("Token Set");
+  //   console.log();
+  // }
 }
 
 main()

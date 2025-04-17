@@ -8,19 +8,10 @@
     "hardhat": "^2.22.15"
   },
   "scripts": {
-    "deploy": "hardhat run ./scripts/deploy.js  --network mainnet",
     "deployMain": "hardhat run ./scripts/deployMain.js  --network mainnet",
-    "deployBartio": "hardhat run ./scripts/deployBartio.js  --network mainnet",
-    "deployBartio1": "hardhat run ./scripts/deployBartio1.js  --network mainnet",
-    "deployBartio2": "hardhat run ./scripts/deployBartio2.js  --network mainnet",
+    "deployBepolia": "hardhat run ./scripts/deployBepolia.js  --network mainnet",
     "deployMerkle": "hardhat run ./scripts/deployMerkle.js  --network mainnet",
     "deployHive": "hardhat run ./scripts/deployHive.js  --network mainnet",
-    "deployTestPlugins": "hardhat run ./scripts/local/deployPlugins.js  --network mainnet",
-    "deployBexPlugins": "hardhat run ./scripts/berachain/deployBexPlugin.js  --network mainnet",
-    "deployBerpPlugins": "hardhat run ./scripts/berachain/deployBerpPlugin.js  --network mainnet",
-    "deployKodiakPlugins": "hardhat run ./scripts/berachain/deployKodiakPlugin.js  --network mainnet",
-    "deployTrifectaPlugins": "hardhat run ./scripts/berachain/deployTrifectaPlugin.js  --network mainnet",
-    "deployInfraredPlugins": "hardhat run ./scripts/berachain/deployInfraredPlugin.js  --network mainnet",
     "testLocal": "hardhat test --grep local --network hardhat",
     "testZkevm": "hardhat test --grep zkevm --network hardhat",
     "testBase": "hardhat test --grep base --network hardhat"
