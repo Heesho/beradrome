@@ -70,6 +70,7 @@ const brOHM = "0xaaced9bC5f4B054a9b23f3DA0Cc90232178EeedB";
 const brWBTC2 = "0xf18221661DB5d181f4375cc06eE302ffcB061142";
 const oriBGT = "0x69f1E971257419B1E9C405A553f252c64A29A30a";
 const oriBGTOT = "0x978448A7866Aed0146Ad5C5E5d3d8424e2b16356";
+const BRR = "0x885a71E726Fe7828d84B876e42C48F97990a5c9d";
 
 // Beradrom Plugin Factory
 const BERADROME_PLUGIN_FACTORY = "0xf0b0f738Fed0656D66725bb1528B42050de64DCa";
@@ -246,6 +247,14 @@ const BERADROME_REWARDS_20 = [PRG];
 const BERADROME_SYMBOL_20 = "Steer-oriBGT/oriBGTOT";
 const BERADROME_NAME_20 = "Beradrome Steer-oriBGT/oriBGTOT";
 const BERADROME_PLUGIN_20 = "0x5f36C4E43e591da0C7F761B09274AB460c391bA1";
+
+// Beradrome Kodiak BRR-HONEY-V2
+const BERADROME_TOKEN_21 = "0xa8f9d7Ea6Baa104454bbcAD647A4c8b17778969C";
+const BERADROME_TOKENS_21 = [BRR, HONEY];
+const BERADROME_REWARDS_21 = [BRR];
+const BERADROME_SYMBOL_21 = "Kodiak BRR-HONEY-V2";
+const BERADROME_NAME_21 = "Beradrome Kodiak BRR-HONEY-V2";
+const BERADROME_PLUGIN_21 = "0x585D231606bAd06213cba6a9f07F0e6e2F7d0885";
 
 // Berachain Plugin Factory
 const BERACHAIN_PLUGIN_FACTORY = "0x3E5b9a5D7D73D8781c4782910523b942dB831ef8";
@@ -1608,11 +1617,11 @@ async function verifyBeradromePluginFactory() {
 async function deployBeradromePlugin() {
   console.log("Starting BeradromePlugin Deployment");
   await beradromePluginFactory.createPlugin(
-    BERADROME_TOKEN_20,
-    BERADROME_TOKENS_20,
-    BERADROME_REWARDS_20,
-    BERADROME_SYMBOL_20,
-    BERADROME_NAME_20,
+    BERADROME_TOKEN_21,
+    BERADROME_TOKENS_21,
+    BERADROME_REWARDS_21,
+    BERADROME_SYMBOL_21,
+    BERADROME_NAME_21,
     { gasPrice: ethers.gasPrice }
   );
   await sleep(10000);
