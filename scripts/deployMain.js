@@ -2153,7 +2153,20 @@ async function main() {
   //   INFRARED_PLUGIN_2,
   //   INFRARED_PLUGIN_3,
   //   INFRARED_PLUGIN_4,
-  //   // INFRARED_PLUGIN_5,
+  //   INFRARED_PLUGIN_5,
+  //   INFRARED_PLUGIN_6,
+  //   INFRARED_PLUGIN_7,
+  //   INFRARED_PLUGIN_8,
+  //   INFRARED_PLUGIN_9,
+  //   INFRARED_PLUGIN_10,
+  //   INFRARED_PLUGIN_11,
+  //   INFRARED_PLUGIN_12,
+  //   INFRARED_PLUGIN_13,
+  //   INFRARED_PLUGIN_14,
+  //   INFRARED_PLUGIN_15,
+  //   INFRARED_PLUGIN_16,
+  //   INFRARED_PLUGIN_17,
+  //   INFRARED_PLUGIN_18,
   // ]);
   // console.log("Infrared Bribe Rewards Distributed");
 
@@ -2180,7 +2193,19 @@ async function main() {
   // ]);
   // console.log("Liquidity Trifecta Bribe Rewards Distributed");
 
-  // await voter.distributeToBribes([INFRARED_TRIFECTA_PLUGIN_0]);
+  // await voter.distributeToBribes([
+  //   INFRARED_TRIFECTA_PLUGIN_0,
+  //   INFRARED_TRIFECTA_PLUGIN_1,
+  //   INFRARED_TRIFECTA_PLUGIN_2,
+  //   INFRARED_TRIFECTA_PLUGIN_3,
+  //   INFRARED_TRIFECTA_PLUGIN_4,
+  //   INFRARED_TRIFECTA_PLUGIN_5,
+  //   INFRARED_TRIFECTA_PLUGIN_6,
+  //   INFRARED_TRIFECTA_PLUGIN_7,
+  //   INFRARED_TRIFECTA_PLUGIN_8,
+  //   INFRARED_TRIFECTA_PLUGIN_9,
+  //   INFRARED_TRIFECTA_PLUGIN_10,
+  // ]);
   // console.log("Infrared Trifecta Bribe Rewards Distributed");
 
   // await voter.distributeToBribes([BULLAS_PLUGIN]);
