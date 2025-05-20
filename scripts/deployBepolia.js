@@ -21,8 +21,10 @@ const WBERA = "0x6969696969696969696969696969696969696969";
 // Plugins
 const BULLAS_PLUGIN = "0xe2719e4C3AC97890b2AF3783A3B892c3a6FF041C";
 const BULLAS_PLUGIN_V2 = "0x436B9a684b6f26B34E9c353De05A0454b7996900";
+const BULLAS_PLUGIN_V3 = "0x37bDB41e497C5b93C9D0652B52cF9979B1c8751e";
 const BENTO_PLUGIN = "0xEfbcFD2666ea6f7Ebd87bF1166722d4f37dE5EF1";
 const BENTO_PLUGIN_V2 = "0xEc76C06258D32890F492c6575708D12d0AF3B9c9";
+const BENTO_PLUGIN_V3 = "0xa4Fcf5232Ad35c99449244427E308e6cf48FFf3D";
 const BTT_PLUGIN = "0xeaB1A53350041eC038718e9b855d15FF471Ce172";
 const BTT_PLUGIN_V2 = "0xd1F6920fF0bAaf628a0640B75F6506BCE3F66Ae2";
 const CUB_PLUGIN = "0xC24435938b08a34e3913Abbf3C3cfE51802383a9";
@@ -637,6 +639,8 @@ async function main() {
   // await voter.connect(wallet).addPlugin(BTT_PLUGIN_V2);
   // await voter.connect(wallet).addPlugin(CUB_PLUGIN);
   // await voter.connect(wallet).addPlugin(CUB_PLUGIN_V2);
+  // await voter.connect(wallet).addPlugin(BULLAS_PLUGIN_V3);
+  // await voter.connect(wallet).addPlugin(BENTO_PLUGIN_V3);
   // console.log("Plugin added");
 
   //===================================================================
@@ -676,30 +680,32 @@ async function main() {
   // Print Plugins
   //===================================================================
 
-  // let plugins = [
-  //   BULLAS_PLUGIN,
-  //   BENTO_PLUGIN,
-  //   BENTO_PLUGIN_V2,
-  //   BULLAS_PLUGIN_V2,
-  //   BTT_PLUGIN,
-  //   BTT_PLUGIN_V2,
-  //   CUB_PLUGIN,
-  //   CUB_PLUGIN_V2,
-  // ];
+  let plugins = [
+    // BULLAS_PLUGIN,
+    // BENTO_PLUGIN,
+    // BENTO_PLUGIN_V2,
+    // BULLAS_PLUGIN_V2,
+    // BTT_PLUGIN,
+    // BTT_PLUGIN_V2,
+    // CUB_PLUGIN,
+    // CUB_PLUGIN_V2,
+    BULLAS_PLUGIN_V3,
+    BENTO_PLUGIN_V3,
+  ];
 
-  // for (let i = 0; i < plugins.length; i++) {
-  //   let plugin = await controller.getPlugin(plugins[i]);
+  for (let i = 0; i < plugins.length; i++) {
+    let plugin = await controller.getPlugin(plugins[i]);
 
-  //   console.log("Protocol: ", plugin.protocol);
-  //   console.log("Name: ", plugin.name);
-  //   console.log("Token: ", plugin.token);
-  //   console.log("Plugin: ", plugin.plugin);
-  //   console.log("Gauge: ", plugin.gauge);
-  //   console.log("Bribe: ", plugin.bribe);
-  //   console.log("Vault Token: ", plugin.vaultToken);
-  //   console.log("Reward Vault: ", plugin.rewardVault);
-  //   console.log();
-  // }
+    console.log("Protocol: ", plugin.protocol);
+    console.log("Name: ", plugin.name);
+    console.log("Token: ", plugin.token);
+    console.log("Plugin: ", plugin.plugin);
+    console.log("Gauge: ", plugin.gauge);
+    console.log("Bribe: ", plugin.bribe);
+    console.log("Vault Token: ", plugin.vaultToken);
+    console.log("Reward Vault: ", plugin.rewardVault);
+    console.log();
+  }
 
   // await verifyGauge(
   //   "0xc24435938b08a34e3913abbf3c3cfe51802383a9",
@@ -715,7 +721,7 @@ async function main() {
   // await voter
   //   .connect(wallet)
   //   .vote(
-  //     [BULLAS_PLUGIN_V2, BENTO_PLUGIN_V2, BTT_PLUGIN_V2, CUB_PLUGIN_V2],
+  //     [BULLAS_PLUGIN_V3, BENTO_PLUGIN_V3, BTT_PLUGIN_V2, CUB_PLUGIN_V2],
   //     [1, 1, 1, 1]
   //   );
   // await voter
