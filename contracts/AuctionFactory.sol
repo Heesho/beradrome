@@ -178,7 +178,7 @@ contract Auction {
         if (paymentAmount > maxPaymentTokenAmount) revert Auction__MaxPaymentAmountExceeded();
 
         if (paymentAmount > 0) {
-            if (receiverIsPlugin) {
+            if (receiverIsFund) {
                 uint256 split = AuctionFactory(factory).split();
                 paymentToken.safeTransferFrom(msg.sender, address(this), paymentAmount);
                 uint256 bribeAmount = paymentAmount * split / DIVISOR;
@@ -189,7 +189,7 @@ contract Auction {
                 if (pluginAmount > 0) {
                     paymentToken.safeApprove(paymentReceiver, 0);
                     paymentToken.safeApprove(paymentReceiver, pluginAmount);
-                    IPlugin(paymentReceiver).deposit(pluginAmount);
+                    IFund(paymentReceiver).deposit(pluginAmount);
                 }
             } else {
                 paymentToken.safeTransferFrom(msg.sender, paymentReceiver, paymentAmount);

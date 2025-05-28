@@ -360,6 +360,13 @@ const BERACHAIN_SYMBOL_4 = "BeraSwap BYUSD-HONEY-STABLE";
 const BERACHAIN_NAME_4 = "Beradrome BeraSwap BYUSD-HONEY-STABLE";
 const BERACHAIN_PLUGIN_4 = "0x968eC53B7bBC6284333719Cd23A653fD9cD4eD86";
 
+// Berachain Kodiak Island BERAMO-WBERA-1%
+const BERACHAIN_TOKEN_5 = "0x7aEF016302C3a27417372CF3AA74A1708D1Ca291";
+const BERACHAIN_TOKENS_5 = [BERAMO, WBERA];
+const BERACHAIN_SYMBOL_5 = "Kodiak Island BERAMO-WBERA-1%";
+const BERACHAIN_NAME_5 = "Beradrome Berachain Kodiak Island BERAMO-WBERA-1%";
+const BERACHAIN_PLUGIN_5 = "0x968eC53B7bBC6284333719Cd23A653fD9cD4eD86";
+
 // BeraPaw Plugin Factory
 const BERAPAW_PLUGIN_FACTORY = "0x5Fd179B11359681e1bd39B8cb0bA623834613a64";
 
@@ -1424,10 +1431,10 @@ async function verifyBerachainPluginFactory() {
 async function deployBerachainPlugin() {
   console.log("Starting BerachainPlugin Deployment");
   await berachainPluginFactory.createPlugin(
-    BERACHAIN_TOKEN_4,
-    BERACHAIN_TOKENS_4,
-    BERACHAIN_SYMBOL_4,
-    BERACHAIN_NAME_4,
+    BERACHAIN_TOKEN_5,
+    BERACHAIN_TOKENS_5,
+    BERACHAIN_SYMBOL_5,
+    BERACHAIN_NAME_5,
     { gasPrice: ethers.gasPrice }
   );
   await sleep(10000);
@@ -2189,7 +2196,7 @@ async function main() {
 
   // await verifyBribe("0x5DBa62Ae28E2EfBd1f42aC372910F8Df78659Edd");
 
-  await verifyVaultToken("0x36FA291f4A4Ae41e4be2a979136EBd7eb97950E7");
+  // await verifyVaultToken("0x36FA291f4A4Ae41e4be2a979136EBd7eb97950E7");
 
   //===================================================================
   // 13. Distro
@@ -2337,6 +2344,7 @@ async function main() {
   //   BERACHAIN_PLUGIN_2,
   //   BERACHAIN_PLUGIN_3,
   //   BERACHAIN_PLUGIN_4,
+  //   BERACHAIN_PLUGIN_5,
   //   INFRARED_PLUGIN_0,
   //   INFRARED_PLUGIN_1,
   //   INFRARED_PLUGIN_2,
