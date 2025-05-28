@@ -1996,7 +1996,7 @@ async function main() {
   //===================================================================
 
   // console.log("Starting BerachainPlugin Deployment");
-  await deployBerachainPlugin();
+  // await deployBerachainPlugin();
   // await verifyBerachainPlugin();
   // console.log("BerachainPlugin Deployed and Verified");
 
