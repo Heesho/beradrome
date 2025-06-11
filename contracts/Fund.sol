@@ -37,32 +37,33 @@ abstract contract Fund is Ownable {
 
     /*----------  ERRORS ------------------------------------------------*/
 
-    error Fund__Initialized();
-    error Fund__NotAuthorizedVoter();
-    error Fund__InvalidZeroAddress();
-    error Fund__TreasuryNotSet();
+    error Fund__AlreadyInitialized();
+    error Fund__CannotDistributeAsset();
     error Fund__AssetAuctionNotSet();
     error Fund__RewardAuctionNotSet();
-    error Fund__CannotDistributeAsset();
+    error Fund__TreasuryNotSet();
+    error Fund__InvalidZeroAddress();
+    error Fund__NotVoter();
 
     /*----------  EVENTS ------------------------------------------------*/
 
     event Fund__Deposit(uint256 amount);
-    event Fund__DistributeAssetAuction(address indexed assetAuction, address indexed rewardToken, uint256 amount);
-    event Fund__DistributeRewardAuction(address indexed rewardAuction, address indexed rewardToken, uint256 amount);
+    event Fund__DistributeAssetAuction(address assetAuction, address token, uint256 amount);
+    event Fund__DistributeRewardAuction(address rewardAuction, address token, uint256 amount);
     event Fund__Withdraw(uint256 amount);
     event Fund__SetName(string name);
-    event Fund__SetTreasury(address indexed treasury);
-    event Fund__SetAssetAuction(address indexed assetAuction);
-    event Fund__SetRewardAuction(address indexed rewardAuction);
+    event Fund__SetTreasury(address treasury);
+    event Fund__SetAssetAuction(address assetAuction);
+    event Fund__SetRewardAuction(address rewardAuction);
     event Fund__SetRewardTokens(address[] rewardTokens);
-    event Fund__SetGauge(address indexed gauge);
-    event Fund__SetBribe(address indexed bribe);
+    event Fund__SetGauge(address gauge);
+    event Fund__SetBribe(address bribe);
+    event Fund__Initialized();
 
     /*----------  MODIFIERS  --------------------------------------------*/
 
     modifier onlyVoter() {
-        if (msg.sender != voter) revert Fund__NotAuthorizedVoter();
+        if (msg.sender != voter) revert Fund__NotVoter();
         _;
     }
 
@@ -88,9 +89,10 @@ abstract contract Fund is Ownable {
     }
 
     function initialize() external {
-        if (initialized) revert Fund__Initialized();
+        if (initialized) revert Fund__AlreadyInitialized();
         initialized = true;
         IGauge(gauge)._deposit(address(this), GAUGE_DEPOSIT_AMOUNT);
+        emit Fund__Initialized();
     }
 
     function deposit(uint256 amount) public virtual {
@@ -198,6 +200,12 @@ abstract contract Fund is Ownable {
 
     function getRewardTokens() public view returns (address[] memory) {
         return rewardTokens;
+    }
+
+    function getBribeTokens() public view returns (address[] memory) {
+        address[] memory tokens = new address[](1);
+        tokens[0] = asset;
+        return tokens;
     }
 
 }
