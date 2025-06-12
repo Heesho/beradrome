@@ -1,11 +1,41 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.19;
 
-import "contracts/interfaces/IVoter.sol";
-import "contracts/interfaces/ITOKENFees.sol";
-import "contracts/interfaces/IPlugin.sol";
+import "@openzeppelin/contracts/access/Ownable.sol";
 
-contract Controller {
+interface IVoter {
+    function getPlugins() external view returns (address[] memory);
+    function isAlive(address gauge) external view returns (bool);
+    function gauges(address plugin) external view returns (address);
+    function OTOKEN() external view returns (address);
+    function distribute(address gauge) external;
+}
+
+interface ITOKENFees {
+    function distribute() external;
+}
+
+interface IPlugin {
+    function claimAndDistribute() external;
+}
+
+interface IFund {
+    function getAssetAuction() external view returns (address);
+    function getRewardTokens() external view returns (address[] memory);
+    function getTvl() external view returns (uint256);
+    function claim() external;
+    function distribute(address[] memory tokens) external;
+}
+
+interface IAuction {
+    function bribePot() external view returns (address);
+}
+
+interface IBribePot {
+    function distribute() external;
+}
+
+contract Controller is Ownable {
 
     /*----------  CONSTANTS  --------------------------------------------*/
 
@@ -14,29 +44,7 @@ contract Controller {
     address public immutable voter;
     address public immutable fees;
 
-    struct Plugin {
-        uint256 index;
-        address plugin;
-        address token;
-        address gauge;
-        address bribe;
-        address vaultToken;
-        address rewardVault;
-        bool isAlive;
-        string name;
-        string protocol;
-    }
-
-    struct PluginData {
-        string protocol;
-        string name;
-        address token;
-        address plugin;
-        address gauge;
-        address bribe;
-        address vaultToken;
-        address rewardVault;
-    }
+    mapping(address => bool) public isFund;
 
     /*----------  FUNCTIONS  --------------------------------------------*/
 
@@ -49,38 +57,6 @@ contract Controller {
     }
 
     /*----------  VIEW FUNCTIONS  ---------------------------------------*/
-
-    function getPlugin(address plugin) public view returns (PluginData memory pluginCard) {
-        pluginCard.protocol = IPlugin(plugin).getProtocol();
-        pluginCard.name = IPlugin(plugin).getName();
-        pluginCard.token = IPlugin(plugin).getToken();
-        pluginCard.plugin = plugin;
-        pluginCard.gauge = IVoter(voter).gauges(plugin);
-        pluginCard.bribe = IVoter(voter).bribes(plugin);
-        pluginCard.vaultToken = IPlugin(plugin).getVaultToken();
-        pluginCard.rewardVault = IPlugin(plugin).getRewardVault();
-    }
-
-    function getPluginInfo(uint256 index) public view returns (Plugin memory plugin) {
-        plugin.index = index;
-        plugin.plugin = IVoter(voter).plugins(index);
-        plugin.token = IPlugin(plugin.plugin).getToken();
-        plugin.gauge = IVoter(voter).gauges(plugin.plugin);
-        plugin.bribe = IVoter(voter).bribes(plugin.plugin);
-        plugin.vaultToken = IPlugin(plugin.plugin).getVaultToken();
-        plugin.rewardVault = IPlugin(plugin.plugin).getRewardVault();
-        plugin.isAlive = IVoter(voter).isAlive(plugin.gauge);
-        plugin.name = IPlugin(plugin.plugin).getName();
-        plugin.protocol = IPlugin(plugin.plugin).getProtocol();
-    }
-
-    function getPluginsInfo() external view returns (Plugin[] memory plugins) {
-        plugins = new Plugin[](IVoter(voter).getPlugins().length);
-        for (uint256 i = 0; i < IVoter(voter).getPlugins().length; i++) {
-            plugins[i] = getPluginInfo(i);
-        }
-        return plugins;
-    }
 
     function distributeToGauges() public {
         address[] memory plugins = IVoter(voter).getPlugins();
@@ -95,8 +71,44 @@ contract Controller {
     function distributeToBribes() public {
         address[] memory plugins = IVoter(voter).getPlugins();
         for (uint256 i = 0; i < plugins.length; i++) {
-            if (IVoter(voter).isAlive(IVoter(voter).gauges(plugins[i]))) {
-                IPlugin(plugins[i]).claimAndDistribute();
+            if (!isFund[plugins[i]]) {
+                if (IVoter(voter).isAlive(IVoter(voter).gauges(plugins[i]))) {
+                    IPlugin(plugins[i]).claimAndDistribute();
+                }
+            }
+        }
+    }
+
+    function distributeToBribePots() public {
+        address[] memory plugins = IVoter(voter).getPlugins();
+        for (uint256 i = 0; i < plugins.length; i++) {
+            if (isFund[plugins[i]]) {
+                address auction = IFund(plugins[i]).getAssetAuction();
+                address bribePot = IAuction(auction).bribePot();
+                if (IVoter(voter).isAlive(IVoter(voter).gauges(plugins[i]))) {
+                    IBribePot(bribePot).distribute();
+                }
+            }
+        }
+    }
+
+    function distributeToAuctions() public {
+        address[] memory plugins = IVoter(voter).getPlugins();
+        for (uint256 i = 0; i < plugins.length; i++) {
+            if (isFund[plugins[i]]) {
+                if (IVoter(voter).isAlive(IVoter(voter).gauges(plugins[i]))) {
+                    address oToken = IVoter(voter).OTOKEN();
+                    address[] memory rewardTokens = IFund(plugins[i]).getRewardTokens();
+                    address[] memory tokens = new address[](rewardTokens.length + 1);
+                    tokens[0] = oToken;
+                    for (uint256 j = 0; j < rewardTokens.length; j++) {
+                        tokens[j + 1] = rewardTokens[j];
+                    }
+                    if (IFund(plugins[i]).getTvl() > 0) {
+                        IFund(plugins[i]).claim();
+                    }
+                    IFund(plugins[i]).distribute(tokens);
+                }
             }
         }
     }
@@ -108,6 +120,8 @@ contract Controller {
     function distribute() external {
         distributeToGauges();
         distributeToBribes();
+        distributeToBribePots();
+        distributeToAuctions();
         distributeToStakers();
     }
 
