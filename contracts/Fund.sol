@@ -22,7 +22,8 @@ abstract contract Fund is Ownable {
 
     /*----------  STATE VARIABLES  --------------------------------------*/
 
-    string public name;
+    string internal protocol;
+    string internal name;
     address public immutable voter;
     address public immutable otoken;
     address public immutable asset;
@@ -51,6 +52,7 @@ abstract contract Fund is Ownable {
     event Fund__DistributeAssetAuction(address assetAuction, address token, uint256 amount);
     event Fund__DistributeRewardAuction(address rewardAuction, address token, uint256 amount);
     event Fund__Withdraw(uint256 amount);
+    event Fund__SetProtocol(string protocol);
     event Fund__SetName(string name);
     event Fund__SetTreasury(address treasury);
     event Fund__SetAssetAuction(address assetAuction);
@@ -75,11 +77,13 @@ abstract contract Fund is Ownable {
     /*----------  FUNCTIONS  --------------------------------------------*/
 
     constructor(
+        string memory _protocol,
         string memory _name,
         address _voter, 
         address _asset,
         address[] memory _rewardTokens
     ) {
+        protocol = _protocol;
         name = _name;
         voter = _voter;
         asset = _asset;
@@ -133,6 +137,11 @@ abstract contract Fund is Ownable {
         }
     }
 
+    function setProtocol(string memory _protocol) external onlyOwner {
+        protocol = _protocol;
+        emit Fund__SetProtocol(_protocol);
+    }
+
     function setName(string memory _name) external onlyOwner {
         name = _name;
         emit Fund__SetName(_name);
@@ -169,6 +178,14 @@ abstract contract Fund is Ownable {
     }
 
     /*----------  VIEW FUNCTIONS  ---------------------------------------*/
+
+    function getProtocol() public view returns (string memory) {
+        return protocol;
+    }
+
+    function getName() public view returns (string memory) {
+        return name;
+    }
 
     function getGauge() public view returns (address) {
         return gauge;
