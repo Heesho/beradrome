@@ -383,18 +383,6 @@ describe("local: test5", function () {
     await plugin0.connect(user1).withdrawTo(user0.address, ten);
   });
 
-  it("Get Plugin0 Card", async function () {
-    console.log("******************************************************");
-    const pluginCard = await controller.getPlugin(plugin0.address);
-    console.log(pluginCard);
-  });
-
-  it("Get Plugin0 Card", async function () {
-    console.log("******************************************************");
-    const pluginCard = await controller.getPluginInfo(0);
-    console.log(pluginCard);
-  });
-
   it("User0 deposits in Plugin0 for user1", async function () {
     console.log("******************************************************");
     await xTEST0.connect(user0).approve(plugin0.address, ten);

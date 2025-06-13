@@ -12,6 +12,7 @@ interface IPlugin {
 }
 
 interface IVoter {
+    function plugins(uint256 index) external view returns (address);
     function gauges(address plugin) external view returns (address);
     function isAlive(address gauge) external view returns (bool);
     function totalWeight() external view returns (uint256);
@@ -114,7 +115,7 @@ contract FarmMulticall {
     function getGaugeCards(uint256 start, uint256 stop, address account) external view returns (GaugeCard[] memory) {
         GaugeCard[] memory gaugeCards = new GaugeCard[](stop - start);
         for (uint i = start; i < stop; i++) {
-            gaugeCards[i] = gaugeCardData(getPlugin(i), account);
+            gaugeCards[i] = gaugeCardData(IVoter(voter).plugins(i), account);
         }
         return gaugeCards;
     }
