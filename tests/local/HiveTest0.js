@@ -33,7 +33,8 @@ let VTOKENFactory,
   rewarderFactory,
   gaugeFactory,
   bribeFactory;
-let minter, voter, fees, rewarder, governance, multicall;
+let minter, voter, fees, rewarder, governance;
+let swapMulticall, farmMulticall, voterMulticall;
 let TOKEN, VTOKEN, OTOKEN, BASE;
 let vaultFactory;
 let hiveFactory,
@@ -205,9 +206,11 @@ describe("Hive token testing", function () {
     );
     console.log("- TOKENGovernor Initialized");
 
-    // initialize Multicall
-    const multicallArtifact = await ethers.getContractFactory("Multicall");
-    const multicallContract = await multicallArtifact.deploy(
+    // initialize SwapMulticall
+    const swapMulticallArtifact = await ethers.getContractFactory(
+      "SwapMulticall"
+    );
+    const swapMulticallContract = await swapMulticallArtifact.deploy(
       voter.address,
       BASE.address,
       TOKEN.address,
@@ -215,11 +218,38 @@ describe("Hive token testing", function () {
       VTOKEN.address,
       rewarder.address
     );
-    multicall = await ethers.getContractAt(
-      "Multicall",
-      multicallContract.address
+    swapMulticall = await ethers.getContractAt(
+      "SwapMulticall",
+      swapMulticallContract.address
     );
-    console.log("- Multicall Initialized");
+    console.log("- SwapMulticall Initialized");
+
+    // initialize FarmMulticall
+    const farmMulticallArtifact = await ethers.getContractFactory(
+      "FarmMulticall"
+    );
+    const farmMulticallContract = await farmMulticallArtifact.deploy(
+      voter.address,
+      TOKEN.address
+    );
+    farmMulticall = await ethers.getContractAt(
+      "FarmMulticall",
+      farmMulticallContract.address
+    );
+    console.log("- FarmMulticall Initialized");
+
+    // initialize VoterMulticall
+    const voterMulticallArtifact = await ethers.getContractFactory(
+      "VoterMulticall"
+    );
+    const voterMulticallContract = await voterMulticallArtifact.deploy(
+      voter.address
+    );
+    voterMulticall = await ethers.getContractAt(
+      "VoterMulticall",
+      voterMulticallContract.address
+    );
+    console.log("- VoterMulticall Initialized");
 
     // System set-up
     await gaugeFactory.setVoter(voter.address);
@@ -554,7 +584,7 @@ describe("Hive token testing", function () {
 
   it("User0 Buys 10 TOKEN", async function () {
     console.log("******************************************************");
-    let res = await multicall.connect(owner).quoteBuyOut(ten, 9700);
+    let res = await swapMulticall.connect(owner).quoteBuyOut(ten, 9700);
     console.log("TOKEN out", divDec(ten));
     console.log("Slippage Tolerance", "3%");
     console.log();
@@ -574,7 +604,7 @@ describe("Hive token testing", function () {
 
   it("User0 TOKEN for 5 BASE", async function () {
     console.log("******************************************************");
-    let res = await multicall.connect(owner).quoteSellOut(five, 9950);
+    let res = await swapMulticall.connect(owner).quoteSellOut(five, 9950);
     console.log("BASE out", divDec(five));
     console.log("Slippage Tolerance", "0.5%");
     console.log();
@@ -1751,7 +1781,7 @@ describe("Hive token testing", function () {
 
   it("BondingCurveData, user0", async function () {
     console.log("******************************************************");
-    let res = await multicall.bondingCurveData(user0.address);
+    let res = await swapMulticall.bondingCurveData(user0.address);
     console.log("GLOBAL DATA");
     console.log("Price BASE: $", divDec(res.priceBASE));
     console.log("Price TOKEN: $", divDec(res.priceTOKEN));
@@ -1807,7 +1837,7 @@ describe("Hive token testing", function () {
 
   it("BondingCurveData, hiveToken", async function () {
     console.log("******************************************************");
-    let res = await multicall.bondingCurveData(hiveToken.address);
+    let res = await swapMulticall.bondingCurveData(hiveToken.address);
     console.log("GLOBAL DATA");
     console.log("Price BASE: $", divDec(res.priceBASE));
     console.log("Price TOKEN: $", divDec(res.priceTOKEN));
@@ -1839,7 +1869,7 @@ describe("Hive token testing", function () {
 
   it("BondingCurveData, user1", async function () {
     console.log("******************************************************");
-    let res = await multicall.bondingCurveData(user1.address);
+    let res = await swapMulticall.bondingCurveData(user1.address);
     console.log("GLOBAL DATA");
     console.log("Price BASE: $", divDec(res.priceBASE));
     console.log("Price TOKEN: $", divDec(res.priceTOKEN));
@@ -1881,7 +1911,7 @@ describe("Hive token testing", function () {
 
   it("BondingCurveData, hiveToken", async function () {
     console.log("******************************************************");
-    let res = await multicall.bondingCurveData(hiveToken.address);
+    let res = await swapMulticall.bondingCurveData(hiveToken.address);
     console.log("GLOBAL DATA");
     console.log("Price BASE: $", divDec(res.priceBASE));
     console.log("Price TOKEN: $", divDec(res.priceTOKEN));
@@ -1944,7 +1974,7 @@ describe("Hive token testing", function () {
 
   it("BondingCurveData, hiveToken", async function () {
     console.log("******************************************************");
-    let res = await multicall.bondingCurveData(hiveToken.address);
+    let res = await swapMulticall.bondingCurveData(hiveToken.address);
     console.log("GLOBAL DATA");
     console.log("Price BASE: $", divDec(res.priceBASE));
     console.log("Price TOKEN: $", divDec(res.priceTOKEN));
@@ -1976,7 +2006,7 @@ describe("Hive token testing", function () {
 
   it("BondingCurveData, hiveToken", async function () {
     console.log("******************************************************");
-    let res = await multicall.bondingCurveData(hiveToken.address);
+    let res = await swapMulticall.bondingCurveData(hiveToken.address);
     console.log("GLOBAL DATA");
     console.log("Price BASE: $", divDec(res.priceBASE));
     console.log("Price TOKEN: $", divDec(res.priceTOKEN));
@@ -2051,9 +2081,12 @@ describe("Hive token testing", function () {
 
   it("BribeCardData, plugin0, hiveToken ", async function () {
     console.log("******************************************************");
-    let res = await multicall.bribeCardData(plugin0.address, hiveToken.address);
+    let res = await voterMulticall.bribeCardData(
+      plugin0.address,
+      hiveToken.address
+    );
     console.log("INFORMATION");
-    console.log("Bribe: ", res.bribe);
+    console.log("Gauge: ", res.bribe);
     console.log("Plugin: ", res.plugin);
     console.log("Reward Tokens: ");
     for (let i = 0; i < res.rewardTokens.length; i++) {
@@ -2063,7 +2096,7 @@ describe("Hive token testing", function () {
     console.log();
     console.log("GLOBAL DATA");
     console.log("Protocol: ", res.protocol);
-    console.log("Symbol: ", res.symbol);
+    console.log("Symbol: ", res.name);
     console.log("Voting Weight: ", divDec(res.voteWeight));
     console.log("Voting percent: ", divDec(res.votePercent), "%");
     console.log("Reward Per Token: ");
@@ -2079,11 +2112,14 @@ describe("Hive token testing", function () {
     }
   });
 
-  it("BribeCardData, plugin2, hiveToken ", async function () {
+  it("BribeCardData, plugin0, hiveToken ", async function () {
     console.log("******************************************************");
-    let res = await multicall.bribeCardData(plugin2.address, hiveToken.address);
+    let res = await voterMulticall.bribeCardData(
+      plugin0.address,
+      hiveToken.address
+    );
     console.log("INFORMATION");
-    console.log("Bribe: ", res.bribe);
+    console.log("Gauge: ", res.bribe);
     console.log("Plugin: ", res.plugin);
     console.log("Reward Tokens: ");
     for (let i = 0; i < res.rewardTokens.length; i++) {
@@ -2093,7 +2129,7 @@ describe("Hive token testing", function () {
     console.log();
     console.log("GLOBAL DATA");
     console.log("Protocol: ", res.protocol);
-    console.log("Symbol: ", res.symbol);
+    console.log("Symbol: ", res.name);
     console.log("Voting Weight: ", divDec(res.voteWeight));
     console.log("Voting percent: ", divDec(res.votePercent), "%");
     console.log("Reward Per Token: ");
@@ -2311,7 +2347,7 @@ describe("Hive token testing", function () {
 
   it("BondingCurveData, hiveToken", async function () {
     console.log("******************************************************");
-    let res = await multicall.bondingCurveData(hiveToken.address);
+    let res = await swapMulticall.bondingCurveData(hiveToken.address);
     console.log("GLOBAL DATA");
     console.log("Price BASE: $", divDec(res.priceBASE));
     console.log("Price TOKEN: $", divDec(res.priceTOKEN));
@@ -2353,7 +2389,7 @@ describe("Hive token testing", function () {
 
   it("BondingCurveData, hiveToken", async function () {
     console.log("******************************************************");
-    let res = await multicall.bondingCurveData(hiveToken.address);
+    let res = await swapMulticall.bondingCurveData(hiveToken.address);
     console.log("GLOBAL DATA");
     console.log("Price BASE: $", divDec(res.priceBASE));
     console.log("Price TOKEN: $", divDec(res.priceTOKEN));
@@ -2423,7 +2459,7 @@ describe("Hive token testing", function () {
 
   it("BondingCurveData, lsToken", async function () {
     console.log("******************************************************");
-    let res = await multicall.bondingCurveData(hiveToken.address);
+    let res = await swapMulticall.bondingCurveData(hiveToken.address);
     console.log("GLOBAL DATA");
     console.log("Price BASE: $", divDec(res.priceBASE));
     console.log("Price TOKEN: $", divDec(res.priceTOKEN));

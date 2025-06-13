@@ -26,7 +26,7 @@ let VTOKENFactory,
   rewarderFactory,
   gaugeFactory,
   bribeFactory;
-let minter, voter, fees, rewarder, governance, multicall;
+let minter, voter, fees, rewarder, governance;
 let TOKEN, VTOKEN, OTOKEN, BASE;
 let pluginFactory;
 let LP0, plugin0, gauge0, bribe0;
@@ -192,9 +192,11 @@ describe("Vol Plugin testing", function () {
     );
     console.log("- TOKENGovernor Initialized");
 
-    // initialize Multicall
-    const multicallArtifact = await ethers.getContractFactory("Multicall");
-    const multicallContract = await multicallArtifact.deploy(
+    // initialize SwapMulticall
+    const swapMulticallArtifact = await ethers.getContractFactory(
+      "SwapMulticall"
+    );
+    const swapMulticallContract = await swapMulticallArtifact.deploy(
       voter.address,
       BASE.address,
       TOKEN.address,
@@ -202,11 +204,25 @@ describe("Vol Plugin testing", function () {
       VTOKEN.address,
       rewarder.address
     );
-    multicall = await ethers.getContractAt(
-      "Multicall",
-      multicallContract.address
+    swapMulticall = await ethers.getContractAt(
+      "SwapMulticall",
+      swapMulticallContract.address
     );
-    console.log("- Multicall Initialized");
+    console.log("- SwapMulticall Initialized");
+
+    // initialize FarmMulticall
+    const farmMulticallArtifact = await ethers.getContractFactory(
+      "FarmMulticall"
+    );
+    const farmMulticallContract = await farmMulticallArtifact.deploy(
+      voter.address,
+      TOKEN.address
+    );
+    farmMulticall = await ethers.getContractAt(
+      "FarmMulticall",
+      farmMulticallContract.address
+    );
+    console.log("- FarmMulticall Initialized");
 
     // System set-up
     await gaugeFactory.setVoter(voter.address);

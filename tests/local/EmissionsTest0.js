@@ -26,7 +26,8 @@ let VTOKENFactory,
   rewarderFactory,
   gaugeFactory,
   bribeFactory;
-let minter, voter, fees, rewarder, governance, multicall;
+let minter, voter, fees, rewarder, governance;
+let swapMulticall, farmMulticall, voterMulticall;
 let TOKEN, VTOKEN, OTOKEN, BASE;
 let pluginFactory;
 let TEST0, xTEST0, plugin0, gauge0, bribe0;
@@ -181,9 +182,11 @@ describe("local: emissions test 0", function () {
     );
     console.log("- TOKENGovernor Initialized");
 
-    // initialize Multicall
-    const multicallArtifact = await ethers.getContractFactory("Multicall");
-    const multicallContract = await multicallArtifact.deploy(
+    // initialize SwapMulticall
+    const swapMulticallArtifact = await ethers.getContractFactory(
+      "SwapMulticall"
+    );
+    const swapMulticallContract = await swapMulticallArtifact.deploy(
       voter.address,
       BASE.address,
       TOKEN.address,
@@ -191,11 +194,38 @@ describe("local: emissions test 0", function () {
       VTOKEN.address,
       rewarder.address
     );
-    multicall = await ethers.getContractAt(
-      "Multicall",
-      multicallContract.address
+    swapMulticall = await ethers.getContractAt(
+      "SwapMulticall",
+      swapMulticallContract.address
     );
-    console.log("- Multicall Initialized");
+    console.log("- SwapMulticall Initialized");
+
+    // initialize FarmMulticall
+    const farmMulticallArtifact = await ethers.getContractFactory(
+      "FarmMulticall"
+    );
+    const farmMulticallContract = await farmMulticallArtifact.deploy(
+      voter.address,
+      TOKEN.address
+    );
+    farmMulticall = await ethers.getContractAt(
+      "FarmMulticall",
+      farmMulticallContract.address
+    );
+    console.log("- FarmMulticall Initialized");
+
+    // initialize VoterMulticall
+    const voterMulticallArtifact = await ethers.getContractFactory(
+      "VoterMulticall"
+    );
+    const voterMulticallContract = await voterMulticallArtifact.deploy(
+      voter.address
+    );
+    voterMulticall = await ethers.getContractAt(
+      "VoterMulticall",
+      voterMulticallContract.address
+    );
+    console.log("- VoterMulticall Initialized");
 
     // System set-up
     await gaugeFactory.setVoter(voter.address);
@@ -445,7 +475,7 @@ describe("local: emissions test 0", function () {
 
   it("GaugeCardData, plugin0, user1", async function () {
     console.log("******************************************************");
-    let res = await multicall.gaugeCardData(plugin0.address, user1.address);
+    let res = await farmMulticall.gaugeCardData(plugin0.address, user1.address);
     console.log("INFORMATION");
     console.log("Gauge: ", res.gauge);
     console.log("Plugin: ", res.plugin);
@@ -454,24 +484,32 @@ describe("local: emissions test 0", function () {
     for (let i = 0; i < res.assetTokens.length; i++) {
       console.log(" - ", res.assetTokens[i]);
     }
-    console.log("Underlying Decimals: ", res.tokenDecimals);
     console.log("Is Alive: ", res.isAlive);
     console.log();
     console.log("GLOBAL DATA");
     console.log("Protocol: ", res.protocol);
     console.log("Symbol: ", res.name);
+    console.log("Price Base: $", divDec(res.priceBase));
     console.log("Price OTOKEN: $", divDec(res.priceOTOKEN));
-    console.log("Reward Per token: ", divDec(res.rewardPerToken));
-    console.log("Reward Per token: $", divDec(res.rewardPerTokenUSD));
     console.log("Total Supply: ", divDec(res.totalSupply));
     console.log("Voting Weight: ", divDec(res.votingWeight), "%");
     console.log();
     console.log("ACCOUNT DATA");
     console.log("Balance Underlying: ", divDec(res.accountTokenBalance));
     console.log("Balance Deposited: ", divDec(res.accountStakedBalance));
-    console.log("Earned OTOKEN: ", divDec(res.accountEarnedOTOKEN));
-  });
 
+    // Reward tokens information
+    console.log("\nREWARD TOKENS");
+    for (let i = 0; i < res.rewardTokens.length; i++) {
+      console.log(`Reward Token ${i + 1}:`, res.rewardTokens[i]);
+      console.log(`Decimals:`, res.rewardTokenDecimals[i]);
+      console.log(`Rewards Per Token:`, divDec(res.rewardsPerToken[i]));
+      console.log(
+        `Account Rewards Earned:`,
+        divDec(res.accountRewardsEarned[i])
+      );
+    }
+  });
   it("Forward 7 days", async function () {
     console.log("******************************************************");
     await network.provider.send("evm_increaseTime", [7 * 24 * 3600]);
@@ -492,7 +530,7 @@ describe("local: emissions test 0", function () {
 
   it("GaugeCardData, plugin0, user1", async function () {
     console.log("******************************************************");
-    let res = await multicall.gaugeCardData(plugin0.address, user1.address);
+    let res = await farmMulticall.gaugeCardData(plugin0.address, user1.address);
     console.log("INFORMATION");
     console.log("Gauge: ", res.gauge);
     console.log("Plugin: ", res.plugin);
@@ -501,21 +539,30 @@ describe("local: emissions test 0", function () {
     for (let i = 0; i < res.assetTokens.length; i++) {
       console.log(" - ", res.assetTokens[i]);
     }
-    console.log("Underlying Decimals: ", res.tokenDecimals);
     console.log("Is Alive: ", res.isAlive);
     console.log();
     console.log("GLOBAL DATA");
     console.log("Protocol: ", res.protocol);
     console.log("Symbol: ", res.name);
+    console.log("Price Base: $", divDec(res.priceBase));
     console.log("Price OTOKEN: $", divDec(res.priceOTOKEN));
-    console.log("Reward Per token: ", divDec(res.rewardPerToken));
-    console.log("Reward Per token: $", divDec(res.rewardPerTokenUSD));
     console.log("Total Supply: ", divDec(res.totalSupply));
     console.log("Voting Weight: ", divDec(res.votingWeight), "%");
     console.log();
     console.log("ACCOUNT DATA");
     console.log("Balance Underlying: ", divDec(res.accountTokenBalance));
     console.log("Balance Deposited: ", divDec(res.accountStakedBalance));
-    console.log("Earned OTOKEN: ", divDec(res.accountEarnedOTOKEN));
+
+    // Reward tokens information
+    console.log("\nREWARD TOKENS");
+    for (let i = 0; i < res.rewardTokens.length; i++) {
+      console.log(`Reward Token ${i + 1}:`, res.rewardTokens[i]);
+      console.log(`Decimals:`, res.rewardTokenDecimals[i]);
+      console.log(`Rewards Per Token:`, divDec(res.rewardsPerToken[i]));
+      console.log(
+        `Account Rewards Earned:`,
+        divDec(res.accountRewardsEarned[i])
+      );
+    }
   });
 });

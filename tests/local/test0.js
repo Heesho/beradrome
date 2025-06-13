@@ -26,7 +26,8 @@ let VTOKENFactory,
   rewarderFactory,
   gaugeFactory,
   bribeFactory;
-let minter, voter, fees, rewarder, governance, multicall;
+let minter, voter, fees, rewarder, governance;
+let swapMulticall, farmMulticall, voterMulticall;
 let TOKEN, VTOKEN, OTOKEN, BASE;
 let pluginFactory;
 let TEST0, xTEST0, plugin0, gauge0, bribe0;
@@ -181,9 +182,11 @@ describe("local: test0", function () {
     );
     console.log("- TOKENGovernor Initialized");
 
-    // initialize Multicall
-    const multicallArtifact = await ethers.getContractFactory("Multicall");
-    const multicallContract = await multicallArtifact.deploy(
+    // initialize SwapMulticall
+    const swapMulticallArtifact = await ethers.getContractFactory(
+      "SwapMulticall"
+    );
+    const swapMulticallContract = await swapMulticallArtifact.deploy(
       voter.address,
       BASE.address,
       TOKEN.address,
@@ -191,11 +194,38 @@ describe("local: test0", function () {
       VTOKEN.address,
       rewarder.address
     );
-    multicall = await ethers.getContractAt(
-      "Multicall",
-      multicallContract.address
+    swapMulticall = await ethers.getContractAt(
+      "SwapMulticall",
+      swapMulticallContract.address
     );
-    console.log("- Multicall Initialized");
+    console.log("- SwapMulticall Initialized");
+
+    // initialize FarmMulticall
+    const farmMulticallArtifact = await ethers.getContractFactory(
+      "FarmMulticall"
+    );
+    const farmMulticallContract = await farmMulticallArtifact.deploy(
+      voter.address,
+      TOKEN.address
+    );
+    farmMulticall = await ethers.getContractAt(
+      "FarmMulticall",
+      farmMulticallContract.address
+    );
+    console.log("- FarmMulticall Initialized");
+
+    // initialize VoterMulticall
+    const voterMulticallArtifact = await ethers.getContractFactory(
+      "VoterMulticall"
+    );
+    const voterMulticallContract = await voterMulticallArtifact.deploy(
+      voter.address
+    );
+    voterMulticall = await ethers.getContractAt(
+      "VoterMulticall",
+      voterMulticallContract.address
+    );
+    console.log("- VoterMulticall Initialized");
 
     // System set-up
     await gaugeFactory.setVoter(voter.address);
@@ -355,7 +385,7 @@ describe("local: test0", function () {
 
   it("BondingCurveData, user1", async function () {
     console.log("******************************************************");
-    let res = await multicall.bondingCurveData(user1.address);
+    let res = await swapMulticall.bondingCurveData(user1.address);
     console.log("GLOBAL DATA");
     console.log("Price BASE: $", divDec(res.priceBASE));
     console.log("Price TOKEN: $", divDec(res.priceTOKEN));
@@ -387,7 +417,7 @@ describe("local: test0", function () {
 
   it("SwapCardData", async function () {
     console.log("******************************************************");
-    let res = await multicall.swapCardData();
+    let res = await swapMulticall.swapCardData();
     console.log("Floor Reserve BASE: ", divDec(res.frBASE));
     console.log("Market Reserve Virtual BASE: ", divDec(res.mrvBASE));
     console.log("Market Reserve Real BASE: ", divDec(res.mrrBASE));
@@ -397,7 +427,7 @@ describe("local: test0", function () {
 
   it("GaugeCardData, plugin0, user0", async function () {
     console.log("******************************************************");
-    let res = await multicall.gaugeCardData(plugin0.address, user0.address);
+    let res = await farmMulticall.gaugeCardData(plugin0.address, user0.address);
     console.log("INFORMATION");
     console.log("Gauge: ", res.gauge);
     console.log("Plugin: ", res.plugin);
@@ -406,27 +436,39 @@ describe("local: test0", function () {
     for (let i = 0; i < res.assetTokens.length; i++) {
       console.log(" - ", res.assetTokens[i]);
     }
-    console.log("Underlying Decimals: ", res.tokenDecimals);
     console.log("Is Alive: ", res.isAlive);
     console.log();
     console.log("GLOBAL DATA");
     console.log("Protocol: ", res.protocol);
     console.log("Symbol: ", res.name);
+    console.log("Price Base: $", divDec(res.priceBase));
     console.log("Price OTOKEN: $", divDec(res.priceOTOKEN));
-    console.log("Reward Per token: ", divDec(res.rewardPerToken));
-    console.log("Reward Per token: $", divDec(res.rewardPerTokenUSD));
     console.log("Total Supply: ", divDec(res.totalSupply));
     console.log("Voting Weight: ", divDec(res.votingWeight), "%");
     console.log();
     console.log("ACCOUNT DATA");
     console.log("Balance Underlying: ", divDec(res.accountTokenBalance));
     console.log("Balance Deposited: ", divDec(res.accountStakedBalance));
-    console.log("Earned OTOKEN: ", divDec(res.accountEarnedOTOKEN));
+
+    // Reward tokens information
+    console.log("\nREWARD TOKENS");
+    for (let i = 0; i < res.rewardTokens.length; i++) {
+      console.log(`Reward Token ${i + 1}:`, res.rewardTokens[i]);
+      console.log(`Decimals:`, res.rewardTokenDecimals[i]);
+      console.log(`Rewards Per Token:`, divDec(res.rewardsPerToken[i]));
+      console.log(
+        `Account Rewards Earned:`,
+        divDec(res.accountRewardsEarned[i])
+      );
+    }
   });
 
   it("BribeCardData, plugin0, user0 ", async function () {
     console.log("******************************************************");
-    let res = await multicall.bribeCardData(plugin0.address, user0.address);
+    let res = await voterMulticall.bribeCardData(
+      plugin0.address,
+      user0.address
+    );
     console.log("INFORMATION");
     console.log("Gauge: ", res.bribe);
     console.log("Plugin: ", res.plugin);
@@ -456,7 +498,7 @@ describe("local: test0", function () {
 
   it("GaugeCardData, plugin2, user0", async function () {
     console.log("******************************************************");
-    let res = await multicall.gaugeCardData(plugin2.address, user0.address);
+    let res = await farmMulticall.gaugeCardData(plugin2.address, user0.address);
     console.log("INFORMATION");
     console.log("Gauge: ", res.gauge);
     console.log("Plugin: ", res.plugin);
@@ -465,27 +507,39 @@ describe("local: test0", function () {
     for (let i = 0; i < res.assetTokens.length; i++) {
       console.log(" - ", res.assetTokens[i]);
     }
-    console.log("Underlying Decimals: ", res.tokenDecimals);
     console.log("Is Alive: ", res.isAlive);
     console.log();
     console.log("GLOBAL DATA");
     console.log("Protocol: ", res.protocol);
     console.log("Symbol: ", res.name);
+    console.log("Price Base: $", divDec(res.priceBase));
     console.log("Price OTOKEN: $", divDec(res.priceOTOKEN));
-    console.log("Reward Per token: ", divDec(res.rewardPerToken));
-    console.log("Reward Per token: $", divDec(res.rewardPerTokenUSD));
     console.log("Total Supply: ", divDec(res.totalSupply));
     console.log("Voting Weight: ", divDec(res.votingWeight), "%");
     console.log();
     console.log("ACCOUNT DATA");
     console.log("Balance Underlying: ", divDec(res.accountTokenBalance));
     console.log("Balance Deposited: ", divDec(res.accountStakedBalance));
-    console.log("Earned OTOKEN: ", divDec(res.accountEarnedOTOKEN));
+
+    // Reward tokens information
+    console.log("\nREWARD TOKENS");
+    for (let i = 0; i < res.rewardTokens.length; i++) {
+      console.log(`Reward Token ${i + 1}:`, res.rewardTokens[i]);
+      console.log(`Decimals:`, res.rewardTokenDecimals[i]);
+      console.log(`Rewards Per Token:`, divDec(res.rewardsPerToken[i]));
+      console.log(
+        `Account Rewards Earned:`,
+        divDec(res.accountRewardsEarned[i])
+      );
+    }
   });
 
   it("BribeCardData, plugin2, user0 ", async function () {
     console.log("******************************************************");
-    let res = await multicall.bribeCardData(plugin2.address, user0.address);
+    let res = await voterMulticall.bribeCardData(
+      plugin2.address,
+      user0.address
+    );
     console.log("INFORMATION");
     console.log("Gauge: ", res.bribe);
     console.log("Plugin: ", res.plugin);
@@ -534,7 +588,7 @@ describe("local: test0", function () {
 
   it("GaugeCardData, plugin3, user0", async function () {
     console.log("******************************************************");
-    let res = await multicall.gaugeCardData(plugin3.address, user0.address);
+    let res = await farmMulticall.gaugeCardData(plugin3.address, user0.address);
     console.log("INFORMATION");
     console.log("Gauge: ", res.gauge);
     console.log("Plugin: ", res.plugin);
@@ -543,27 +597,36 @@ describe("local: test0", function () {
     for (let i = 0; i < res.assetTokens.length; i++) {
       console.log(" - ", res.assetTokens[i]);
     }
-    console.log("Underlying Decimals: ", res.tokenDecimals);
     console.log("Is Alive: ", res.isAlive);
     console.log();
     console.log("GLOBAL DATA");
     console.log("Protocol: ", res.protocol);
     console.log("Symbol: ", res.name);
+    console.log("Price Base: $", divDec(res.priceBase));
     console.log("Price OTOKEN: $", divDec(res.priceOTOKEN));
-    console.log("Reward Per token: ", divDec(res.rewardPerToken));
-    console.log("Reward Per token: $", divDec(res.rewardPerTokenUSD));
     console.log("Total Supply: ", divDec(res.totalSupply));
     console.log("Voting Weight: ", divDec(res.votingWeight), "%");
     console.log();
     console.log("ACCOUNT DATA");
     console.log("Balance Underlying: ", divDec(res.accountTokenBalance));
     console.log("Balance Deposited: ", divDec(res.accountStakedBalance));
-    console.log("Earned OTOKEN: ", divDec(res.accountEarnedOTOKEN));
+
+    // Reward tokens information
+    console.log("\nREWARD TOKENS");
+    for (let i = 0; i < res.rewardTokens.length; i++) {
+      console.log(`Reward Token ${i + 1}:`, res.rewardTokens[i]);
+      console.log(`Decimals:`, res.rewardTokenDecimals[i]);
+      console.log(`Rewards Per Token:`, divDec(res.rewardsPerToken[i]));
+      console.log(
+        `Account Rewards Earned:`,
+        divDec(res.accountRewardsEarned[i])
+      );
+    }
   });
 
   it("Quote Buy In", async function () {
     console.log("******************************************************");
-    let res = await multicall.connect(owner).quoteBuyIn(ten, 9800);
+    let res = await swapMulticall.connect(owner).quoteBuyIn(ten, 9800);
     console.log("BASE in", divDec(ten));
     console.log("Slippage Tolerance", "2%");
     console.log();
@@ -586,7 +649,7 @@ describe("local: test0", function () {
 
   it("BondingCurveData, user0", async function () {
     console.log("******************************************************");
-    let res = await multicall.bondingCurveData(user0.address);
+    let res = await swapMulticall.bondingCurveData(user0.address);
     console.log("GLOBAL DATA");
     console.log("Price BASE: $", divDec(res.priceBASE));
     console.log("Price TOKEN: $", divDec(res.priceTOKEN));
@@ -618,7 +681,7 @@ describe("local: test0", function () {
 
   it("Quote Sell In", async function () {
     console.log("******************************************************");
-    let res = await multicall.quoteSellIn(
+    let res = await swapMulticall.quoteSellIn(
       await TOKEN.balanceOf(user0.address),
       9700
     );
@@ -632,7 +695,7 @@ describe("local: test0", function () {
 
   it("BondingCurveData, user0", async function () {
     console.log("******************************************************");
-    let res = await multicall.bondingCurveData(user0.address);
+    let res = await swapMulticall.bondingCurveData(user0.address);
     console.log("GLOBAL DATA");
     console.log("Price BASE: $", divDec(res.priceBASE));
     console.log("Price TOKEN: $", divDec(res.priceTOKEN));
@@ -664,7 +727,7 @@ describe("local: test0", function () {
 
   it("SwapCardData", async function () {
     console.log("******************************************************");
-    let res = await multicall.swapCardData();
+    let res = await swapMulticall.swapCardData();
     console.log("Floor Reserve BASE: ", divDec(res.frBASE));
     console.log("Market Reserve Virtual BASE: ", divDec(res.mrvBASE));
     console.log("Market Reserve Real BASE: ", divDec(res.mrrBASE));
@@ -695,7 +758,7 @@ describe("local: test0", function () {
 
   it("SwapCardData", async function () {
     console.log("******************************************************");
-    let res = await multicall.swapCardData();
+    let res = await swapMulticall.swapCardData();
     console.log("Floor Reserve BASE: ", divDec(res.frBASE));
     console.log("Market Reserve Virtual BASE: ", divDec(res.mrvBASE));
     console.log("Market Reserve Real BASE: ", divDec(res.mrrBASE));
@@ -706,7 +769,7 @@ describe("local: test0", function () {
 
   it("BondingCurveData, user0", async function () {
     console.log("******************************************************");
-    let res = await multicall.bondingCurveData(user0.address);
+    let res = await swapMulticall.bondingCurveData(user0.address);
     console.log("GLOBAL DATA");
     console.log("Price BASE: $", divDec(res.priceBASE));
     console.log("Price TOKEN: $", divDec(res.priceTOKEN));
@@ -738,7 +801,7 @@ describe("local: test0", function () {
 
   it("User0 Buys 10 TOKEN", async function () {
     console.log("******************************************************");
-    let res = await multicall.connect(owner).quoteBuyOut(ten, 9700);
+    let res = await swapMulticall.connect(owner).quoteBuyOut(ten, 9700);
     console.log("TOKEN out", divDec(ten));
     console.log("Slippage Tolerance", "3%");
     console.log();
@@ -758,7 +821,7 @@ describe("local: test0", function () {
 
   it("BondingCurveData, user0", async function () {
     console.log("******************************************************");
-    let res = await multicall.bondingCurveData(user0.address);
+    let res = await swapMulticall.bondingCurveData(user0.address);
     console.log("GLOBAL DATA");
     console.log("Price BASE: $", divDec(res.priceBASE));
     console.log("Price TOKEN: $", divDec(res.priceTOKEN));
@@ -790,7 +853,7 @@ describe("local: test0", function () {
 
   it("User0 TOKEN for 5 BASE", async function () {
     console.log("******************************************************");
-    let res = await multicall.connect(owner).quoteSellOut(five, 9950);
+    let res = await swapMulticall.connect(owner).quoteSellOut(five, 9950);
     console.log("BASE out", divDec(five));
     console.log("Slippage Tolerance", "0.5%");
     console.log();
@@ -816,7 +879,7 @@ describe("local: test0", function () {
 
   it("BondingCurveData, user0", async function () {
     console.log("******************************************************");
-    let res = await multicall.bondingCurveData(user0.address);
+    let res = await swapMulticall.bondingCurveData(user0.address);
     console.log("GLOBAL DATA");
     console.log("Price BASE: $", divDec(res.priceBASE));
     console.log("Price TOKEN: $", divDec(res.priceTOKEN));
@@ -870,7 +933,7 @@ describe("local: test0", function () {
 
   it("BondingCurveData, user0", async function () {
     console.log("******************************************************");
-    let res = await multicall.bondingCurveData(user0.address);
+    let res = await swapMulticall.bondingCurveData(user0.address);
     console.log("GLOBAL DATA");
     console.log("Price BASE: $", divDec(res.priceBASE));
     console.log("Price TOKEN: $", divDec(res.priceTOKEN));
@@ -932,7 +995,7 @@ describe("local: test0", function () {
 
   it("BondingCurveData, user0", async function () {
     console.log("******************************************************");
-    let res = await multicall.bondingCurveData(user0.address);
+    let res = await swapMulticall.bondingCurveData(user0.address);
     console.log("GLOBAL DATA");
     console.log("Price BASE: $", divDec(res.priceBASE));
     console.log("Price TOKEN: $", divDec(res.priceTOKEN));
@@ -985,7 +1048,7 @@ describe("local: test0", function () {
 
   it("BondingCurveData, user0", async function () {
     console.log("******************************************************");
-    let res = await multicall.bondingCurveData(user0.address);
+    let res = await swapMulticall.bondingCurveData(user0.address);
     console.log("GLOBAL DATA");
     console.log("Price BASE: $", divDec(res.priceBASE));
     console.log("Price TOKEN: $", divDec(res.priceTOKEN));
@@ -1039,7 +1102,7 @@ describe("local: test0", function () {
 
   it("BondingCurveData, user0", async function () {
     console.log("******************************************************");
-    let res = await multicall.bondingCurveData(user0.address);
+    let res = await swapMulticall.bondingCurveData(user0.address);
     console.log("GLOBAL DATA");
     console.log("Price BASE: $", divDec(res.priceBASE));
     console.log("Price TOKEN: $", divDec(res.priceTOKEN));
@@ -1105,7 +1168,7 @@ describe("local: test0", function () {
 
   it("BondingCurveData, user1", async function () {
     console.log("******************************************************");
-    let res = await multicall.bondingCurveData(user1.address);
+    let res = await swapMulticall.bondingCurveData(user1.address);
     console.log("GLOBAL DATA");
     console.log("Price BASE: $", divDec(res.priceBASE));
     console.log("Price TOKEN: $", divDec(res.priceTOKEN));
@@ -1166,7 +1229,7 @@ describe("local: test0", function () {
 
   it("BondingCurveData, user0", async function () {
     console.log("******************************************************");
-    let res = await multicall.bondingCurveData(user0.address);
+    let res = await swapMulticall.bondingCurveData(user0.address);
     console.log("GLOBAL DATA");
     console.log("Price BASE: $", divDec(res.priceBASE));
     console.log("Price TOKEN: $", divDec(res.priceTOKEN));
@@ -1231,7 +1294,7 @@ describe("local: test0", function () {
 
   it("BondingCurveData, user0", async function () {
     console.log("******************************************************");
-    let res = await multicall.bondingCurveData(user0.address);
+    let res = await swapMulticall.bondingCurveData(user0.address);
     console.log("GLOBAL DATA");
     console.log("Price BASE: $", divDec(res.priceBASE));
     console.log("Price TOKEN: $", divDec(res.priceTOKEN));
@@ -1263,7 +1326,7 @@ describe("local: test0", function () {
 
   it("SwapCardData", async function () {
     console.log("******************************************************");
-    let res = await multicall.swapCardData();
+    let res = await swapMulticall.swapCardData();
     console.log("Floor Reserve BASE: ", divDec(res.frBASE));
     console.log("Market Reserve Virtual BASE: ", divDec(res.mrvBASE));
     console.log("Market Reserve Real BASE: ", divDec(res.mrrBASE));
@@ -1316,7 +1379,7 @@ describe("local: test0", function () {
 
   it("BondingCurveData, user0", async function () {
     console.log("******************************************************");
-    let res = await multicall.bondingCurveData(user0.address);
+    let res = await swapMulticall.bondingCurveData(user0.address);
     console.log("GLOBAL DATA");
     console.log("Price BASE: $", divDec(res.priceBASE));
     console.log("Price TOKEN: $", divDec(res.priceTOKEN));
@@ -1348,7 +1411,7 @@ describe("local: test0", function () {
 
   it("SwapCardData", async function () {
     console.log("******************************************************");
-    let res = await multicall.swapCardData();
+    let res = await swapMulticall.swapCardData();
     console.log("Floor Reserve BASE: ", divDec(res.frBASE));
     console.log("Market Reserve Virtual BASE: ", divDec(res.mrvBASE));
     console.log("Market Reserve Real BASE: ", divDec(res.mrrBASE));
@@ -1414,7 +1477,7 @@ describe("local: test0", function () {
 
   it("SwapCardData", async function () {
     console.log("******************************************************");
-    let res = await multicall.swapCardData();
+    let res = await swapMulticall.swapCardData();
     console.log("Floor Reserve BASE: ", divDec(res.frBASE));
     console.log("Market Reserve Virtual BASE: ", divDec(res.mrvBASE));
     console.log("Market Reserve Real BASE: ", divDec(res.mrrBASE));
@@ -1465,7 +1528,7 @@ describe("local: test0", function () {
 
   it("SwapCardData", async function () {
     console.log("******************************************************");
-    let res = await multicall.swapCardData();
+    let res = await swapMulticall.swapCardData();
     console.log("Floor Reserve BASE: ", divDec(res.frBASE));
     console.log("Market Reserve Virtual BASE: ", divDec(res.mrvBASE));
     console.log("Market Reserve Real BASE: ", divDec(res.mrrBASE));
@@ -1516,7 +1579,7 @@ describe("local: test0", function () {
 
   it("SwapCardData", async function () {
     console.log("******************************************************");
-    let res = await multicall.swapCardData();
+    let res = await swapMulticall.swapCardData();
     console.log("Floor Reserve BASE: ", divDec(res.frBASE));
     console.log("Market Reserve Virtual BASE: ", divDec(res.mrvBASE));
     console.log("Market Reserve Real BASE: ", divDec(res.mrrBASE));
@@ -1575,7 +1638,7 @@ describe("local: test0", function () {
 
   it("SwapCardData", async function () {
     console.log("******************************************************");
-    let res = await multicall.swapCardData();
+    let res = await swapMulticall.swapCardData();
     console.log("Floor Reserve BASE: ", divDec(res.frBASE));
     console.log("Market Reserve Virtual BASE: ", divDec(res.mrvBASE));
     console.log("Market Reserve Real BASE: ", divDec(res.mrrBASE));
@@ -1626,7 +1689,7 @@ describe("local: test0", function () {
 
   it("SwapCardData", async function () {
     console.log("******************************************************");
-    let res = await multicall.swapCardData();
+    let res = await swapMulticall.swapCardData();
     console.log("Floor Reserve BASE: ", divDec(res.frBASE));
     console.log("Market Reserve Virtual BASE: ", divDec(res.mrvBASE));
     console.log("Market Reserve Real BASE: ", divDec(res.mrrBASE));
@@ -1653,7 +1716,7 @@ describe("local: test0", function () {
 
   it("BondingCurveData, user1", async function () {
     console.log("******************************************************");
-    let res = await multicall.bondingCurveData(user1.address);
+    let res = await swapMulticall.bondingCurveData(user1.address);
     console.log("GLOBAL DATA");
     console.log("Price BASE: $", divDec(res.priceBASE));
     console.log("Price TOKEN: $", divDec(res.priceTOKEN));
@@ -1709,7 +1772,7 @@ describe("local: test0", function () {
 
   it("SwapCardData", async function () {
     console.log("******************************************************");
-    let res = await multicall.swapCardData();
+    let res = await swapMulticall.swapCardData();
     console.log("Floor Reserve BASE: ", divDec(res.frBASE));
     console.log("Market Reserve Virtual BASE: ", divDec(res.mrvBASE));
     console.log("Market Reserve Real BASE: ", divDec(res.mrrBASE));
@@ -1750,7 +1813,7 @@ describe("local: test0", function () {
 
   it("BondingCurveData, user0", async function () {
     console.log("******************************************************");
-    let res = await multicall.bondingCurveData(user0.address);
+    let res = await swapMulticall.bondingCurveData(user0.address);
     console.log("GLOBAL DATA");
     console.log("Price BASE: $", divDec(res.priceBASE));
     console.log("Price TOKEN: $", divDec(res.priceTOKEN));
@@ -1811,7 +1874,7 @@ describe("local: test0", function () {
 
   it("SwapCardData", async function () {
     console.log("******************************************************");
-    let res = await multicall.swapCardData();
+    let res = await swapMulticall.swapCardData();
     console.log("Floor Reserve BASE: ", divDec(res.frBASE));
     console.log("Market Reserve Virtual BASE: ", divDec(res.mrvBASE));
     console.log("Market Reserve Real BASE: ", divDec(res.mrrBASE));
@@ -1838,7 +1901,7 @@ describe("local: test0", function () {
 
   it("BondingCurveData, user0", async function () {
     console.log("******************************************************");
-    let res = await multicall.bondingCurveData(user0.address);
+    let res = await swapMulticall.bondingCurveData(user0.address);
     console.log("GLOBAL DATA");
     console.log("Price BASE: $", divDec(res.priceBASE));
     console.log("Price TOKEN: $", divDec(res.priceTOKEN));
@@ -1906,7 +1969,7 @@ describe("local: test0", function () {
 
   it("BondingCurveData, user0", async function () {
     console.log("******************************************************");
-    let res = await multicall.bondingCurveData(user0.address);
+    let res = await swapMulticall.bondingCurveData(user0.address);
     console.log("GLOBAL DATA");
     console.log("Price BASE: $", divDec(res.priceBASE));
     console.log("Price TOKEN: $", divDec(res.priceTOKEN));
@@ -1964,7 +2027,7 @@ describe("local: test0", function () {
 
   it("BondingCurveData, user1", async function () {
     console.log("******************************************************");
-    let res = await multicall.bondingCurveData(user1.address);
+    let res = await swapMulticall.bondingCurveData(user1.address);
     console.log("GLOBAL DATA");
     console.log("Price BASE: $", divDec(res.priceBASE));
     console.log("Price TOKEN: $", divDec(res.priceTOKEN));
@@ -2001,7 +2064,7 @@ describe("local: test0", function () {
 
   it("BondingCurveData, user1", async function () {
     console.log("******************************************************");
-    let res = await multicall.bondingCurveData(user1.address);
+    let res = await swapMulticall.bondingCurveData(user1.address);
     console.log("GLOBAL DATA");
     console.log("Price BASE: $", divDec(res.priceBASE));
     console.log("Price TOKEN: $", divDec(res.priceTOKEN));
@@ -2133,7 +2196,7 @@ describe("local: test0", function () {
 
   it("GaugeCardData, plugin0, user0", async function () {
     console.log("******************************************************");
-    let res = await multicall.gaugeCardData(plugin0.address, user0.address);
+    let res = await farmMulticall.gaugeCardData(plugin0.address, user0.address);
     console.log("INFORMATION");
     console.log("Gauge: ", res.gauge);
     console.log("Plugin: ", res.plugin);
@@ -2142,27 +2205,39 @@ describe("local: test0", function () {
     for (let i = 0; i < res.assetTokens.length; i++) {
       console.log(" - ", res.assetTokens[i]);
     }
-    console.log("Underlying Decimals: ", res.tokenDecimals);
     console.log("Is Alive: ", res.isAlive);
     console.log();
     console.log("GLOBAL DATA");
     console.log("Protocol: ", res.protocol);
     console.log("Symbol: ", res.name);
+    console.log("Price Base: $", divDec(res.priceBase));
     console.log("Price OTOKEN: $", divDec(res.priceOTOKEN));
-    console.log("Reward Per token: ", divDec(res.rewardPerToken));
-    console.log("Reward Per token: $", divDec(res.rewardPerTokenUSD));
     console.log("Total Supply: ", divDec(res.totalSupply));
     console.log("Voting Weight: ", divDec(res.votingWeight), "%");
     console.log();
     console.log("ACCOUNT DATA");
     console.log("Balance Underlying: ", divDec(res.accountTokenBalance));
     console.log("Balance Deposited: ", divDec(res.accountStakedBalance));
-    console.log("Earned OTOKEN: ", divDec(res.accountEarnedOTOKEN));
+
+    // Reward tokens information
+    console.log("\nREWARD TOKENS");
+    for (let i = 0; i < res.rewardTokens.length; i++) {
+      console.log(`Reward Token ${i + 1}:`, res.rewardTokens[i]);
+      console.log(`Decimals:`, res.rewardTokenDecimals[i]);
+      console.log(`Rewards Per Token:`, divDec(res.rewardsPerToken[i]));
+      console.log(
+        `Account Rewards Earned:`,
+        divDec(res.accountRewardsEarned[i])
+      );
+    }
   });
 
   it("BribeCardData, plugin0, user0 ", async function () {
     console.log("******************************************************");
-    let res = await multicall.bribeCardData(plugin0.address, user0.address);
+    let res = await voterMulticall.bribeCardData(
+      plugin0.address,
+      user0.address
+    );
     console.log("INFORMATION");
     console.log("Gauge: ", res.bribe);
     console.log("Plugin: ", res.plugin);
@@ -2216,7 +2291,7 @@ describe("local: test0", function () {
 
   it("GaugeCardData, plugin0, user0", async function () {
     console.log("******************************************************");
-    let res = await multicall.gaugeCardData(plugin0.address, user1.address);
+    let res = await farmMulticall.gaugeCardData(plugin0.address, user0.address);
     console.log("INFORMATION");
     console.log("Gauge: ", res.gauge);
     console.log("Plugin: ", res.plugin);
@@ -2225,27 +2300,36 @@ describe("local: test0", function () {
     for (let i = 0; i < res.assetTokens.length; i++) {
       console.log(" - ", res.assetTokens[i]);
     }
-    console.log("Underlying Decimals: ", res.tokenDecimals);
     console.log("Is Alive: ", res.isAlive);
     console.log();
     console.log("GLOBAL DATA");
     console.log("Protocol: ", res.protocol);
     console.log("Symbol: ", res.name);
+    console.log("Price Base: $", divDec(res.priceBase));
     console.log("Price OTOKEN: $", divDec(res.priceOTOKEN));
-    console.log("Reward Per token: ", divDec(res.rewardPerToken));
-    console.log("Reward Per token: $", divDec(res.rewardPerTokenUSD));
     console.log("Total Supply: ", divDec(res.totalSupply));
     console.log("Voting Weight: ", divDec(res.votingWeight), "%");
     console.log();
     console.log("ACCOUNT DATA");
     console.log("Balance Underlying: ", divDec(res.accountTokenBalance));
     console.log("Balance Deposited: ", divDec(res.accountStakedBalance));
-    console.log("Earned OTOKEN: ", divDec(res.accountEarnedOTOKEN));
+
+    // Reward tokens information
+    console.log("\nREWARD TOKENS");
+    for (let i = 0; i < res.rewardTokens.length; i++) {
+      console.log(`Reward Token ${i + 1}:`, res.rewardTokens[i]);
+      console.log(`Decimals:`, res.rewardTokenDecimals[i]);
+      console.log(`Rewards Per Token:`, divDec(res.rewardsPerToken[i]));
+      console.log(
+        `Account Rewards Earned:`,
+        divDec(res.accountRewardsEarned[i])
+      );
+    }
   });
 
   it("GaugeCardData, plugin2, user0", async function () {
     console.log("******************************************************");
-    let res = await multicall.gaugeCardData(plugin2.address, user0.address);
+    let res = await farmMulticall.gaugeCardData(plugin2.address, user0.address);
     console.log("INFORMATION");
     console.log("Gauge: ", res.gauge);
     console.log("Plugin: ", res.plugin);
@@ -2254,22 +2338,31 @@ describe("local: test0", function () {
     for (let i = 0; i < res.assetTokens.length; i++) {
       console.log(" - ", res.assetTokens[i]);
     }
-    console.log("Underlying Decimals: ", res.tokenDecimals);
     console.log("Is Alive: ", res.isAlive);
     console.log();
     console.log("GLOBAL DATA");
     console.log("Protocol: ", res.protocol);
     console.log("Symbol: ", res.name);
+    console.log("Price Base: $", divDec(res.priceBase));
     console.log("Price OTOKEN: $", divDec(res.priceOTOKEN));
-    console.log("Reward Per token: ", divDec(res.rewardPerToken));
-    console.log("Reward Per token: $", divDec(res.rewardPerTokenUSD));
     console.log("Total Supply: ", divDec(res.totalSupply));
     console.log("Voting Weight: ", divDec(res.votingWeight), "%");
     console.log();
     console.log("ACCOUNT DATA");
     console.log("Balance Underlying: ", divDec(res.accountTokenBalance));
     console.log("Balance Deposited: ", divDec(res.accountStakedBalance));
-    console.log("Earned OTOKEN: ", divDec(res.accountEarnedOTOKEN));
+
+    // Reward tokens information
+    console.log("\nREWARD TOKENS");
+    for (let i = 0; i < res.rewardTokens.length; i++) {
+      console.log(`Reward Token ${i + 1}:`, res.rewardTokens[i]);
+      console.log(`Decimals:`, res.rewardTokenDecimals[i]);
+      console.log(`Rewards Per Token:`, divDec(res.rewardsPerToken[i]));
+      console.log(
+        `Account Rewards Earned:`,
+        divDec(res.accountRewardsEarned[i])
+      );
+    }
   });
 
   it("user0 votes on plugins b", async function () {
@@ -2304,7 +2397,7 @@ describe("local: test0", function () {
 
   it("GaugeCardData, plugin2, user1", async function () {
     console.log("******************************************************");
-    let res = await multicall.gaugeCardData(plugin2.address, user1.address);
+    let res = await farmMulticall.gaugeCardData(plugin2.address, user1.address);
     console.log("INFORMATION");
     console.log("Gauge: ", res.gauge);
     console.log("Plugin: ", res.plugin);
@@ -2313,22 +2406,31 @@ describe("local: test0", function () {
     for (let i = 0; i < res.assetTokens.length; i++) {
       console.log(" - ", res.assetTokens[i]);
     }
-    console.log("Underlying Decimals: ", res.tokenDecimals);
     console.log("Is Alive: ", res.isAlive);
     console.log();
     console.log("GLOBAL DATA");
     console.log("Protocol: ", res.protocol);
     console.log("Symbol: ", res.name);
+    console.log("Price Base: $", divDec(res.priceBase));
     console.log("Price OTOKEN: $", divDec(res.priceOTOKEN));
-    console.log("Reward Per token: ", divDec(res.rewardPerToken));
-    console.log("Reward Per token: $", divDec(res.rewardPerTokenUSD));
     console.log("Total Supply: ", divDec(res.totalSupply));
     console.log("Voting Weight: ", divDec(res.votingWeight), "%");
     console.log();
     console.log("ACCOUNT DATA");
     console.log("Balance Underlying: ", divDec(res.accountTokenBalance));
     console.log("Balance Deposited: ", divDec(res.accountStakedBalance));
-    console.log("Earned OTOKEN: ", divDec(res.accountEarnedOTOKEN));
+
+    // Reward tokens information
+    console.log("\nREWARD TOKENS");
+    for (let i = 0; i < res.rewardTokens.length; i++) {
+      console.log(`Reward Token ${i + 1}:`, res.rewardTokens[i]);
+      console.log(`Decimals:`, res.rewardTokenDecimals[i]);
+      console.log(`Rewards Per Token:`, divDec(res.rewardsPerToken[i]));
+      console.log(
+        `Account Rewards Earned:`,
+        divDec(res.accountRewardsEarned[i])
+      );
+    }
   });
 
   it("Owner calls distribute", async function () {
@@ -2344,7 +2446,7 @@ describe("local: test0", function () {
 
   it("GaugeCardData, plugin2, user0", async function () {
     console.log("******************************************************");
-    let res = await multicall.gaugeCardData(plugin2.address, user0.address);
+    let res = await farmMulticall.gaugeCardData(plugin2.address, user0.address);
     console.log("INFORMATION");
     console.log("Gauge: ", res.gauge);
     console.log("Plugin: ", res.plugin);
@@ -2353,22 +2455,31 @@ describe("local: test0", function () {
     for (let i = 0; i < res.assetTokens.length; i++) {
       console.log(" - ", res.assetTokens[i]);
     }
-    console.log("Underlying Decimals: ", res.tokenDecimals);
     console.log("Is Alive: ", res.isAlive);
     console.log();
     console.log("GLOBAL DATA");
     console.log("Protocol: ", res.protocol);
     console.log("Symbol: ", res.name);
+    console.log("Price Base: $", divDec(res.priceBase));
     console.log("Price OTOKEN: $", divDec(res.priceOTOKEN));
-    console.log("Reward Per token: ", divDec(res.rewardPerToken));
-    console.log("Reward Per token: $", divDec(res.rewardPerTokenUSD));
     console.log("Total Supply: ", divDec(res.totalSupply));
     console.log("Voting Weight: ", divDec(res.votingWeight), "%");
     console.log();
     console.log("ACCOUNT DATA");
     console.log("Balance Underlying: ", divDec(res.accountTokenBalance));
     console.log("Balance Deposited: ", divDec(res.accountStakedBalance));
-    console.log("Earned OTOKEN: ", divDec(res.accountEarnedOTOKEN));
+
+    // Reward tokens information
+    console.log("\nREWARD TOKENS");
+    for (let i = 0; i < res.rewardTokens.length; i++) {
+      console.log(`Reward Token ${i + 1}:`, res.rewardTokens[i]);
+      console.log(`Decimals:`, res.rewardTokenDecimals[i]);
+      console.log(`Rewards Per Token:`, divDec(res.rewardsPerToken[i]));
+      console.log(
+        `Account Rewards Earned:`,
+        divDec(res.accountRewardsEarned[i])
+      );
+    }
   });
 
   it("Owner calls distribute", async function () {
@@ -2398,7 +2509,7 @@ describe("local: test0", function () {
 
   it("BondingCurveData, user0", async function () {
     console.log("******************************************************");
-    let res = await multicall.bondingCurveData(user0.address);
+    let res = await swapMulticall.bondingCurveData(user0.address);
     console.log("GLOBAL DATA");
     console.log("Price BASE: $", divDec(res.priceBASE));
     console.log("Price TOKEN: $", divDec(res.priceTOKEN));
@@ -2430,7 +2541,7 @@ describe("local: test0", function () {
 
   it("GaugeCardData, plugin2, user0", async function () {
     console.log("******************************************************");
-    let res = await multicall.gaugeCardData(plugin2.address, user0.address);
+    let res = await farmMulticall.gaugeCardData(plugin2.address, user0.address);
     console.log("INFORMATION");
     console.log("Gauge: ", res.gauge);
     console.log("Plugin: ", res.plugin);
@@ -2439,22 +2550,31 @@ describe("local: test0", function () {
     for (let i = 0; i < res.assetTokens.length; i++) {
       console.log(" - ", res.assetTokens[i]);
     }
-    console.log("Underlying Decimals: ", res.tokenDecimals);
     console.log("Is Alive: ", res.isAlive);
     console.log();
     console.log("GLOBAL DATA");
     console.log("Protocol: ", res.protocol);
     console.log("Symbol: ", res.name);
+    console.log("Price Base: $", divDec(res.priceBase));
     console.log("Price OTOKEN: $", divDec(res.priceOTOKEN));
-    console.log("Reward Per token: ", divDec(res.rewardPerToken));
-    console.log("Reward Per token: $", divDec(res.rewardPerTokenUSD));
     console.log("Total Supply: ", divDec(res.totalSupply));
     console.log("Voting Weight: ", divDec(res.votingWeight), "%");
     console.log();
     console.log("ACCOUNT DATA");
     console.log("Balance Underlying: ", divDec(res.accountTokenBalance));
     console.log("Balance Deposited: ", divDec(res.accountStakedBalance));
-    console.log("Earned OTOKEN: ", divDec(res.accountEarnedOTOKEN));
+
+    // Reward tokens information
+    console.log("\nREWARD TOKENS");
+    for (let i = 0; i < res.rewardTokens.length; i++) {
+      console.log(`Reward Token ${i + 1}:`, res.rewardTokens[i]);
+      console.log(`Decimals:`, res.rewardTokenDecimals[i]);
+      console.log(`Rewards Per Token:`, divDec(res.rewardsPerToken[i]));
+      console.log(
+        `Account Rewards Earned:`,
+        divDec(res.accountRewardsEarned[i])
+      );
+    }
   });
 
   it("User0 unstakes all TOKEN", async function () {
@@ -2544,7 +2664,7 @@ describe("local: test0", function () {
 
   it("BondingCurveData, user0", async function () {
     console.log("******************************************************");
-    let res = await multicall.bondingCurveData(user0.address);
+    let res = await swapMulticall.bondingCurveData(user0.address);
     console.log("GLOBAL DATA");
     console.log("Price BASE: $", divDec(res.priceBASE));
     console.log("Price TOKEN: $", divDec(res.priceTOKEN));
@@ -2606,7 +2726,7 @@ describe("local: test0", function () {
 
   it("BondingCurveData, user0", async function () {
     console.log("******************************************************");
-    let res = await multicall.bondingCurveData(user0.address);
+    let res = await swapMulticall.bondingCurveData(user0.address);
     console.log("GLOBAL DATA");
     console.log("Price BASE: $", divDec(res.priceBASE));
     console.log("Price TOKEN: $", divDec(res.priceTOKEN));
@@ -2676,7 +2796,10 @@ describe("local: test0", function () {
 
   it("BribeCardData, plugin1, user0 ", async function () {
     console.log("******************************************************");
-    let res = await multicall.bribeCardData(plugin1.address, user0.address);
+    let res = await voterMulticall.bribeCardData(
+      plugin1.address,
+      user0.address
+    );
     console.log("INFORMATION");
     console.log("Gauge: ", res.bribe);
     console.log("Plugin: ", res.plugin);
@@ -2706,7 +2829,10 @@ describe("local: test0", function () {
 
   it("BribeCardData, plugin2, user0 ", async function () {
     console.log("******************************************************");
-    let res = await multicall.bribeCardData(plugin1.address, user1.address);
+    let res = await voterMulticall.bribeCardData(
+      plugin2.address,
+      user0.address
+    );
     console.log("INFORMATION");
     console.log("Gauge: ", res.bribe);
     console.log("Plugin: ", res.plugin);
@@ -2736,7 +2862,10 @@ describe("local: test0", function () {
 
   it("BribeCardData, plugin3, user0 ", async function () {
     console.log("******************************************************");
-    let res = await multicall.bribeCardData(plugin3.address, user0.address);
+    let res = await voterMulticall.bribeCardData(
+      plugin3.address,
+      user0.address
+    );
     console.log("INFORMATION");
     console.log("Gauge: ", res.bribe);
     console.log("Plugin: ", res.plugin);
@@ -2783,7 +2912,10 @@ describe("local: test0", function () {
 
   it("BribeCardData, plugin2, user0 ", async function () {
     console.log("******************************************************");
-    let res = await multicall.bribeCardData(plugin2.address, user2.address);
+    let res = await voterMulticall.bribeCardData(
+      plugin2.address,
+      user2.address
+    );
     console.log("INFORMATION");
     console.log("Gauge: ", res.bribe);
     console.log("Plugin: ", res.plugin);
@@ -2825,7 +2957,7 @@ describe("local: test0", function () {
 
   it("BondingCurveData, user0", async function () {
     console.log("******************************************************");
-    let res = await multicall.bondingCurveData(user0.address);
+    let res = await swapMulticall.bondingCurveData(user0.address);
     console.log("GLOBAL DATA");
     console.log("Price BASE: $", divDec(res.priceBASE));
     console.log("Price TOKEN: $", divDec(res.priceTOKEN));
@@ -2907,7 +3039,7 @@ describe("local: test0", function () {
 
   it("GaugeCardData, plugin0, user0", async function () {
     console.log("******************************************************");
-    let res = await multicall.gaugeCardData(plugin3.address, user2.address);
+    let res = await farmMulticall.gaugeCardData(plugin0.address, user0.address);
     console.log("INFORMATION");
     console.log("Gauge: ", res.gauge);
     console.log("Plugin: ", res.plugin);
@@ -2916,22 +3048,31 @@ describe("local: test0", function () {
     for (let i = 0; i < res.assetTokens.length; i++) {
       console.log(" - ", res.assetTokens[i]);
     }
-    console.log("Underlying Decimals: ", res.tokenDecimals);
     console.log("Is Alive: ", res.isAlive);
     console.log();
     console.log("GLOBAL DATA");
     console.log("Protocol: ", res.protocol);
     console.log("Symbol: ", res.name);
+    console.log("Price Base: $", divDec(res.priceBase));
     console.log("Price OTOKEN: $", divDec(res.priceOTOKEN));
-    console.log("Reward Per token: ", divDec(res.rewardPerToken));
-    console.log("Reward Per token: $", divDec(res.rewardPerTokenUSD));
     console.log("Total Supply: ", divDec(res.totalSupply));
     console.log("Voting Weight: ", divDec(res.votingWeight), "%");
     console.log();
     console.log("ACCOUNT DATA");
     console.log("Balance Underlying: ", divDec(res.accountTokenBalance));
     console.log("Balance Deposited: ", divDec(res.accountStakedBalance));
-    console.log("Earned OTOKEN: ", divDec(res.accountEarnedOTOKEN));
+
+    // Reward tokens information
+    console.log("\nREWARD TOKENS");
+    for (let i = 0; i < res.rewardTokens.length; i++) {
+      console.log(`Reward Token ${i + 1}:`, res.rewardTokens[i]);
+      console.log(`Decimals:`, res.rewardTokenDecimals[i]);
+      console.log(`Rewards Per Token:`, divDec(res.rewardsPerToken[i]));
+      console.log(
+        `Account Rewards Earned:`,
+        divDec(res.accountRewardsEarned[i])
+      );
+    }
   });
 
   it("User2 Buys TOKEN with 10 BASE", async function () {
@@ -2957,7 +3098,7 @@ describe("local: test0", function () {
 
   it("BondingCurveData, user2", async function () {
     console.log("******************************************************");
-    let res = await multicall.bondingCurveData(user2.address);
+    let res = await swapMulticall.bondingCurveData(user2.address);
     console.log("GLOBAL DATA");
     console.log("Price BASE: $", divDec(res.priceBASE));
     console.log("Price TOKEN: $", divDec(res.priceTOKEN));
@@ -3005,7 +3146,10 @@ describe("local: test0", function () {
 
   it("BribeCardData, plugin2, user0 ", async function () {
     console.log("******************************************************");
-    let res = await multicall.bribeCardData(plugin3.address, user2.address);
+    let res = await voterMulticall.bribeCardData(
+      plugin3.address,
+      user2.address
+    );
     console.log("INFORMATION");
     console.log("Gauge: ", res.bribe);
     console.log("Plugin: ", res.plugin);
@@ -3052,7 +3196,7 @@ describe("local: test0", function () {
 
   it("BondingCurveData, user2", async function () {
     console.log("******************************************************");
-    let res = await multicall.bondingCurveData(user2.address);
+    let res = await swapMulticall.bondingCurveData(user2.address);
     console.log("GLOBAL DATA");
     console.log("Price BASE: $", divDec(res.priceBASE));
     console.log("Price TOKEN: $", divDec(res.priceTOKEN));
@@ -3134,7 +3278,7 @@ describe("local: test0", function () {
 
   it("BondingCurveData, user2", async function () {
     console.log("******************************************************");
-    let res = await multicall.bondingCurveData(user2.address);
+    let res = await swapMulticall.bondingCurveData(user2.address);
     console.log("GLOBAL DATA");
     console.log("Price BASE: $", divDec(res.priceBASE));
     console.log("Price TOKEN: $", divDec(res.priceTOKEN));
@@ -3277,7 +3421,7 @@ describe("local: test0", function () {
 
   it("BondingCurveData, user1", async function () {
     console.log("******************************************************");
-    let res = await multicall.bondingCurveData(user1.address);
+    let res = await swapMulticall.bondingCurveData(user1.address);
     console.log("GLOBAL DATA");
     console.log("Price BASE: $", divDec(res.priceBASE));
     console.log("Price TOKEN: $", divDec(res.priceTOKEN));
@@ -3325,7 +3469,7 @@ describe("local: test0", function () {
 
   it("BondingCurveData, user1", async function () {
     console.log("******************************************************");
-    let res = await multicall.bondingCurveData(user1.address);
+    let res = await swapMulticall.bondingCurveData(user1.address);
     console.log("GLOBAL DATA");
     console.log("Price BASE: $", divDec(res.priceBASE));
     console.log("Price TOKEN: $", divDec(res.priceTOKEN));
@@ -3363,7 +3507,7 @@ describe("local: test0", function () {
 
   it("BondingCurveData, user1", async function () {
     console.log("******************************************************");
-    let res = await multicall.bondingCurveData(user1.address);
+    let res = await swapMulticall.bondingCurveData(user1.address);
     console.log("GLOBAL DATA");
     console.log("Price BASE: $", divDec(res.priceBASE));
     console.log("Price TOKEN: $", divDec(res.priceTOKEN));
@@ -3395,45 +3539,7 @@ describe("local: test0", function () {
 
   it("BondingCurveData, user0", async function () {
     console.log("******************************************************");
-    let res = await multicall.bondingCurveData(user0.address);
-    console.log("GLOBAL DATA");
-    console.log("Price BASE: $", divDec(res.priceBASE));
-    console.log("Price TOKEN: $", divDec(res.priceTOKEN));
-    console.log("Price OTOKEN: $", divDec(res.priceOTOKEN));
-    console.log("Max Market Sell: ", divDec(res.maxMarketSell));
-    console.log();
-    console.log("Total Value Locked: $", divDec(res.tvl));
-    console.log("Market Cap: $", divDec(res.marketCap));
-    console.log("TOKEN Supply: ", divDec(res.supplyTOKEN));
-    console.log("VTOKEN Supply: ", divDec(res.supplyVTOKEN));
-    console.log("APR: ", divDec(res.apr), "%");
-    console.log("Loan-to-Value: ", divDec(res.ltv), "%");
-    console.log("WeeklyOTOKEN: ", divDec(res.weekly));
-    console.log();
-    console.log("ACCOUNT DATA");
-    console.log("Balance BASE: ", divDec(res.accountBASE));
-    console.log("Earned BASE: ", divDec(res.accountEarnedBASE));
-    console.log("Balance TOKEN: ", divDec(res.accountTOKEN));
-    console.log("Earned TOKEN: ", divDec(res.accountEarnedTOKEN));
-    console.log("Balance OTOKEN: ", divDec(res.accountOTOKEN));
-    console.log("Earned BASE: ", divDec(res.accountEarnedBASE));
-    console.log("Balance VTOKEN: ", divDec(res.accountVTOKEN));
-    console.log("Voting Power: ", divDec(res.accountVotingPower));
-    console.log("Used Voting Power: ", divDec(res.accountUsedWeights));
-    console.log("Borrow Credit: ", divDec(res.accountBorrowCredit), "BASE");
-    console.log("Borrow Debt: ", divDec(res.accountBorrowDebt), "BASE");
-    console.log("Max Withdraw: ", divDec(res.accountMaxWithdraw), "VTOKEN");
-  });
-
-  it("Forward 1 hour", async function () {
-    console.log("******************************************************");
-    await network.provider.send("evm_increaseTime", [1 * 3600]);
-    await network.provider.send("evm_mine");
-  });
-
-  it("BondingCurveData, user0", async function () {
-    console.log("******************************************************");
-    let res = await multicall.bondingCurveData(user0.address);
+    let res = await swapMulticall.bondingCurveData(user0.address);
     console.log("GLOBAL DATA");
     console.log("Price BASE: $", divDec(res.priceBASE));
     console.log("Price TOKEN: $", divDec(res.priceTOKEN));
@@ -3471,7 +3577,7 @@ describe("local: test0", function () {
 
   it("BondingCurveData, user0", async function () {
     console.log("******************************************************");
-    let res = await multicall.bondingCurveData(user0.address);
+    let res = await swapMulticall.bondingCurveData(user0.address);
     console.log("GLOBAL DATA");
     console.log("Price BASE: $", divDec(res.priceBASE));
     console.log("Price TOKEN: $", divDec(res.priceTOKEN));
@@ -3509,7 +3615,7 @@ describe("local: test0", function () {
 
   it("BondingCurveData, user0", async function () {
     console.log("******************************************************");
-    let res = await multicall.bondingCurveData(user0.address);
+    let res = await swapMulticall.bondingCurveData(user0.address);
     console.log("GLOBAL DATA");
     console.log("Price BASE: $", divDec(res.priceBASE));
     console.log("Price TOKEN: $", divDec(res.priceTOKEN));
@@ -3547,7 +3653,45 @@ describe("local: test0", function () {
 
   it("BondingCurveData, user0", async function () {
     console.log("******************************************************");
-    let res = await multicall.bondingCurveData(user0.address);
+    let res = await swapMulticall.bondingCurveData(user0.address);
+    console.log("GLOBAL DATA");
+    console.log("Price BASE: $", divDec(res.priceBASE));
+    console.log("Price TOKEN: $", divDec(res.priceTOKEN));
+    console.log("Price OTOKEN: $", divDec(res.priceOTOKEN));
+    console.log("Max Market Sell: ", divDec(res.maxMarketSell));
+    console.log();
+    console.log("Total Value Locked: $", divDec(res.tvl));
+    console.log("Market Cap: $", divDec(res.marketCap));
+    console.log("TOKEN Supply: ", divDec(res.supplyTOKEN));
+    console.log("VTOKEN Supply: ", divDec(res.supplyVTOKEN));
+    console.log("APR: ", divDec(res.apr), "%");
+    console.log("Loan-to-Value: ", divDec(res.ltv), "%");
+    console.log("WeeklyOTOKEN: ", divDec(res.weekly));
+    console.log();
+    console.log("ACCOUNT DATA");
+    console.log("Balance BASE: ", divDec(res.accountBASE));
+    console.log("Earned BASE: ", divDec(res.accountEarnedBASE));
+    console.log("Balance TOKEN: ", divDec(res.accountTOKEN));
+    console.log("Earned TOKEN: ", divDec(res.accountEarnedTOKEN));
+    console.log("Balance OTOKEN: ", divDec(res.accountOTOKEN));
+    console.log("Earned BASE: ", divDec(res.accountEarnedBASE));
+    console.log("Balance VTOKEN: ", divDec(res.accountVTOKEN));
+    console.log("Voting Power: ", divDec(res.accountVotingPower));
+    console.log("Used Voting Power: ", divDec(res.accountUsedWeights));
+    console.log("Borrow Credit: ", divDec(res.accountBorrowCredit), "BASE");
+    console.log("Borrow Debt: ", divDec(res.accountBorrowDebt), "BASE");
+    console.log("Max Withdraw: ", divDec(res.accountMaxWithdraw), "VTOKEN");
+  });
+
+  it("Forward 1 hour", async function () {
+    console.log("******************************************************");
+    await network.provider.send("evm_increaseTime", [1 * 3600]);
+    await network.provider.send("evm_mine");
+  });
+
+  it("BondingCurveData, user0", async function () {
+    console.log("******************************************************");
+    let res = await swapMulticall.bondingCurveData(user0.address);
     console.log("GLOBAL DATA");
     console.log("Price BASE: $", divDec(res.priceBASE));
     console.log("Price TOKEN: $", divDec(res.priceTOKEN));
@@ -3738,12 +3882,6 @@ describe("local: test0", function () {
     await expect(
       voter.connect(user1).addPlugin(BASE.address)
     ).to.be.revertedWith("Voter__NotAuthorizedGovernance");
-    // await expect(
-    //   voter.connect(owner).reviveGauge(gauge0.address)
-    // ).to.be.revertedWith("Voter__GaugeIsAlive");
-    // await expect(
-    //   voter.connect(user1).reviveGauge(gauge0.address)
-    // ).to.be.revertedWith("Voter__NotAuthorizedGovernance");
     await voter.connect(owner).killGauge(gauge0.address);
     await expect(
       voter.connect(owner).killGauge(gauge0.address)
@@ -3764,7 +3902,7 @@ describe("local: test0", function () {
 
   it("SwapCardData", async function () {
     console.log("******************************************************");
-    let res = await multicall.swapCardData();
+    let res = await swapMulticall.swapCardData();
     console.log("Floor Reserve BASE: ", divDec(res.frBASE));
     console.log("Market Reserve Virtual BASE: ", divDec(res.mrvBASE));
     console.log("Market Reserve Real BASE: ", divDec(res.mrrBASE));

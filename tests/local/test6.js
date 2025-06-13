@@ -26,7 +26,8 @@ let VTOKENFactory,
   rewarderFactory,
   gaugeFactory,
   bribeFactory;
-let minter, voter, fees, rewarder, governance, multicall;
+let minter, voter, fees, rewarder, governance;
+let swapMulticall, farmMulticall, voterMulticall;
 let TOKEN, VTOKEN, OTOKEN, BASE;
 let pluginFactory;
 let TEST0, xTEST0, plugin0, gauge0, bribe0;
@@ -181,9 +182,11 @@ describe("local: test6", function () {
     );
     console.log("- TOKENGovernor Initialized");
 
-    // initialize Multicall
-    const multicallArtifact = await ethers.getContractFactory("Multicall");
-    const multicallContract = await multicallArtifact.deploy(
+    // initialize SwapMulticall
+    const swapMulticallArtifact = await ethers.getContractFactory(
+      "SwapMulticall"
+    );
+    const swapMulticallContract = await swapMulticallArtifact.deploy(
       voter.address,
       BASE.address,
       TOKEN.address,
@@ -191,11 +194,25 @@ describe("local: test6", function () {
       VTOKEN.address,
       rewarder.address
     );
-    multicall = await ethers.getContractAt(
-      "Multicall",
-      multicallContract.address
+    swapMulticall = await ethers.getContractAt(
+      "SwapMulticall",
+      swapMulticallContract.address
     );
-    console.log("- Multicall Initialized");
+    console.log("- SwapMulticall Initialized");
+
+    // initialize FarmMulticall
+    const farmMulticallArtifact = await ethers.getContractFactory(
+      "FarmMulticall"
+    );
+    const farmMulticallContract = await farmMulticallArtifact.deploy(
+      voter.address,
+      TOKEN.address
+    );
+    farmMulticall = await ethers.getContractAt(
+      "FarmMulticall",
+      farmMulticallContract.address
+    );
+    console.log("- FarmMulticall Initialized");
 
     // System set-up
     await gaugeFactory.setVoter(voter.address);
@@ -382,7 +399,7 @@ describe("local: test6", function () {
 
   it("BondingCurveData, user0", async function () {
     console.log("******************************************************");
-    let res = await multicall.bondingCurveData(user0.address);
+    let res = await swapMulticall.bondingCurveData(user0.address);
     console.log("GLOBAL DATA");
     console.log("Price BASE: $", divDec(res.priceBASE));
     console.log("Price TOKEN: $", divDec(res.priceTOKEN));
@@ -414,7 +431,7 @@ describe("local: test6", function () {
 
   it("SwapCardData", async function () {
     console.log("******************************************************");
-    let res = await multicall.swapCardData();
+    let res = await swapMulticall.swapCardData();
     console.log("Floor Reserve BASE: ", divDec(res.frBASE));
     console.log("Market Reserve Virtual BASE: ", divDec(res.mrvBASE));
     console.log("Market Reserve Real BASE: ", divDec(res.mrrBASE));
@@ -437,7 +454,7 @@ describe("local: test6", function () {
 
   it("BondingCurveData, user0", async function () {
     console.log("******************************************************");
-    let res = await multicall.bondingCurveData(user0.address);
+    let res = await swapMulticall.bondingCurveData(user0.address);
     console.log("GLOBAL DATA");
     console.log("Price BASE: $", divDec(res.priceBASE));
     console.log("Price TOKEN: $", divDec(res.priceTOKEN));
@@ -469,7 +486,7 @@ describe("local: test6", function () {
 
   it("SwapCardData", async function () {
     console.log("******************************************************");
-    let res = await multicall.swapCardData();
+    let res = await swapMulticall.swapCardData();
     console.log("Floor Reserve BASE: ", divDec(res.frBASE));
     console.log("Market Reserve Virtual BASE: ", divDec(res.mrvBASE));
     console.log("Market Reserve Real BASE: ", divDec(res.mrrBASE));
