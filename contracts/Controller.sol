@@ -56,6 +56,12 @@ contract Controller is Ownable {
         fees = _fees;
     }
 
+    /*----------  RESTRICTED FUNCTIONS  --------------------------------*/
+
+    function setIsFund(address plugin, bool _isFund) external onlyOwner {
+        isFund[plugin] = _isFund;
+    }
+
     /*----------  VIEW FUNCTIONS  ---------------------------------------*/
 
     function distributeToGauges() public {
