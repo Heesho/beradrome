@@ -43,12 +43,13 @@ abstract contract Fund is Ownable {
     error Fund__AssetAuctionNotSet();
     error Fund__RewardAuctionNotSet();
     error Fund__TreasuryNotSet();
+    error Fund__InvalidZeroAmount();
     error Fund__InvalidZeroAddress();
     error Fund__NotVoter();
 
     /*----------  EVENTS ------------------------------------------------*/
 
-    event Fund__Deposit(uint256 amount);
+    event Fund__Deposit(address indexed account, uint256 amount);
     event Fund__DistributeAssetAuction(address assetAuction, address token, uint256 amount);
     event Fund__DistributeRewardAuction(address rewardAuction, address token, uint256 amount);
     event Fund__Withdraw(uint256 amount);
@@ -100,9 +101,10 @@ abstract contract Fund is Ownable {
     }
 
     function deposit(uint256 amount) public virtual {
+        if (amount == 0) revert Fund__InvalidZeroAmount();
         tvl += amount;
         IERC20(asset).safeTransferFrom(msg.sender, address(this), amount);
-        emit Fund__Deposit(amount);
+        emit Fund__Deposit(msg.sender, amount);
     }
 
     function claim() public virtual {}

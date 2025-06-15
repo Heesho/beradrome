@@ -30,6 +30,8 @@ contract MockERC20 is ERC20 {
 contract MockFund is Fund, ReentrancyGuard {
     using SafeERC20 for IERC20;
 
+    event MockFund__Claim(address rewardToken, uint256 amount);
+
     constructor(
         string memory _protocol,
         string memory _name,
@@ -45,6 +47,7 @@ contract MockFund is Fund, ReentrancyGuard {
     function claim() public override nonReentrant {
         for (uint256 i = 0; i < rewardTokens.length; i++) {
             MockERC20(rewardTokens[i]).mint(address(this), 10 ether);
+            emit MockFund__Claim(rewardTokens[i], 10 ether);
         }
     }
 
