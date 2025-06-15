@@ -33,7 +33,7 @@ let TOKEN, VTOKEN, OTOKEN, BASE;
 let fundFactory, auctionFactory, rewardAuction;
 let asset0, reward0, fund0, gauge0, bribe0, auction0;
 
-describe.only("local: MockFundTest", function () {
+describe("local: MockFundTest", function () {
   before("Initial set up", async function () {
     console.log("Begin Initialization");
 
