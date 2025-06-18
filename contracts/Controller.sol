@@ -56,14 +56,6 @@ contract Controller is Ownable {
         fees = _fees;
     }
 
-    /*----------  RESTRICTED FUNCTIONS  --------------------------------*/
-
-    function setIsFund(address plugin, bool _isFund) external onlyOwner {
-        isFund[plugin] = _isFund;
-    }
-
-    /*----------  VIEW FUNCTIONS  ---------------------------------------*/
-
     function distributeToGauges() public {
         address[] memory plugins = IVoter(voter).getPlugins();
         for (uint256 i = 0; i < plugins.length; i++) {
@@ -130,5 +122,13 @@ contract Controller is Ownable {
         distributeToAuctions();
         distributeToStakers();
     }
+
+    /*----------  RESTRICTED FUNCTIONS  --------------------------------*/
+
+    function setIsFund(address plugin, bool _isFund) external onlyOwner {
+        isFund[plugin] = _isFund;
+    }
+
+    /*----------  VIEW FUNCTIONS  ---------------------------------------*/
 
 }

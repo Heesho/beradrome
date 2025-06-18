@@ -86,6 +86,7 @@ const bruniBTC = "0xBAc6acaDc524520A1d98c1e0e384E9cDf98185c0";
 const fBOMB = "0xdf486980df72446a5eff76263efb2fa9391be136";
 const xfatBERA = "0xcAc89B3F94eD6BAb04113884deeE2A55293c2DD7";
 const canaNECT = "0x439c84851bb1EDd8Db3DD94809ebBEA6670682F3";
+const brPOLLEN = "0xa9f9fc404378686275Ae053EC73c21c43fa2D7b5";
 
 // Beradrom Plugin Factory
 const BERADROME_PLUGIN_FACTORY = "0xf0b0f738Fed0656D66725bb1528B42050de64DCa";
@@ -334,6 +335,38 @@ const BERADROME_REWARDS_29 = [NECT];
 const BERADROME_SYMBOL_29 = "BurrBear NECT-canaNECT";
 const BERADROME_NAME_29 = "Beradrome BurrBear NECT-canaNECT";
 const BERADROME_PLUGIN_29 = "0xFa5f675c93376255cc2Ed2c08544FFc4cD4e7a48";
+
+// Beradrome Arbera brYEET-brNECT
+const BERADROME_TOKEN_30 = "0x5565fA2e45F3df97dbFAF22Eb0E5C6e15555719f";
+const BERADROME_TOKENS_30 = [brYEET, brNECT];
+const BERADROME_REWARDS_30 = [POLLEN, WBERA, ARBERAPOINTS];
+const BERADROME_SYMBOL_30 = "Arbera brYEET-brNECT";
+const BERADROME_NAME_30 = "Beradrome Arbera brYEET-brNECT";
+const BERADROME_PLUGIN_30 = "0xA3e301E3353F29aBb3C5e1d5Dd8DD988D079723a";
+
+// Beradrome Arbera br3BC-brNECT
+const BERADROME_TOKEN_31 = "0xC2fa20594f6B3bEFc2A04212C56790763443aF49";
+const BERADROME_TOKENS_31 = [br3BC, brNECT];
+const BERADROME_REWARDS_31 = [POLLEN, WBERA, ARBERAPOINTS];
+const BERADROME_SYMBOL_31 = "Arbera br3BC-brNECT";
+const BERADROME_NAME_31 = "Beradrome Arbera br3BC-brNECT";
+const BERADROME_PLUGIN_31 = "0x63386EF367dE11cC8A83DC4eDdC09B47428a6693";
+
+// Beradrome Arbera brPOLLEN-brNECT
+const BERADROME_TOKEN_32 = "0x32D173F3a3b223200C7aE887a6A583CE2f0f613D";
+const BERADROME_TOKENS_32 = [brPOLLEN, brNECT];
+const BERADROME_REWARDS_32 = [POLLEN, WBERA, ARBERAPOINTS];
+const BERADROME_SYMBOL_32 = "Arbera brPOLLEN-brNECT";
+const BERADROME_NAME_32 = "Beradrome Arbera brPOLLEN-brNECT";
+const BERADROME_PLUGIN_32 = "0x646fA0e2095a455A88BD178F98E9c0466A38Fa30";
+
+// Beradrome Arbera brHENLO-brNECT
+const BERADROME_TOKEN_33 = "0xe4b390e6220c4F4D41bAbdc4b7bf2d975200884d";
+const BERADROME_TOKENS_33 = [brHENLO, brNECT];
+const BERADROME_REWARDS_33 = [POLLEN, WBERA, ARBERAPOINTS];
+const BERADROME_SYMBOL_33 = "Arbera brHENLO-brNECT";
+const BERADROME_NAME_33 = "Beradrome Arbera brHENLO-brNECT";
+const BERADROME_PLUGIN_33 = "0x444FDbdb82a38Cbeaf9Da2a105171dE4d5acAd86";
 
 // Berachain Plugin Factory
 const BERACHAIN_PLUGIN_FACTORY = "0x3E5b9a5D7D73D8781c4782910523b942dB831ef8";
@@ -852,18 +885,18 @@ async function getContracts() {
     "0xe2719e4C3AC97890b2AF3783A3B892c3a6FF041C"
   );
 
-  multicall = await ethers.getContractAt(
-    "contracts/Multicall.sol:Multicall",
-    "0xDAd4AC347c08e05365f10Fd9B4CCD137bA18a39D"
-  );
-  trifectaMulticall = await ethers.getContractAt(
-    "contracts/TrifectaMulticall.sol:TrifectaMulticall",
-    "0xA431bA493D5A63Fa77c69284535E105fB98f0472"
-  );
-  controller = await ethers.getContractAt(
-    "contracts/Controller.sol:Controller",
-    "0x65e3249EccD38aD841345dA5beBBebE3a73a596C"
-  );
+  // multicall = await ethers.getContractAt(
+  //   "contracts/Multicall.sol:Multicall",
+  //   "0xDAd4AC347c08e05365f10Fd9B4CCD137bA18a39D"
+  // );
+  // trifectaMulticall = await ethers.getContractAt(
+  //   "contracts/TrifectaMulticall.sol:TrifectaMulticall",
+  //   "0xA431bA493D5A63Fa77c69284535E105fB98f0472"
+  // );
+  // controller = await ethers.getContractAt(
+  //   "contracts/Controller.sol:Controller",
+  //   "0x65e3249EccD38aD841345dA5beBBebE3a73a596C"
+  // );
   helper = await ethers.getContractAt(
     "contracts/BeradromeHelper.sol:BeradromeHelper",
     "0x05e970Cf64b44456e019bAaA63361864D55d900E"
@@ -1707,11 +1740,11 @@ async function verifyBeradromePluginFactory() {
 async function deployBeradromePlugin() {
   console.log("Starting BeradromePlugin Deployment");
   await beradromePluginFactory.createPlugin(
-    BERADROME_TOKEN_23,
-    BERADROME_TOKENS_23,
-    BERADROME_REWARDS_23,
-    BERADROME_SYMBOL_23,
-    BERADROME_NAME_23,
+    BERADROME_TOKEN_33,
+    BERADROME_TOKENS_33,
+    BERADROME_REWARDS_33,
+    BERADROME_SYMBOL_33,
+    BERADROME_NAME_33,
     { gasPrice: ethers.gasPrice }
   );
   await sleep(10000);
@@ -2104,7 +2137,7 @@ async function main() {
   //===================================================================
 
   // console.log("Starting Beradrome Plugin Deployment");
-  // await deployBeradromePlugin();
+  await deployBeradromePlugin();
   // await verifyBeradromePlugin();
   // console.log("Beradrome Plugin Deployed and Verified");
 
