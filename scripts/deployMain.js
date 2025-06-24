@@ -81,7 +81,7 @@ const vsbrOOGA = "0xF1354deC077c5e14eDED6a56f98476AB7Ecea7e8";
 const MEAD = "0xEDB5180661F56077292C92Ab40B1AC57A279a396";
 const brOOGA = "0x128F9d072E14d499F664285735252bB3b94Eb010";
 const brLBGT = "0x883899D0111d69f85Fdfd19e4B89E613F231B781";
-const brarBERO = "0x03Df3c022834Ed1B4db99aeaba5A347b04923bEE";
+const brarBERO = "0x0c1f965eb5221b8daca960dac1ccfda5a97b7dd7";
 const bruniBTC = "0xBAc6acaDc524520A1d98c1e0e384E9cDf98185c0";
 const fBOMB = "0xdf486980df72446a5eff76263efb2fa9391be136";
 const xfatBERA = "0xcAc89B3F94eD6BAb04113884deeE2A55293c2DD7";
@@ -286,7 +286,7 @@ const BERADROME_TOKENS_23 = [brarBERO, brLBGT];
 const BERADROME_REWARDS_23 = [PPAW, WBERA, ARBERAPOINTS, BR];
 const BERADROME_SYMBOL_23 = "Arbera brarBERO-brLBGT";
 const BERADROME_NAME_23 = "Beradrome Arbera brarBERO-brLBGT";
-const BERADROME_PLUGIN_23 = "0x14E08b945Ec4EaBf763da854627F0BcF4cd85B82";
+const BERADROME_PLUGIN_23 = "";
 
 // Beradrome Arbera brLBGT-brNECT
 const BERADROME_TOKEN_24 = vsbrLBGT;
@@ -1740,11 +1740,11 @@ async function verifyBeradromePluginFactory() {
 async function deployBeradromePlugin() {
   console.log("Starting BeradromePlugin Deployment");
   await beradromePluginFactory.createPlugin(
-    BERADROME_TOKEN_33,
-    BERADROME_TOKENS_33,
-    BERADROME_REWARDS_33,
-    BERADROME_SYMBOL_33,
-    BERADROME_NAME_33,
+    BERADROME_TOKEN_23,
+    BERADROME_TOKENS_23,
+    BERADROME_REWARDS_23,
+    BERADROME_SYMBOL_23,
+    BERADROME_NAME_23,
     { gasPrice: ethers.gasPrice }
   );
   await sleep(10000);
