@@ -286,7 +286,7 @@ const BERADROME_TOKENS_23 = [brarBERO, brLBGT];
 const BERADROME_REWARDS_23 = [PPAW, WBERA, ARBERAPOINTS, BR];
 const BERADROME_SYMBOL_23 = "Arbera brarBERO-brLBGT";
 const BERADROME_NAME_23 = "Beradrome Arbera brarBERO-brLBGT";
-const BERADROME_PLUGIN_23 = "";
+const BERADROME_PLUGIN_23 = "0x9968C2783D5d10a188C3Ae48a2AAEF20C5EdfA8E";
 
 // Beradrome Arbera brLBGT-brNECT
 const BERADROME_TOKEN_24 = vsbrLBGT;
@@ -2137,7 +2137,7 @@ async function main() {
   //===================================================================
 
   // console.log("Starting Beradrome Plugin Deployment");
-  await deployBeradromePlugin();
+  // await deployBeradromePlugin();
   // await verifyBeradromePlugin();
   // console.log("Beradrome Plugin Deployed and Verified");
 

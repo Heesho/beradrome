@@ -26,6 +26,7 @@ const BENTO_PLUGIN = "0xEfbcFD2666ea6f7Ebd87bF1166722d4f37dE5EF1";
 const BENTO_PLUGIN_V2 = "0xEc76C06258D32890F492c6575708D12d0AF3B9c9";
 const BENTO_PLUGIN_V3 = "0xa4Fcf5232Ad35c99449244427E308e6cf48FFf3D";
 const BENTO_PLUGIN_V4 = "0x24f2b8BEb1F4D93Ea9599dd7E1e7Ca0B4Af6AF5D";
+const BENTO_PLUGIN_V5 = "0x56C66F0ba4577182ED6217E1ac86B81C0BA47B35";
 const BTT_PLUGIN = "0xeaB1A53350041eC038718e9b855d15FF471Ce172";
 const BTT_PLUGIN_V2 = "0xd1F6920fF0bAaf628a0640B75F6506BCE3F66Ae2";
 const CUB_PLUGIN = "0xC24435938b08a34e3913Abbf3C3cfE51802383a9";
@@ -93,14 +94,14 @@ async function getContracts() {
     "0x6A6A9AEeF062ce48Ec115182820415aC086FE139"
   );
 
-  multicall = await ethers.getContractAt(
-    "contracts/Multicall.sol:Multicall",
-    "0x22Fdd0Ef9bf2773B0C91BaE0fe421a5fC8a8b4ea"
-  );
-  controller = await ethers.getContractAt(
-    "contracts/Controller.sol:Controller",
-    "0xA4710B90d207b5aEC7561a279bf63c9D217ae5d1"
-  );
+  // multicall = await ethers.getContractAt(
+  //   "contracts/Multicall.sol:Multicall",
+  //   "0x22Fdd0Ef9bf2773B0C91BaE0fe421a5fC8a8b4ea"
+  // );
+  // controller = await ethers.getContractAt(
+  //   "contracts/Controller.sol:Controller",
+  //   "0xA4710B90d207b5aEC7561a279bf63c9D217ae5d1"
+  // );
 
   console.log("Contracts Retrieved");
 }
@@ -643,6 +644,7 @@ async function main() {
   // await voter.connect(wallet).addPlugin(BULLAS_PLUGIN_V3);
   // await voter.connect(wallet).addPlugin(BENTO_PLUGIN_V3);
   // await voter.connect(wallet).addPlugin(BENTO_PLUGIN_V4);
+  // await voter.connect(wallet).addPlugin(BENTO_PLUGIN_V5);
   // console.log("Plugin added");
 
   //===================================================================
@@ -694,6 +696,7 @@ async function main() {
   // BULLAS_PLUGIN_V3,
   // BENTO_PLUGIN_V3,
   // BENTO_PLUGIN_V4,
+  //   BENTO_PLUGIN_V5,
   // ];
 
   // for (let i = 0; i < plugins.length; i++) {
@@ -724,7 +727,7 @@ async function main() {
   // await voter
   //   .connect(wallet)
   //   .vote(
-  //     [BULLAS_PLUGIN_V3, BENTO_PLUGIN_V4, BTT_PLUGIN_V2, CUB_PLUGIN_V2],
+  //     [BULLAS_PLUGIN_V3, BENTO_PLUGIN_V5, BTT_PLUGIN_V2, CUB_PLUGIN_V2],
   //     [1, 1, 1, 1]
   //   );
   // await voter
