@@ -62,7 +62,6 @@ contract AuctionMulticall {
         address bribe;
         address assetAuction;
         address rewardAuction;
-        address treasury;
         address[] rewardTokens;
 
         bool isAlive;       
@@ -120,7 +119,6 @@ contract AuctionMulticall {
         auctionCard.bribe = IVoter(voter).bribes(fund);
         auctionCard.assetAuction = IFund(fund).getAssetAuction();
         auctionCard.rewardAuction = IFund(fund).getRewardAuction();
-        auctionCard.treasury = IFund(fund).getTreasury();
         auctionCard.rewardTokens = IFund(fund).getRewardTokens();
         
         auctionCard.isAlive = IVoter(voter).isAlive(auctionCard.gauge);

@@ -31,7 +31,6 @@ abstract contract Fund is Ownable {
     address internal bribe;
     address internal assetAuction;
     address internal rewardAuction;
-    address internal treasury;
     address[] internal rewardTokens;
     uint256 internal tvl;
     bool internal initialized;
@@ -42,7 +41,6 @@ abstract contract Fund is Ownable {
     error Fund__CannotDistributeAsset();
     error Fund__AssetAuctionNotSet();
     error Fund__RewardAuctionNotSet();
-    error Fund__TreasuryNotSet();
     error Fund__InvalidZeroAmount();
     error Fund__InvalidZeroAddress();
     error Fund__NotVoter();
@@ -55,7 +53,6 @@ abstract contract Fund is Ownable {
     event Fund__Withdraw(uint256 amount);
     event Fund__SetProtocol(string protocol);
     event Fund__SetName(string name);
-    event Fund__SetTreasury(address treasury);
     event Fund__SetAssetAuction(address assetAuction);
     event Fund__SetRewardAuction(address rewardAuction);
     event Fund__SetRewardTokens(address[] rewardTokens);
@@ -130,11 +127,10 @@ abstract contract Fund is Ownable {
     /*----------  RESTRICTED FUNCTIONS  ---------------------------------*/
 
     function withdraw() public virtual onlyOwner {
-        if (treasury == address(0)) revert Fund__TreasuryNotSet();
         uint256 balance = IERC20(asset).balanceOf(address(this));
         if (balance > 0) {
             tvl = 0;
-            IERC20(asset).safeTransfer(treasury, balance);
+            IERC20(asset).safeTransfer(owner(), balance);
             emit Fund__Withdraw(balance);
         }
     }
@@ -147,11 +143,6 @@ abstract contract Fund is Ownable {
     function setName(string memory _name) external onlyOwner {
         name = _name;
         emit Fund__SetName(_name);
-    }
-
-    function setTreasury(address _treasury) external onlyOwner nonZeroAddress(_treasury) {
-        treasury = _treasury;
-        emit Fund__SetTreasury(_treasury);
     }
 
     function setAssetAuction(address _assetAuction) external onlyOwner nonZeroAddress(_assetAuction) {
@@ -203,10 +194,6 @@ abstract contract Fund is Ownable {
 
     function getRewardAuction() public view returns (address) {
         return rewardAuction;
-    }
-
-    function getTreasury() public view returns (address) {
-        return treasury;
     }
 
     function getTvl() public view returns (uint256) {

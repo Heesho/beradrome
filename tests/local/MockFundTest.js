@@ -302,7 +302,6 @@ describe("local: MockFundTest", function () {
     );
     fundFactory = await FundFactoryArtifact.deploy(
       multisig.address,
-      treasury.address,
       rewardAuction.address,
       auctionFactory.address
     );
@@ -622,7 +621,7 @@ describe("local: MockFundTest", function () {
     console.log();
 
     // Get initial states
-    const initialBalance = await asset0.balanceOf(treasury.address);
+    const initialBalance = await asset0.balanceOf(multisig.address);
     const initialTvl = await fund0.getTvl();
 
     console.log("Initial State:");
@@ -637,7 +636,7 @@ describe("local: MockFundTest", function () {
     await fund0.connect(multisig).withdraw();
 
     // Check final states
-    const finalBalance = await asset0.balanceOf(treasury.address);
+    const finalBalance = await asset0.balanceOf(multisig.address);
     const finalTvl = await fund0.getTvl();
 
     console.log("\nPost-Withdrawal State:");
@@ -727,7 +726,7 @@ describe("local: MockFundTest", function () {
     console.log("Non-owner withdrawal correctly reverted");
 
     // Get initial states
-    const initialBalance = await asset0.balanceOf(treasury.address);
+    const initialBalance = await asset0.balanceOf(multisig.address);
     const initialTvl = await fund0.getTvl();
 
     console.log("\nInitial State:");
@@ -741,7 +740,7 @@ describe("local: MockFundTest", function () {
     await fund0.connect(multisig).withdraw();
 
     // Check final states
-    const finalBalance = await asset0.balanceOf(treasury.address);
+    const finalBalance = await asset0.balanceOf(multisig.address);
     const finalTvl = await fund0.getTvl();
 
     console.log("\nPost-Withdrawal State:");

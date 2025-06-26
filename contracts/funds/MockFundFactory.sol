@@ -58,7 +58,6 @@ contract MockFundFactory is Ownable {
     /*----------  STATE VARIABLES  --------------------------------------*/
 
     address public governance;
-    address public treasury;
     address public rewardAuction;
     address public auctionFactory;
 
@@ -72,7 +71,6 @@ contract MockFundFactory is Ownable {
 
     event MockFundFactory__CreateFund(address fund);
     event MockFundFactory__SetGovernance(address governance);
-    event MockFundFactory__SetTreasury(address treasury);
     event MockFundFactory__SetRewardAuction(address rewardAuction);
     event MockFundFactory__SetAuctionFactory(address auctionFactory);
 
@@ -80,13 +78,11 @@ contract MockFundFactory is Ownable {
 
     constructor(
         address _governance,
-        address _treasury,
         address _rewardAuction,
         address _auctionFactory
     ) {
         if (_governance == address(0)) revert MockFundFactory__InvalidGovernance();
         governance = _governance;
-        treasury = _treasury;
         rewardAuction = _rewardAuction;
         auctionFactory = _auctionFactory;
     }
@@ -113,7 +109,6 @@ contract MockFundFactory is Ownable {
             _priceMultiplier,
             _minInitPrice
         );
-        MockFund(fund).setTreasury(treasury);
         MockFund(fund).setRewardAuction(rewardAuction);
         MockFund(fund).setAssetAuction(assetAuction);
         MockFund(fund).transferOwnership(governance);
@@ -121,17 +116,12 @@ contract MockFundFactory is Ownable {
         return fund;
     }
 
-    /*---------- RESTRICTED FUNCTIONS  --------------------------------*/
+    /*---------- RESTRICTED FUNCTIONS  ----------------------------------*/
 
     function setGovernance(address _governance) external onlyOwner {
         if (_governance == address(0)) revert MockFundFactory__InvalidGovernance();
         governance = _governance;
         emit MockFundFactory__SetGovernance(_governance);
-    }
-
-    function setTreasury(address _treasury) external onlyOwner {
-        treasury = _treasury;
-        emit MockFundFactory__SetTreasury(_treasury);
     }
 
     function setRewardAuction(address _rewardAuction) external onlyOwner {
