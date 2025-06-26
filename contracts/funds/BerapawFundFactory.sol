@@ -82,7 +82,7 @@ contract BeraPawFund is Fund, ReentrancyGuard {
 
 }
 
-contract BerapawFundFactory is Ownable {
+contract BeraPawFundFactory is Ownable {
 
     /*----------  CONSTANTS  --------------------------------------------*/
 
@@ -98,14 +98,14 @@ contract BerapawFundFactory is Ownable {
 
     /*----------  ERRORS ------------------------------------------------*/
 
-    error BerapawFundFactory__InvalidGovernance();
+    error BeraPawFundFactory__InvalidGovernance();
 
     /*----------  EVENTS  -----------------------------------------------*/
 
-    event BerapawFundFactory__CreateFund(address fund);
-    event BerapawFundFactory__SetGovernance(address governance);
-    event BerapawFundFactory__SetRewardAuction(address rewardAuction);
-    event BerapawFundFactory__SetAuctionFactory(address auctionFactory);
+    event BeraPawFundFactory__CreateFund(address fund);
+    event BeraPawFundFactory__SetGovernance(address governance);
+    event BeraPawFundFactory__SetRewardAuction(address rewardAuction);
+    event BeraPawFundFactory__SetAuctionFactory(address auctionFactory);
 
     /*----------  FUNCTIONS  --------------------------------------------*/
 
@@ -114,7 +114,7 @@ contract BerapawFundFactory is Ownable {
         address _rewardAuction,
         address _auctionFactory
     ) {
-        if (_governance == address(0)) revert BerapawFundFactory__InvalidGovernance();
+        if (_governance == address(0)) revert BeraPawFundFactory__InvalidGovernance();
         governance = _governance;
         rewardAuction = _rewardAuction;
         auctionFactory = _auctionFactory;
@@ -147,26 +147,26 @@ contract BerapawFundFactory is Ownable {
         BeraPawFund(fund).setRewardAuction(rewardAuction);
         BeraPawFund(fund).setAssetAuction(assetAuction);
         BeraPawFund(fund).transferOwnership(governance);
-        emit BerapawFundFactory__CreateFund(fund);
+        emit BeraPawFundFactory__CreateFund(fund);
         return fund;
     }
 
     /*---------- RESTRICTED FUNCTIONS  ----------------------------------*/
 
     function setGovernance(address _governance) external onlyOwner {
-        if (_governance == address(0)) revert BerapawFundFactory__InvalidGovernance();
+        if (_governance == address(0)) revert BeraPawFundFactory__InvalidGovernance();
         governance = _governance;
-        emit BerapawFundFactory__SetGovernance(_governance);
+        emit BeraPawFundFactory__SetGovernance(_governance);
     }
 
     function setRewardAuction(address _rewardAuction) external onlyOwner {
         rewardAuction = _rewardAuction;
-        emit BerapawFundFactory__SetRewardAuction(_rewardAuction);
+        emit BeraPawFundFactory__SetRewardAuction(_rewardAuction);
     }
 
     function setAuctionFactory(address _auctionFactory) external onlyOwner {
         auctionFactory = _auctionFactory;
-        emit BerapawFundFactory__SetAuctionFactory(_auctionFactory);
+        emit BeraPawFundFactory__SetAuctionFactory(_auctionFactory);
     }
 
 }
