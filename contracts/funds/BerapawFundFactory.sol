@@ -120,7 +120,7 @@ contract BerapawFundFactory is Ownable {
         auctionFactory = _auctionFactory;
     }
 
-        function createFund(
+    function createFund(
         string memory _protocol,
         string memory _name,
         address _voter,
