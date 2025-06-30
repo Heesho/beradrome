@@ -86,6 +86,7 @@ contract BeraPawFundFactory is Ownable {
 
     /*----------  CONSTANTS  --------------------------------------------*/
 
+    string public constant PROTOCOL = "BeraPaw";
     address public constant LBGT = 0xBaadCC2962417C01Af99fb2B7C75706B9bd6Babe;
 
     /*----------  STATE VARIABLES  --------------------------------------*/
@@ -121,7 +122,6 @@ contract BeraPawFundFactory is Ownable {
     }
 
     function createFund(
-        string memory _protocol,
         string memory _name,
         address _voter,
         address _asset,
@@ -133,7 +133,7 @@ contract BeraPawFundFactory is Ownable {
     ) external returns (address) {
         address[] memory _rewardTokens = new address[](1);
         _rewardTokens[0] = LBGT;
-        address fund = address(new BeraPawFund(_protocol, _name, _voter, _asset, _rewardTokens, _berachainRewardVault));
+        address fund = address(new BeraPawFund(PROTOCOL, _name, _voter, _asset, _rewardTokens, _berachainRewardVault));
         lastFund = fund;
         address assetAuction = IAuctionFactory(auctionFactory).createAuction(
             _initPrice,

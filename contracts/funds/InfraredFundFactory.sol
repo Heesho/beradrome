@@ -86,6 +86,7 @@ contract InfraredFundFactory is Ownable {
 
     /*----------  CONSTANTS  --------------------------------------------*/
 
+    string public constant PROTOCOL = "Infrared";
     address public constant IBGT = 0xac03CABA51e17c86c921E1f6CBFBdC91F8BB2E6b;
 
     /*----------  STATE VARIABLES  --------------------------------------*/
@@ -121,7 +122,6 @@ contract InfraredFundFactory is Ownable {
     }
 
     function createFund(
-        string memory _protocol,
         string memory _name,
         address _voter,
         address _asset,
@@ -133,7 +133,7 @@ contract InfraredFundFactory is Ownable {
     ) external returns (address) {
         address[] memory _rewardTokens = new address[](1);
         _rewardTokens[0] = IBGT;
-        address fund = address(new InfraredFund(_protocol, _name, _voter, _asset, _rewardTokens, _berachainRewardVault));
+        address fund = address(new InfraredFund(PROTOCOL, _name, _voter, _asset, _rewardTokens, _berachainRewardVault));
         lastFund = fund;
         address assetAuction = IAuctionFactory(auctionFactory).createAuction(
             _initPrice,
