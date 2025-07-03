@@ -37,12 +37,10 @@ function timer(t) {
   return new Promise((r) => setTimeout(r, t));
 }
 
-const WBERA_ADDR = "0x6969696969696969696969696969696969696969";
-const HONEY_ADDR = "0xFCBD14DC51f0A4d49d5E53C2E0950e0bC26d0Dce";
-const WBERA_HONEY_LP_ADDR = "0x4a254b11810b8ebb63c5468e438fc561cb1bb1da";
-const WBERA_HONEY_LP_VAULT = "0x45325df4a6a6ebd268f4693474aaaa1f3f0ce8ca";
-const WBERA_HONEY_LP_HOLDER = "0x55b93b7F5B75bec5804460cF9EF0269148758BD8";
-const LBGT_ADDR = "0xBaadCC2962417C01Af99fb2B7C75706B9bd6Babe";
+const LP_ADDR = "0x4a254b11810b8ebb63c5468e438fc561cb1bb1da";
+const VAULT_ADDR = "0x45325df4a6a6ebd268f4693474aaaa1f3f0ce8ca";
+const LP_HOLDER = "0x55b93b7F5B75bec5804460cF9EF0269148758BD8";
+const BGT_ADDR = "0xBaadCC2962417C01Af99fb2B7C75706B9bd6Babe";
 
 let owner, multisig, treasury, user0, user1, user2;
 let vaultFactory;
@@ -57,10 +55,10 @@ let swapMulticall, farmMulticall, voterMulticall, auctionMulticall;
 let controller, router;
 let TOKEN, VTOKEN, OTOKEN, BASE;
 let fundFactory, auctionFactory, rewardAuction;
-let WBERA, HONEY, LBGT, LP0;
+let BGT, LP0;
 let fund0, gauge0, bribe0, auction0;
 
-describe.only("bera: BeraPawFundTest", function () {
+describe("bera: BeraPawFundTest", function () {
   before("Initial set up", async function () {
     console.log("Begin Initialization");
 
@@ -73,10 +71,8 @@ describe.only("bera: BeraPawFundTest", function () {
       await ethers.getSigners();
 
     // initialize ERC20s
-    WBERA = new ethers.Contract(WBERA_ADDR, ERC20_ABI, provider);
-    HONEY = new ethers.Contract(HONEY_ADDR, ERC20_ABI, provider);
-    LP0 = new ethers.Contract(WBERA_HONEY_LP_ADDR, ERC20_ABI, provider);
-    LBGT = new ethers.Contract(LBGT_ADDR, ERC20_ABI, provider);
+    LP0 = new ethers.Contract(LP_ADDR, ERC20_ABI, provider);
+    BGT = new ethers.Contract(BGT_ADDR, ERC20_ABI, provider);
     console.log("- ERC20s Initialized");
 
     // initialize BASE
@@ -346,7 +342,7 @@ describe.only("bera: BeraPawFundTest", function () {
       "Fund0",
       voter.address,
       LP0.address,
-      WBERA_HONEY_LP_VAULT,
+      VAULT_ADDR,
       oneHundred,
       24 * 3600,
       two,
@@ -378,32 +374,331 @@ describe.only("bera: BeraPawFundTest", function () {
 
   it("first test", async function () {
     console.log("******************************************************");
-    console.log(
-      "Balance of LP0 holder",
-      await LP0.balanceOf(WBERA_HONEY_LP_HOLDER)
-    );
+    console.log("Balance of LP0 holder", await LP0.balanceOf(LP_HOLDER));
   });
 
   it("Impersonate LP0 holder and send to user0", async function () {
     console.log("******************************************************");
     await network.provider.request({
       method: "hardhat_impersonateAccount",
-      params: [WBERA_HONEY_LP_HOLDER],
+      params: [LP_HOLDER],
     });
-    const signer = ethers.provider.getSigner(WBERA_HONEY_LP_HOLDER);
+    const signer = ethers.provider.getSigner(LP_HOLDER);
 
     await LP0.connect(signer).transfer(
       user0.address,
-      await LP0.connect(owner).balanceOf(WBERA_HONEY_LP_HOLDER)
+      await LP0.connect(owner).balanceOf(LP_HOLDER)
     );
+    await LP0.connect(user0).transfer(user1.address, oneHundred);
+    await LP0.connect(user0).transfer(user2.address, oneHundred);
 
     console.log(
       "Holder LP0 balance: ",
-      divDec(await LP0.connect(owner).balanceOf(WBERA_HONEY_LP_HOLDER))
+      divDec(await LP0.connect(owner).balanceOf(LP_HOLDER))
     );
     console.log(
       "User0 LP0 balance: ",
       divDec(await LP0.connect(owner).balanceOf(user0.address))
     );
+    console.log(
+      "User1 LP0 balance: ",
+      divDec(await LP0.connect(owner).balanceOf(user1.address))
+    );
+    console.log(
+      "User2 LP0 balance: ",
+      divDec(await LP0.connect(owner).balanceOf(user2.address))
+    );
+  });
+
+  it("Mint test tokens to each user", async function () {
+    console.log("******************************************************");
+    await BASE.mint(user0.address, oneThousand);
+    await BASE.mint(user1.address, oneThousand);
+    await BASE.mint(user2.address, oneThousand);
+  });
+
+  it("Setup emissions for fund0", async function () {
+    console.log("******************************************************");
+    console.log("Setting up emissions for fund0");
+    console.log();
+
+    // Add plugin to voter which will create and set gauge and bribe
+    await voter.connect(owner).addPlugin(fund0.address);
+
+    // First get some BASE to purchase TOKEN
+    const baseAmount = oneThousand;
+    await BASE.mint(user0.address, baseAmount);
+    await BASE.connect(user0).approve(TOKEN.address, baseAmount);
+
+    // Purchase TOKEN
+    console.log("Purchasing TOKEN...");
+    await TOKEN.connect(user0).buy(
+      baseAmount,
+      1,
+      1792282187,
+      user0.address,
+      AddressZero
+    );
+    const tokenBalance = await TOKEN.balanceOf(user0.address);
+    console.log("TOKEN purchased:", ethers.utils.formatUnits(tokenBalance, 18));
+
+    // Stake TOKEN for vTOKEN
+    console.log("\nStaking TOKEN for vTOKEN...");
+    await TOKEN.connect(user0).approve(VTOKEN.address, tokenBalance);
+    await VTOKEN.connect(user0).deposit(tokenBalance);
+    const vTokenBalance = await VTOKEN.balanceOf(user0.address);
+    console.log(
+      "vTOKEN received:",
+      ethers.utils.formatUnits(vTokenBalance, 18)
+    );
+
+    // Vote for fund0
+    console.log("\nVoting for fund0...");
+    await voter.connect(user0).vote([fund0.address], [vTokenBalance]);
+
+    // Verify the vote
+    const weight = await voter.weights(fund0.address);
+    console.log("Voting weight:", ethers.utils.formatUnits(weight, 18));
+
+    // Get updated plugin data
+    const auctionCard = await auctionMulticall.auctionCardData(
+      fund0.address,
+      user0.address
+    );
+    console.log("\nUpdated Fund Details:");
+    console.log(
+      "- Voting Weight:",
+      ethers.utils.formatUnits(auctionCard.votingWeight, 18),
+      "%"
+    );
+    console.log(
+      "- Offered OTOKEN:",
+      ethers.utils.formatUnits(auctionCard.offeredOTOKEN, 18)
+    );
+
+    expect(weight).to.equal(vTokenBalance);
+    console.log("\nEmissions setup complete!");
+  });
+
+  it("Initialize fund0", async function () {
+    console.log("******************************************************");
+    console.log("Initializing fund0");
+    console.log();
+
+    // Initialize fund
+    await fund0.connect(user2).initialize();
+    console.log("- Fund initialized");
+
+    // Verify initialization
+    expect(await fund0.getInitialized()).to.be.true;
+  });
+
+  it("Owner calls distribute", async function () {
+    console.log("******************************************************");
+    await controller.connect(owner).distribute();
+  });
+
+  it("Test fund0 parameters via multicall", async function () {
+    console.log("******************************************************");
+    console.log("Testing plugin0 parameters via multicall");
+    console.log();
+
+    const auctionCard = await auctionMulticall.auctionCardData(
+      fund0.address,
+      user0.address
+    );
+
+    console.log("Plugin Details:");
+    console.log("- Protocol:", auctionCard.protocol);
+    console.log("- Name:", auctionCard.name);
+    console.log("- Asset:", auctionCard.asset);
+    console.log("- Gauge:", auctionCard.gauge);
+    console.log("- Bribe:", auctionCard.bribe);
+    console.log("- Asset Auction:", auctionCard.assetAuction);
+    console.log("- Reward Auction:", auctionCard.rewardAuction);
+    console.log("- TVL:", ethers.utils.formatUnits(auctionCard.tvl, 18));
+    console.log(
+      "- Voting Weight:",
+      ethers.utils.formatUnits(auctionCard.votingWeight, 18),
+      "%"
+    );
+
+    console.log("\nAuction Parameters:");
+    console.log(
+      "- Epoch Duration:",
+      auctionCard.auctionEpochDuration.toString(),
+      "seconds"
+    );
+    console.log(
+      "- Price Multiplier:",
+      ethers.utils.formatUnits(auctionCard.auctionPriceMultiplier, 18)
+    );
+    console.log(
+      "- Min Init Price:",
+      ethers.utils.formatUnits(auctionCard.auctionMinInitPrice, 18)
+    );
+    console.log("- Current Epoch:", auctionCard.auctionEpoch.toString());
+    console.log(
+      "- Current Init Price:",
+      ethers.utils.formatUnits(auctionCard.auctionInitPrice, 18)
+    );
+    console.log(
+      "- Start Time:",
+      new Date(auctionCard.auctionStartTime * 1000).toLocaleString()
+    );
+    console.log(
+      "- Current Price:",
+      ethers.utils.formatUnits(auctionCard.auctionPrice, 18)
+    );
+    console.log(
+      "- Offered OTOKEN:",
+      ethers.utils.formatUnits(auctionCard.offeredOTOKEN, 18)
+    );
+
+    console.log("\nStatus:");
+    console.log("- Is Alive:", auctionCard.isAlive);
+    console.log("- Is Initialized:", auctionCard.isInitialized);
+  });
+
+  it("Owner calls distribute", async function () {
+    console.log("******************************************************");
+    await controller.distribute();
+  });
+
+  it("Test fund0 deposit and rewards", async function () {
+    console.log("******************************************************");
+    console.log("Testing fund0 deposits and rewards");
+    console.log();
+
+    // Get initial states
+    const initialTotalSupply = await fund0.getTvl();
+    console.log("Initial Fund State:");
+    console.log("- TVL:", ethers.utils.formatUnits(initialTotalSupply, 18));
+
+    // Mint some LP0 tokens to user1
+    const depositAmount = await LP0.connect(user1).balanceOf(user1.address);
+
+    console.log(
+      "\nMinted",
+      ethers.utils.formatUnits(depositAmount, 18),
+      "LP0 to user1"
+    );
+
+    // Approve and deposit LP0 tokens
+    await LP0.connect(user1).approve(fund0.address, depositAmount);
+    await fund0.connect(user1).deposit(depositAmount);
+
+    console.log("\nPost-Deposit State:");
+    console.log(
+      "- Fund TVL:",
+      ethers.utils.formatUnits(await fund0.getTvl(), 18)
+    );
+
+    // Generate some fund rewards
+    console.log("\nGenerating fund rewards...");
+    await fund0.connect(owner).claim();
+
+    // Forward time to accumulate rewards
+    await network.provider.send("evm_increaseTime", [24 * 3600]); // 1 day
+    await network.provider.send("evm_mine");
+
+    // Claim rewards from fund
+    console.log("\nClaiming fund rewards...");
+    const preClaim = await BGT.connect(owner).balanceOf(fund0.address);
+    await fund0.connect(multisig).claim();
+    const postClaim = await BGT.connect(owner).balanceOf(fund0.address);
+
+    console.log(
+      "Rewards claimed:",
+      ethers.utils.formatUnits(postClaim.sub(preClaim), 18),
+      "LBGT"
+    );
+
+    // Distribute rewards to auction
+    console.log("\nDistributing rewards to auction...");
+    const preAuctionBalance = await BGT.connect(owner).balanceOf(
+      rewardAuction.address
+    );
+    await fund0.connect(user2).distribute([BGT.address]);
+    const postAuctionBalance = await BGT.connect(owner).balanceOf(
+      rewardAuction.address
+    );
+
+    console.log(
+      "Rewards sent to auction:",
+      ethers.utils.formatUnits(postAuctionBalance.sub(preAuctionBalance), 18),
+      "LBGT"
+    );
+
+    // Verify states
+    expect(await fund0.getTvl()).to.equal(depositAmount);
+    expect(postClaim).to.be.gt(preClaim);
+    expect(postAuctionBalance).to.be.gt(preAuctionBalance);
+  });
+
+  it("Owner calls distribute", async function () {
+    console.log("******************************************************");
+    // Forward time to start new epoch
+    await network.provider.send("evm_increaseTime", [7 * 24 * 3600]); // 7 days
+    await network.provider.send("evm_mine");
+
+    await controller.distributeToGauges();
+  });
+
+  it("Buy from auction", async function () {
+    console.log("******************************************************");
+    // Buy from auction
+    console.log("\nPurchasing from auction...");
+    const currentPrice = await auction0.getPrice();
+    const currentEpoch = (await auction0.getSlot0()).epochId;
+    console.log("Current price:", ethers.utils.formatUnits(currentPrice, 18));
+    console.log("Current epoch:", currentEpoch);
+
+    // Get LP0 for auction payment
+    await LP0.connect(user2).approve(router.address, currentPrice.mul(2));
+
+    // Execute auction purchase
+    await router.connect(user2).buyFromAssetAuction(
+      fund0.address,
+      currentEpoch,
+      1792282187, // deadline
+      currentPrice
+    );
+
+    console.log("\nPost-Purchase State:");
+    console.log(
+      "- Auction Price:",
+      ethers.utils.formatUnits(await auction0.getPrice(), 18)
+    );
+    console.log(
+      "- User2 OTOKEN Balance:",
+      ethers.utils.formatUnits(await OTOKEN.balanceOf(user2.address), 18)
+    );
+
+    // Verify states
+    expect(await OTOKEN.balanceOf(user2.address)).to.be.gt(0);
+  });
+
+  it("Test emergency withdrawal", async function () {
+    console.log("******************************************************");
+    console.log("Testing emergency withdrawal");
+    console.log();
+
+    // Try emergency withdraw from non-owner (should fail)
+    await expect(fund0.connect(user1).withdraw()).to.be.reverted;
+
+    // Emergency withdraw from owner
+    const preBal = await LP0.balanceOf(treasury.address);
+    await fund0.connect(multisig).withdraw();
+    const postBal = await LP0.balanceOf(treasury.address);
+
+    console.log("Emergency withdrawal results:");
+    console.log(
+      "- LP0 withdrawn:",
+      ethers.utils.formatUnits(postBal.sub(preBal), 18)
+    );
+
+    // Verify farm is empty
+    expect(await fund0.getTvl()).to.equal(0);
   });
 });

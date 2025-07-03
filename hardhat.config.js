@@ -7,8 +7,8 @@ require("solidity-coverage");
 /*===================================================================*/
 /*===========================  SETTINGS  ============================*/
 
-const CHAIN_ID = 80069; // Berachain Bepolia chain id
-// const CHAIN_ID = 80094; // Berachain Mainnet chain id
+// const CHAIN_ID = 80069; // Berachain Bepolia chain id
+const CHAIN_ID = 80094; // Berachain Mainnet chain id
 
 /*===========================  END SETTINGS  ========================*/
 /*===================================================================*/
@@ -56,15 +56,16 @@ module.exports = {
     ],
   },
   networks: {
-    mainnet: {
-      url: RPC_URL,
-      chainId: CHAIN_ID,
-      accounts: [PRIVATE_KEY],
-    },
+    // mainnet: {
+    //   url: RPC_URL,
+    //   chainId: CHAIN_ID,
+    //   accounts: [PRIVATE_KEY],
+    // },
     hardhat: {
       chainId: CHAIN_ID,
       forking: {
         url: RPC_URL,
+        // blockNumber: 7000000,
       },
     },
   },

@@ -53,7 +53,7 @@ const VAULT_FACTORY = "0x94Ad6Ac84f6C6FbA8b8CCbD71d9f4f101def52a8"; // Vault Fac
 const WBERA_ADDR = "0x6969696969696969696969696969696969696969";
 const HONEY_ADDR = "0xFCBD14DC51f0A4d49d5E53C2E0950e0bC26d0Dce";
 const WBERA_HONEY_LP_ADDR = "0xefC923B5F2162b83F0e05dC36148aD56615Bff70";
-const WBERA_HONEY_LP_HOLDER = "0xf3B5E19D1438FeDAa5080A74701017896311AAd6";
+const WBERA_HONEY_LP_HOLDER = "0x38D2dFC2F67Ce4a9dAEfE6C2F2E3882042f5E439";
 const YBGT_ADDR = "0x7e768f47dfDD5DAe874Aac233f1Bc5817137E453";
 
 let owner, multisig, treasury, user0, user1, user2;
@@ -64,6 +64,7 @@ let VTOKENFactory,
   gaugeFactory,
   bribeFactory;
 let minter, voter, fees, rewarder, governance, multicall, pluginFactory;
+let swapMulticall, farmMulticall, voterMulticall;
 let TOKEN, VTOKEN, OTOKEN, BASE;
 let WBERA, HONEY, YBGT;
 let LP0, plugin0, gauge0, bribe0;
@@ -217,9 +218,11 @@ describe("berachain: bearn plugin testing", function () {
     );
     console.log("- TOKENGovernor Initialized");
 
-    // initialize Multicall
-    const multicallArtifact = await ethers.getContractFactory("Multicall");
-    const multicallContract = await multicallArtifact.deploy(
+    // initialize SwapMulticall
+    const swapMulticallArtifact = await ethers.getContractFactory(
+      "SwapMulticall"
+    );
+    const swapMulticallContract = await swapMulticallArtifact.deploy(
       voter.address,
       BASE.address,
       TOKEN.address,
@@ -227,11 +230,38 @@ describe("berachain: bearn plugin testing", function () {
       VTOKEN.address,
       rewarder.address
     );
-    multicall = await ethers.getContractAt(
-      "Multicall",
-      multicallContract.address
+    swapMulticall = await ethers.getContractAt(
+      "SwapMulticall",
+      swapMulticallContract.address
     );
-    console.log("- Multicall Initialized");
+    console.log("- SwapMulticall Initialized");
+
+    // initialize FarmMulticall
+    const farmMulticallArtifact = await ethers.getContractFactory(
+      "FarmMulticall"
+    );
+    const farmMulticallContract = await farmMulticallArtifact.deploy(
+      voter.address,
+      TOKEN.address
+    );
+    farmMulticall = await ethers.getContractAt(
+      "FarmMulticall",
+      farmMulticallContract.address
+    );
+    console.log("- FarmMulticall Initialized");
+
+    // initialize VoterMulticall
+    const voterMulticallArtifact = await ethers.getContractFactory(
+      "VoterMulticall"
+    );
+    const voterMulticallContract = await voterMulticallArtifact.deploy(
+      voter.address
+    );
+    voterMulticall = await ethers.getContractAt(
+      "VoterMulticall",
+      voterMulticallContract.address
+    );
+    console.log("- VoterMulticall Initialized");
 
     // System set-up
     await gaugeFactory.setVoter(voter.address);
@@ -381,7 +411,7 @@ describe("berachain: bearn plugin testing", function () {
 
   it("BondingCurveData, user1", async function () {
     console.log("******************************************************");
-    let res = await multicall.bondingCurveData(user1.address);
+    let res = await swapMulticall.bondingCurveData(user1.address);
     console.log("GLOBAL DATA");
     console.log("Price BASE: $", divDec(res.priceBASE));
     console.log("Price TOKEN: $", divDec(res.priceTOKEN));
@@ -411,7 +441,7 @@ describe("berachain: bearn plugin testing", function () {
 
   it("GaugeCardData, plugin0, user1", async function () {
     console.log("******************************************************");
-    let res = await multicall.gaugeCardData(plugin0.address, user1.address);
+    let res = await farmMulticall.gaugeCardData(plugin0.address, user1.address);
     console.log("INFORMATION");
     console.log("Gauge: ", res.gauge);
     console.log("Plugin: ", res.plugin);
@@ -440,7 +470,10 @@ describe("berachain: bearn plugin testing", function () {
 
   it("BribeCardData, plugin0, user1 ", async function () {
     console.log("******************************************************");
-    let res = await multicall.bribeCardData(plugin0.address, user1.address);
+    let res = await voterMulticall.bribeCardData(
+      plugin0.address,
+      user1.address
+    );
     console.log("INFORMATION");
     console.log("Gauge: ", res.bribe);
     console.log("Plugin: ", res.plugin);
@@ -470,7 +503,7 @@ describe("berachain: bearn plugin testing", function () {
 
   it("GaugeCardData, plugin0, user0", async function () {
     console.log("******************************************************");
-    let res = await multicall.gaugeCardData(plugin0.address, user0.address);
+    let res = await farmMulticall.gaugeCardData(plugin0.address, user0.address);
     console.log("INFORMATION");
     console.log("Gauge: ", res.gauge);
     console.log("Plugin: ", res.plugin);
@@ -505,7 +538,7 @@ describe("berachain: bearn plugin testing", function () {
 
   it("GaugeCardData, plugin0, user0", async function () {
     console.log("******************************************************");
-    let res = await multicall.gaugeCardData(plugin0.address, user0.address);
+    let res = await farmMulticall.gaugeCardData(plugin0.address, user0.address);
     console.log("INFORMATION");
     console.log("Gauge: ", res.gauge);
     console.log("Plugin: ", res.plugin);
@@ -547,7 +580,7 @@ describe("berachain: bearn plugin testing", function () {
 
   it("GaugeCardData, plugin0, user1", async function () {
     console.log("******************************************************");
-    let res = await multicall.gaugeCardData(plugin0.address, user1.address);
+    let res = await farmMulticall.gaugeCardData(plugin0.address, user1.address);
     console.log("INFORMATION");
     console.log("Gauge: ", res.gauge);
     console.log("Plugin: ", res.plugin);
@@ -576,7 +609,10 @@ describe("berachain: bearn plugin testing", function () {
 
   it("BribeCardData, plugin0, user1 ", async function () {
     console.log("******************************************************");
-    let res = await multicall.bribeCardData(plugin0.address, user1.address);
+    let res = await voterMulticall.bribeCardData(
+      plugin0.address,
+      user1.address
+    );
     console.log("INFORMATION");
     console.log("Gauge: ", res.bribe);
     console.log("Plugin: ", res.plugin);
@@ -612,7 +648,10 @@ describe("berachain: bearn plugin testing", function () {
 
   it("BribeCardData, plugin0, user1 ", async function () {
     console.log("******************************************************");
-    let res = await multicall.bribeCardData(plugin0.address, user1.address);
+    let res = await voterMulticall.bribeCardData(
+      plugin0.address,
+      user1.address
+    );
     console.log("INFORMATION");
     console.log("Gauge: ", res.bribe);
     console.log("Plugin: ", res.plugin);
@@ -652,7 +691,7 @@ describe("berachain: bearn plugin testing", function () {
 
   it("GaugeCardData, plugin0, user0", async function () {
     console.log("******************************************************");
-    let res = await multicall.gaugeCardData(plugin0.address, user0.address);
+    let res = await farmMulticall.gaugeCardData(plugin0.address, user0.address);
     console.log("INFORMATION");
     console.log("Gauge: ", res.gauge);
     console.log("Plugin: ", res.plugin);
