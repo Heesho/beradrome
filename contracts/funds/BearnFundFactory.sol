@@ -154,19 +154,19 @@ contract BearnFundFactory is Ownable {
     /*---------- RESTRICTED FUNCTIONS  ----------------------------------*/
 
     function setGovernance(address _governance) external onlyOwner {
-        if (_governance == address(0)) revert BeraPawFundFactory__InvalidGovernance();
+        if (_governance == address(0)) revert BearnFundFactory__InvalidGovernance();
         governance = _governance;
-        emit BeraPawFundFactory__SetGovernance(_governance);
+        emit BearnFundFactory__SetGovernance(_governance);
     }
 
     function setRewardAuction(address _rewardAuction) external onlyOwner {
         rewardAuction = _rewardAuction;
-        emit BeraPawFundFactory__SetRewardAuction(_rewardAuction);
+        emit BearnFundFactory__SetRewardAuction(_rewardAuction);
     }
 
     function setAuctionFactory(address _auctionFactory) external onlyOwner {
         auctionFactory = _auctionFactory;
-        emit BeraPawFundFactory__SetAuctionFactory(_auctionFactory);
+        emit BearnFundFactory__SetAuctionFactory(_auctionFactory);
     }
 
 }

@@ -67,7 +67,7 @@ let TOKEN, VTOKEN, OTOKEN, BASE;
 let HONEY, STYBGT;
 let plugin0, gauge0, bribe0;
 
-describe.only("berachain: bearn plugin testing", function () {
+describe("berachain: bearn plugin testing", function () {
   before("Initial set up", async function () {
     console.log("Begin Initialization");
 
