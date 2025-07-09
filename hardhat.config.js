@@ -56,11 +56,11 @@ module.exports = {
     ],
   },
   networks: {
-    // mainnet: {
-    //   url: RPC_URL,
-    //   chainId: CHAIN_ID,
-    //   accounts: [PRIVATE_KEY],
-    // },
+    mainnet: {
+      url: RPC_URL,
+      chainId: CHAIN_ID,
+      accounts: [PRIVATE_KEY],
+    },
     hardhat: {
       chainId: CHAIN_ID,
       forking: {
