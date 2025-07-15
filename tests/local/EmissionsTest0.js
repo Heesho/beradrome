@@ -27,6 +27,7 @@ let VTOKENFactory,
   gaugeFactory,
   bribeFactory;
 let minter, voter, fees, rewarder, governance;
+let controller;
 let swapMulticall, farmMulticall, voterMulticall;
 let TOKEN, VTOKEN, OTOKEN, BASE;
 let pluginFactory;
@@ -182,6 +183,18 @@ describe("local: emissions test 0", function () {
     );
     console.log("- TOKENGovernor Initialized");
 
+    // initialize Controller
+    const controllerArtifact = await ethers.getContractFactory("Controller");
+    const controllerContract = await controllerArtifact.deploy(
+      voter.address,
+      fees.address
+    );
+    controller = await ethers.getContractAt(
+      "Controller",
+      controllerContract.address
+    );
+    console.log("- Controller Initialized");
+
     // initialize SwapMulticall
     const swapMulticallArtifact = await ethers.getContractFactory(
       "SwapMulticall"
@@ -206,7 +219,8 @@ describe("local: emissions test 0", function () {
     );
     const farmMulticallContract = await farmMulticallArtifact.deploy(
       voter.address,
-      TOKEN.address
+      TOKEN.address,
+      controller.address
     );
     farmMulticall = await ethers.getContractAt(
       "FarmMulticall",

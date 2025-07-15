@@ -29,12 +29,17 @@ interface ITOKEN {
     function getOTokenPrice() external view returns (uint256);
 }
 
+interface IController {
+    function isFund(address fund) external view returns (bool);
+}
+
 contract FarmMulticall {
 
     /*----------  STATE VARIABLES  --------------------------------------*/
 
-    address public voter;
-    address public TOKEN;
+    address public immutable voter;
+    address public immutable TOKEN;
+    address public immutable controller;
     
     struct GaugeCard {
         address plugin;
@@ -60,9 +65,10 @@ contract FarmMulticall {
         uint256[] accountRewardsEarned;
     }
 
-    constructor(address _voter, address _TOKEN) {
+    constructor(address _voter, address _TOKEN, address _controller) {
         voter = _voter;
         TOKEN = _TOKEN;
+        controller = _controller;
     }
 
     /*----------  VIEW FUNCTIONS  ---------------------------------------*/
@@ -115,7 +121,10 @@ contract FarmMulticall {
     function getGaugeCards(uint256 start, uint256 stop, address account) external view returns (GaugeCard[] memory) {
         GaugeCard[] memory gaugeCards = new GaugeCard[](stop - start);
         for (uint i = start; i < stop; i++) {
-            gaugeCards[i] = gaugeCardData(IVoter(voter).plugins(i), account);
+            address plugin = IVoter(voter).plugins(i);
+            if (!IController(controller).isFund(plugin)) {
+                gaugeCards[i] = gaugeCardData(plugin, account);
+            }
         }
         return gaugeCards;
     }

@@ -31,7 +31,7 @@ contract VoterMulticall {
 
     /*----------  STATE VARIABLES  --------------------------------------*/
 
-    address public voter;
+    address public immutable voter;
 
     struct BribeCard {
         address plugin;                 

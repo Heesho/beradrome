@@ -69,10 +69,10 @@ contract Router {
         address paymentToken = IAuction(auction).paymentToken();
         address[] memory assets = new address[](1);
         assets[0] = oToken;
-        IFund(plugin).distribute(assets);
+
         IERC20(paymentToken).safeTransferFrom(msg.sender, address(this), maxPayment);
-        IERC20(paymentToken).approve(auction, 0);
-        IERC20(paymentToken).approve(auction, maxPayment);
+        IERC20(paymentToken).safeApprove(auction, 0);
+        IERC20(paymentToken).safeApprove(auction, maxPayment);
         IAuction(auction).buy(
             assets,
             msg.sender,
@@ -111,8 +111,8 @@ contract Router {
         }
 
         IERC20(token).safeTransferFrom(msg.sender, address(this), maxPayment);
-        IERC20(token).approve(rewardAuction, 0);
-        IERC20(token).approve(rewardAuction, maxPayment);
+        IERC20(token).safeApprove(rewardAuction, 0);
+        IERC20(token).safeApprove(rewardAuction, maxPayment);
         IAuction(rewardAuction).buy(
             assets,
             msg.sender,

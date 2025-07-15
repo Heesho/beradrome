@@ -7,7 +7,21 @@ const sleep = (delay) => new Promise((resolve) => setTimeout(resolve, delay));
 const convert = (amount, decimals) => ethers.utils.parseUnits(amount, decimals);
 const divDec = (amount, decimals = 18) => amount / 10 ** decimals;
 const one = convert("1", 18);
+const two = convert("2", 18);
+const ten = convert("10", 18);
+const oneHundred = convert("100", 18);
 const oneHundredThousand = convert("100000", 18);
+const ADDRESS_ZERO = "0x0000000000000000000000000000000000000000";
+
+const WBERA_ABI = [
+  "function balanceOf(address owner) view returns (uint256)",
+  "function transfer(address to, uint amount) returns (bool)",
+  "function approve(address spender, uint256 amount) external returns (bool)",
+  "function allowance(address owner, address spender) view returns (uint256)",
+  "function totalSupply() view returns (uint256)",
+  "function deposit() external payable",
+  "function withdraw(uint256 amount) external",
+];
 
 const MARKET_RESERVES = "5000000"; // 5,000,000 TOKEN in market reserves
 
@@ -33,12 +47,20 @@ const CUB_PLUGIN = "0xC24435938b08a34e3913Abbf3C3cfE51802383a9";
 const CUB_PLUGIN_V2 = "0x36357C56644F760781647F1AC6CaEE3734A162d1";
 
 // Contract Variables
+let provider, wbera;
 let OTOKENFactory, VTOKENFactory, feesFactory, rewarderFactory;
 let TOKEN, OTOKEN, VTOKEN, fees, rewarder;
 let voter, minter, gaugeFactory, bribeFactory;
-let multicall, controller;
+let swapMulticall, farmMulticall, voterMulticall, auctionMulticall;
+let controller, router;
+let auctionFactory, rewardAuction;
+let fundFactory;
+let asset0, reward0, fund0, auction0;
+let asset1, reward1, fund1, auction1;
 
 async function getContracts() {
+  provider = new ethers.providers.JsonRpcProvider(process.env.RPC_URL);
+  wbera = new ethers.Contract(WBERA, WBERA_ABI, provider);
   OTOKENFactory = await ethers.getContractAt(
     "contracts/OTOKENFactory.sol:OTOKENFactory",
     "0x9C751E6825EDAa55007160b99933846f6ECeEc9B"
@@ -94,14 +116,72 @@ async function getContracts() {
     "0x6A6A9AEeF062ce48Ec115182820415aC086FE139"
   );
 
-  // multicall = await ethers.getContractAt(
-  //   "contracts/Multicall.sol:Multicall",
-  //   "0x22Fdd0Ef9bf2773B0C91BaE0fe421a5fC8a8b4ea"
-  // );
-  // controller = await ethers.getContractAt(
-  //   "contracts/Controller.sol:Controller",
-  //   "0xA4710B90d207b5aEC7561a279bf63c9D217ae5d1"
-  // );
+  auctionFactory = await ethers.getContractAt(
+    "contracts/AuctionFactory.sol:AuctionFactory",
+    "0xBAb961cBEAdC65eb3B2158fE09EdC2553131A115"
+  );
+  rewardAuction = await ethers.getContractAt(
+    "contracts/AuctionFactory.sol:Auction",
+    "0x06CB13f412228A46dE72f0E918B12B5A31512025"
+  );
+
+  controller = await ethers.getContractAt(
+    "contracts/Controller.sol:Controller",
+    "0x775c2674eB0C0Fe3eF1788ADeE280ec03B201072"
+  );
+  router = await ethers.getContractAt(
+    "contracts/Router.sol:Router",
+    "0xd585a3D3aba0722d9e2ADAF6a3539466A3C94F2c"
+  );
+
+  swapMulticall = await ethers.getContractAt(
+    "contracts/multicalls/SwapMulticall.sol:SwapMulticall",
+    "0x0C512eE6557DBcc4403a9Dc3B1Fd9c5416455035"
+  );
+  farmMulticall = await ethers.getContractAt(
+    "contracts/multicalls/FarmMulticall.sol:FarmMulticall",
+    "0xD8c0877007D2D667E619FBc7367d1feF13Ec41Cb"
+  );
+  voterMulticall = await ethers.getContractAt(
+    "contracts/multicalls/VoterMulticall.sol:VoterMulticall",
+    "0x076111Af7726540e83C9889c21789072629D796B"
+  );
+  auctionMulticall = await ethers.getContractAt(
+    "contracts/multicalls/AuctionMulticall.sol:AuctionMulticall",
+    "0xB946BBcbf600FEbCB9b006C2310465bdeBF9910e"
+  );
+
+  asset0 = await ethers.getContractAt(
+    "contracts/funds/MockFundFactory.sol:MockERC20",
+    "0x5120123fD6b7FF18512a907fb704C5065743CcDa"
+  );
+  asset1 = await ethers.getContractAt(
+    "contracts/funds/MockFundFactory.sol:MockERC20",
+    "0xD9D1c695bc030C2A3Ba958fE3D96f45f5F06E4a3"
+  );
+
+  reward0 = await ethers.getContractAt(
+    "contracts/funds/MockFundFactory.sol:MockERC20",
+    "0x9dCeBcD336390BEC47C9806Ca44379d890468C64"
+  );
+  reward1 = await ethers.getContractAt(
+    "contracts/funds/MockFundFactory.sol:MockERC20",
+    "0x614C63de3909038D74afAF831D11440eD41602b1"
+  );
+
+  fundFactory = await ethers.getContractAt(
+    "contracts/funds/MockFundFactory.sol:MockFundFactory",
+    "0x26181F231fe2E8253Ffd7f8E303e71752923bc9c"
+  );
+
+  fund0 = await ethers.getContractAt(
+    "contracts/funds/MockFundFactory.sol:MockFund",
+    "0x75AAecD95AcC6bc9178F227a100cF01EA1C8389B"
+  );
+  fund1 = await ethers.getContractAt(
+    "contracts/funds/MockFundFactory.sol:MockFund",
+    "0x90F6E9e63e3685b45fB961270Cf79d4EC8775435"
+  );
 
   console.log("Contracts Retrieved");
 }
@@ -376,21 +456,70 @@ async function verifyMinter() {
   console.log("Minter Verified");
 }
 
-async function deployMulticall() {
-  console.log("Starting Multicall Deployment");
-  const multicallArtifact = await ethers.getContractFactory("Multicall");
-  const multicallContract = await multicallArtifact.deploy(
-    voter.address,
-    BASE_ADDRESS,
-    TOKEN.address,
-    OTOKEN.address,
-    VTOKEN.address,
-    rewarder.address,
-    { gasPrice: ethers.gasPrice }
+async function deployAuctionFactory() {
+  console.log("Starting AuctionFactory Deployment");
+  const auctionFactoryArtifact = await ethers.getContractFactory(
+    "AuctionFactory"
   );
-  multicall = await multicallContract.deployed();
+  const auctionFactoryContract = await auctionFactoryArtifact.deploy({
+    gasPrice: ethers.gasPrice,
+  });
+  auctionFactory = await auctionFactoryContract.deployed();
   await sleep(5000);
-  console.log("Multicall Deployed at:", multicall.address);
+  console.log("AuctionFactory Deployed at:", auctionFactory.address);
+}
+
+async function verifyAuctionFactory() {
+  console.log("Starting AuctionFactory Verification");
+  await hre.run("verify:verify", {
+    address: auctionFactory.address,
+    contract: "contracts/AuctionFactory.sol:AuctionFactory",
+  });
+  console.log("AuctionFactory Verified");
+}
+
+async function deployRewardAuction() {
+  console.log("Starting RewardAuction Deployment");
+  await auctionFactory.createAuction(
+    oneHundred,
+    false,
+    TOKEN.address,
+    fees.address,
+    24 * 3600,
+    two,
+    ten
+  );
+  rewardAuction = await ethers.getContractAt(
+    "contracts/AuctionFactory.sol:Auction",
+    await auctionFactory.last_auction()
+  );
+  console.log("RewardAuction Deployed at:", rewardAuction.address);
+}
+
+async function verifyRewardAuction() {
+  console.log("Starting RewardAuction Verification");
+  await hre.run("verify:verify", {
+    address: rewardAuction.address,
+    contract: "contracts/AuctionFactory.sol:Auction",
+    constructorArguments: [
+      oneHundred,
+      false,
+      TOKEN.address,
+      fees.address,
+      ADDRESS_ZERO,
+      24 * 3600,
+      two,
+      ten,
+    ],
+  });
+  console.log("RewardAuction Verified");
+}
+
+async function printAuctionAddresses() {
+  console.log("**************************************************************");
+  console.log("AuctionFactory: ", auctionFactory.address);
+  console.log("RewardAuction: ", rewardAuction.address);
+  console.log("**************************************************************");
 }
 
 async function deployController() {
@@ -406,18 +535,79 @@ async function deployController() {
   console.log("Controller Deployed at:", controller.address);
 }
 
+async function verifyController() {
+  console.log("Starting Controller Verification");
+  await hre.run("verify:verify", {
+    address: controller.address,
+    contract: "contracts/Controller.sol:Controller",
+    constructorArguments: [voter.address, fees.address],
+  });
+  console.log("Controller Verified");
+}
+
+async function deployRouter() {
+  console.log("Starting Router Deployment");
+  const routerArtifact = await ethers.getContractFactory("Router");
+  const routerContract = await routerArtifact.deploy(
+    controller.address,
+    voter.address,
+    TOKEN.address,
+    OTOKEN.address,
+    rewardAuction.address,
+    { gasPrice: ethers.gasPrice }
+  );
+  router = await routerContract.deployed();
+  await sleep(5000);
+  console.log("Router Deployed at:", router.address);
+}
+
+async function verifyRouter() {
+  console.log("Starting Router Verification");
+  await hre.run("verify:verify", {
+    address: router.address,
+    contract: "contracts/Router.sol:Router",
+    constructorArguments: [
+      controller.address,
+      voter.address,
+      TOKEN.address,
+      OTOKEN.address,
+      rewardAuction.address,
+    ],
+  });
+  console.log("Router Verified");
+}
+
 async function printAncillaryAddresses() {
   console.log("**************************************************************");
-  console.log("Multicall: ", multicall.address);
   console.log("Controller: ", controller.address);
+  console.log("Router: ", router.address);
   console.log("**************************************************************");
 }
 
-async function verifyMulticall() {
-  console.log("Starting Multicall Verification");
+async function deploySwapMulticall() {
+  console.log("Starting SwapMulticall Deployment");
+  const swapMulticallArtifact = await ethers.getContractFactory(
+    "SwapMulticall"
+  );
+  const swapMulticallContract = await swapMulticallArtifact.deploy(
+    voter.address,
+    BASE_ADDRESS,
+    TOKEN.address,
+    OTOKEN.address,
+    VTOKEN.address,
+    rewarder.address,
+    { gasPrice: ethers.gasPrice }
+  );
+  swapMulticall = await swapMulticallContract.deployed();
+  await sleep(5000);
+  console.log("SwapMulticall Deployed at:", swapMulticall.address);
+}
+
+async function verifySwapMulticall() {
+  console.log("Starting SwapMulticall Verification");
   await hre.run("verify:verify", {
-    address: multicall.address,
-    contract: "contracts/Multicall.sol:Multicall",
+    address: swapMulticall.address,
+    contract: "contracts/multicalls/SwapMulticall.sol:SwapMulticall",
     constructorArguments: [
       voter.address,
       BASE_ADDRESS,
@@ -427,17 +617,99 @@ async function verifyMulticall() {
       rewarder.address,
     ],
   });
-  console.log("Multicall Verified");
+  console.log("SwapMulticall Verified");
 }
 
-async function verifyController() {
-  console.log("Starting Controller Verification");
+async function deployFarmMulticall() {
+  console.log("Starting FarmMulticall Deployment");
+  const farmMulticallArtifact = await ethers.getContractFactory(
+    "FarmMulticall"
+  );
+  const farmMulticallContract = await farmMulticallArtifact.deploy(
+    voter.address,
+    TOKEN.address,
+    controller.address,
+    { gasPrice: ethers.gasPrice }
+  );
+  farmMulticall = await farmMulticallContract.deployed();
+  await sleep(5000);
+  console.log("FarmMulticall Deployed at:", farmMulticall.address);
+}
+
+async function verifyFarmMulticall() {
+  console.log("Starting FarmMulticall Verification");
   await hre.run("verify:verify", {
-    address: controller.address,
-    contract: "contracts/Controller.sol:Controller",
-    constructorArguments: [voter.address, fees.address],
+    address: farmMulticall.address,
+    contract: "contracts/multicalls/FarmMulticall.sol:FarmMulticall",
+    constructorArguments: [voter.address, TOKEN.address, controller.address],
   });
-  console.log("Controller Verified");
+  console.log("FarmMulticall Verified");
+}
+
+async function deployVoterMulticall() {
+  console.log("Starting VoterMulticall Deployment");
+  const voterMulticallArtifact = await ethers.getContractFactory(
+    "VoterMulticall"
+  );
+  const voterMulticallContract = await voterMulticallArtifact.deploy(
+    voter.address,
+    { gasPrice: ethers.gasPrice }
+  );
+  voterMulticall = await voterMulticallContract.deployed();
+  await sleep(5000);
+  console.log("VoterMulticall Deployed at:", voterMulticall.address);
+}
+
+async function verifyVoterMulticall() {
+  console.log("Starting VoterMulticall Verification");
+  await hre.run("verify:verify", {
+    address: voterMulticall.address,
+    contract: "contracts/multicalls/VoterMulticall.sol:VoterMulticall",
+    constructorArguments: [voter.address],
+  });
+  console.log("VoterMulticall Verified");
+}
+async function deployAuctionMulticall() {
+  console.log("Starting AuctionMulticall Deployment");
+  const auctionMulticallArtifact = await ethers.getContractFactory(
+    "contracts/multicalls/AuctionMulticall.sol:AuctionMulticall"
+  );
+  const auctionMulticallContract = await auctionMulticallArtifact.deploy(
+    voter.address,
+    TOKEN.address,
+    OTOKEN.address,
+    rewardAuction.address,
+    controller.address,
+    { gasPrice: ethers.gasPrice }
+  );
+  auctionMulticall = await auctionMulticallContract.deployed();
+  await sleep(5000);
+  console.log("AuctionMulticall Deployed at:", auctionMulticall.address);
+}
+
+async function verifyAuctionMulticall() {
+  console.log("Starting AuctionMulticall Verification");
+  await hre.run("verify:verify", {
+    address: auctionMulticall.address,
+    contract: "contracts/multicalls/AuctionMulticall.sol:AuctionMulticall",
+    constructorArguments: [
+      voter.address,
+      TOKEN.address,
+      OTOKEN.address,
+      rewardAuction.address,
+      controller.address,
+    ],
+  });
+  console.log("AuctionMulticall Verified");
+}
+
+async function printMulticallAddresses() {
+  console.log("**************************************************************");
+  console.log("SwapMulticall: ", swapMulticall.address);
+  console.log("FarmMulticall: ", farmMulticall.address);
+  console.log("VoterMulticall: ", voterMulticall.address);
+  console.log("AuctionMulticall: ", auctionMulticall.address);
+  console.log("**************************************************************");
 }
 
 async function setUpSystem(wallet) {
@@ -478,6 +750,9 @@ async function setUpSystem(wallet) {
   //   await minter.initialize();
   //   await sleep(5000);
   //   console.log("Minter Set Up");
+
+  await auctionFactory.setSplit(4000);
+  console.log("Auction Factory split set to 4000");
 
   console.log("System Initialized");
 }
@@ -521,6 +796,69 @@ async function verifyBribe(bribeAddress) {
     constructorArguments: [voter.address],
   });
   console.log("Bribe Verified");
+}
+
+async function deployFundFactory() {
+  console.log("Starting Fund Factory Deployment");
+  const fundFactoryArtifact = await ethers.getContractFactory(
+    "MockFundFactory"
+  );
+  const fundFactoryContract = await fundFactoryArtifact.deploy(
+    MULTISIG,
+    rewardAuction.address,
+    auctionFactory.address,
+    { gasPrice: ethers.gasPrice }
+  );
+  fundFactory = await fundFactoryContract.deployed();
+  await sleep(5000);
+  console.log("Fund Factory Deployed at:", fundFactory.address);
+}
+
+async function verifyFundFactory() {
+  console.log("Starting Fund Factory Verification");
+  await hre.run("verify:verify", {
+    address: fundFactory.address,
+    contract: "contracts/funds/MockFundFactory.sol:MockFundFactory",
+    constructorArguments: [
+      MULTISIG,
+      rewardAuction.address,
+      auctionFactory.address,
+    ],
+  });
+  console.log("Fund Factory Verified");
+}
+
+async function deployFund() {
+  console.log("Starting Fund Deployment");
+  await fundFactory.createFund(
+    "Protocol1",
+    "Fund1",
+    voter.address,
+    asset1.address,
+    [reward1.address],
+    oneHundred,
+    24 * 3600,
+    two,
+    ten
+  );
+  await sleep(5000);
+  console.log("Fund Deployed at:", await fundFactory.lastFund());
+}
+
+async function verifyFund() {
+  console.log("Starting Fund Verification");
+  await hre.run("verify:verify", {
+    address: await fundFactory.lastFund(),
+    contract: "contracts/funds/MockFundFactory.sol:MockFund",
+    constructorArguments: [
+      "Protocol0",
+      "Fund0",
+      voter.address,
+      asset0.address,
+      [reward0.address],
+    ],
+  });
+  console.log("Fund Verified");
 }
 
 async function main() {
@@ -583,30 +921,117 @@ async function main() {
   // console.log("Voting Contracts Verified");
 
   //===================================================================
+  // Deploy Auction Factory
+  //===================================================================
+
+  // console.log("Starting Auction Factory Deployment");
+  // await deployAuctionFactory();
+  // await deployRewardAuction();
+  // await printAuctionAddresses();
+
+  //===================================================================
+  // Verify Auction Factory
+  //===================================================================
+
+  // console.log("Starting Auction Factory Verification");
+  // await verifyAuctionFactory();
+  // await verifyRewardAuction();
+  // console.log("Auction Factory Verified");
+
+  //===================================================================
   // Deploy Ancillary Contracts
   //===================================================================
 
-  //   console.log("Starting Ancillary Deployment");
-  //   await deployMulticall();
-  //   await deployController();
-  //   await printAncillaryAddresses();
+  // console.log("Starting Ancillary Deployment");
+  // await deployController();
+  // await deployRouter();
+  // await printAncillaryAddresses();
 
   //===================================================================
   // Verify Ancillary Contracts
   //===================================================================
 
   // console.log("Starting Ancillary Verification");
-  // await verifyMulticall();
   // await verifyController();
+  // await verifyRouter();
   // console.log("Ancillary Contracts Verified");
+
+  //===================================================================
+  // Deploy Multicall Contracts
+  //===================================================================
+
+  // console.log("Starting Multicall Deployment");
+  // await deploySwapMulticall();
+  // await deployFarmMulticall();
+  // await deployVoterMulticall();
+  // await deployAuctionMulticall();
+  // await printMulticallAddresses();
+
+  //===================================================================
+  // Verify Multicall Contracts
+  //===================================================================
+
+  // console.log("Starting Ancillary Verification");
+  // await verifySwapMulticall();
+  // await verifyFarmMulticall();
+  // await verifyVoterMulticall();
+  // await verifyAuctionMulticall();
+  // console.log("Multicall Contracts Verified");
 
   //===================================================================
   // Set Up System
   //===================================================================
 
-  //   console.log("Starting System Set Up");
-  //   await setUpSystem(wallet.address);
-  //   console.log("System Set Up");
+  // console.log("Starting System Set Up");
+  // await setUpSystem(wallet.address);
+  // console.log("System Set Up");
+
+  //===================================================================
+  // Deploy Tokens
+  //===================================================================
+
+  // const MockERC20Artifact = await ethers.getContractFactory(
+  //   "contracts/funds/MockFundFactory.sol:MockERC20"
+  // );
+  // asset0 = await MockERC20Artifact.deploy("ASSET0", "ASSET0");
+  // await sleep(5000);
+  // console.log("- ASSET0 Initialized at ", asset0.address);
+  // asset1 = await MockERC20Artifact.deploy("ASSET1", "ASSET1");
+  // await sleep(5000);
+  // console.log("- ASSET1 Initialized at ", asset1.address);
+  // reward0 = await MockERC20Artifact.deploy("REWARD0", "REWARD0");
+  // await sleep(5000);
+  // console.log("- REWARD0 Initialized at ", reward0.address);
+  // reward1 = await MockERC20Artifact.deploy("REWARD1", "REWARD1");
+  // await sleep(5000);
+  // console.log("- REWARD1 Initialized at ", reward1.address);
+
+  // verify tokens
+  // console.log("Starting Token Verification");
+  // await hre.run("verify:verify", {
+  //   address: asset0.address,
+  //   contract: "contracts/funds/MockFundFactory.sol:MockERC20",
+  //   constructorArguments: ["ASSET0", "ASSET0"],
+  // });
+  // console.log("Token Verified");
+
+  //===================================================================
+  // Deploy Fund Factory
+  //===================================================================
+
+  // console.log("Starting Fund Factory Deployment");
+  // await deployFundFactory();
+  // await verifyFundFactory();
+  // console.log("Fund Factory Verified");
+
+  //===================================================================
+  // Deploy Fund
+  //===================================================================
+
+  // console.log("Starting Fund Deployment");
+  // await deployFund();
+  // await verifyFund();
+  // console.log("Fund Verified");
 
   //===================================================================
   // Transfer Ownership
@@ -645,7 +1070,25 @@ async function main() {
   // await voter.connect(wallet).addPlugin(BENTO_PLUGIN_V3);
   // await voter.connect(wallet).addPlugin(BENTO_PLUGIN_V4);
   // await voter.connect(wallet).addPlugin(BENTO_PLUGIN_V5);
+  // await voter.connect(wallet).addPlugin(fund0.address);
+  // await voter.connect(wallet).addPlugin(fund1.address);
   // console.log("Plugin added");
+
+  //===================================================================
+  // Initialize Funds
+  //===================================================================
+
+  // await fund0.connect(wallet).initialize();
+  // await fund1.connect(wallet).initialize();
+  // console.log("Funds Initialized");
+
+  //===================================================================
+  // Set isFund on controller
+  //===================================================================
+
+  // await controller.connect(wallet).setIsFund(fund0.address, true);
+  // await controller.connect(wallet).setIsFund(fund1.address, true);
+  // console.log("Funds set as isFund");
 
   //===================================================================
   // Add Gauge Rewards
@@ -667,18 +1110,15 @@ async function main() {
   // Print Deployment
   //===================================================================
 
-  // console.log("Beradrome Mainnet Deployment");
-  // console.log();
-  // console.log("voter: ", await voter.address);
-  // console.log("gaugeFactory: ", await gaugeFactory.address);
-  // console.log("bribeFactory: ", await bribeFactory.address);
-  // console.log();
-  // console.log("multicall: ", await multicall.address);
-  // console.log("trifectaMulticall: ", await trifectaMulticall.address);
-  // console.log("controller: ", await controller.address);
-  // console.log();
-  // console.log("Reward Vault: ", await VTOKEN.rewardVault());
-  // console.log("Vault Token: ", await VTOKEN.vaultToken());
+  console.log("Beradrome Bepolia Deployment");
+  console.log();
+  printTokenAddresses();
+  console.log();
+  printVotingAddresses();
+  console.log();
+  printAncillaryAddresses();
+  console.log();
+  printMulticallAddresses();
 
   //===================================================================
   // Print Plugins
@@ -696,7 +1136,7 @@ async function main() {
   // BULLAS_PLUGIN_V3,
   // BENTO_PLUGIN_V3,
   // BENTO_PLUGIN_V4,
-  //   BENTO_PLUGIN_V5,
+  // BENTO_PLUGIN_V5,
   // ];
 
   // for (let i = 0; i < plugins.length; i++) {
@@ -726,10 +1166,7 @@ async function main() {
 
   // await voter
   //   .connect(wallet)
-  //   .vote(
-  //     [BULLAS_PLUGIN_V3, BENTO_PLUGIN_V5, BTT_PLUGIN_V2, CUB_PLUGIN_V2],
-  //     [1, 1, 1, 1]
-  //   );
+  //   .vote([BENTO_PLUGIN_V5, fund0.address, fund1.address], [1, 1, 1]);
   // await voter
   //   .connect(wallet)
   //   .claimBribes(["0xf00ef45a47c1bb814d9a86ed781cff86b27d0024"]);
@@ -738,7 +1175,11 @@ async function main() {
   // Distro
   //===================================================================
 
+  // await wbera.connect(wallet).withdraw(ten);
+
   // console.log("Distributing Rewards");
+
+  // await controller.connect(wallet).distribute();
 
   // await voter.distro();
   // console.log("Gauge Rewards Distributed");

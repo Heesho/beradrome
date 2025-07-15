@@ -29,8 +29,8 @@ contract BribePot {
         address bribe = IFund(fund).getBribe();
         uint256 balance = IERC20(token).balanceOf(address(this));
         if (balance > IBribe(bribe).left(address(token))) {
-            IERC20(token).approve(address(bribe), 0);
-            IERC20(token).approve(address(bribe), balance);
+            IERC20(token).safeApprove(address(bribe), 0);
+            IERC20(token).safeApprove(address(bribe), balance);
             IBribe(bribe).notifyRewardAmount(address(token), balance);
         }
     }

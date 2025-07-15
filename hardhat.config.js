@@ -7,8 +7,8 @@ require("solidity-coverage");
 /*===================================================================*/
 /*===========================  SETTINGS  ============================*/
 
-// const CHAIN_ID = 80069; // Berachain Bepolia chain id
-const CHAIN_ID = 80094; // Berachain Mainnet chain id
+const CHAIN_ID = 80069; // Berachain Bepolia chain id
+// const CHAIN_ID = 80094; // Berachain Mainnet chain id
 
 /*===========================  END SETTINGS  ========================*/
 /*===================================================================*/
@@ -94,7 +94,7 @@ module.exports = {
 
   paths: {
     sources: "./contracts",
-    tests: "./tests/bera",
+    tests: "./tests/local",
     cache: "./cache",
     artifacts: "./artifacts",
   },

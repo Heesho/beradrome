@@ -182,6 +182,18 @@ describe("local: test5", function () {
     );
     console.log("- TOKENGovernor Initialized");
 
+    // initialize Controller
+    const controllerArtifact = await ethers.getContractFactory("Controller");
+    const controllerContract = await controllerArtifact.deploy(
+      voter.address,
+      fees.address
+    );
+    controller = await ethers.getContractAt(
+      "Controller",
+      controllerContract.address
+    );
+    console.log("- Controller Initialized");
+
     // initialize SwapMulticall
     const swapMulticallArtifact = await ethers.getContractFactory(
       "SwapMulticall"
@@ -206,7 +218,8 @@ describe("local: test5", function () {
     );
     const farmMulticallContract = await farmMulticallArtifact.deploy(
       voter.address,
-      TOKEN.address
+      TOKEN.address,
+      controller.address
     );
     farmMulticall = await ethers.getContractAt(
       "FarmMulticall",
@@ -226,18 +239,6 @@ describe("local: test5", function () {
       voterMulticallContract.address
     );
     console.log("- VoterMulticall Initialized");
-
-    // initialize Controller
-    const controllerArtifact = await ethers.getContractFactory("Controller");
-    const controllerContract = await controllerArtifact.deploy(
-      voter.address,
-      fees.address
-    );
-    controller = await ethers.getContractAt(
-      "Controller",
-      controllerContract.address
-    );
-    console.log("- Controller Initialized");
 
     // System set-up
     await gaugeFactory.setVoter(voter.address);

@@ -207,6 +207,11 @@ describe("local: MockFundTest", function () {
     );
     console.log("- RewardAuction Initialized");
 
+    // initialize Controller
+    const controllerArtifact = await ethers.getContractFactory("Controller");
+    controller = await controllerArtifact.deploy(voter.address, fees.address);
+    console.log("- Controller Initialized");
+
     // initialize SwapMulticall
     const swapMulticallArtifact = await ethers.getContractFactory(
       "SwapMulticall"
@@ -231,7 +236,8 @@ describe("local: MockFundTest", function () {
     );
     const farmMulticallContract = await farmMulticallArtifact.deploy(
       voter.address,
-      TOKEN.address
+      TOKEN.address,
+      controller.address
     );
     farmMulticall = await ethers.getContractAt(
       "FarmMulticall",
@@ -260,18 +266,14 @@ describe("local: MockFundTest", function () {
       voter.address,
       TOKEN.address,
       OTOKEN.address,
-      rewardAuction.address
+      rewardAuction.address,
+      controller.address
     );
     auctionMulticall = await ethers.getContractAt(
       "AuctionMulticall",
       auctionMulticallContract.address
     );
     console.log("- AuctionMulticall Initialized");
-
-    // initialize Controller
-    const controllerArtifact = await ethers.getContractFactory("Controller");
-    controller = await controllerArtifact.deploy(voter.address, fees.address);
-    console.log("- Controller Initialized");
 
     // initialize Router
     const routerArtifact = await ethers.getContractFactory("Router");

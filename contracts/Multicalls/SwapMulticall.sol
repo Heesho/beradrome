@@ -49,12 +49,12 @@ contract SwapMulticall {
 
     /*----------  STATE VARIABLES  --------------------------------------*/
 
-    address public voter;
-    address public BASE;
-    address public TOKEN;
-    address public OTOKEN;
-    address public VTOKEN;
-    address public rewarder;
+    address public immutable voter;
+    address public immutable BASE;
+    address public immutable TOKEN;
+    address public immutable OTOKEN;
+    address public immutable VTOKEN;
+    address public immutable rewarder;
 
     uint256 public immutable FEE;
 

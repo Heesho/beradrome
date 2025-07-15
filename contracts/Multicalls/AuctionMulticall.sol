@@ -43,6 +43,10 @@ interface IGauge {
     function earned(address account, address token) external view returns (uint256);
 }
 
+interface IController {
+    function isFund(address fund) external view returns (bool);
+}
+
 contract AuctionMulticall {
 
     /*----------  STATE VARIABLES  --------------------------------------*/
@@ -51,6 +55,7 @@ contract AuctionMulticall {
     address public immutable TOKEN;
     address public immutable OTOKEN;
     address public immutable auction;
+    address public immutable controller;
 
     struct AuctionCard {
         string protocol;
@@ -100,12 +105,14 @@ contract AuctionMulticall {
         address _voter,
         address _TOKEN,
         address _OTOKEN,
-        address _auction
+        address _auction,
+        address _controller
     ) {
         voter = _voter;
         TOKEN = _TOKEN;
         OTOKEN = _OTOKEN;
         auction = _auction;
+        controller = _controller;
     }
 
     /*----------  VIEW FUNCTIONS  ---------------------------------------*/
@@ -147,7 +154,10 @@ contract AuctionMulticall {
     function getAuctionCards(uint256 start, uint256 stop, address account) external view returns (AuctionCard[] memory) {
         AuctionCard[] memory auctionCards = new AuctionCard[](stop - start);
         for (uint i = start; i < stop; i++) {
-            auctionCards[i] = auctionCardData(IVoter(voter).plugins(i), account);
+            address plugin = IVoter(voter).plugins(i);
+            if (IController(controller).isFund(plugin)) {
+                auctionCards[i] = auctionCardData(plugin, account);
+            }
         }
         return auctionCards;
     }
