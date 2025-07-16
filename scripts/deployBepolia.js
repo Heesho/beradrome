@@ -1110,15 +1110,15 @@ async function main() {
   // Print Deployment
   //===================================================================
 
-  console.log("Beradrome Bepolia Deployment");
-  console.log();
-  printTokenAddresses();
-  console.log();
-  printVotingAddresses();
-  console.log();
-  printAncillaryAddresses();
-  console.log();
-  printMulticallAddresses();
+  // console.log("Beradrome Bepolia Deployment");
+  // console.log();
+  // printTokenAddresses();
+  // console.log();
+  // printVotingAddresses();
+  // console.log();
+  // printAncillaryAddresses();
+  // console.log();
+  // printMulticallAddresses();
 
   //===================================================================
   // Print Plugins
