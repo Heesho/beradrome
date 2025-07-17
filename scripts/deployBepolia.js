@@ -127,28 +127,28 @@ async function getContracts() {
 
   controller = await ethers.getContractAt(
     "contracts/Controller.sol:Controller",
-    "0x775c2674eB0C0Fe3eF1788ADeE280ec03B201072"
+    "0x8d6F9Cb274Cf0E27540e44F62427a61bD8EF6eD3"
   );
   router = await ethers.getContractAt(
     "contracts/Router.sol:Router",
-    "0xd585a3D3aba0722d9e2ADAF6a3539466A3C94F2c"
+    "0x6ab80fBD2C92DdDf85499DCF5dBEfeE34Df055dC"
   );
 
   swapMulticall = await ethers.getContractAt(
     "contracts/multicalls/SwapMulticall.sol:SwapMulticall",
-    "0x0C512eE6557DBcc4403a9Dc3B1Fd9c5416455035"
+    "0xeA2646CCe262A34c6ED9C54365af25bB638446b8"
   );
   farmMulticall = await ethers.getContractAt(
     "contracts/multicalls/FarmMulticall.sol:FarmMulticall",
-    "0xD8c0877007D2D667E619FBc7367d1feF13Ec41Cb"
+    "0x04979731a4a26f55356115d3Fd52eb4005E14fAf"
   );
   voterMulticall = await ethers.getContractAt(
     "contracts/multicalls/VoterMulticall.sol:VoterMulticall",
-    "0x076111Af7726540e83C9889c21789072629D796B"
+    "0x8D8da7A2fF7cbb1Dd96C77A9e0E11bbd429c8B84"
   );
   auctionMulticall = await ethers.getContractAt(
     "contracts/multicalls/AuctionMulticall.sol:AuctionMulticall",
-    "0xB946BBcbf600FEbCB9b006C2310465bdeBF9910e"
+    "0x6Bf84aaAD7aE76b6d17E2b7C79b58A831fE427A6"
   );
 
   asset0 = await ethers.getContractAt(
@@ -1042,19 +1042,6 @@ async function main() {
   // console.log("Ownership Transferred");
 
   //===================================================================
-  // Print Deployment
-  //===================================================================
-
-  //   console.log("Beradrome Mainnet Deployment");
-  //   console.log();
-  //   await printTokenAddresses();
-  //   console.log();
-  //   await printVotingAddresses();
-  //   console.log();
-  //   await printAncillaryAddresses();
-  //   console.log();
-
-  //===================================================================
   // Add Plugin
   //===================================================================
 
@@ -1086,8 +1073,8 @@ async function main() {
   // Set isFund on controller
   //===================================================================
 
-  // await controller.connect(wallet).setIsFund(fund0.address, true);
-  // await controller.connect(wallet).setIsFund(fund1.address, true);
+  // await controller.connect(wallet).setPluginIsFund(fund0.address, true);
+  // await controller.connect(wallet).setPluginIsFund(fund1.address, true);
   // console.log("Funds set as isFund");
 
   //===================================================================
