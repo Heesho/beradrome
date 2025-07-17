@@ -334,7 +334,7 @@ describe("local: MockFundTest", function () {
     console.log("- Auction Initialized");
 
     // set fund0 isFund = true
-    await controller.connect(owner).setIsFund(fund0.address, true);
+    await controller.connect(owner).setPluginIsFund(fund0.address, true);
 
     console.log("Initialization Complete");
     console.log();

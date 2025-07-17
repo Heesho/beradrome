@@ -11,7 +11,7 @@ interface IVoter {
 
 interface IController {
     function distribute() external;
-    function isFund(address plugin) external view returns (bool);
+    function plugin_IsFund(address plugin) external view returns (bool);
 }
 
 interface IFund {
@@ -93,7 +93,7 @@ contract Router {
         address[] memory plugins = IVoter(voter).getPlugins();
         uint256 assetsLength = 0;
         for (uint256 i = 0; i < plugins.length; i++) {
-            if (IController(controller).isFund(plugins[i])) {
+            if (IController(controller).plugin_IsFund(plugins[i])) {
                 address[] memory rewardTokens = IFund(plugins[i]).getRewardTokens();
                 assetsLength += rewardTokens.length;
             }
@@ -101,7 +101,7 @@ contract Router {
         address[] memory assets = new address[](assetsLength);
         uint256 index = 0;
         for (uint256 i = 0; i < plugins.length; i++) {
-            if (IController(controller).isFund(plugins[i])) {
+            if (IController(controller).plugin_IsFund(plugins[i])) {
                 address[] memory rewardTokens = IFund(plugins[i]).getRewardTokens();
                 for (uint256 j = 0; j < rewardTokens.length; j++) {
                     assets[index] = rewardTokens[j];

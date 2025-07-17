@@ -44,7 +44,7 @@ interface IGauge {
 }
 
 interface IController {
-    function isFund(address fund) external view returns (bool);
+    function plugin_IsFund(address fund) external view returns (bool);
 }
 
 contract AuctionMulticall {
@@ -155,8 +155,8 @@ contract AuctionMulticall {
         AuctionCard[] memory auctionCards = new AuctionCard[](stop - start);
         for (uint i = start; i < stop; i++) {
             address plugin = IVoter(voter).plugins(i);
-            if (IController(controller).isFund(plugin)) {
-                auctionCards[i] = auctionCardData(plugin, account);
+            if (IController(controller).plugin_IsFund(plugin)) {
+                auctionCards[i - start] = auctionCardData(plugin, account);
             }
         }
         return auctionCards;
@@ -166,17 +166,21 @@ contract AuctionMulticall {
         address[] memory plugins = IVoter(voter).getPlugins();
         uint256 assetsLength = 0;
         for (uint i = 0; i < plugins.length; i++) {
-            assetsLength += IFund(plugins[i]).getRewardTokens().length;
+            if (IController(controller).plugin_IsFund(plugins[i])) {
+                assetsLength += IFund(plugins[i]).getRewardTokens().length;
+            }
         }
         rewardAuction.assets = new address[](assetsLength);
         rewardAuction.amounts = new uint256[](assetsLength);
         uint256 index = 0;
         for (uint i = 0; i < plugins.length; i++) {
-            address[] memory rewardTokens = IFund(plugins[i]).getRewardTokens();
-            for (uint j = 0; j < rewardTokens.length; j++) {
-                rewardAuction.assets[index] = rewardTokens[j];
-                rewardAuction.amounts[index] = IERC20(rewardTokens[j]).balanceOf(auction);
-                index++;
+            if (IController(controller).plugin_IsFund(plugins[i])) {
+                address[] memory rewardTokens = IFund(plugins[i]).getRewardTokens();
+                for (uint j = 0; j < rewardTokens.length; j++) {
+                    rewardAuction.assets[index] = rewardTokens[j];
+                    rewardAuction.amounts[index] = IERC20(rewardTokens[j]).balanceOf(auction);
+                    index++;
+                }
             }
         }
         rewardAuction.auctionEpochDuration = IAuction(auction).epochPeriod();

@@ -44,7 +44,7 @@ contract Controller is Ownable {
     address public immutable voter;
     address public immutable fees;
 
-    mapping(address => bool) public isFund;
+    mapping(address => bool) public plugin_IsFund;
 
     /*----------  FUNCTIONS  --------------------------------------------*/
 
@@ -69,7 +69,7 @@ contract Controller is Ownable {
     function distributeToBribes() public {
         address[] memory plugins = IVoter(voter).getPlugins();
         for (uint256 i = 0; i < plugins.length; i++) {
-            if (!isFund[plugins[i]]) {
+            if (!plugin_IsFund[plugins[i]]) {
                 if (IVoter(voter).isAlive(IVoter(voter).gauges(plugins[i]))) {
                     IPlugin(plugins[i]).claimAndDistribute();
                 }
@@ -80,7 +80,7 @@ contract Controller is Ownable {
     function distributeToBribePots() public {
         address[] memory plugins = IVoter(voter).getPlugins();
         for (uint256 i = 0; i < plugins.length; i++) {
-            if (isFund[plugins[i]]) {
+            if (plugin_IsFund[plugins[i]]) {
                 address auction = IFund(plugins[i]).getAssetAuction();
                 address bribePot = IAuction(auction).bribePot();
                 if (IVoter(voter).isAlive(IVoter(voter).gauges(plugins[i]))) {
@@ -93,7 +93,7 @@ contract Controller is Ownable {
     function distributeToAuctions() public {
         address[] memory plugins = IVoter(voter).getPlugins();
         for (uint256 i = 0; i < plugins.length; i++) {
-            if (isFund[plugins[i]]) {
+            if (plugin_IsFund[plugins[i]]) {
                 if (IVoter(voter).isAlive(IVoter(voter).gauges(plugins[i]))) {
                     address oToken = IVoter(voter).OTOKEN();
                     address[] memory rewardTokens = IFund(plugins[i]).getRewardTokens();
@@ -125,8 +125,8 @@ contract Controller is Ownable {
 
     /*----------  RESTRICTED FUNCTIONS  --------------------------------*/
 
-    function setIsFund(address plugin, bool _isFund) external onlyOwner {
-        isFund[plugin] = _isFund;
+    function setPluginIsFund(address plugin, bool isFund) external onlyOwner {
+        plugin_IsFund[plugin] = isFund;
     }
 
     /*----------  VIEW FUNCTIONS  ---------------------------------------*/

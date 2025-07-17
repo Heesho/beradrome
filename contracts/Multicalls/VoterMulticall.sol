@@ -103,7 +103,7 @@ contract VoterMulticall {
     function getBribeCards(uint256 start, uint256 stop, address account) external view returns (BribeCard[] memory) {
         BribeCard[] memory bribeCards = new BribeCard[](stop - start);
         for (uint i = start; i < stop; i++) {
-            bribeCards[i] = bribeCardData(getPlugin(i), account);
+            bribeCards[i - start] = bribeCardData(getPlugin(i), account);
         }
         return bribeCards;
     }

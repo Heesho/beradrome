@@ -30,7 +30,7 @@ interface ITOKEN {
 }
 
 interface IController {
-    function isFund(address fund) external view returns (bool);
+    function plugin_IsFund(address fund) external view returns (bool);
 }
 
 contract FarmMulticall {
@@ -122,8 +122,8 @@ contract FarmMulticall {
         GaugeCard[] memory gaugeCards = new GaugeCard[](stop - start);
         for (uint i = start; i < stop; i++) {
             address plugin = IVoter(voter).plugins(i);
-            if (!IController(controller).isFund(plugin)) {
-                gaugeCards[i] = gaugeCardData(plugin, account);
+            if (!IController(controller).plugin_IsFund(plugin)) {
+                gaugeCards[i - start] = gaugeCardData(plugin, account);
             }
         }
         return gaugeCards;
