@@ -230,7 +230,8 @@ describe("Hive token testing multicall", function () {
       TOKEN.address,
       OTOKEN.address,
       VTOKEN.address,
-      rewarder.address
+      rewarder.address,
+      controller.address
     );
     swapMulticall = await ethers.getContractAt(
       "SwapMulticall",

@@ -220,7 +220,8 @@ describe("local: test3", function () {
       TOKEN.address,
       OTOKEN.address,
       VTOKEN.address,
-      rewarder.address
+      rewarder.address,
+      controller.address
     );
     swapMulticall = await ethers.getContractAt(
       "SwapMulticall",
@@ -4028,7 +4029,8 @@ describe("local: test3", function () {
       TOKEN.address,
       OTOKEN.address,
       VTOKEN.address,
-      rewarder.address
+      rewarder.address,
+      controller.address
     );
     swapMulticall1 = await ethers.getContractAt(
       "SwapMulticall",

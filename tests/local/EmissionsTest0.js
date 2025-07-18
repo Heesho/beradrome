@@ -205,7 +205,8 @@ describe("local: emissions test 0", function () {
       TOKEN.address,
       OTOKEN.address,
       VTOKEN.address,
-      rewarder.address
+      rewarder.address,
+      controller.address
     );
     swapMulticall = await ethers.getContractAt(
       "SwapMulticall",

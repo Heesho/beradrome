@@ -34,9 +34,21 @@ interface IMinter {
 }
 
 interface IVoter {
+    function gauges(address plugin) external view returns (address);
+    function getPlugins() external view returns (address[] memory);
     function minter() external view returns (address);
     function usedWeights(address account) external view returns (uint256);
     function lastVoted(address account) external view returns (uint256);
+}
+
+interface IController {
+    function plugin_IsFund(address plugin) external view returns (bool);
+}
+
+interface IGauge {
+    function getRewardForDuration(address token) external view returns (uint256);
+    function balanceOf(address account) external view returns (uint256);
+    function totalSupply() external view returns (uint256);
 }
 
 contract SwapMulticall {
@@ -55,8 +67,15 @@ contract SwapMulticall {
     address public immutable OTOKEN;
     address public immutable VTOKEN;
     address public immutable rewarder;
+    address public immutable controller;
 
     uint256 public immutable FEE;
+
+    struct Portfolio {
+        uint256 total;
+        uint256 stakingRewards;
+        uint256 farmingRewards;
+    }
 
     struct SwapCard {
         uint256 frBASE;
@@ -101,13 +120,14 @@ contract SwapMulticall {
 
     /*----------  FUNCTIONS  --------------------------------------------*/
 
-    constructor(address _voter, address _BASE, address _TOKEN, address _OTOKEN, address _VTOKEN, address _rewarder) {
+    constructor(address _voter, address _BASE, address _TOKEN, address _OTOKEN, address _VTOKEN, address _rewarder, address _controller) {
         voter = _voter;
         BASE = _BASE;
         TOKEN = _TOKEN;
         OTOKEN = _OTOKEN;
         VTOKEN = _VTOKEN;
         rewarder = _rewarder;
+        controller = _controller;
 
         FEE = ITOKEN(TOKEN).SWAP_FEE();
     }
@@ -164,7 +184,36 @@ contract SwapMulticall {
         return bondingCurve;
     }
 
-function quoteBuyIn(uint256 input, uint256 slippageTolerance) external view returns (uint256 output, uint256 slippage, uint256 minOutput, uint256 autoMinOutput) {
+    function portfolioData(address account) external view returns (Portfolio memory portfolio) {
+        uint256 priceBASE = getBasePrice();
+
+        portfolio.total = (account == address(0) ? 0 : priceBASE * (((IERC20(TOKEN).balanceOf(account) 
+            + IVTOKEN(VTOKEN).balanceOfTOKEN(account)) * ITOKEN(TOKEN).getMarketPrice() / 1e18)
+            + (IERC20(OTOKEN).balanceOf(account) * ITOKEN(TOKEN).getOTokenPrice() / 1e18)
+            - ITOKEN(TOKEN).debts(account)) / 1e18);
+
+        portfolio.stakingRewards = (account == address(0) ? 0 : priceBASE * (IVTOKENRewarder(rewarder).getRewardForDuration(BASE)
+            + (IVTOKENRewarder(rewarder).getRewardForDuration(TOKEN) * ITOKEN(TOKEN).getMarketPrice() / 1e18)
+            + (IVTOKENRewarder(rewarder).getRewardForDuration(OTOKEN) * ITOKEN(TOKEN).getOTokenPrice() / 1e18)) / 1e18
+            * IERC20(VTOKEN).balanceOf(account) / IERC20(VTOKEN).totalSupply());
+
+        address[] memory plugins = IVoter(voter).getPlugins();
+        uint256 rewardsOTOKEN = 0;
+        for (uint i = 0; i < plugins.length; i++) {
+            if (!IController(controller).plugin_IsFund(plugins[i])) {
+                address gauge = IVoter(voter).gauges(plugins[i]);
+                if (IGauge(gauge).balanceOf(account) > 0) {
+                    rewardsOTOKEN += (IGauge(gauge).getRewardForDuration(OTOKEN) * IGauge(gauge).balanceOf(account) / IGauge(gauge).totalSupply());
+                }
+            }
+        }
+
+        portfolio.farmingRewards = rewardsOTOKEN * ITOKEN(TOKEN).getOTokenPrice() * priceBASE / 1e36;
+        
+        return portfolio;
+    }
+
+    function quoteBuyIn(uint256 input, uint256 slippageTolerance) external view returns (uint256 output, uint256 slippage, uint256 minOutput, uint256 autoMinOutput) {
         uint256 feeBASE = input * FEE / DIVISOR;
         uint256 oldMrBASE = ITOKEN(TOKEN).mrvBASE() + ITOKEN(TOKEN).mrrBASE();
         uint256 newMrBASE = oldMrBASE + input - feeBASE;

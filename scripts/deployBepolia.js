@@ -136,7 +136,7 @@ async function getContracts() {
 
   swapMulticall = await ethers.getContractAt(
     "contracts/multicalls/SwapMulticall.sol:SwapMulticall",
-    "0xeA2646CCe262A34c6ED9C54365af25bB638446b8"
+    "0x85441fA528c781658B296c9e5654557bd83023ED"
   );
   farmMulticall = await ethers.getContractAt(
     "contracts/multicalls/FarmMulticall.sol:FarmMulticall",
@@ -596,6 +596,7 @@ async function deploySwapMulticall() {
     OTOKEN.address,
     VTOKEN.address,
     rewarder.address,
+    controller.address,
     { gasPrice: ethers.gasPrice }
   );
   swapMulticall = await swapMulticallContract.deployed();
@@ -615,6 +616,7 @@ async function verifySwapMulticall() {
       OTOKEN.address,
       VTOKEN.address,
       rewarder.address,
+      controller.address,
     ],
   });
   console.log("SwapMulticall Verified");
@@ -972,7 +974,7 @@ async function main() {
   //===================================================================
 
   // console.log("Starting Ancillary Verification");
-  // await verifySwapMulticall();
+  await verifySwapMulticall();
   // await verifyFarmMulticall();
   // await verifyVoterMulticall();
   // await verifyAuctionMulticall();
