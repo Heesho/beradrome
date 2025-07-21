@@ -140,7 +140,7 @@ async function getContracts() {
   );
   farmMulticall = await ethers.getContractAt(
     "contracts/multicalls/FarmMulticall.sol:FarmMulticall",
-    "0x04979731a4a26f55356115d3Fd52eb4005E14fAf"
+    "0x63956a77d4507c43e8fb80d104d6d5a2dE734d26"
   );
   voterMulticall = await ethers.getContractAt(
     "contracts/multicalls/VoterMulticall.sol:VoterMulticall",
@@ -974,7 +974,7 @@ async function main() {
   //===================================================================
 
   // console.log("Starting Ancillary Verification");
-  await verifySwapMulticall();
+  // await verifySwapMulticall();
   // await verifyFarmMulticall();
   // await verifyVoterMulticall();
   // await verifyAuctionMulticall();
