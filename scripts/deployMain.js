@@ -87,6 +87,10 @@ const fBOMB = "0xdf486980df72446a5eff76263efb2fa9391be136";
 const xfatBERA = "0xcAc89B3F94eD6BAb04113884deeE2A55293c2DD7";
 const canaNECT = "0x439c84851bb1EDd8Db3DD94809ebBEA6670682F3";
 const brPOLLEN = "0xa9f9fc404378686275Ae053EC73c21c43fa2D7b5";
+const canaBERA = "0x768670beAD85b4383940F60AfD8492AC76b2Ba28";
+const BURR = "0x28e0e3b9817012b356119df9e217c25932d609c2";
+const OBERO = "0x40A8d9efE6A2C6C9D193Cc0A4476767748E68133";
+const BERO = "0x7838CEc5B11298Ff6a9513Fa385621B765C74174";
 
 // Beradrom Plugin Factory
 const BERADROME_PLUGIN_FACTORY = "0xf0b0f738Fed0656D66725bb1528B42050de64DCa";
@@ -367,6 +371,30 @@ const BERADROME_REWARDS_33 = [POLLEN, WBERA, ARBERAPOINTS];
 const BERADROME_SYMBOL_33 = "Arbera brHENLO-brNECT";
 const BERADROME_NAME_33 = "Beradrome Arbera brHENLO-brNECT";
 const BERADROME_PLUGIN_33 = "0x444FDbdb82a38Cbeaf9Da2a105171dE4d5acAd86";
+
+// Beradrome BurrBear canaBERA-wgBERA
+const BERADROME_TOKEN_34 = "0x2c5542a6d73fee281f6ecb303e6b4fdebb2edda2";
+const BERADROME_TOKENS_34 = [canaBERA, WGBERA];
+const BERADROME_REWARDS_34 = [WBERA, BURR];
+const BERADROME_SYMBOL_34 = "BurrBear canaBERA-wgBERA";
+const BERADROME_NAME_34 = "Beradrome BurrBear canaBERA-wgBERA";
+const BERADROME_PLUGIN_34 = "0x927eEEE4c0c64c513708379c925042eF3DF4EbC1";
+
+// Beradrome Kodiak Island oBERO-WBERA-0.3%
+const BERADROME_TOKEN_35 = "0x3671DCfeD1586757660ea641b8C07431470bA5B3";
+const BERADROME_TOKENS_35 = [OBERO, WBERA];
+const BERADROME_REWARDS_35 = [xfatBERA];
+const BERADROME_SYMBOL_35 = "Kodiak Island oBERO-WBERA-0.3%";
+const BERADROME_NAME_35 = "Beradrome Kodiak Island oBERO-WBERA-0.3%";
+const BERADROME_PLUGIN_35 = "0x19b75aE2799EB3d1595B1E5D84aeE9e07D9DA0CE";
+
+// Beradrome Kodiak Island WBERA-BERO-0.3%
+const BERADROME_TOKEN_36 = "0x9bA04ED80A76417bb6b00CCa4D9A645Bba89386b";
+const BERADROME_TOKENS_36 = [WBERA, BERO];
+const BERADROME_REWARDS_36 = [xfatBERA];
+const BERADROME_SYMBOL_36 = "Kodiak Island WBERA-BERO-0.3%";
+const BERADROME_NAME_36 = "Beradrome Kodiak Island WBERA-BERO-0.3%";
+const BERADROME_PLUGIN_36 = "0x4887E918Ce2C8332b01CA6dbc558202C04DCDB13";
 
 // Berachain Plugin Factory
 const BERACHAIN_PLUGIN_FACTORY = "0x3E5b9a5D7D73D8781c4782910523b942dB831ef8";
@@ -1761,11 +1789,11 @@ async function verifyBeradromePluginFactory() {
 async function deployBeradromePlugin() {
   console.log("Starting BeradromePlugin Deployment");
   await beradromePluginFactory.createPlugin(
-    BERADROME_TOKEN_23,
-    BERADROME_TOKENS_23,
-    BERADROME_REWARDS_23,
-    BERADROME_SYMBOL_23,
-    BERADROME_NAME_23,
+    BERADROME_TOKEN_36,
+    BERADROME_TOKENS_36,
+    BERADROME_REWARDS_36,
+    BERADROME_SYMBOL_36,
+    BERADROME_NAME_36,
     { gasPrice: ethers.gasPrice }
   );
   await sleep(10000);
@@ -2416,6 +2444,14 @@ async function main() {
   //   BERADROME_PLUGIN_26,
   //   BERADROME_PLUGIN_27,
   //   BERADROME_PLUGIN_28,
+  // BERADROME_PLUGIN_29, // havent done yet
+  // BERADROME_PLUGIN_30, // havent done yet
+  // BERADROME_PLUGIN_31, // havent done yet
+  // BERADROME_PLUGIN_32, // havent done yet
+  // BERADROME_PLUGIN_33, // havent done yet
+  // BERADROME_PLUGIN_34, // havent done yet
+  // BERADROME_PLUGIN_35, // havent done yet
+  // BERADROME_PLUGIN_36, // havent done yet
   //   BERACHAIN_PLUGIN_0,
   //   BERACHAIN_PLUGIN_1,
   //   BERACHAIN_PLUGIN_2,
@@ -2457,6 +2493,8 @@ async function main() {
   //   INFRARED_TRIFECTA_PLUGIN_8,
   //   INFRARED_TRIFECTA_PLUGIN_9,
   //   INFRARED_TRIFECTA_PLUGIN_10,
+  // INFRARED_TRIFECTA_PLUGIN_11, // havent done yet
+  // INFRARED_TRIFECTA_PLUGIN_12, // havent done yet
   //   BERAPAW_PLUGIN_0,
   //   BERAPAW_PLUGIN_1,
   //   BERAPAW_PLUGIN_2,
@@ -2467,6 +2505,7 @@ async function main() {
   //   BURRBEAR_PLUGIN_2,
   // ];
 
+  // needs to be updated to work with new multicalls and controller
   // for (let i = 0; i < plugins.length; i++) {
   //   let res = await controller.connect(wallet).getPlugin(plugins[i]);
   //   console.log("Plugin: ", plugins[i]);

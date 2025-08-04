@@ -7,8 +7,8 @@ require("solidity-coverage");
 /*===================================================================*/
 /*===========================  SETTINGS  ============================*/
 
-const CHAIN_ID = 80069; // Berachain Bepolia chain id
-// const CHAIN_ID = 80094; // Berachain Mainnet chain id
+// const CHAIN_ID = 80069; // Berachain Bepolia chain id
+const CHAIN_ID = 80094; // Berachain Mainnet chain id
 
 /*===========================  END SETTINGS  ========================*/
 /*===================================================================*/
