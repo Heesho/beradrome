@@ -91,6 +91,7 @@ const canaBERA = "0x768670beAD85b4383940F60AfD8492AC76b2Ba28";
 const BURR = "0x28e0e3b9817012b356119df9e217c25932d609c2";
 const OBERO = "0x40A8d9efE6A2C6C9D193Cc0A4476767748E68133";
 const BERO = "0x7838CEc5B11298Ff6a9513Fa385621B765C74174";
+const osBGT = "0xD2C41BF4033A83C0FC3A7F58a392Bf37d6dCDb58";
 
 // Beradrom Plugin Factory
 const BERADROME_PLUGIN_FACTORY = "0xf0b0f738Fed0656D66725bb1528B42050de64DCa";
@@ -839,6 +840,16 @@ const INFRARED_TRIFECTA_NAME_12 =
   "Beradrome Infrared Trifecta Kodiak Island YEET-wgBERA-0.3%";
 const INFRARED_TRIFECTA_PLUGIN_12 =
   "0xa3B1be9F7004C3493F914d860364195006CE7a76";
+
+// Infrared Trifecta Kodiak Island YEET-osBGT-0.3%
+const INFRARED_TRIFECTA_VAULT_13 = "0xfacacD8B4452aac5B861aD429727f3b0Aeceb446";
+const INFRARED_TRIFECTA_TOKENS_13 = [YEET, osBGT];
+const INFRARED_TRIFECTA_REWARDS_13 = [YEET];
+const INFRARED_TRIFECTA_SYMBOL_13 = "Kodiak Island YEET-osBGT-0.3%";
+const INFRARED_TRIFECTA_NAME_13 =
+  "Beradrome Infrared Trifecta Kodiak Island YEET-osBGT-0.3%";
+const INFRARED_TRIFECTA_PLUGIN_13 =
+  "0x845C3E17b3171062e643b4673E104493ca76DAE4";
 
 // Bullas BULL iSH
 const BULLAS_PLUGIN = "0xE259A689D13139F413eE693BE27181192319a629";
@@ -1854,11 +1865,11 @@ async function verifyInfraredTrifectaPluginFactory() {
 async function deployInfraredTrifectaPlugin() {
   console.log("Starting InfraredTrifectaPlugin Deployment");
   await infraredTrifectaPluginFactory.createPlugin(
-    INFRARED_TRIFECTA_VAULT_12,
-    INFRARED_TRIFECTA_TOKENS_12,
-    INFRARED_TRIFECTA_REWARDS_12,
-    INFRARED_TRIFECTA_SYMBOL_12,
-    INFRARED_TRIFECTA_NAME_12,
+    INFRARED_TRIFECTA_VAULT_13,
+    INFRARED_TRIFECTA_TOKENS_13,
+    INFRARED_TRIFECTA_REWARDS_13,
+    INFRARED_TRIFECTA_SYMBOL_13,
+    INFRARED_TRIFECTA_NAME_13,
     { gasPrice: ethers.gasPrice }
   );
   await sleep(10000);
@@ -2204,7 +2215,7 @@ async function main() {
   //===================================================================
 
   // console.log("Starting Infrared Trifecta Plugin Deployment");
-  // await deployInfraredTrifectaPlugin();
+  await deployInfraredTrifectaPlugin();
   // await verifyInfraredTrifectaPlugin();
   // console.log("Infrared Trifecta Plugin Deployed and Verified");
 
