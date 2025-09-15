@@ -2215,7 +2215,7 @@ async function main() {
   //===================================================================
 
   // console.log("Starting Infrared Trifecta Plugin Deployment");
-  await deployInfraredTrifectaPlugin();
+  // await deployInfraredTrifectaPlugin();
   // await verifyInfraredTrifectaPlugin();
   // console.log("Infrared Trifecta Plugin Deployed and Verified");
 
@@ -2527,6 +2527,40 @@ async function main() {
   //   console.log("Token Set");
   //   console.log();
   // }
+
+  // console.log("Plugin Data");
+  // let length = await voter.length();
+  // for (let i = 0; i < length; i++) {
+  //   const plugin = await voter.plugins(i);
+  //   const pluginContract = await ethers.getContractAt(
+  //     "contracts/Plugin.sol:Plugin",
+  //     plugin
+  //   );
+  //   const name = await pluginContract.getName();
+  //   const bribe = await voter.bribes(plugin);
+  //   const gauge = await voter.gauges(plugin);
+  //   const isAlive = await voter.isAlive(gauge);
+
+  //   console.log("Name: ", name);
+  //   console.log("Plugin: ", plugin);
+  //   console.log("Bribe: ", bribe);
+  //   console.log("Gauge: ", gauge);
+  //   console.log("Is Alive: ", isAlive);
+  //   console.log();
+  // }
+
+  // console.log("Bribe Array");
+  // let length = await voter.length();
+  // console.log("[");
+  // for (let i = 0; i < length; i++) {
+  //   const plugin = await voter.plugins(i);
+  //   const bribe = await voter.bribes(plugin);
+  //   const isAlive = await voter.isAlive(await voter.gauges(plugin));
+  //   if (isAlive) {
+  //     console.log(bribe + ", ");
+  //   }
+  // }
+  // console.log("]");
 }
 
 main()
