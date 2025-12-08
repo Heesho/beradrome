@@ -1380,19 +1380,31 @@ async function deployController() {
   console.log("Controller Deployed at:", controller.address);
 }
 
-async function printAncillaryAddresses() {
-  console.log("**************************************************************");
-  console.log("Multicall: ", multicall.address);
-  console.log("TrifectaMulticall: ", trifectaMulticall.address);
-  console.log("Controller: ", controller.address);
-  console.log("**************************************************************");
+async function deploySwapMulticall() {
+  console.log("Starting SwapMulticall Deployment");
+  const swapMulticallArtifact = await ethers.getContractFactory(
+    "SwapMulticall"
+  );
+  const swapMulticallContract = await swapMulticallArtifact.deploy(
+    voter.address,
+    BASE_ADDRESS,
+    TOKEN.address,
+    OTOKEN.address,
+    VTOKEN.address,
+    rewarder.address,
+    controller.address,
+    { gasPrice: ethers.gasPrice }
+  );
+  swapMulticall = await swapMulticallContract.deployed();
+  await sleep(5000);
+  console.log("SwapMulticall Deployed at:", swapMulticall.address);
 }
 
-async function verifyMulticall() {
-  console.log("Starting Multicall Verification");
+async function verifySwapMulticall() {
+  console.log("Starting SwapMulticall Verification");
   await hre.run("verify:verify", {
-    address: multicall.address,
-    contract: "contracts/Multicall.sol:Multicall",
+    address: swapMulticall.address,
+    contract: "contracts/multicalls/SwapMulticall.sol:SwapMulticall",
     constructorArguments: [
       voter.address,
       BASE_ADDRESS,
@@ -1400,29 +1412,102 @@ async function verifyMulticall() {
       OTOKEN.address,
       VTOKEN.address,
       rewarder.address,
+      controller.address,
     ],
   });
-  console.log("Multicall Verified");
+  console.log("SwapMulticall Verified");
 }
 
-async function verifyTrifectaMulticall() {
-  console.log("Starting TrifectaMulticall Verification");
+async function deployFarmMulticall() {
+  console.log("Starting FarmMulticall Deployment");
+  const farmMulticallArtifact = await ethers.getContractFactory(
+    "FarmMulticall"
+  );
+  const farmMulticallContract = await farmMulticallArtifact.deploy(
+    voter.address,
+    TOKEN.address,
+    controller.address,
+    { gasPrice: ethers.gasPrice }
+  );
+  farmMulticall = await farmMulticallContract.deployed();
+  await sleep(5000);
+  console.log("FarmMulticall Deployed at:", farmMulticall.address);
+}
+
+async function verifyFarmMulticall() {
+  console.log("Starting FarmMulticall Verification");
   await hre.run("verify:verify", {
-    address: trifectaMulticall.address,
-    contract: "contracts/TrifectaMulticall.sol:TrifectaMulticall",
+    address: farmMulticall.address,
+    contract: "contracts/multicalls/FarmMulticall.sol:FarmMulticall",
+    constructorArguments: [voter.address, TOKEN.address, controller.address],
+  });
+  console.log("FarmMulticall Verified");
+}
+
+async function deployVoterMulticall() {
+  console.log("Starting VoterMulticall Deployment");
+  const voterMulticallArtifact = await ethers.getContractFactory(
+    "VoterMulticall"
+  );
+  const voterMulticallContract = await voterMulticallArtifact.deploy(
+    voter.address,
+    { gasPrice: ethers.gasPrice }
+  );
+  voterMulticall = await voterMulticallContract.deployed();
+  await sleep(5000);
+  console.log("VoterMulticall Deployed at:", voterMulticall.address);
+}
+
+async function verifyVoterMulticall() {
+  console.log("Starting VoterMulticall Verification");
+  await hre.run("verify:verify", {
+    address: voterMulticall.address,
+    contract: "contracts/multicalls/VoterMulticall.sol:VoterMulticall",
     constructorArguments: [voter.address],
   });
-  console.log("TrifectaMulticall Verified");
+  console.log("VoterMulticall Verified");
+}
+async function deployAuctionMulticall() {
+  console.log("Starting AuctionMulticall Deployment");
+  const auctionMulticallArtifact = await ethers.getContractFactory(
+    "contracts/multicalls/AuctionMulticall.sol:AuctionMulticall"
+  );
+  const auctionMulticallContract = await auctionMulticallArtifact.deploy(
+    voter.address,
+    TOKEN.address,
+    OTOKEN.address,
+    rewardAuction.address,
+    controller.address,
+    { gasPrice: ethers.gasPrice }
+  );
+  auctionMulticall = await auctionMulticallContract.deployed();
+  await sleep(5000);
+  console.log("AuctionMulticall Deployed at:", auctionMulticall.address);
 }
 
-async function verifyController() {
-  console.log("Starting Controller Verification");
+async function verifyAuctionMulticall() {
+  console.log("Starting AuctionMulticall Verification");
   await hre.run("verify:verify", {
-    address: controller.address,
-    contract: "contracts/Controller.sol:Controller",
-    constructorArguments: [voter.address, fees.address],
+    address: auctionMulticall.address,
+    contract: "contracts/multicalls/AuctionMulticall.sol:AuctionMulticall",
+    constructorArguments: [
+      voter.address,
+      TOKEN.address,
+      OTOKEN.address,
+      rewardAuction.address,
+      controller.address,
+    ],
   });
-  console.log("Controller Verified");
+  console.log("AuctionMulticall Verified");
+}
+
+async function printMulticallAddresses() {
+  console.log("**************************************************************");
+  console.log("SwapMulticall: ", swapMulticall.address);
+  console.log("FarmMulticall: ", farmMulticall.address);
+  console.log("VoterMulticall: ", voterMulticall.address);
+  console.log("AuctionMulticall: ", auctionMulticall.address);
+  console.log("**************************************************************");
 }
 
 async function setUpSystem(wallet) {

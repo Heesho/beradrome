@@ -8,6 +8,7 @@
     "hardhat": "^2.22.15"
   },
   "scripts": {
+    "deployBivot": "hardhat run ./scripts/deployBivot.js  --network mainnet",
     "deployMain": "hardhat run ./scripts/deployMain.js  --network mainnet",
     "deployBepolia": "hardhat run ./scripts/deployBepolia.js  --network mainnet",
     "deployMerkle": "hardhat run ./scripts/deployMerkle.js  --network mainnet",
