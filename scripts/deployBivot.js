@@ -24,6 +24,18 @@ const HONEY = "0xFCBD14DC51f0A4d49d5E53C2E0950e0bC26d0Dce";
 
 const INFRARED_FUND_FACTORY = "0x0a0C653F3FB69906dFC77b845a24c285071d3144";
 
+// Infrared Kodiak Island WBERA-BERO-0.3%
+
+const INFRARED_FUND_ASSET_0 = "0x9bA04ED80A76417bb6b00CCa4D9A645Bba89386b";
+const INFRARED_FUND_BERACHAIN_REWARD_VAULT_0 =
+  "0x7Cfe21C7a6c61903F31E657F593d3CfD7e067c0c";
+const INFRARED_FUND_INIT_PRICE_0 = convert("100", 18);
+const INFRARED_FUND_EPOCH_PERIOD_0 = 24 * 60 * 60; // 1 day
+const INFRARED_FUND_PRICE_MULTIPLIER_0 = convert("1.2", 18);
+const INFRARED_FUND_MIN_INIT_PRICE_0 = convert("100", 18);
+const INFRARED_FUND_NAME_0 = "Kodiak Island WBERA-BERO-0.3%";
+const INFRARED_FUND_0 = "0x8653C7f07C4De7fd526aF1f9B78614D21DD4fFab";
+
 // Contract Variables
 let auctionFactory, rewardAuction;
 let controller, router;
@@ -52,26 +64,26 @@ async function getContracts() {
   );
 
   swapMulticall = await ethers.getContractAt(
-    "contracts/multicalls/SwapMulticall.sol:SwapMulticall",
+    "contracts/Multicalls/SwapMulticall.sol:SwapMulticall",
     "0xF69614F4Ee8D4D3879dd53d5A039eB3114C794F6"
   );
   farmMulticall = await ethers.getContractAt(
-    "contracts/multicalls/FarmMulticall.sol:FarmMulticall",
+    "contracts/Multicalls/FarmMulticall.sol:FarmMulticall",
     "0x7a85CA4b4E15df2a7b927Fa56edb050d2399B34c"
   );
   voterMulticall = await ethers.getContractAt(
-    "contracts/multicalls/VoterMulticall.sol:VoterMulticall",
+    "contracts/Multicalls/VoterMulticall.sol:VoterMulticall",
     "0xC23E316705Feef0922F0651488264db90133ED38"
   );
   auctionMulticall = await ethers.getContractAt(
-    "contracts/multicalls/AuctionMulticall.sol:AuctionMulticall",
+    "contracts/Multicalls/AuctionMulticall.sol:AuctionMulticall",
     "0x30F8e847fCf1bC750A1fDCE7bd329FEc4c8277F9"
   );
 
-  //   infraredFund = await ethers.getContractAt(
-  //     "contracts/funds/InfraredFundFactory.sol:InfraredFund",
-  //     ""
-  //   );
+  infraredFund = await ethers.getContractAt(
+    "contracts/funds/InfraredFundFactory.sol:InfraredFund",
+    INFRARED_FUND_0
+  );
   infraredFundFactory = await ethers.getContractAt(
     "contracts/funds/InfraredFundFactory.sol:InfraredFundFactory",
     INFRARED_FUND_FACTORY
@@ -371,6 +383,42 @@ async function verifyInfraredFundFactory() {
   console.log("Infrared Fund Factory Verified");
 }
 
+async function deployInfraredFund() {
+  console.log("Starting Infrared Fund Deployment");
+  await infraredFundFactory.createFund(
+    INFRARED_FUND_NAME_0,
+    VOTER,
+    INFRARED_FUND_ASSET_0,
+    INFRARED_FUND_BERACHAIN_REWARD_VAULT_0,
+    INFRARED_FUND_INIT_PRICE_0,
+    INFRARED_FUND_EPOCH_PERIOD_0,
+    INFRARED_FUND_PRICE_MULTIPLIER_0,
+    INFRARED_FUND_MIN_INIT_PRICE_0
+  );
+  await sleep(5000);
+  console.log(
+    "Infrared Fund Deployed at:",
+    await infraredFundFactory.lastFund()
+  );
+}
+
+async function verifyInfraredFund() {
+  console.log("Starting Infrared Fund Verification");
+  await hre.run("verify:verify", {
+    address: infraredFund.address,
+    contract: "contracts/funds/InfraredFundFactory.sol:InfraredFund",
+    constructorArguments: [
+      "Infrared",
+      INFRARED_FUND_NAME_0,
+      VOTER,
+      INFRARED_FUND_ASSET_0,
+      [INFRARED_FUND_ASSET_0],
+      INFRARED_FUND_BERACHAIN_REWARD_VAULT_0,
+    ],
+  });
+  console.log("Infrared Fund Verified");
+}
+
 async function main() {
   const [wallet] = await ethers.getSigners();
   console.log("Using wallet: ", wallet.address);
@@ -458,6 +506,8 @@ async function main() {
   //   console.log("Starting Infrared Fund Factory Deployment");
   //   await deployInfraredFundFactory();
   //   console.log("Infrared Fund Factory Deployed");
+  // await infraredFundFactory.transferOwnership(MULTISIG);
+  // console.log("Infrared Fund Factory Ownership Transferred");
 
   //===================================================================
   // Verify Infrared Fund Factory
@@ -471,17 +521,17 @@ async function main() {
   // Deploy Infrared Fund
   //===================================================================
 
-  //   console.log("Starting Infrared Fund Deployment");
-  //   await deployInfraredFund();
-  //   console.log("Infrared Fund Deployed");
+  // console.log("Starting Infrared Fund Deployment");
+  // await deployInfraredFund();
+  // console.log("Infrared Fund Deployed");
 
   //===================================================================
   // Verify Infrared Fund
   //===================================================================
 
-  //   console.log("Starting Infrared Fund Verification");
-  //   await verifyInfraredFund();
-  //   console.log("Infrared Fund Verified");
+  // console.log("Starting Infrared Fund Verification");
+  // await verifyInfraredFund();
+  // console.log("Infrared Fund Verified");
 
   //===================================================================
   // Print Deployment
