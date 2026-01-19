@@ -449,7 +449,7 @@ async function main() {
 
   //   console.log("Starting Ancillary Deployment");
   //   await deployController();
-    await deployRouter();
+    // await deployRouter();
   //   await printAncillaryAddresses();
 
   //===================================================================
