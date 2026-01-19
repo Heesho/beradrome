@@ -10,7 +10,7 @@ interface IVoter {
 }
 
 interface IController {
-    function distribute() external;
+    function distributeToAuctions() external;
     function plugin_IsFund(address plugin) external view returns (bool);
 }
 
@@ -63,7 +63,7 @@ contract Router {
         uint256 deadline,
         uint256 maxPayment
     ) external {
-        IController(controller).distribute();
+        IController(controller).distributeToAuctions();
 
         address auction = IFund(plugin).getAssetAuction();
         address paymentToken = IAuction(auction).paymentToken();
@@ -88,7 +88,7 @@ contract Router {
         uint256 deadline,
         uint256 maxPayment
     ) external {
-        IController(controller).distribute();
+        IController(controller).distributeToAuctions();
 
         address[] memory plugins = IVoter(voter).getPlugins();
         uint256 assetsLength = 0;

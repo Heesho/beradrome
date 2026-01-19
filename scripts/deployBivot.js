@@ -60,23 +60,23 @@ async function getContracts() {
   );
   router = await ethers.getContractAt(
     "contracts/Router.sol:Router",
-    "0xf0A25665F14b49A233CDdbD2879B3AFA54172dF7"
+    "0x2169bc2B537dA1D949035f5162a38561CFac6462"
   );
 
   swapMulticall = await ethers.getContractAt(
-    "contracts/Multicalls/SwapMulticall.sol:SwapMulticall",
+    "contracts/multicalls/SwapMulticall.sol:SwapMulticall",
     "0xF69614F4Ee8D4D3879dd53d5A039eB3114C794F6"
   );
   farmMulticall = await ethers.getContractAt(
-    "contracts/Multicalls/FarmMulticall.sol:FarmMulticall",
+    "contracts/multicalls/FarmMulticall.sol:FarmMulticall",
     "0x7a85CA4b4E15df2a7b927Fa56edb050d2399B34c"
   );
   voterMulticall = await ethers.getContractAt(
-    "contracts/Multicalls/VoterMulticall.sol:VoterMulticall",
+    "contracts/multicalls/VoterMulticall.sol:VoterMulticall",
     "0xC23E316705Feef0922F0651488264db90133ED38"
   );
   auctionMulticall = await ethers.getContractAt(
-    "contracts/Multicalls/AuctionMulticall.sol:AuctionMulticall",
+    "contracts/multicalls/AuctionMulticall.sol:AuctionMulticall",
     "0x30F8e847fCf1bC750A1fDCE7bd329FEc4c8277F9"
   );
 
@@ -449,7 +449,7 @@ async function main() {
 
   //   console.log("Starting Ancillary Deployment");
   //   await deployController();
-  //   await deployRouter();
+    await deployRouter();
   //   await printAncillaryAddresses();
 
   //===================================================================
@@ -458,7 +458,7 @@ async function main() {
 
   //   console.log("Starting Ancillary Verification");
   //   await verifyController();
-  //   await verifyRouter();
+    // await verifyRouter();
   //   console.log("Ancillary Contracts Verified");
 
   //===================================================================
